@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap } from 'lucide-react';
+import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 
 export default function DocumentVault({ user }: { user: any }) {
   const [documents, setDocuments] = useState([]);
@@ -12,14 +13,20 @@ export default function DocumentVault({ user }: { user: any }) {
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
   
-  // State khusus untuk skeleton tabel
+  // State loading
   const [isTableLoading, setIsTableLoading] = useState(true);
+  const [isPeriodLoading, setIsPeriodLoading] = useState(true);
+  const [isWeightsLoading, setIsWeightsLoading] = useState(true);
   
   // State untuk form upload
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [isDragging, setIsDragging] = useState(false);
+
+  // === State untuk Pagination ===
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     fetchWeights();
@@ -45,6 +52,7 @@ export default function DocumentVault({ user }: { user: any }) {
   };
 
   const fetchWeights = async () => {
+    setIsWeightsLoading(true);
     try {
       const res = await fetch('/api/weights');
       const data = await res.json();
@@ -54,16 +62,21 @@ export default function DocumentVault({ user }: { user: any }) {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsWeightsLoading(false);
     }
   };
 
   const fetchPeriod = async () => {
+    setIsPeriodLoading(true);
     try {
       const res = await fetch('/api/accreditation-periods');
       const data = await res.json();
       setKpiPeriod(data.kpi_period);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsPeriodLoading(false);
     }
   };
 
@@ -100,6 +113,26 @@ export default function DocumentVault({ user }: { user: any }) {
     }
   }, [publishedAt, docType, category, kpiPeriod, weights]);
 
+  const stats = useMemo(() => {
+    return {
+      total: documents.length,
+      approved: documents.filter((d: any) => d.status === 'Approved').length,
+      pending: documents.filter((d: any) => d.status === 'Pending').length,
+      points: documents.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
+    };
+  }, [documents]);
+
+  const categoryStats = useMemo(() => {
+    const map = new Map();
+    documents.forEach((doc: any) => {
+      const cat = doc.category || 'Belum Ada Kategori';
+      map.set(cat, (map.get(cat) || 0) + 1);
+    });
+    return Array.from(map.entries())
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [documents]);
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title || !category || !publishedAt) {
@@ -132,6 +165,7 @@ export default function DocumentVault({ user }: { user: any }) {
         
         setIsTableLoading(true);
         await fetchDocuments();
+        setCurrentPage(1); // Reset ke halaman 1 setelah upload berhasil
         setIsTableLoading(false);
       } else {
         setMessage('Gagal mengunggah dokumen.');
@@ -169,8 +203,49 @@ export default function DocumentVault({ user }: { user: any }) {
     }
   };
 
+  // === Logika Pagination ===
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentDocuments = documents.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(documents.length / itemsPerPage);
+
   return (
-    <div className="max-w-6xl mx-auto space-y-6 lg:space-y-10 pb-12">
+    <div className="max-w-none space-y-6 lg:space-y-10 pb-12">
+      {/* Dashboard Summary Section */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {[
+          { label: 'Total Dokumen', value: stats.total, icon: FileText, color: 'blue' },
+          { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
+          { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
+          { label: 'Total Poin KPI', value: stats.points, icon: Award, color: 'indigo' },
+        ].map((item, index) => (
+          <motion.div
+            key={item.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl border border-gray-100 dark:border-zinc-800 p-5 flex items-center gap-4 hover:shadow-md transition-shadow"
+          >
+            <div className={`p-3 rounded-xl ${
+              item.color === 'blue' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400' :
+              item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
+              item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
+              'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400'
+            }`}>
+              <item.icon className="h-6 w-6" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
+              {isTableLoading ? (
+                <div className="h-6 w-12 bg-gray-100 dark:bg-zinc-800 animate-pulse rounded mt-1"></div>
+              ) : (
+                <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100 mt-0.5">{item.value}</p>
+              )}
+            </div>
+          </motion.div>
+        ))}
+      </section>
+
       {/* Upload Form Section */}
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -193,8 +268,8 @@ export default function DocumentVault({ user }: { user: any }) {
           </AnimatePresence>
         </div>
 
-        <div className="p-6 lg:p-8">
-          <form onSubmit={handleUpload} className="space-y-8">
+        <div className="p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <form onSubmit={handleUpload} className="lg:col-span-2 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 type="button"
@@ -399,6 +474,171 @@ export default function DocumentVault({ user }: { user: any }) {
               </button>
             </div>
           </form>
+
+          {/* === Panel Informasi & Ringkasan Visual === */}
+          <div className="space-y-6 lg:col-span-1">
+            {/* 1. Card Periode KPI */}
+            {isPeriodLoading ? (
+              <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 animate-pulse">
+                <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                  <div className="w-7 h-7 bg-gray-200 dark:bg-zinc-700 rounded-lg shrink-0"></div>
+                  <div className="h-3 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+                </div>
+                <div>
+                  <div className="h-4 w-3/4 bg-gray-200 dark:bg-zinc-700 rounded mb-3"></div>
+                  <div className="space-y-2 mt-2">
+                    <div className="flex justify-between"><div className="h-2 w-8 bg-gray-200 dark:bg-zinc-700 rounded"></div><div className="h-2 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div></div>
+                    <div className="flex justify-between"><div className="h-2 w-8 bg-gray-200 dark:bg-zinc-700 rounded"></div><div className="h-2 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div></div>
+                  </div>
+                </div>
+              </div>
+            ) : kpiPeriod && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 hover:shadow-sm transition-shadow"
+              >
+                <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                  <div className="p-1.5 bg-primary-100 dark:bg-primary-900/40 rounded-lg">
+                    <CalendarDays className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Periode KPI Aktif</h4>
+                </div>
+                <div>
+                  <p className="text-sm font-black text-gray-800 dark:text-zinc-100 leading-snug">{kpiPeriod.label}</p>
+                  <div className="mt-2 space-y-1 text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest leading-none">
+                    <p className="flex justify-between"><span>Mulai</span> <span className="text-gray-900 dark:text-zinc-300 font-mono tracking-tighter">{new Date(kpiPeriod.start).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span></p>
+                    <p className="flex justify-between mt-1"><span>Selesai</span> <span className="text-gray-900 dark:text-zinc-300 font-mono tracking-tighter">{new Date(kpiPeriod.end).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span></p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 2. Card Panduan Poin KPI */}
+            {isWeightsLoading ? (
+              <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 animate-pulse">
+                <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                  <div className="w-7 h-7 bg-gray-200 dark:bg-zinc-700 rounded-lg shrink-0"></div>
+                  <div className="h-3 w-32 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+                </div>
+                <div className="space-y-2 pr-1">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="flex justify-between items-center bg-white dark:bg-zinc-900 p-2 rounded-xl border border-gray-50 dark:border-zinc-800">
+                      <div className="h-2.5 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+                      <div className="h-4 w-12 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : weights.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5"
+              >
+                <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                  <div className="p-1.5 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
+                    <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Panduan Poin Kategori</h4>
+                </div>
+                <div className="max-h-[160px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                  {weights.slice(0, 5).map((w: any) => (
+                    <div key={w.category} className="flex justify-between items-center bg-white dark:bg-zinc-900 p-2 rounded-xl border border-gray-50 dark:border-zinc-800 hover:border-gray-100 dark:hover:border-zinc-700 transition-colors">
+                      <span className="text-[10px] font-bold text-gray-600 dark:text-zinc-300 truncate max-w-[150px] uppercase tracking-wide" title={w.category}>{w.category}</span>
+                      <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30">+{w.weight_value} PTS</span>
+                    </div>
+                  ))}
+                  {weights.length > 5 && (
+                    <p className="text-[9px] font-black text-center text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">+ {weights.length - 5} kategori lainnya</p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* 3. Card Visual Chart (Jika Ada Dokumen) */}
+            {isTableLoading ? (
+               <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 flex flex-col items-center animate-pulse">
+                 <div className="w-full flex items-center gap-2 mb-2 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                   <div className="w-7 h-7 bg-gray-200 dark:bg-zinc-700 rounded-lg shrink-0"></div>
+                   <div className="h-3 w-28 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+                 </div>
+                 <div className="h-40 w-full flex items-center justify-center">
+                   <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
+                 </div>
+                 <div className="grid grid-cols-2 gap-x-3 gap-y-2 w-full mt-2 border-t border-gray-100/80 dark:border-zinc-800/80 pt-3">
+                   {[1, 2, 3, 4].map(i => (
+                     <div key={i} className="flex items-center gap-1.5">
+                       <div className="w-2 h-2 rounded-full bg-gray-200 dark:bg-zinc-700 shrink-0"></div>
+                       <div className="h-2 w-16 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+            ) : documents.length > 0 && categoryStats.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 flex flex-col items-center"
+              >
+                <div className="w-full flex items-center gap-2 mb-2 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                  <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg">
+                    <FileText className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Komposisi Dokumen</h4>
+                </div>
+                
+                <div className="h-40 w-full relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryStats.slice(0, 5)}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={65}
+                        paddingAngle={4}
+                        dataKey="value"
+                      >
+                        {categoryStats.slice(0, 5).map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={['#0d9488', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'][index % 5]} 
+                            className="stroke-white dark:stroke-zinc-900 stroke-2 outline-none"
+                          />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip 
+                        content={({ active, payload }: any) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 p-2 rounded-xl shadow-lg ring-1 ring-black/5">
+                                <p className="text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400">{payload[0].name}</p>
+                                <p className="text-sm font-black text-gray-900 dark:text-white">{payload[0].value} <span className="text-xs font-bold text-gray-400">Berkas</span></p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                {/* Custom Legend */}
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 w-full mt-2 border-t border-gray-100/80 dark:border-zinc-800/80 pt-3">
+                  {categoryStats.slice(0, 4).map((item, index) => (
+                    <div key={item.name} className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: ['#0d9488', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'][index % 5] }}></div>
+                      <span className="text-[9px] font-black text-gray-500 dark:text-zinc-400 truncate uppercase tracking-dense leading-none" title={item.name}>{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -408,8 +648,7 @@ export default function DocumentVault({ user }: { user: any }) {
           <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Dokumen</h3>
         </div>
         
-        {/* Kontainer tabel dibiarkan w-full tanpa memaksakan whitespace-nowrap agar bisa menyesuaikan flex child-nya */}
-        <div className="w-full">
+        <div className="w-full overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
             <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
               <tr>
@@ -442,19 +681,18 @@ export default function DocumentVault({ user }: { user: any }) {
                     <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
                   </tr>
                 ))
-              ) : documents.length > 0 ? (
-                // 🔹 DOKUMEN ASLI (RESPONSIVE) 🔹
-                documents.map((doc: any) => (
+              ) : currentDocuments.length > 0 ? (
+                // 🔹 DOKUMEN ASLI (Menggunakan currentDocuments untuk pagination) 🔹
+                currentDocuments.map((doc: any) => (
                   <tr key={doc.id} className="hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-colors group">
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
                       <div className="flex items-center gap-3 lg:gap-4">
                         <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors shrink-0">
                           <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400 dark:text-zinc-500 group-hover:text-primary-600 dark:group-hover:text-primary-400" />
                         </div>
-                        <div className="min-w-0 flex-1 max-w-[130px] sm:max-w-[200px] lg:max-w-xs">
+                        <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-sm">
                           <p className="text-[11px] sm:text-xs lg:text-sm font-extrabold text-gray-900 dark:text-zinc-100 truncate tracking-tight uppercase" title={doc.title}>{doc.title}</p>
                           <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate mt-0.5" title={doc.category}>
-                            {/* Di Mobile (<lg), tanggal ikut ditampilkan di bawah judul agar tetap terlihat */}
                             <span className="lg:hidden">{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'} • </span>
                             {doc.category}
                           </p>
@@ -462,17 +700,14 @@ export default function DocumentVault({ user }: { user: any }) {
                       </div>
                     </td>
                     
-                    {/* Disembunyikan pada layar kurang dari Desktop (LG) */}
                     <td className="hidden lg:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle">
                       <span className="text-xs font-bold text-gray-600 dark:text-zinc-300 uppercase tracking-wide truncate max-w-[150px] block" title={doc.category}>{doc.category}</span>
                     </td>
                     
-                    {/* Disembunyikan pada layar kurang dari Tablet (MD) */}
                     <td className="hidden md:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle text-xs font-black text-gray-500 dark:text-zinc-400 font-mono tracking-tighter italic">
                       {doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'}
                     </td>
                     
-                    {/* Muncul di semua layar, teks disingkat di mobile */}
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
                       <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest ${
                         doc.status === 'Approved' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 shadow-sm border border-emerald-100 dark:border-emerald-900/30' :
@@ -483,12 +718,10 @@ export default function DocumentVault({ user }: { user: any }) {
                         {doc.status === 'Rejected' && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5" />}
                         {doc.status === 'Pending' && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5" />}
                         <span className="hidden sm:inline">{doc.status}</span>
-                        {/* Singkat nama status di HP biar muat */}
                         <span className="sm:hidden">{doc.status === 'Approved' ? 'OK' : doc.status === 'Rejected' ? 'NO' : 'Wait'}</span>
                       </div>
                     </td>
                     
-                    {/* Disembunyikan pada layar ukuran HP (SM) */}
                     <td className="hidden sm:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle">
                       {doc.is_kpi_counted ? (
                         <div className="inline-flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-[10px] font-black uppercase text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl border border-primary-100 dark:border-primary-900/30 shadow-sm">
@@ -503,7 +736,6 @@ export default function DocumentVault({ user }: { user: any }) {
                       )}
                     </td>
                     
-                    {/* Muncul di semua layar tapi posisinya menyesuaikan */}
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
                       <div className="flex flex-col items-end sm:items-start">
                         <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter">
@@ -527,6 +759,74 @@ export default function DocumentVault({ user }: { user: any }) {
             </tbody>
           </table>
         </div>
+
+        {/* === Pagination Controls === */}
+        {!isTableLoading && documents.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="px-6 py-5 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/10 flex flex-col sm:flex-row items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, documents.length)} of {documents.length} entries
+              </span>
+              <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 mx-2 hidden sm:block" />
+              <div className="hidden sm:flex items-center gap-1.5">
+                <span className="text-[10px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Per Page:</span>
+                <select 
+                  value={itemsPerPage} 
+                  onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                  className="bg-gray-100 dark:bg-zinc-800 border-none rounded-lg text-xs font-bold text-gray-600 dark:text-zinc-300 py-1 pl-2 pr-6 focus:ring-2 focus:ring-primary-200 outline-none cursor-pointer"
+                >
+                  {[5, 10, 25, 50].map(val => (
+                    <option key={val} value={val}>{val}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .map((p, index, array) => (
+                    <React.Fragment key={p}>
+                      {index > 0 && array[index - 1] !== p - 1 && (
+                        <span className="px-2 text-gray-300 dark:text-zinc-600 font-bold">...</span>
+                      )}
+                      <button
+                        onClick={() => setCurrentPage(p)}
+                        className={`min-w-[36px] h-9 flex items-center justify-center rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                          currentPage === p 
+                            ? 'bg-primary-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900/30' 
+                            : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    </React.Fragment>
+                  ))}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
       </section>
     </div>
   );

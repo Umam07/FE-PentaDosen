@@ -1,7 +1,3 @@
-<div align="center">
-  <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
-
 # 🚀 PentaDosen 2.0
 
 **PentaDosen 2.0** adalah sistem dashboard manajemen dokumen dan kinerja dosen yang komprehensif. Dirancang untuk menyederhanakan alur kerja administratif bagi Dosen dan Admin di perguruan tinggi.

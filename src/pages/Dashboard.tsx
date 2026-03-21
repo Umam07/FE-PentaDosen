@@ -65,7 +65,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto space-y-8 pb-12 w-full animate-pulse">
+      <div className="max-w-none space-y-8 pb-12 w-full animate-pulse">
         {/* Header Skeleton */}
         <div className="h-[120px] lg:h-[140px] bg-gray-200 dark:bg-zinc-800 rounded-3xl w-full"></div>
 
@@ -153,7 +153,7 @@ export default function Dashboard() {
   const totalFakultasPoints = formattedFakultasData.reduce((sum: number, f: any) => sum + f.value, 0);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12 selection:bg-primary-200">
+    <div className="max-w-none space-y-8 pb-12 selection:bg-primary-200">
       
       {/* Header Section */}
       <motion.div 
