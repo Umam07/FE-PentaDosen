@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Geist Mono", ui-monospace, monospace;
+  --font-serif: serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Custom Primary Color: Teal for freshness & comfort */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+}
+
+/* Base Dark Mode Support cascading */
+@layer base {
+  :root {
+    --bg-surface: #ffffff;
+    --bg-page: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --border-color: #f1f5f9;
+  }
+
+  .dark {
+    --bg-surface: #111827; /* gray-900 */
+    --bg-page: #030712;    /* gray-950 */
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #1f2937; /* gray-800 */
+  }
+
+  /* Global Dark Mode overrides for rapid implementation without bulk edits */
+  .dark body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+  }
+
+  .dark .bg-white {
+    background-color: var(--bg-surface) !important;
+  }
+
+  /* Make transparent whites into transparent dark colors for consistent backdrop effects */
+  .dark .bg-white\/90 {
+    background-color: rgba(17, 24, 39, 0.9) !important;
+  }
+
+  .dark .bg-white\/80 {
+    background-color: rgba(17, 24, 39, 0.8) !important;
+  }
+
+  .dark .bg-white\/70 {
+    background-color: rgba(17, 24, 39, 0.7) !important;
+  }
+
+  .dark .bg-white\/50,
+  .dark .bg-white\/40,
+  .dark .bg-white\/30,
+  .dark .bg-white\/20,
+  .dark .bg-white\/10 {
+    /* Keep these transparent for accent effects or light overlays */
+  }
+
+  .dark .bg-\[\#F8FAFC\],
+  .dark .bg-gray-50,
+  .dark .bg-gray-100,
+  .dark .bg-gray-50\/50,
+  .dark .bg-[#F8FAFC] {
+    background-color: var(--bg-page) !important;
+  }
+
+  .dark .border-gray-100,
+  .dark .border-gray-200,
+  .dark .border-white\/60,
+  .dark .border-white\/50,
+  .dark .border-white {
+    border-color: var(--border-color) !important;
+  }
+
+  .dark .text-gray-900,
+  .dark .text-gray-800,
+  .dark .text-gray-700 {
+    color: #f8fafc !important;
+  }
+
+  .dark .text-gray-600,
+  .dark .text-gray-500,
+  .dark .text-gray-400 {
+    color: #94a3b8 !important;
+  }
+
+  .dark .shadow-sm,
+  .dark .shadow-lg,
+  .dark .shadow-xl,
+  .dark .shadow-2xl {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .dark header {
+    background-color: rgba(17, 24, 39, 0.8) !important;
+  }
+}
+
+
