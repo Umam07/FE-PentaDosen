@@ -274,7 +274,7 @@ export default function AdminAllDocuments() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <a 
-                        href={`http://localhost:8000/storage/${doc.file_path}`}
+                        href={`/storage/${doc.file_path}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-zinc-700 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 focus:outline-none"

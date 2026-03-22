@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "https://be-pentadosen-production.up.railway.app/api/$1"
+    },
+    {
+      "source": "/storage/(.*)",
+      "destination": "https://be-pentadosen-production.up.railway.app/storage/$1"
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": "https://be-pentadosen-production.up.railway.app/uploads/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
