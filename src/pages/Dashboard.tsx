@@ -7,7 +7,8 @@ import {
   Trophy, Users, FileText, Award, Building2, 
   ChevronRight, ArrowUpRight, CheckCircle2, LayoutDashboard, BookOpen 
 } from 'lucide-react';
-import { motion } from 'motion/react'; 
+import { motion } from 'motion/react';
+import TopRankModal from '../components/TopRankModal';
 
 const PRODI_COLORS = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
@@ -37,6 +38,7 @@ export default function Dashboard() {
   const [fakultasData, setFakultasData] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -364,7 +366,8 @@ export default function Dashboard() {
             {leaderboard.length > 0 ? leaderboard.map((user: any, index: number) => (
               <div 
                 key={user.id} 
-                className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors duration-200 cursor-default group border-b border-gray-50 dark:border-zinc-800 last:border-0"
+                onClick={() => setSelectedUserId(user.id)}
+                className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors duration-200 cursor-pointer group border-b border-gray-50 dark:border-zinc-800 last:border-0"
               >
                 <div className="flex items-center gap-4">
                   <div className="relative">
@@ -478,6 +481,12 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {/* Top Rank Modal */}
+      <TopRankModal 
+        isOpen={selectedUserId !== null}
+        onClose={() => setSelectedUserId(null)}
+        userId={selectedUserId}
+      />
     </div>
   );
 }

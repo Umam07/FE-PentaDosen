@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Menu, Search, Bell, LogOut, ChevronDown, User, X, Mail, GraduationCap, BookOpen, BadgeCheck } from 'lucide-react';
+import { Menu, Search, Bell, LogOut, ChevronDown, User, Users, X, Mail, GraduationCap, BookOpen, BadgeCheck, LayoutDashboard, ArrowUpRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
 
@@ -25,17 +26,71 @@ export default function Topbar({
 }: TopbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [lecturers, setLecturers] = useState<any[]>([]);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      fetch('/api/admin/lecturers')
+        .then(res => res.json())
+        .then(data => setLecturers(data.lecturers || []))
+        .catch(err => console.error(err));
+    }
+  }, [user]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [searchTerm]);
+
+  const menuItems = user?.role === 'admin' ? [
+    { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
+    { title: 'Verifikasi Dokumen', path: '/admin/verify', icon: BadgeCheck, category: 'Menu' },
+    { title: 'Kelola Dosen', path: '/admin/lecturers', icon: Users, category: 'Menu' },
+    { title: 'Semua Dokumen', path: '/admin/documents/all', icon: BookOpen, category: 'Menu' },
+    { title: 'Sync Data API', path: '/admin/sync', icon: ArrowUpRight, category: 'Menu' },
+  ] : [
+    { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
+    { title: 'Dokumen Saya', path: '/documents', icon: BookOpen, category: 'Menu' },
+  ];
+
+  const dynamicItems = user?.role === 'admin' 
+    ? lecturers.map((l: any) => ({
+        title: l.name,
+        path: `/admin/lecturers/${l.id}`,
+        icon: User,
+        category: 'Dosen',
+        subtext: l.program_studi
+      }))
+    : [];
+
+  const allSearchItems = [...menuItems, ...dynamicItems];
+  
+  const filteredItems = searchTerm.trim() === '' 
+    ? [] 
+    : allSearchItems.filter(item => 
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.subtext && item.subtext.toLowerCase().includes(searchTerm.toLowerCase()))
+      ).slice(0, 5);
 
   return (
     <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-6 lg:px-10 sticky top-0 z-20 shadow-sm">
@@ -56,24 +111,92 @@ export default function Topbar({
            </div>
       </div>
 
-      <div className="flex items-center gap-3 lg:gap-5">
-        <div className="hidden sm:flex items-center bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-2xl px-4 py-2 w-48 lg:w-72 focus-within:ring-2 focus-within:ring-primary-100 transition-all">
-           <Search className="w-4 h-4 text-gray-400 mr-2 lg:mr-3" />
-           <input type="text" placeholder="Search..." className="bg-transparent border-none text-xs lg:text-sm dark:text-zinc-100 outline-none w-full font-medium" />
+      <div className="flex items-center gap-3 xs:gap-4 lg:gap-5">
+        {/* Interactive Search Bar dengan Dropdown */}
+        <div className="relative" ref={searchRef}>
+          <div className="hidden sm:flex items-center bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-2xl px-4 py-2 w-48 lg:w-72 focus-within:ring-2 focus-within:ring-primary-100 transition-all">
+             <Search className="w-4 h-4 text-gray-400 mr-2 lg:mr-3" />
+             <input 
+               type="text" 
+               placeholder="Search..." 
+               value={searchTerm}
+               onChange={(e) => { setSearchTerm(e.target.value); setIsSearchOpen(true); }}
+               onFocus={() => setIsSearchOpen(true)}
+               onKeyDown={(e) => {
+                 if (e.key === 'ArrowDown') {
+                   e.preventDefault();
+                   setActiveIndex(prev => prev < filteredItems.length - 1 ? prev + 1 : prev);
+                 } else if (e.key === 'ArrowUp') {
+                   e.preventDefault();
+                   setActiveIndex(prev => prev > -1 ? prev - 1 : prev);
+                 } else if (e.key === 'Enter') {
+                   if (activeIndex >= 0 && filteredItems[activeIndex]) {
+                     navigate(filteredItems[activeIndex].path);
+                     setIsSearchOpen(false);
+                     setSearchTerm('');
+                   }
+                 } else if (e.key === 'Escape') {
+                   setIsSearchOpen(false);
+                 }
+               }}
+               className="bg-transparent border-none text-xs lg:text-sm dark:text-zinc-100 outline-none w-full font-medium" 
+             />
+          </div>
+          
+          <AnimatePresence>
+            {isSearchOpen && filteredItems.length > 0 && (
+               <motion.div 
+                 initial={{ opacity: 0, y: -10 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 exit={{ opacity: 0, y: -10 }}
+                 transition={{ duration: 0.15 }}
+                 className="absolute left-0 right-0 mt-2 bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-800 py-1.5 z-40 max-h-64 overflow-y-auto w-48 lg:w-72"
+               >
+                 {filteredItems.map((item, index) => (
+                   <button
+                     key={item.path + index}
+                     onClick={() => {
+                        navigate(item.path);
+                        setIsSearchOpen(false);
+                        setSearchTerm('');
+                     }}
+                     className={`flex items-center gap-3 px-4 py-2.5 w-full text-left transition-colors group ${index === activeIndex ? 'bg-primary-50 dark:bg-zinc-800/60' : 'hover:bg-primary-50 dark:hover:bg-zinc-800/60'}`}
+                   >
+                     <div className={`p-1.5 rounded-lg transition-colors ${index === activeIndex ? 'bg-primary-100 dark:bg-primary-950/40 text-primary-600' : 'bg-gray-50 dark:bg-zinc-800 text-gray-400 group-hover:bg-primary-100 dark:group-hover:bg-primary-950/40 group-hover:text-primary-600'}`}>
+                        <item.icon className="w-4 h-4" />
+                     </div>
+                     <div className="min-w-0 flex-1">
+                       <p className="text-xs font-black text-gray-700 dark:text-zinc-200 truncate uppercase tracking-tight">{item.title}</p>
+                       {item.subtext ? (
+                        <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate">{item.subtext}</p>
+                       ) : (
+                        <p className="text-[9px] font-bold text-primary-500 uppercase tracking-widest">{item.category}</p>
+                       )}
+                     </div>
+                   </button>
+                 ))}
+               </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Theme Toggle Component */}
         <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
         
-        <button className="relative p-2.5 bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 text-gray-400 hover:text-primary-600 rounded-xl transition-all border border-gray-100 dark:border-zinc-700">
-           <Bell className="w-5 h-5" />
-           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+        {/* Divider khusus Mobile */}
+        <div className="h-4 w-px bg-gray-200 dark:bg-zinc-800 sm:hidden" />
+        
+        {/* Mobile Search Button */}
+        <button 
+          onClick={() => setIsMobileSearchOpen(true)}
+          className="flex sm:hidden items-center justify-center w-9 h-9 bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 text-gray-400 hover:text-primary-600 rounded-xl transition-all border border-gray-100 dark:border-zinc-700 flex-shrink-0"
+        >
+           <Search className="w-4 h-4" />
         </button>
 
         {/* User Profile & Dropdown */}
-        <div className="relative flex items-center gap-3 pl-3 border-l border-gray-200" ref={dropdownRef}>
-          <button 
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        <div className="relative flex items-center gap-1.5 xs:gap-3 pl-1.5 xs:pl-3 border-l border-gray-200" ref={dropdownRef}>
+          <button             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 p-1.5 rounded-xl transition-all duration-200"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white shadow-lg flex-shrink-0">
@@ -217,6 +340,97 @@ export default function Topbar({
                   </div>
 
                 </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
+
+        {/* Mobile Search Modal */}
+        {typeof document !== 'undefined' && createPortal(
+          <AnimatePresence>
+            {isMobileSearchOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[100] bg-white dark:bg-zinc-950 flex flex-col sm:hidden"
+              >
+                {/* Header Search */}
+                <div className="h-20 px-6 flex items-center gap-4 border-b border-gray-100 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl">
+                  <div className="flex-1 flex items-center bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary-100 transition-all">
+                    <Search className="w-5 h-5 text-gray-400 mr-2" />
+                    <input 
+                      type="text" 
+                      placeholder="Cari menu atau dosen..." 
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'ArrowDown') {
+                          e.preventDefault();
+                          setActiveIndex(prev => prev < filteredItems.length - 1 ? prev + 1 : prev);
+                        } else if (e.key === 'ArrowUp') {
+                          e.preventDefault();
+                          setActiveIndex(prev => prev > -1 ? prev - 1 : prev);
+                        } else if (e.key === 'Enter') {
+                          if (activeIndex >= 0 && filteredItems[activeIndex]) {
+                            navigate(filteredItems[activeIndex].path);
+                            setIsMobileSearchOpen(false);
+                            setSearchTerm('');
+                          }
+                        } else if (e.key === 'Escape') {
+                          setIsMobileSearchOpen(false);
+                        }
+                      }}
+                      className="bg-transparent border-none text-xs dark:text-zinc-100 outline-none w-full font-medium" 
+                      autoFocus
+                    />
+                  </div>
+                  <button 
+                    onClick={() => { setIsMobileSearchOpen(false); setSearchTerm(''); }}
+                    className="p-2.5 bg-gray-50 dark:bg-zinc-900 text-gray-500 rounded-xl border border-gray-200 dark:border-zinc-800 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Results with Scroll area */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {filteredItems.length > 0 ? (
+                    filteredItems.map((item, index) => (
+                      <button
+                        key={item.path + index}
+                        onClick={() => {
+                          navigate(item.path);
+                          setIsMobileSearchOpen(false);
+                          setSearchTerm('');
+                        }}
+                        className={`flex items-center gap-4 p-4 rounded-2xl w-full text-left transition-all duration-200 border shadow-sm flex-shrink-0 group ${index === activeIndex ? 'bg-primary-50 dark:bg-zinc-800/60 border-primary-100 dark:border-primary-900/40' : 'bg-gray-50 dark:bg-zinc-900/40 border-transparent hover:bg-primary-50 dark:hover:bg-zinc-800/60 hover:border-primary-100 dark:hover:border-primary-900/40'}`}
+                      >
+                        <div className={`p-2.5 rounded-xl transition-colors shadow-sm ${index === activeIndex ? 'bg-primary-100 dark:bg-primary-950/40 text-primary-600' : 'bg-white dark:bg-zinc-800 text-gray-400 group-hover:bg-primary-100 dark:group-hover:bg-primary-950/40 group-hover:text-primary-600'}`}>
+                          <item.icon className="w-5 h-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-black text-gray-700 dark:text-zinc-200 truncate uppercase tracking-tight">{item.title}</p>
+                          {item.subtext ? (
+                            <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate">{item.subtext}</p>
+                          ) : (
+                            <p className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">{item.category}</p>
+                          )}
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    searchTerm.trim() !== '' && (
+                      <div className="text-center py-12 text-gray-400 dark:text-zinc-500 flex flex-col items-center justify-center">
+                        <Search className="w-12 h-12 mb-3 opacity-20" />
+                        <p className="text-sm font-bold">Tidak ada hasil ditemukan</p>
+                        <p className="text-xs text-gray-400 dark:text-zinc-600 mt-1">Coba kata kunci lain</p>
+                      </div>
+                    )
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>,

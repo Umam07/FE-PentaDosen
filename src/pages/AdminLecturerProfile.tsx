@@ -63,54 +63,59 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-// 3. Chart dibuat terpisah & di-memo
+// 3. Chart dibuat terpisah & di-memo (DIPERBARUI AGAR RESPONSIVE DI MOBILE)
 const ProfileTrendChart = memo(({ chartData, leftDomainMax, rightDomainMax }: any) => {
   const [crosshair, setCrosshair] = useState<{ x: number, y: number, year: string } | null>(null);
 
   return (
-    <div className="h-80 w-full relative"> 
-      <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart 
-          data={chartData} 
-          margin={{ top: 25, right: 80, bottom: 35, left: 80 }}
-          onMouseMove={(state: any) => {
-            if (state && state.isTooltipActive && state.activeCoordinate) {
-              setCrosshair({ 
-                x: state.activeCoordinate.x,
-                y: state.chartY,
-                year: state.activeLabel 
-              });
-            } else {
-              setCrosshair(null);
-            }
-          }}
-          onMouseLeave={() => setCrosshair(null)}
-        >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#3f3f46" opacity={0.15} />
-          
-          <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dy={10} />
-          
-          <YAxis yAxisId="left" orientation="left" domain={[0, leftDomainMax]} tick={{ fill: '#0d9488', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dx={-10} label={{ value: 'Publikasi', angle: -90, position: 'insideLeft', fill: '#0d9488', fontWeight: 'bold' }} />
-          <YAxis yAxisId="right" orientation="right" domain={[0, rightDomainMax]} tick={{ fill: '#a855f7', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dx={10} label={{ value: 'Sitasi', angle: 90, position: 'insideRight', fill: '#a855f7', fontWeight: 'bold' }} />
-          
-          <Tooltip content={<CustomTooltip />} cursor={false} />
-          <Legend wrapperStyle={{ paddingTop: '25px', fontSize: '12px', fontWeight: 500 }} />
-          
-          <Customized 
-            component={(props: any) => (
-              <CustomCrosshair 
-                {...props} 
-                crosshairData={crosshair} 
-                leftMax={leftDomainMax} 
-                rightMax={rightDomainMax} 
-              />
-            )} 
-          />
+    /* Menambahkan wrapper overflow-x-auto agar bisa di-scroll di HP */
+    <div className="w-full overflow-x-auto pb-4"> 
+      {/* Memberikan min-width agar chart tidak penyok di layar kecil */}
+      <div className="h-80 min-w-[600px] w-full relative"> 
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart 
+            data={chartData} 
+            /* Margin sedikit disesuaikan agar lebih proporsional */
+            margin={{ top: 25, right: 60, bottom: 35, left: 60 }} 
+            onMouseMove={(state: any) => {
+              if (state && state.isTooltipActive && state.activeCoordinate) {
+                setCrosshair({ 
+                  x: state.activeCoordinate.x,
+                  y: state.chartY,
+                  year: state.activeLabel 
+                });
+              } else {
+                setCrosshair(null);
+              }
+            }}
+            onMouseLeave={() => setCrosshair(null)}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#3f3f46" opacity={0.15} />
+            
+            <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dy={10} />
+            
+            <YAxis yAxisId="left" orientation="left" domain={[0, leftDomainMax]} tick={{ fill: '#0d9488', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dx={-10} label={{ value: 'Publikasi', angle: -90, position: 'insideLeft', fill: '#0d9488', fontWeight: 'bold' }} />
+            <YAxis yAxisId="right" orientation="right" domain={[0, rightDomainMax]} tick={{ fill: '#a855f7', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dx={10} label={{ value: 'Sitasi', angle: 90, position: 'insideRight', fill: '#a855f7', fontWeight: 'bold' }} />
+            
+            <Tooltip content={<CustomTooltip />} cursor={false} />
+            <Legend wrapperStyle={{ paddingTop: '25px', fontSize: '12px', fontWeight: 500 }} />
+            
+            <Customized 
+              component={(props: any) => (
+                <CustomCrosshair 
+                  {...props} 
+                  crosshairData={crosshair} 
+                  leftMax={leftDomainMax} 
+                  rightMax={rightDomainMax} 
+                />
+              )} 
+            />
 
-          <Bar yAxisId="left" dataKey="publications" name="Jumlah Publikasi" fill="#0d9488" radius={[6, 6, 0, 0]} maxBarSize={45} />
-          <Line yAxisId="right" type="monotone" dataKey="citations" name="Sitasi" stroke="#a855f7" strokeWidth={3} dot={{ r: 4, fill: '#a855f7', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 7, strokeWidth: 0, fill: '#a855f7' }} />
-        </ComposedChart>
-      </ResponsiveContainer>
+            <Bar yAxisId="left" dataKey="publications" name="Jumlah Publikasi" fill="#0d9488" radius={[6, 6, 0, 0]} maxBarSize={45} />
+            <Line yAxisId="right" type="monotone" dataKey="citations" name="Sitasi" stroke="#a855f7" strokeWidth={3} dot={{ r: 4, fill: '#a855f7', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 7, strokeWidth: 0, fill: '#a855f7' }} />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 });
@@ -171,7 +176,7 @@ export default function AdminLecturerProfile() {
       setMessage('Terjadi kesalahan koneksi.');
     } finally {
       setSyncingScholar(false);
-      setTimeout(() => setMessage(''), 5000); // Auto hide message
+      setTimeout(() => setMessage(''), 5000); 
     }
   };
 
@@ -196,7 +201,7 @@ export default function AdminLecturerProfile() {
       setMessage('Terjadi kesalahan koneksi.');
     } finally {
       setSyncingScopus(false);
-      setTimeout(() => setMessage(''), 5000); // Auto hide message
+      setTimeout(() => setMessage(''), 5000); 
     }
   };
 
@@ -310,7 +315,6 @@ export default function AdminLecturerProfile() {
               </div>
             </div>
 
-            {/* Notification Area for Syncing */}
             {message && (
               <div className={`mt-6 p-3 rounded-lg text-sm flex items-start ${message.includes('Gagal') ? 'bg-red-50 text-red-700 border border-red-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
                 <CheckCircle className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
@@ -318,7 +322,6 @@ export default function AdminLecturerProfile() {
               </div>
             )}
 
-            {/* Integrasi Stats: Google Scholar & Scopus pindah ke sini */}
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-100 dark:border-zinc-800 pt-8">
               
               {/* Box Scholar */}
@@ -497,9 +500,15 @@ export default function AdminLecturerProfile() {
                         </span>
                       )}
                     </div>
-                    <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-1.5 leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    <a 
+                      href={pub.link || (pub.source === 'scholar' ? `https://scholar.google.com/scholar?q=${encodeURIComponent(pub.title)}` : `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(pub.title)}%22)`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-base font-semibold text-gray-900 dark:text-white mb-1.5 leading-snug hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                      title="Buka di platform"
+                    >
                       {pub.title}
-                    </h4>
+                    </a>
                     <p className="text-sm text-gray-600 dark:text-zinc-400 mb-3 line-clamp-1">{pub.authors}</p>
                     <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-zinc-500">
                       {pub.journal && (

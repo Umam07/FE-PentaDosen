@@ -155,14 +155,14 @@ export default function AdminAllDocuments() {
       <div className="bg-white dark:bg-zinc-900 shadow-sm rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden">
         <div className="p-4 border-b border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap w-full sm:w-auto">
               {/* Period Filter */}
-              <div className="flex items-center">
+              <div className="flex items-center w-full sm:w-auto">
                 <Filter className="w-4 h-4 mr-2 text-gray-400" />
                 <select
                   value={periodFilter}
                   onChange={(e) => setPeriodFilter(e.target.value)}
-                  className="text-sm border border-gray-300 dark:border-zinc-700 rounded-md px-3 py-1.5 bg-white dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 focus:ring-primary-500 focus:border-primary-500"
+                  className="text-sm border border-gray-300 dark:border-zinc-700 rounded-md px-3 py-1.5 bg-white dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 focus:ring-primary-500 focus:border-primary-500 w-full sm:w-auto"
                 >
                   <option value="all">Semua Dokumen</option>
                   <option value="kpi">KPI Aktif {kpiPeriod ? `(${kpiPeriod.label})` : ''}</option>
@@ -171,16 +171,16 @@ export default function AdminAllDocuments() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <button
                 onClick={handleExportCSV}
                 disabled={filteredDocuments.length === 0}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-zinc-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-zinc-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 w-full sm:w-auto"
               >
                 <FileDown className="h-4 w-4 mr-2 text-primary-600" />
                 Export CSV {periodFilter !== 'all' && `(${periodFilter})`}
               </button>
-              <div className="relative w-64">
+              <div className="relative w-full sm:w-64">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Search className="h-4 w-4 text-gray-400" />
                 </div>
@@ -201,92 +201,165 @@ export default function AdminAllDocuments() {
         ) : filteredDocuments.length === 0 ? (
           <div className="p-8 text-center text-gray-500">Tidak ada dokumen yang ditemukan.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800">
-              <thead className="bg-gray-50 dark:bg-zinc-800">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Informasi Dokumen
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Dosen Pengaju
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Tgl. Publikasi
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                    KPI
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Points
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                    File
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-800">
-                {/* Gunakan currentItems, bukan filteredDocuments langsung */}
-                {currentItems.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900 dark:text-zinc-100 line-clamp-2">{doc.title}</div>
-                      <div className="text-sm text-primary-600 dark:text-primary-400 mt-1">{doc.category}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900 dark:text-zinc-100">{doc.user_name}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-500 dark:text-zinc-400">
-                        <CalendarDays className="h-4 w-4 mr-1.5 text-gray-400" />
+          <div>
+            {/* Tampilan Mobile (Card List) */}
+            <div className="md:hidden divide-y divide-gray-100 dark:divide-zinc-800/80">
+              {currentItems.map((doc) => (
+                <div key={doc.id} className="p-4 space-y-4 bg-white dark:bg-zinc-900">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 leading-snug break-words">
+                        {doc.title}
+                      </h4>
+                      <p className="mt-1 text-xs font-medium text-primary-600 dark:text-primary-400">
+                        {doc.category}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-1 whitespace-nowrap">
+                      {getStatusIcon(doc.status)}
+                      <span className={`text-xs font-bold ${
+                        doc.status === 'Approved' ? 'text-emerald-600 dark:text-emerald-400' : 
+                        doc.status === 'Rejected' ? 'text-red-600 dark:text-red-400' : 'text-amber-500'
+                      }`}>
+                        {doc.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-xs">
+                    <div>
+                      <p className="text-gray-400 dark:text-zinc-500 uppercase tracking-wide text-[10px] font-bold">Dosen</p>
+                      <p className="mt-0.5 font-medium text-gray-800 dark:text-zinc-300">{doc.user_name}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 dark:text-zinc-500 uppercase tracking-wide text-[10px] font-bold">Publikasi</p>
+                      <p className="mt-0.5 flex items-center gap-1 font-medium text-gray-600 dark:text-zinc-400">
+                        <CalendarDays className="h-3.5 w-3.5 text-gray-400" />
                         {doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 dark:text-zinc-500 uppercase tracking-wide text-[10px] font-bold">KPI</p>
+                      <div className="mt-0.5">
+                        {doc.is_kpi_counted ? (
+                          <span className="inline-flex items-center text-xs font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400">
+                            {doc.accreditation_period}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center text-xs font-medium px-1.5 py-0.5 rounded-full bg-gray-50 dark:bg-zinc-800 text-gray-400">
+                            Arsip
+                          </span>
+                        )}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        {getStatusIcon(doc.status)}
-                        <span className={`text-sm font-medium ${
-                          doc.status === 'Approved' ? 'text-emerald-700 dark:text-emerald-400' : 
-                          doc.status === 'Rejected' ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400'
-                        }`}>
-                          {doc.status}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
-                      {doc.is_kpi_counted ? (
-                        <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
-                          <Award className="w-3 h-3 mr-1" />
-                          {doc.accreditation_period}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400">
-                          <Archive className="w-3 h-3 mr-1" />
-                          Arsip
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900 dark:text-zinc-100 font-bold">
-                      {doc.awarded_points || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <a 
-                        href={`/storage/${doc.file_path}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-zinc-700 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 focus:outline-none"
-                      >
-                        <Download className="w-4 h-4 mr-1.5 text-gray-400" />
-                        Unduh
-                      </a>
-                    </td>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 dark:text-zinc-500 uppercase tracking-wide text-[10px] font-bold">Points</p>
+                      <p className="mt-0.5 font-black text-gray-900 dark:text-zinc-100">{doc.awarded_points || '-'}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-3 border-t border-gray-100 dark:border-zinc-800/60">
+                    <a 
+                      href={`/storage/${doc.file_path}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-zinc-800 shadow-sm text-xs font-bold rounded-lg text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
+                    >
+                      <Download className="w-4 h-4 mr-1.5 text-gray-400" />
+                      Unduh File
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Tampilan Desktop (Table) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800">
+                <thead className="bg-gray-50 dark:bg-zinc-800">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                      Informasi Dokumen
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                      Dosen Pengaju
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                      Tgl. Publikasi
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                      KPI
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                      Points
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                      File
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-800">
+                  {currentItems.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-gray-900 dark:text-zinc-100 line-clamp-2">{doc.title}</div>
+                        <div className="text-sm text-primary-600 dark:text-primary-400 mt-1">{doc.category}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900 dark:text-zinc-100">{doc.user_name}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center text-sm text-gray-500 dark:text-zinc-400">
+                          <CalendarDays className="h-4 w-4 mr-1.5 text-gray-400" />
+                          {doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <div className="flex items-center justify-center space-x-2">
+                          {getStatusIcon(doc.status)}
+                          <span className={`text-sm font-medium ${
+                            doc.status === 'Approved' ? 'text-emerald-700 dark:text-emerald-400' : 
+                            doc.status === 'Rejected' ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400'
+                          }`}>
+                            {doc.status}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {doc.is_kpi_counted ? (
+                          <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
+                            <Award className="w-3 h-3 mr-1" />
+                            {doc.accreditation_period}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400">
+                            <Archive className="w-3 h-3 mr-1" />
+                            Arsip
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900 dark:text-zinc-100 font-bold">
+                        {doc.awarded_points || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a 
+                          href={`/storage/${doc.file_path}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-zinc-700 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 focus:outline-none"
+                        >
+                          <Download className="w-4 h-4 mr-1.5 text-gray-400" />
+                          Unduh
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 

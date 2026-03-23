@@ -231,7 +231,7 @@ export default function Hero() {
                 </div>
               </motion.div>
 
-              {/* Animasi Mengetik */}
+              {/* Animasi Mengetik - SUDAH DIPERBAIKI UNTUK RESPONSIVE */}
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -239,24 +239,30 @@ export default function Hero() {
                 className="flex items-start gap-3 text-primary-400 font-semibold"
               >
                 <div className="mt-0.5"><Activity className="w-4 h-4" /></div>
-                <div className="flex-1 flex flex-wrap items-center">
+                
+                {/* Mengubah flex container menjadi block (leading-relaxed) agar teks bisa membungkus alami ke bawah */}
+                <div className="flex-1 leading-relaxed">
                   <span className="text-slate-500 font-normal mr-2">[10:00:08]</span>
+                  
+                  {/* Menghapus "flex" class dan menambahkan whitespace-pre-wrap agar spasi memotong kata secara alami */}
                   <motion.span
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="flex"
+                    className="whitespace-pre-wrap inline"
                   >
+                    {/* Menggunakan "letter" langsung tanpa menukarnya dengan \u00A0 agar tidak menjadi satu blok kata panjang */}
                     {typingText.split("").map((letter, index) => (
                       <motion.span key={index} variants={letterVariants}>
-                        {letter === " " ? "\u00A0" : letter}
+                        {letter}
                       </motion.span>
                     ))}
                   </motion.span>
-                  {/* Kursor Berkedip */}
+                  
+                  {/* Kursor Berkedip ditempatkan secara inline agar selalu mengikuti kata terakhir */}
                   <motion.span
                     animate={{ opacity: [0, 1, 0] }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "steps(1)" }}
+                    transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
                     className="inline-block w-2 h-4 bg-primary-400 ml-1 translate-y-[2px]"
                   />
                 </div>
@@ -266,7 +272,7 @@ export default function Hero() {
               <motion.div 
                 initial={{ opacity: 0, y: 10 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                transition={{ delay: 7.2 }} // Muncul dramatis 0.5 detik setelah animasi ngetik selesai
+                transition={{ delay: 7.2 }} 
                 className="flex items-start gap-3 mt-6 pt-4 border-t border-slate-800/50"
               >
                 <div className="mt-0.5 text-emerald-400"><Award className="w-5 h-5" /></div>

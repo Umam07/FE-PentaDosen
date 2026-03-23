@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, CheckCircle, AlertCircle, BookOpen, Search, User, GraduationCap, Globe } from 'lucide-react';
+import { RefreshCw, CheckCircle, AlertCircle, BookOpen, Search, User, GraduationCap, Globe, Users, ChevronRight, X, ChevronLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function AdminSync() {
   const [lecturers, setLecturers] = useState<any[]>([]);
@@ -25,6 +26,13 @@ export default function AdminSync() {
   const [checkingInfoScopus, setCheckingInfoScopus] = useState(false);
   const [checkedAuthorScopus, setCheckedAuthorScopus] = useState<any>(null);
   const [messageScopus, setMessageScopus] = useState('');
+
+  // States related to global summary table
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Fetch all lecturers on mount
   useEffect(() => {
@@ -231,57 +239,96 @@ export default function AdminSync() {
     }
   };
 
+  const filteredLecturers = lecturers.filter((l) =>
+    l.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (l.email && l.email.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredLecturers.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentLecturers = filteredLecturers.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Reset page to current search results if needed
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [filteredLecturers.length, currentPage, totalPages]);
+
+  // Reset page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12">
-      {/* Select Lecturer Card */}
-      <div className="bg-white dark:bg-zinc-900 shadow-sm rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden">
-        <div className="px-6 py-5 border-b border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50 flex items-center">
-          <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg mr-3">
-            <RefreshCw className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-zinc-100">Sinkronisasi Data Dosen</h3>
+    <div className="max-w-none space-y-8 pb-12">
+      {/* 1. Dashboard Ringkasan Sinkronisasi */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Total Dosen */}
+        <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-2xl border border-gray-50 dark:border-zinc-800 p-6 flex items-center justify-between">
+           <div>
+              <p className="text-xs font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Total Dosen</p>
+              <p className="text-2xl font-black text-gray-900 dark:text-zinc-100 mt-1">{lecturers.length}</p>
+           </div>
+           <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-2xl text-primary-600 dark:text-primary-400">
+              <User className="h-6 w-6" />
+           </div>
         </div>
-        <div className="p-6">
-          <label htmlFor="lecturer-select" className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
-            Pilih Dosen
-          </label>
-          <select
-            id="lecturer-select"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md border"
-            value={selectedLecturerId}
-            onChange={(e) => setSelectedLecturerId(e.target.value)}
-          >
-            <option value="">-- Pilih Nama Dosen --</option>
-            {lecturers.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.name}
-              </option>
-            ))}
-          </select>
+        {/* Connected Scholar */}
+        <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-2xl border border-gray-50 dark:border-zinc-800 p-6 flex items-center justify-between">
+           <div>
+              <p className="text-xs font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Scholar Terhubung</p>
+              <p className="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">{lecturers.filter(l => l.scholar_id).length}</p>
+           </div>
+           <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl text-blue-600 dark:text-blue-400">
+              <BookOpen className="h-6 w-6" />
+           </div>
+        </div>
+        {/* Connected Scopus */}
+        <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-2xl border border-gray-50 dark:border-zinc-800 p-6 flex items-center justify-between">
+           <div>
+              <p className="text-xs font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Scopus Terhubung</p>
+              <p className="text-2xl font-black text-orange-600 dark:text-orange-400 mt-1">{lecturers.filter(l => l.scopus_id).length}</p>
+           </div>
+           <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl text-orange-600 dark:text-orange-400">
+              <Globe className="h-6 w-6" />
+           </div>
         </div>
       </div>
+
+
 
       {scholarUser && (
         <div className="space-y-8">
           {/* Identity Info */}
           <div className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden bg-gradient-to-r from-zinc-50/50 to-white dark:from-zinc-900/30 dark:to-zinc-900">
-             <div className="p-6 flex flex-col md:flex-row gap-6 md:items-center">
-                <div className="h-16 w-16 rounded-2xl bg-primary-500 dark:bg-primary-900/40 flex items-center justify-center text-white dark:text-primary-300 text-2xl font-black shadow-lg shadow-primary-500/10 transform rotate-3 hover:rotate-0 transition-all duration-300">
-                  {scholarUser.name.charAt(0)}
-                </div>
-                <div>
-                  <h4 className="text-xl font-extrabold text-gray-900 dark:text-zinc-100">{scholarUser.name}</h4>
-                  <div className="mt-1 flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4">
-                    <p className="text-sm text-gray-500 dark:text-zinc-400 flex items-center">
-                      <GraduationCap className="h-4 w-4 mr-1 text-gray-400" />
-                      {scholarUser.program_studi || 'Prodi tidak diatur'}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-zinc-400 flex items-center">
-                      <Globe className="h-4 w-4 mr-1 text-gray-400" />
-                      {scholarUser.email}
-                    </p>
+             <div className="p-6 flex flex-col md:flex-row gap-6 md:items-center justify-between">
+                <div className="flex flex-col md:flex-row gap-6 md:items-center">
+                  <div className="h-16 w-16 rounded-2xl bg-primary-500 dark:bg-primary-900/40 flex items-center justify-center text-white dark:text-primary-300 text-2xl font-black shadow-lg shadow-primary-500/10 transform rotate-3 hover:rotate-0 transition-all duration-300">
+                    {scholarUser.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-extrabold text-gray-900 dark:text-zinc-100">{scholarUser.name}</h4>
+                    <div className="mt-1 flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4">
+                      <p className="text-sm text-gray-500 dark:text-zinc-400 flex items-center">
+                        <GraduationCap className="h-4 w-4 mr-1 text-gray-400" />
+                        {scholarUser.program_studi || 'Prodi tidak diatur'}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-zinc-400 flex items-center">
+                        <Globe className="h-4 w-4 mr-1 text-gray-400" />
+                        {scholarUser.email}
+                      </p>
+                    </div>
                   </div>
                 </div>
+                <button
+                  onClick={() => setSelectedLecturerId('')}
+                  className="px-4 py-2 bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 hover:border-red-200 rounded-xl text-xs font-black text-gray-600 dark:text-zinc-300 uppercase tracking-wider hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 active:scale-95 transition-all shadow-sm flex items-center gap-1 mt-4 md:mt-0 self-end md:self-auto"
+                >
+                  <X className="w-4 h-4" /> Tutup
+                </button>
              </div>
           </div>
 
@@ -502,6 +549,167 @@ export default function AdminSync() {
           </div>
         </div>
       )}
+
+      {/* 4. Daftar Ringkasan Sinkronisasi */}
+      <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-[2rem] border border-gray-50 dark:border-zinc-800 overflow-hidden">
+        <div className="px-6 py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-800/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-2xl text-primary-600 dark:text-primary-400">
+               <Users className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Status Integrasi</h3>
+              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Daftar kesiapan data publikasi</p>
+            </div>
+          </div>
+          
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Cari Dosen..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-primary-100 focus:border-primary-500 tracking-tight transition-all outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
+            <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
+              <tr>
+                {['Dosen', 'Google Scholar', 'Scopus', 'Aksi'].map((h, i) => (
+                  <th key={i} className="px-6 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50 dark:divide-zinc-800">
+              {currentLecturers.map((l) => (
+                <tr key={l.id} className={`group hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-colors ${selectedLecturerId === l.id ? 'bg-primary-50/50 dark:bg-primary-900/10' : ''}`}>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold">
+                        {l.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{l.name}</p>
+                        <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 tracking-wider flex items-center gap-1">
+                          <Globe className="h-3 w-3" />
+                          {l.email || 'No email set'}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {l.scholar_id ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-black text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-900/30 uppercase tracking-tight">
+                         <BookOpen className="w-3 h-3" /> Terhubung
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-400 dark:text-zinc-500 bg-gray-50 dark:bg-zinc-800/50 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-zinc-700 uppercase tracking-tight">
+                         Not Set
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    {l.scopus_id ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-black text-orange-700 dark:text-accent-orange-400 bg-orange-50 dark:bg-orange-900/20 px-3 py-1.5 rounded-lg border border-orange-100 dark:border-orange-900/30 uppercase tracking-tight">
+                         <Globe className="w-3 h-3" /> Terhubung
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-400 dark:text-zinc-500 bg-gray-50 dark:bg-zinc-800/50 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-zinc-700 uppercase tracking-tight">
+                         Not Set
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                     <button
+                       onClick={() => {
+                         setSelectedLecturerId(l.id);
+                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                       }}
+                       className="px-4 py-1.5 bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 hover:border-primary-200 rounded-xl text-[10px] font-black text-gray-600 dark:text-zinc-300 uppercase tracking-wider hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 active:scale-95 transition-all shadow-sm flex items-center gap-1"
+                     >
+                       Kelola <ChevronRight className="w-3 h-3" />
+                     </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Controls */}
+        {filteredLecturers.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="px-6 py-5 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/10 flex flex-col sm:flex-row items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredLecturers.length)} of {filteredLecturers.length} entries
+              </span>
+              <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 mx-2 hidden sm:block" />
+              <div className="hidden sm:flex items-center gap-1.5">
+                <span className="text-[10px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Per Page:</span>
+                <select 
+                  value={itemsPerPage} 
+                  onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                  className="bg-gray-100 dark:bg-zinc-800 border-none rounded-lg text-xs font-bold text-gray-600 dark:text-zinc-300 py-1 pl-2 pr-6 focus:ring-2 focus:ring-primary-200 outline-none cursor-pointer"
+                >
+                  {[5, 10, 25, 50].map(val => (
+                    <option key={val} value={val}>{val}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .map((p, index, array) => (
+                    <React.Fragment key={p}>
+                      {index > 0 && array[index - 1] !== p - 1 && (
+                        <span className="px-2 text-gray-300 dark:text-zinc-600 font-bold">...</span>
+                      )}
+                      <button
+                        onClick={() => setCurrentPage(p)}
+                        className={`min-w-[36px] h-9 flex items-center justify-center rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                          currentPage === p 
+                            ? 'bg-primary-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900/30' 
+                            : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    </React.Fragment>
+                  ))}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
