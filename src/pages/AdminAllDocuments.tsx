@@ -5,8 +5,10 @@ import {
   ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useOutletContext } from 'react-router-dom';
 
 export default function AdminAllDocuments() {
+  const { user } = useOutletContext<{ user: any }>();
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,7 +31,7 @@ export default function AdminAllDocuments() {
 
   const fetchDocuments = async () => {
     try {
-      const res = await fetch('/api/admin/documents/all');
+      const res = await fetch(`/api/admin/documents/all?role=${user?.role}&user_id=${user?.id}`);
       if (res.ok) {
         const data = await res.json();
         setDocuments(data.documents);

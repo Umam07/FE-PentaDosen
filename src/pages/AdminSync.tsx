@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, CheckCircle, AlertCircle, BookOpen, Search, User, GraduationCap, Globe, Users, ChevronRight, X, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useOutletContext } from 'react-router-dom';
 
 export default function AdminSync() {
+  const { user } = useOutletContext<{ user: any }>();
   const [lecturers, setLecturers] = useState<any[]>([]);
   const [selectedLecturerId, setSelectedLecturerId] = useState<string>('');
   
@@ -38,7 +40,7 @@ export default function AdminSync() {
   useEffect(() => {
     const fetchLecturers = async () => {
       try {
-        const res = await fetch('/api/admin/lecturers');
+        const res = await fetch(`/api/admin/lecturers?role=${user?.role}&user_id=${user?.id}`);
         const data = await res.json();
         setLecturers(data.lecturers);
       } catch (err) {

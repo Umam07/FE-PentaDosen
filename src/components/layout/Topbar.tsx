@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Menu, Search, Bell, LogOut, ChevronDown, User, Users, X, Mail, GraduationCap, BookOpen, BadgeCheck, LayoutDashboard, ArrowUpRight } from 'lucide-react';
+import { Menu, Search, LogOut, ChevronDown, User, Users, X, BookOpen, BadgeCheck, LayoutDashboard, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
@@ -25,7 +25,6 @@ export default function Topbar({
   handleLogout
 }: TopbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -37,7 +36,7 @@ export default function Topbar({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user?.role === 'admin') {
+    if (user?.role === 'admin' || user?.role === 'prodi') {
       fetch('/api/admin/lecturers')
         .then(res => res.json())
         .then(data => setLecturers(data.lecturers || []))
@@ -62,7 +61,7 @@ export default function Topbar({
     setActiveIndex(-1);
   }, [searchTerm]);
 
-  const menuItems = user?.role === 'admin' ? [
+  const menuItems = (user?.role === 'admin' || user?.role === 'prodi') ? [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Verifikasi Dokumen', path: '/admin/verify', icon: BadgeCheck, category: 'Menu' },
     { title: 'Kelola Dosen', path: '/admin/lecturers', icon: Users, category: 'Menu' },
@@ -73,7 +72,7 @@ export default function Topbar({
     { title: 'Dokumen Saya', path: '/documents', icon: BookOpen, category: 'Menu' },
   ];
 
-  const dynamicItems = user?.role === 'admin' 
+  const dynamicItems = (user?.role === 'admin' || user?.role === 'prodi') 
     ? lecturers.map((l: any) => ({
         title: l.name,
         path: `/admin/lecturers/${l.id}`,
@@ -204,7 +203,9 @@ export default function Topbar({
             </div>
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
-              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{user?.role}</p>
+              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
+                {user?.role === 'admin' ? 'Admin LPPM' : user?.role === 'prodi' ? 'Admin Prodi' : user?.role}
+              </p>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -221,7 +222,7 @@ export default function Topbar({
               >
                 <button 
                   onClick={() => {
-                    setIsModalOpen(true);
+                    navigate('/profile');
                     setIsDropdownOpen(false);
                   }} 
                   className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-zinc-300 hover:bg-primary-50 dark:hover:bg-zinc-800 hover:text-primary-600 w-full text-left transition-colors uppercase tracking-wider"
@@ -242,109 +243,7 @@ export default function Topbar({
           </AnimatePresence>
         </div>
 
-        {/* Profile Modal dengan Framer Motion */}
-        {typeof document !== 'undefined' && createPortal(
-          <AnimatePresence>
-            {isModalOpen && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4"
-              >
-                <motion.div 
-                  initial={{ scale: 0.9, y: 20, opacity: 0 }}
-                  animate={{ scale: 1, y: 0, opacity: 1 }}
-                  exit={{ scale: 0.9, y: 20, opacity: 0 }}
-                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                  className="bg-white dark:bg-zinc-900 rounded-3xl w-full max-w-md shadow-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden"
-                >
-                  
-                  {/* Banner / Cover Header */}
-                  <div className="h-28 bg-gradient-to-r from-primary-500 to-primary-700 relative">
-                    <button 
-                      onClick={() => setIsModalOpen(false)} 
-                      className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white backdrop-blur-md transition-all"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
 
-                  {/* Profile Avatar & Title */}
-                  <div className="px-6 relative pb-4 border-b border-gray-100 dark:border-zinc-800">
-                    <div className="w-20 h-20 rounded-2xl bg-white dark:bg-zinc-900 p-1.5 absolute -top-10 shadow-lg border border-gray-50 dark:border-zinc-800">
-                      <div className="w-full h-full rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-3xl font-black shadow-inner">
-                        {user?.name?.charAt(0) || 'U'}
-                      </div>
-                    </div>
-                    
-                    <div className="pt-12">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-xl font-black text-gray-900 tracking-tight">{user?.name || 'User Tanpa Nama'}</h3>
-                        <BadgeCheck className="w-5 h-5 text-blue-500" />
-                      </div>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <span className="bg-primary-50 text-primary-600 text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider flex items-center gap-1 border border-primary-100">
-                          {user?.role || 'Mahasiswa'}
-                        </span>
-                        <span className="bg-green-50 text-green-600 text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider border border-green-100">
-                          Aktif
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Profile Details */}
-                  <div className="p-6 space-y-4 bg-gray-50/50 dark:bg-zinc-900/50">
-                    <div className="flex items-center p-4 bg-white dark:bg-zinc-800/80 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-sm hover:border-primary-100 transition-colors">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 mr-4 flex-shrink-0">
-                         <Mail className="w-5 h-5" />
-                      </div>
-                      <div className="overflow-hidden">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Alamat Email</label>
-                        <p className="text-sm font-bold text-gray-800 dark:text-zinc-200 truncate">{user?.email || '-'}</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="flex items-start p-4 bg-white dark:bg-zinc-800/80 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-sm hover:border-primary-100 transition-colors">
-                        <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-500 mr-3 flex-shrink-0 mt-0.5">
-                           <BookOpen className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Fakultas</label>
-                          <p className="text-sm font-bold text-gray-800 dark:text-zinc-200 line-clamp-2">{user?.fakultas || '-'}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start p-4 bg-white dark:bg-zinc-800/80 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-sm hover:border-primary-100 transition-colors">
-                        <div className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-500 mr-3 flex-shrink-0 mt-0.5">
-                           <GraduationCap className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Program Studi</label>
-                          <p className="text-sm font-bold text-gray-800 dark:text-zinc-200 line-clamp-2">{user?.program_studi || '-'}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Modal Footer */}
-                  <div className="p-4 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800">
-                    <button 
-                      onClick={() => setIsModalOpen(false)}
-                      className="w-full py-3.5 bg-gray-900 hover:bg-gray-800 text-white rounded-2xl font-black uppercase tracking-[0.15em] text-xs transition-all active:scale-[0.98] shadow-lg shadow-gray-900/20"
-                    >
-                      Tutup Profil
-                    </button>
-                  </div>
-
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
 
         {/* Mobile Search Modal */}
         {typeof document !== 'undefined' && createPortal(

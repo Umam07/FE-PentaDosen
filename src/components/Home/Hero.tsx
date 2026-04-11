@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { ArrowRight, Play, Terminal, CheckCircle2, ShieldCheck, Database, Activity, Code2, Braces, Award } from 'lucide-react';
+import { LayoutDashboard, Play, Terminal, CheckCircle2, ShieldCheck, Database, Activity, Code2, Braces, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Hero() {
@@ -82,11 +82,11 @@ export default function Hero() {
           >
             {/* Primary Button */}
             <Link
-              to="/register"
+              to="/dashboard-all"
               className="w-full sm:w-auto flex items-center justify-center gap-3 bg-slate-900 dark:bg-primary-600 hover:bg-primary-600 dark:hover:bg-primary-500 text-white font-bold text-base px-10 py-5 rounded-2xl shadow-2xl shadow-slate-200 dark:shadow-none transition-all duration-300 group overflow-hidden relative"
             >
-              <span className="relative z-10">Daftar Sekarang</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform relative z-10" />
+              <span className="relative z-10">PentaDashboard</span>
+              <LayoutDashboard className="w-5 h-5 group-hover:rotate-12 transition-transform relative z-10" />
               <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
               {/* Shine Effect */}

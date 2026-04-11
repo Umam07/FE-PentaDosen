@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Users, GraduationCap, TrendingUp, Search, Edit3, Save, X, ChevronRight, Mail, BookOpen, ChevronLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function AdminLecturers() {
+  const { user } = useOutletContext<{ user: any }>();
   const [lecturers, setLecturers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,9 +28,8 @@ export default function AdminLecturers() {
     try {
       setLoading(true);
       // Simulasi delay sedikit agar skeleton terlihat lebih jelas (bisa dihapus di production)
-      await new Promise(resolve => setTimeout(resolve, 800)); 
       
-      const res = await fetch('/api/admin/lecturers');
+      const res = await fetch(`/api/admin/lecturers?role=${user?.role}&user_id=${user?.id}`);
       const data = await res.json();
       setLecturers(data.lecturers);
       const initialScholar: any = {};

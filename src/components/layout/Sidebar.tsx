@@ -85,7 +85,7 @@ export default function Sidebar({
              </motion.p>
            )}
            <nav className="space-y-1.5 font-bold">
-            {navItems.filter(item => item.roles.includes(user.role)).map((item) => {
+            {navItems.filter(item => item.roles.includes(user.role) && !item.hidden).map((item) => {
               const Icon = item.icon;
               const isActive = currentPath === item.path;
               return (
