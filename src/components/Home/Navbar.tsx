@@ -1,13 +1,16 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Hexagon, Menu, X, ArrowRight, Sun, Moon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Hexagon, Menu, X, ArrowRight } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import ThemeToggle from '../layout/ThemeToggle';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') === 'dark');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isDark) {
@@ -41,6 +44,13 @@ export default function Navbar() {
   ];
 
   const handleScrollTo = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (location.pathname !== '/') {
+      // If we're not on the home page, just navigate to home
+      // The browser will handle the hash if we navigate to /#id
+      // but since we want custom scroll, we'll just navigate
+      return;
+    }
+    
     e.preventDefault();
     setIsMenuOpen(false);
     const element = document.querySelector(href);
@@ -61,7 +71,7 @@ export default function Navbar() {
           : 'py-6 bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
@@ -76,37 +86,21 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
-                onClick={(e) => handleScrollTo(e, link.href)}
+                to={location.pathname === '/' ? link.href : `/${link.href}`}
+                onClick={(e: any) => handleScrollTo(e, link.href)}
                 className="text-sm font-bold text-gray-600 hover:text-primary-600 transition-colors duration-200 relative group"
               >
                 {link.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300" />
-              </a>
+              </Link>
             ))}
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="relative flex items-center bg-gray-100 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 p-1 rounded-2xl w-14 h-8 transition-all duration-300 overflow-hidden group shadow-inner flex-shrink-0"
-            >
-              <motion.div
-                layout
-                className="absolute h-6 w-6 rounded-xl bg-white dark:bg-zinc-900 shadow-md flex items-center justify-center z-10"
-                animate={{ x: isDark ? 24 : 0 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              >
-                {isDark ? <Moon className="w-3.5 h-3.5 text-primary-500" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
-              </motion.div>
-              <div className="flex justify-between w-full px-1.5 z-0">
-                <Sun className={`w-3.5 h-3.5 ${!isDark ? 'text-amber-500' : 'text-gray-400'} transition-colors duration-300`} />
-                <Moon className={`w-3.5 h-3.5 ${isDark ? 'text-primary-500' : 'text-gray-400'} transition-colors duration-300`} />
-              </div>
-            </button>
+            <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
             {user ? (
               <Link 
                 to="/dashboard"
@@ -136,23 +130,7 @@ export default function Navbar() {
 
           {/* Mobile Actions */}
           <div className="flex items-center gap-2 md:hidden">
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="relative flex items-center bg-gray-100 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 p-1 rounded-2xl w-14 h-8 transition-all duration-300 overflow-hidden group shadow-inner flex-shrink-0"
-            >
-              <motion.div
-                layout
-                className="absolute h-6 w-6 rounded-xl bg-white dark:bg-zinc-900 shadow-md flex items-center justify-center z-10"
-                animate={{ x: isDark ? 24 : 0 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              >
-                {isDark ? <Moon className="w-3.5 h-3.5 text-primary-500" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
-              </motion.div>
-              <div className="flex justify-between w-full px-1.5 z-0">
-                <Sun className={`w-3.5 h-3.5 ${!isDark ? 'text-amber-500' : 'text-gray-400'} transition-colors duration-300`} />
-                <Moon className={`w-3.5 h-3.5 ${isDark ? 'text-primary-500' : 'text-gray-400'} transition-colors duration-300`} />
-              </div>
-            </button>
+            <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 bg-gray-50 text-gray-600 rounded-xl hover:bg-primary-50 hover:text-primary-600 transition-all"
@@ -175,14 +153,14 @@ export default function Navbar() {
           >
             <div className="p-4 space-y-3">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
-                  href={link.href}
-                  onClick={(e) => handleScrollTo(e, link.href)}
+                  to={location.pathname === '/' ? link.href : `/${link.href}`}
+                  onClick={(e: any) => handleScrollTo(e, link.href)}
                   className="block p-3 text-sm font-bold text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-all"
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
               <hr className="border-gray-100 my-2" />
               <div className="pt-2">

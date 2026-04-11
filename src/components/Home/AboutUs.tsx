@@ -1,28 +1,31 @@
 import { motion } from 'motion/react';
-import { Quote, Github, Linkedin, Mail } from 'lucide-react';
+import { Quote, Instagram } from 'lucide-react';
 
 export default function AboutUs() {
   const members = [
     {
       name: 'Kiki Aimar Wicaksana',
       npm: '1402022030',
-      role: 'Full-Stack Developer',
+      role: 'API Integrator',
       image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Kiki_l5i0u9.jpg',
       bgColor: 'primary',
+      instagram: 'https://www.instagram.com/kim.aimarr?igsh=ZXRnNzM2cnJvbWV5',
     },
     {
       name: "Muhammad Syafi'ul Umam",
       npm: '1402022048',
-      role: 'Backend & DevOps Engineer',
+      role: 'Frontend Engineer',
       image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Mamz_oz4gxx.jpg',
       bgColor: 'blue',
+      instagram: 'https://www.instagram.com/umammskyy?igsh=MWY4Z212M3U5OGloag==',
     },
     {
       name: 'Rafi Daniswara',
       npm: '1402022050',
-      role: 'Frontend & UI Designer',
+      role: 'Backend Engineer',
       image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Denis_ohil78.jpg',
       bgColor: 'violet',
+      instagram: 'https://www.instagram.com/ravidnss?igsh=MWkyaWZmNWI4N3hxOQ==',
     },
   ];
 
@@ -94,15 +97,14 @@ export default function AboutUs() {
                 
                 {/* Social Links */}
                 <div className="absolute top-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20">
-                  <button className="p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-primary-500 text-white transition-colors">
-                    <Github className="w-5 h-5" />
-                  </button>
-                  <button className="p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-primary-500 text-white transition-colors">
-                    <Linkedin className="w-5 h-5" />
-                  </button>
-                  <button className="p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-primary-500 text-white transition-colors">
-                    <Mail className="w-5 h-5" />
-                  </button>
+                  <a 
+                    href={member.instagram} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-primary-500 text-white transition-colors"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </a>
                 </div>
 
                 {/* Info Container */}

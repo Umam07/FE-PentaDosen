@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Layout from './components/layout/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import DashboardAll from './pages/DashboardAll';
+import DashboardAll from './pages/dashboard/Dashboard';
 import Profile from './pages/Profile';
 import DocumentVault from './pages/DocumentVault';
 import AdminVerification from './pages/AdminVerification';
@@ -17,6 +17,7 @@ import AdminLecturerProfile from './pages/AdminLecturerProfile';
 import AdminSync from './pages/AdminSync';
 import AdminAllDocuments from './pages/AdminAllDocuments';
 import Research from './pages/Research';
+import LecturerList from './pages/dashboard/LecturerList';
 
 import Home from './pages/Home';
 
@@ -66,6 +67,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard-all" element={user ? <Navigate to="/dashboard" /> : <DashboardAll />} />
+        <Route path="/lecturers" element={<LecturerList />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
         <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register setUser={setUser} />} />
         

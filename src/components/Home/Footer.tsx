@@ -17,7 +17,7 @@ export default function Footer() {
       {/* Glow Effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary-500/10 rounded-full filter blur-3xl" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-gray-800">
           
           {/* Logo & About */}
@@ -92,7 +92,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-xs font-black text-white uppercase tracking-wider">Email</p>
-                  <p className="text-sm font-bold text-gray-500 mt-1">support@pentadosen.ac.id</p>
+                  <p className="text-sm font-bold text-gray-500 mt-1">teamduk.ta@gmail.com</p>
                 </div>
               </div>
 

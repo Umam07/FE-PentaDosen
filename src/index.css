@@ -73,8 +73,7 @@
   .dark .bg-\[\#F8FAFC\],
   .dark .bg-gray-50,
   .dark .bg-gray-100,
-  .dark .bg-gray-50\/50,
-  .dark .bg-[#F8FAFC] {
+  .dark .bg-gray-50\/50 {
     background-color: var(--bg-page) !important;
   }
 
@@ -109,5 +108,21 @@
     background-color: rgba(15, 23, 42, 0.8) !important;
   }
 }
+
+@layer utilities {
+  .mask-gradient-left {
+    mask-image: linear-gradient(to left, black 20%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, black 20%, transparent 100%);
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/10 border border-white/20;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
+}
+
 
 
