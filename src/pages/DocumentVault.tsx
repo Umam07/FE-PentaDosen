@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 
 export default function DocumentVault({ user }: { user: any }) {
   const [documents, setDocuments] = useState([]);
   const [weights, setWeights] = useState([]);
-  const [kpiPeriod, setKpiPeriod] = useState<any>(null);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [publishedAt, setPublishedAt] = useState('');
@@ -15,7 +14,6 @@ export default function DocumentVault({ user }: { user: any }) {
   
   // State loading
   const [isTableLoading, setIsTableLoading] = useState(true);
-  const [isPeriodLoading, setIsPeriodLoading] = useState(true);
   const [isWeightsLoading, setIsWeightsLoading] = useState(true);
   
   // State untuk form upload
@@ -30,7 +28,6 @@ export default function DocumentVault({ user }: { user: any }) {
 
   useEffect(() => {
     fetchWeights();
-    fetchPeriod();
 
     const loadDocuments = async () => {
       setIsTableLoading(true);
@@ -67,18 +64,7 @@ export default function DocumentVault({ user }: { user: any }) {
     }
   };
 
-  const fetchPeriod = async () => {
-    setIsPeriodLoading(true);
-    try {
-      const res = await fetch('/api/accreditation-periods');
-      const data = await res.json();
-      setKpiPeriod(data.kpi_period);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsPeriodLoading(false);
-    }
-  };
+
 
   const scoringPreview = useMemo(() => {
     if (docType === 'arsip') {
@@ -89,29 +75,17 @@ export default function DocumentVault({ user }: { user: any }) {
       };
     }
 
-    if (!publishedAt || !kpiPeriod) return null;
-
-    const pubDate = new Date(publishedAt);
-    const startDate = new Date(kpiPeriod.start);
-    const endDate = new Date(kpiPeriod.end);
+    if (!publishedAt) return null;
 
     const selectedWeight = weights.find((w: any) => w.category === category);
     const pts = selectedWeight ? (selectedWeight as any).weight_value : 0;
 
-    if (pubDate >= startDate && pubDate <= endDate) {
-      return {
-        type: 'kpi' as const,
-        message: `Masuk Periode KPI Aktif ${kpiPeriod.label}: +${pts} Poin`,
-        points: pts,
-      };
-    } else {
-      return {
-        type: 'outside' as const,
-        message: `Luar Periode KPI ${kpiPeriod.label}: Tersimpan sebagai Arsip (0 Poin)`,
-        points: 0,
-      };
-    }
-  }, [publishedAt, docType, category, kpiPeriod, weights]);
+    return {
+      type: 'kpi' as const,
+      message: `Masuk Penghitungan KPI: +${pts} Poin`,
+      points: pts,
+    };
+  }, [publishedAt, docType, category, weights]);
 
   const stats = useMemo(() => {
     return {
@@ -133,10 +107,24 @@ export default function DocumentVault({ user }: { user: any }) {
       .sort((a, b) => b.value - a.value);
   }, [documents]);
 
+  const duplicateFound = useMemo(() => {
+    if (!title || title.length < 5) return null;
+    return documents.find((doc: any) => 
+      doc.title.toLowerCase().trim() === title.toLowerCase().trim() && 
+      doc.is_kpi_counted
+    );
+  }, [title, documents]);
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title || !category || !publishedAt) {
       setMessage('Harap lengkapi semua field.');
+      setMessageType('error');
+      return;
+    }
+
+    if (duplicateFound) {
+      setMessage('Dokumen ini sudah terdata dalam sistem.');
       setMessageType('error');
       return;
     }
@@ -337,7 +325,7 @@ export default function DocumentVault({ user }: { user: any }) {
                     className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
                     placeholder="Masukkan judul berkas/kegiatan..."
                   />
-                  {docType === 'kpi' && title.length > 3 && (
+                  {docType === 'kpi' && title.length > 3 && !duplicateFound && (
                     <motion.p 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -346,6 +334,22 @@ export default function DocumentVault({ user }: { user: any }) {
                       <Zap className="w-3 h-3 mr-1.5 fill-current" />
                       Auto-Verification Enabled
                     </motion.p>
+                  )}
+
+                  {duplicateFound && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3"
+                    >
+                      <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-[10px] font-black text-amber-900 dark:text-amber-200 uppercase tracking-tight">Dokumen Sudah Terdata (Akses Dibatasi)</p>
+                        <p className="text-[10px] font-bold text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
+                          Dokumen dengan judul ini sudah terhitung dalam poin KPI. Pengunggahan dibatasi untuk menghindari duplikasi data dan kecurangan.
+                        </p>
+                      </div>
+                    </motion.div>
                   )}
                 </div>
               </div>
@@ -393,9 +397,7 @@ export default function DocumentVault({ user }: { user: any }) {
                     className={`w-full px-5 py-3 rounded-xl border-2 flex items-center gap-4 transition-all ${
                     scoringPreview.type === 'kpi'
                       ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400'
-                      : scoringPreview.type === 'outside'
-                        ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/30 text-amber-800 dark:text-amber-400'
-                        : 'bg-primary-50 dark:bg-primary-950/20 border-primary-100 dark:border-primary-900/30 text-primary-800 dark:text-primary-400'
+                      : 'bg-primary-50 dark:bg-primary-950/20 border-primary-100 dark:border-primary-900/30 text-primary-800 dark:text-primary-400'
                   }`}>
                     {scoringPreview.type === 'kpi' ? (
                       <Award className="h-6 w-6 shrink-0 text-emerald-600" />
@@ -466,8 +468,8 @@ export default function DocumentVault({ user }: { user: any }) {
             <div className="flex justify-end pt-4 border-t border-gray-50 dark:border-zinc-800">
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full sm:w-auto inline-flex items-center justify-center py-4 px-10 border border-transparent shadow-xl shadow-primary-200 dark:shadow-primary-900/30 text-sm font-black rounded-2xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 transition-all uppercase tracking-widest disabled:opacity-50 active:scale-95"
+                disabled={loading || !!duplicateFound}
+                className="w-full sm:w-auto inline-flex items-center justify-center py-4 px-10 border border-transparent shadow-xl shadow-primary-200 dark:shadow-primary-900/30 text-sm font-black rounded-2xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 transition-all uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
               >
                 {loading ? 'Processing...' : 'Submit Document'}
                 {!loading && <Zap className="w-4 h-4 ml-2 fill-white" />}
@@ -477,44 +479,9 @@ export default function DocumentVault({ user }: { user: any }) {
 
           {/* === Panel Informasi & Ringkasan Visual === */}
           <div className="space-y-6 lg:col-span-1">
-            {/* 1. Card Periode KPI */}
-            {isPeriodLoading ? (
-              <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 animate-pulse">
-                <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
-                  <div className="w-7 h-7 bg-gray-200 dark:bg-zinc-700 rounded-lg shrink-0"></div>
-                  <div className="h-3 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div>
-                </div>
-                <div>
-                  <div className="h-4 w-3/4 bg-gray-200 dark:bg-zinc-700 rounded mb-3"></div>
-                  <div className="space-y-2 mt-2">
-                    <div className="flex justify-between"><div className="h-2 w-8 bg-gray-200 dark:bg-zinc-700 rounded"></div><div className="h-2 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div></div>
-                    <div className="flex justify-between"><div className="h-2 w-8 bg-gray-200 dark:bg-zinc-700 rounded"></div><div className="h-2 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div></div>
-                  </div>
-                </div>
-              </div>
-            ) : kpiPeriod && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 hover:shadow-sm transition-shadow"
-              >
-                <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
-                  <div className="p-1.5 bg-primary-100 dark:bg-primary-900/40 rounded-lg">
-                    <CalendarDays className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-                  </div>
-                  <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Periode KPI Aktif</h4>
-                </div>
-                <div>
-                  <p className="text-sm font-black text-gray-800 dark:text-zinc-100 leading-snug">{kpiPeriod.label}</p>
-                  <div className="mt-2 space-y-1 text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest leading-none">
-                    <p className="flex justify-between"><span>Mulai</span> <span className="text-gray-900 dark:text-zinc-300 font-mono tracking-tighter">{new Date(kpiPeriod.start).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span></p>
-                    <p className="flex justify-between mt-1"><span>Selesai</span> <span className="text-gray-900 dark:text-zinc-300 font-mono tracking-tighter">{new Date(kpiPeriod.end).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span></p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
 
-            {/* 2. Card Panduan Poin KPI */}
+
+            {/* 1. Card Panduan Poin KPI */}
             {isWeightsLoading ? (
               <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 animate-pulse">
                 <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
@@ -557,7 +524,7 @@ export default function DocumentVault({ user }: { user: any }) {
               </motion.div>
             )}
 
-            {/* 3. Card Visual Chart (Jika Ada Dokumen) */}
+            {/* 2. Card Visual Chart (Jika Ada Dokumen) */}
             {isTableLoading ? (
                <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 flex flex-col items-center animate-pulse">
                  <div className="w-full flex items-center gap-2 mb-2 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
@@ -727,7 +694,7 @@ export default function DocumentVault({ user }: { user: any }) {
                       {doc.is_kpi_counted ? (
                         <div className="inline-flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-[10px] font-black uppercase text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl border border-primary-100 dark:border-primary-900/30 shadow-sm">
                           <Award className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-                          KPI <span className="hidden lg:inline">{doc.accreditation_period}</span>
+                          KPI <span className="hidden lg:inline">Tercatat</span>
                         </div>
                       ) : (
                         <div className="inline-flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800 px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl border border-gray-100 dark:border-zinc-700">

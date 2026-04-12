@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Home/Navbar';
 import Footer from '../../components/Home/Footer';
-import TopRankModal from './TopRankModal';
 
 export default function LecturerList() {
   const [lecturers, setLecturers] = useState<any[]>([]);
@@ -125,7 +124,7 @@ export default function LecturerList() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: index * 0.05 }}
                   className="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] transition-all duration-500 overflow-hidden cursor-pointer"
-                  onClick={() => setSelectedUserId(lecturer.id)}
+                  onClick={() => navigate(`/lecturer/${lecturer.id}`)}
                 >
                   <div className="relative z-10 space-y-6">
                     <div className="flex justify-between items-start">
@@ -199,11 +198,7 @@ export default function LecturerList() {
 
       <Footer />
 
-      <TopRankModal 
-        isOpen={selectedUserId !== null}
-        onClose={() => setSelectedUserId(null)}
-        userId={selectedUserId}
-      />
+      <Footer />
     </div>
   );
 }

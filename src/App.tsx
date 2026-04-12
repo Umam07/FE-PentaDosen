@@ -18,6 +18,7 @@ import AdminSync from './pages/AdminSync';
 import AdminAllDocuments from './pages/AdminAllDocuments';
 import Research from './pages/Research';
 import LecturerList from './pages/dashboard/LecturerList';
+import LecturerProfileDashboard from './pages/dashboard/LecturerProfileDashboard';
 
 import Home from './pages/Home';
 
@@ -68,6 +69,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/dashboard-all" element={user ? <Navigate to="/dashboard" /> : <DashboardAll />} />
         <Route path="/lecturers" element={<LecturerList />} />
+        <Route path="/lecturer/:id" element={<LecturerProfileDashboard />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
         <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register setUser={setUser} />} />
         

@@ -9,7 +9,6 @@ import {
   BookOpen, Sparkles, Zap, TrendingUp, Search, Filter
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import TopRankModal from './TopRankModal';
 import Navbar from '../../components/Home/Navbar';
 import Footer from '../../components/Home/Footer';
 
@@ -556,7 +555,7 @@ export default function DashboardAll() {
               {leaderboard.slice(0, 3).map((user: any, index: number) => (
                 <button 
                   key={user.id}
-                  onClick={() => setSelectedUserId(user.id)}
+                  onClick={() => navigate(`/lecturer/${user.id}`)}
                   className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                 >
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm ${
@@ -658,12 +657,6 @@ export default function DashboardAll() {
       </main>
 
       <Footer />
-
-      <TopRankModal 
-        isOpen={selectedUserId !== null}
-        onClose={() => setSelectedUserId(null)}
-        userId={selectedUserId}
-      />
     </div>
   );
 }
