@@ -370,15 +370,18 @@ export default function DashboardAll() {
 
               <div className="w-px h-24 bg-slate-100 dark:bg-slate-800"></div>
 
-              <div className="text-center space-y-4 relative z-10 flex-1">
-                <div className="mx-auto w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all duration-700 shadow-lg group-hover:shadow-indigo-500/25">
+              <button 
+                onClick={() => navigate('/departments')}
+                className="text-center space-y-4 relative z-10 flex-1 group/btn cursor-pointer"
+              >
+                <div className="mx-auto w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center group-hover/btn:bg-indigo-500 group-hover/btn:text-white transition-all duration-700 shadow-lg group-hover/btn:shadow-indigo-500/25">
                   <Building2 className="w-8 h-8" />
                 </div>
                 <div>
                   <h5 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter text-glow">{stats?.total_prodi || 8}</h5>
                   <p className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Prog. Studi</p>
                 </div>
-              </div>
+              </button>
               
               <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 dark:bg-slate-800/10 translate-x-24 -translate-y-24 rotate-45 group-hover:translate-x-20 group-hover:-translate-y-20 transition-transform duration-1000"></div>
             </motion.div>

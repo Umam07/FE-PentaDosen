@@ -3,7 +3,7 @@ import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Ar
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 
-export default function DocumentVault({ user }: { user: any }) {
+export default function Publication({ user }: { user: any }) {
   const [documents, setDocuments] = useState([]);
   const [weights, setWeights] = useState([]);
   const [title, setTitle] = useState('');
@@ -237,7 +237,7 @@ export default function DocumentVault({ user }: { user: any }) {
       {/* Upload Form Section */}
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Unggah Dokumen Baru</h3>
+          <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Unggah Publikasi Baru</h3>
           
           <AnimatePresence>
             {message && (
@@ -313,7 +313,7 @@ export default function DocumentVault({ user }: { user: any }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label htmlFor="title" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Judul Dokumen
+                  Judul Publikasi
                 </label>
                 <div className="relative group">
                   <input
@@ -356,7 +356,7 @@ export default function DocumentVault({ user }: { user: any }) {
 
               <div className="space-y-2">
                 <label htmlFor="category" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Kategori Dokumen
+                  Kategori Publikasi
                 </label>
                 <select
                   id="category"
@@ -365,11 +365,16 @@ export default function DocumentVault({ user }: { user: any }) {
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 appearance-none cursor-pointer"
                 >
-                  {weights.map((w: any) => (
-                    <option key={w.category} value={w.category} className="dark:bg-zinc-900">
-                      {w.category} (+{w.weight_value} PTS)
-                    </option>
-                  ))}
+                  {weights
+                    .filter((w: any) => 
+                      w.category.toLowerCase().includes('jurnal internasional') || 
+                      w.category.toLowerCase().includes('jurnal nasional')
+                    )
+                    .map((w: any) => (
+                      <option key={w.category} value={w.category} className="dark:bg-zinc-900">
+                        {w.category} (+{w.weight_value} PTS)
+                      </option>
+                    ))}
                 </select>
               </div>
 
@@ -612,14 +617,14 @@ export default function DocumentVault({ user }: { user: any }) {
       {/* Document History Table - FULLY RESPONSIVE */}
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
-          <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Dokumen</h3>
+          <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Publikasi</h3>
         </div>
         
         <div className="w-full overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
             <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
               <tr>
-                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Dokumen</th>
+                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Publikasi</th>
                 <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori</th>
                 <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tgl. Terbit</th>
                 <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
@@ -747,7 +752,7 @@ export default function DocumentVault({ user }: { user: any }) {
                   onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
                   className="bg-gray-100 dark:bg-zinc-800 border-none rounded-lg text-xs font-bold text-gray-600 dark:text-zinc-300 py-1 pl-2 pr-6 focus:ring-2 focus:ring-primary-200 outline-none cursor-pointer"
                 >
-                  {[5, 10, 25, 50].map(val => (
+                  {[10, 25, 50, 100].map(val => (
                     <option key={val} value={val}>{val}</option>
                   ))}
                 </select>

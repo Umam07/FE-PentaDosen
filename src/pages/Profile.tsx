@@ -147,7 +147,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
               <span className="bg-primary-50/80 dark:bg-primary-500/10 backdrop-blur-sm text-primary-700 dark:text-primary-400 border border-primary-200/50 dark:border-primary-500/20 text-[11px] px-4 py-2 rounded-xl font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm">
                 <ShieldCheck className="w-4 h-4" />
-                {user?.role === 'admin' ? 'Admin LPPM' : user?.role === 'prodi' ? 'Admin Prodi' : user?.role || 'User'}
+                {user?.role === 'admin lppm' ? 'Admin LPPM' : user?.role === 'admin prodi' ? 'Admin Prodi' : user?.role || 'User'}
               </span>
               <span className="bg-green-50/80 dark:bg-green-500/10 backdrop-blur-sm text-green-700 dark:text-green-400 border border-green-200/50 dark:border-green-500/20 text-[11px] px-4 py-2 rounded-xl font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

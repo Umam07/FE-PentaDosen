@@ -36,7 +36,7 @@ export default function Topbar({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user?.role === 'admin' || user?.role === 'prodi') {
+    if (user?.role === 'admin lppm' || user?.role === 'admin prodi') {
       fetch('/api/admin/lecturers')
         .then(res => res.json())
         .then(data => setLecturers(data.lecturers || []))
@@ -61,7 +61,7 @@ export default function Topbar({
     setActiveIndex(-1);
   }, [searchTerm]);
 
-  const menuItems = (user?.role === 'admin' || user?.role === 'prodi') ? [
+  const menuItems = (user?.role === 'admin lppm' || user?.role === 'admin prodi') ? [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Verifikasi Dokumen', path: '/admin/verify', icon: BadgeCheck, category: 'Menu' },
     { title: 'Kelola Dosen', path: '/admin/lecturers', icon: Users, category: 'Menu' },
@@ -72,7 +72,7 @@ export default function Topbar({
     { title: 'Dokumen Saya', path: '/documents', icon: BookOpen, category: 'Menu' },
   ];
 
-  const dynamicItems = (user?.role === 'admin' || user?.role === 'prodi') 
+  const dynamicItems = (user?.role === 'admin lppm' || user?.role === 'admin prodi') 
     ? lecturers.map((l: any) => ({
         title: l.name,
         path: `/admin/lecturers/${l.id}`,
@@ -204,7 +204,7 @@ export default function Topbar({
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
               <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
-                {user?.role === 'admin' ? 'Admin LPPM' : user?.role === 'prodi' ? 'Admin Prodi' : user?.role}
+                {user?.role === 'admin lppm' ? 'Admin LPPM' : user?.role === 'admin prodi' ? 'Admin Prodi' : user?.role}
               </p>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />

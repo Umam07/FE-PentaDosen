@@ -46,13 +46,13 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
   }
 
   const navItems = [
-    { name: 'Dokumen', path: '/documents', icon: FileText, roles: ['dosen'] },
+    { name: 'Publikasi', path: '/publication', icon: FileText, roles: ['dosen'] },
     { name: 'Penelitian', path: '/research', icon: Beaker, roles: ['dosen'] },
-    { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin', 'prodi'] },
-    { name: 'Verifikasi', path: '/admin/verify', icon: CheckSquare, roles: ['admin', 'prodi'] },
-    { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin', 'prodi'] },
-    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin', 'prodi'] },
-    { name: 'Profil Saya', path: '/profile', icon: Users, roles: ['admin', 'prodi', 'dosen'], hidden: true },
+    { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin lppm', 'admin prodi'] },
+    { name: 'Verifikasi', path: '/admin/verify', icon: CheckSquare, roles: ['admin lppm', 'admin prodi'] },
+    { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin prodi'] },
+    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin prodi'] },
+    { name: 'Profil Saya', path: '/profile', icon: Users, roles: ['admin lppm', 'admin prodi', 'dosen'], hidden: true },
   ];
 
   const currentPage = navItems.find(item => item.path === location.pathname);

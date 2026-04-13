@@ -6,28 +6,29 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 import DashboardAll from './pages/dashboard/Dashboard';
 import Profile from './pages/Profile';
-import DocumentVault from './pages/DocumentVault';
-import AdminVerification from './pages/AdminVerification';
-import AdminLecturers from './pages/AdminLecturers';
-import AdminLecturerProfile from './pages/AdminLecturerProfile';
-import AdminSync from './pages/AdminSync';
-import AdminAllDocuments from './pages/AdminAllDocuments';
+import Publication from './pages/Publication';
+import AdminVerification from './pages/admin/AdminVerification';
+import AdminLecturers from './pages/admin/AdminLecturers';
+import AdminLecturerProfile from './pages/admin/AdminLecturerProfile';
+import AdminSync from './pages/admin/AdminSync';
+import AdminAllDocuments from './pages/admin/AdminAllDocuments';
 import Research from './pages/Research';
+import Home from './pages/Home';
 import LecturerList from './pages/dashboard/LecturerList';
 import LecturerProfileDashboard from './pages/dashboard/LecturerProfileDashboard';
-
-import Home from './pages/Home';
+import DepartementList from './pages/dashboard/DepartementList';
+import ScrollToTop from './components/layout/ScrollToTop';
 
 function DashboardRedirect({ user }: { user: any }) {
   if (!user) return <Navigate to="/login" />;
-  if (user.role === 'admin' || user.role === 'prodi') {
+  if (user.role === 'admin lppm' || user.role === 'admin prodi') {
     return <Navigate to="/admin/verify" />;
   }
-  return <Navigate to="/documents" />;
+  return <Navigate to="/publication" />;
 }
 
 export default function App() {
@@ -65,9 +66,11 @@ export default function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard-all" element={user ? <Navigate to="/dashboard" /> : <DashboardAll />} />
+        <Route path="/departments" element={<DepartementList />} />
         <Route path="/lecturers" element={<LecturerList />} />
         <Route path="/lecturer/:id" element={<LecturerProfileDashboard />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
@@ -75,13 +78,13 @@ export default function App() {
         
         <Route element={<Layout user={user} setUser={setUser} />}>
           <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
-          <Route path="/documents" element={user?.role === 'dosen' ? <DocumentVault user={user} /> : <Navigate to="/dashboard" />} />
+          <Route path="/publication" element={user?.role === 'dosen' ? <Publication user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/documents/all" element={(user?.role === 'admin' || user?.role === 'prodi') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/verify" element={(user?.role === 'admin' || user?.role === 'prodi') ? <AdminVerification /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/lecturers" element={(user?.role === 'admin' || user?.role === 'prodi') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/lecturers/:id" element={(user?.role === 'admin' || user?.role === 'prodi') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/sync" element={(user?.role === 'admin' || user?.role === 'prodi') ? <AdminSync /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/documents/all" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/verify" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminVerification /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/lecturers" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/lecturers/:id" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/sync" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminSync /> : <Navigate to="/dashboard" />} />
           <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
         </Route>
       </Routes>

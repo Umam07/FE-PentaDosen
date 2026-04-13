@@ -624,26 +624,72 @@ export default function Research({ user }: { user: any }) {
         </div>
 
         {/* Pagination */}
-        {!isTableLoading && totalPages > 1 && (
-          <div className="px-6 py-4 bg-gray-50/20 border-t border-gray-50 flex justify-between items-center">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+        {/* Enhanced Pagination Controls */}
+        {!isTableLoading && researchList.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="px-6 py-5 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/10 flex flex-col sm:flex-row items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, researchList.length)} of {researchList.length} entries
+              </span>
+              <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 mx-2 hidden sm:block" />
+              <div className="hidden sm:flex items-center gap-1.5">
+                <span className="text-[10px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Per Page:</span>
+                <select 
+                  value={itemsPerPage} 
+                  onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                  className="bg-gray-100 dark:bg-zinc-800 border-none rounded-lg text-xs font-bold text-gray-600 dark:text-zinc-300 py-1 pl-2 pr-6 focus:ring-2 focus:ring-primary-200 outline-none cursor-pointer"
+                >
+                  {[10, 25, 50, 100].map(val => (
+                    <option key={val} value={val}>{val}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg border bg-white disabled:opacity-50"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
-              <button 
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .map((p, index, array) => (
+                    <React.Fragment key={p}>
+                      {index > 0 && array[index - 1] !== p - 1 && (
+                        <span className="px-2 text-gray-300 dark:text-zinc-600 font-bold">...</span>
+                      )}
+                      <button
+                        onClick={() => setCurrentPage(p)}
+                        className={`min-w-[36px] h-9 flex items-center justify-center rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                          currentPage === p 
+                            ? 'bg-primary-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900/30' 
+                            : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    </React.Fragment>
+                  ))}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages || totalPages === 0}
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded-lg border bg-white disabled:opacity-50"
+                className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
       </section>
     </div>
