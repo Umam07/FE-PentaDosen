@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   Upload, FileText, CheckCircle, XCircle, Clock, 
   CalendarDays, Award, Zap, ChevronLeft, ChevronRight,
@@ -9,10 +10,25 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart as ReChartsPie, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 
 export default function Research({ user }: { user: any }) {
+  const location = useLocation();
+  const urlKategori = new URLSearchParams(location.search).get('kategori') || '';
+
   const [researchList, setResearchList] = useState([]);
   const [judulPenelitian, setJudulPenelitian] = useState('');
   const [danaDisetujui, setDanaDisetujui] = useState('');
-  const [program, setProgram] = useState('hibah internal');
+  
+  const [program, setProgram] = useState(() => {
+    if (urlKategori === 'Penelitian Hibah Luar Negeri') return 'hibah luar negeri';
+    if (urlKategori === 'Penelitian Hibah Eksternal') return 'hibah dikti';
+    return 'hibah internal';
+  });
+
+  useEffect(() => {
+    if (urlKategori === 'Penelitian Hibah Luar Negeri') setProgram('hibah luar negeri');
+    else if (urlKategori === 'Penelitian Hibah Eksternal') setProgram('hibah dikti');
+    else if (urlKategori === 'Penelitian Internal Institusi') setProgram('hibah internal');
+  }, [urlKategori]);
+
   const [skema, setSkema] = useState('');
   const [fokus, setFokus] = useState('');
   const [tahun, setTahun] = useState(new Date().getFullYear().toString());
@@ -261,29 +277,43 @@ export default function Research({ user }: { user: any }) {
                 { id: 'hibah dikti', label: 'Eksternal (Dikti)', icon: Landmark, color: 'emerald', pts: 50 },
                 { id: 'hibah luar negeri', label: 'Luar Negeri', icon: Globe, color: 'purple', pts: 60 },
               ].map((prog) => (
-                <button
+                <motion.button
                   key={prog.id}
                   type="button"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setProgram(prog.id)}
                   className={`group relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 ${
                     program === prog.id
-                      ? `border-primary-500 bg-primary-50 dark:bg-primary-950/10 ring-4 ring-primary-500/10`
-                      : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10 shadow-md'
+                      : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-black/50'
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                    program === prog.id ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800'
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-all duration-300 ${
+                    program === prog.id 
+                      ? 'bg-primary-100 dark:bg-primary-900/40 scale-110' 
+                      : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30'
                   }`}>
-                    <prog.icon className={`w-5 h-5 ${program === prog.id ? 'text-primary-600' : 'text-gray-400'}`} />
+                    <prog.icon className={`w-5 h-5 transition-colors ${program === prog.id ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
                   </div>
-                  <p className={`text-[10px] font-black uppercase text-center ${program === prog.id ? 'text-primary-900' : 'text-gray-500'}`}>
+                  <p className={`text-[10px] sm:text-xs font-black uppercase text-center tracking-tight ${program === prog.id ? 'text-primary-900 dark:text-primary-100' : 'text-gray-500 dark:text-zinc-400 group-hover:text-gray-900 dark:group-hover:text-zinc-200'}`}>
                     {prog.label}
                   </p>
-                  <p className="text-[9px] font-bold text-primary-500 mt-1">{prog.pts} Poin</p>
-                  {program === prog.id && (
-                    <CheckCircle className="absolute top-2 right-2 w-4 h-4 text-primary-500" />
-                  )}
-                </button>
+                  <p className={`text-[9px] font-bold mt-1.5 transition-colors ${program === prog.id ? 'text-primary-500' : 'text-gray-400 group-hover:text-primary-400'}`}>{prog.pts} Poin</p>
+                  
+                  <AnimatePresence>
+                    {program === prog.id && (
+                      <motion.div 
+                        initial={{ scale: 0, opacity: 0 }} 
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        className="absolute top-2 right-2"
+                      >
+                        <CheckCircle className="w-4 h-4 text-primary-500" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
               ))}
             </div>
 

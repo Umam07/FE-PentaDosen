@@ -56,9 +56,9 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       roles: ['dosen'],
       // children = submenu items (kategori dokumen publikasi)
       children: [
+        { name: 'Jurnal Internasional', path: '/publication?kategori=Jurnal Internasional', icon: BookOpen, categoryFilter: 'Jurnal Internasional', points: 40 },
+        { name: 'Jurnal Nasional', path: '/publication?kategori=Jurnal Nasional', icon: BookOpen, categoryFilter: 'Jurnal Nasional', points: 20 },
         { name: 'HKI', path: '/publication?kategori=HKI', icon: Award, categoryFilter: 'HKI' },
-        { name: 'Jurnal Internasional', path: '/publication?kategori=Jurnal Internasional', icon: BookOpen, categoryFilter: 'Jurnal Internasional' },
-        { name: 'Jurnal Nasional', path: '/publication?kategori=Jurnal Nasional', icon: BookOpen, categoryFilter: 'Jurnal Nasional' },
       ]
     },
     { 

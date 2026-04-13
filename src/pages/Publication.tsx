@@ -46,7 +46,11 @@ export default function Publication({ user }: { user: any }) {
   // Sync category state saat user berpindah sub-kategori di sidebar
   useEffect(() => {
     if (urlKategori) {
-      setCategory(urlKategori);
+      if (urlKategori === 'HKI') {
+         setCategory('HKI Paten');
+      } else {
+         setCategory(urlKategori);
+      }
     }
   }, [urlKategori]);
 
@@ -395,9 +399,69 @@ export default function Publication({ user }: { user: any }) {
                 </div>
               </div>
 
-              {/* Kategori otomatis dari pilihan sidebar — ditampilkan sebagai badge readonly */}
+              {/* Kategori otomatis dari pilihan sidebar — ditampilkan sebagai badge readonly, ATAU grid kartu HKI */}
               {category && (() => {
                 const activeWeight = weights.find((w: any) => w.category === category);
+                
+                if (urlKategori === 'HKI') {
+                  const hkiOptions = [
+                    { id: 'HKI Paten', label: 'Paten', pts: 40, icon: Award, color: 'blue' },
+                    { id: 'HKI Paten Sederhana', label: 'Paten Sederhana', pts: 20, icon: Zap, color: 'emerald' },
+                    { id: 'HKI Merk', label: 'Merk', pts: 5, icon: Shield, color: 'amber' },
+                    { id: 'HKI Hak Cipta', label: 'Hak Cipta', pts: 5, icon: FileText, color: 'purple' },
+                  ];
+                  return (
+                    <div className="md:col-span-2 space-y-3 mt-4 mb-2">
+                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+                        <Shield className="w-3.5 h-3.5 mr-1.5 text-primary-500" />
+                        Jenis HKI
+                      </label>
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                        {hkiOptions.map((opt) => (
+                          <motion.button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => setCategory(opt.id)}
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`group relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 ${
+                              category === opt.id
+                                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10 shadow-md'
+                                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-black/50'
+                            }`}
+                          >
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-all duration-300 ${
+                              category === opt.id 
+                                ? 'bg-primary-100 dark:bg-primary-900/40 scale-110' 
+                                : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30'
+                            }`}>
+                              <opt.icon className={`w-5 h-5 transition-colors ${category === opt.id ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
+                            </div>
+                            <p className={`text-[10px] sm:text-xs font-black uppercase text-center tracking-tight ${category === opt.id ? 'text-primary-900 dark:text-primary-100' : 'text-gray-500 dark:text-zinc-400 group-hover:text-gray-900 dark:group-hover:text-zinc-200'}`}>
+                              {opt.label}
+                            </p>
+                            <p className={`text-[9px] font-bold mt-1.5 transition-colors ${category === opt.id ? 'text-primary-500' : 'text-gray-400 group-hover:text-primary-400'}`}>+{opt.pts} Poin</p>
+                            
+                            <AnimatePresence>
+                              {category === opt.id && (
+                                <motion.div 
+                                  initial={{ scale: 0, opacity: 0 }} 
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  exit={{ scale: 0, opacity: 0 }}
+                                  className="absolute top-2 right-2"
+                                >
+                                  <CheckCircle className="w-4 h-4 text-primary-500" />
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Tampilkan Readonly Badge
                 return (
                   <div className="space-y-2">
                     <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
@@ -414,11 +478,11 @@ export default function Publication({ user }: { user: any }) {
                         </span>
                       )}
                     </div>
+                    {/* Hidden input agar form validation tetap berjalan */}
+                    <input type="hidden" value={category} />
                   </div>
                 );
               })()}
-              {/* Hidden input agar form validation tetap berjalan */}
-              <input type="hidden" value={category} />
 
               <div className="space-y-2">
                 <label htmlFor="published_at" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">

@@ -8,6 +8,7 @@ interface NavChild {
   path: string;
   icon: any;
   categoryFilter?: string;
+  points?: number;
 }
 
 interface NavItem {
@@ -235,7 +236,12 @@ export default function Sidebar({
                                 >
                                   <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-transform group-hover:scale-110 ${childActive ? 'text-primary-600 dark:text-primary-400' : ''}`} />
                                   <span className="truncate">{child.name}</span>
-                                  {childActive && (
+                                  {child.points !== undefined && (
+                                    <div className={`ml-auto px-1.5 py-0.5 rounded text-[8px] font-black tracking-widest flex-shrink-0 ${childActive ? 'bg-primary-50 text-primary-600 dark:bg-primary-950/40 dark:text-primary-400' : 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400 group-hover:bg-primary-50 group-hover:text-primary-600'}`}>
+                                      +{child.points} PTS
+                                    </div>
+                                  )}
+                                  {childActive && child.points === undefined && (
                                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-500 flex-shrink-0" />
                                   )}
                                 </button>
