@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, FileText, CheckSquare, Users, 
-  RefreshCw, FolderOpen, Beaker
+  FileText, CheckSquare, Users, 
+  RefreshCw, FolderOpen, Beaker, Award, BookOpen,
+  ClipboardList, FileSignature
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Sidebar from './Sidebar';
@@ -45,17 +46,59 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     return <Outlet />;
   }
 
+  // Nav items dengan children untuk dropdown
   const navItems = [
-    { name: 'Publikasi', path: '/publication', icon: FileText, roles: ['dosen'] },
-    { name: 'Penelitian', path: '/research', icon: Beaker, roles: ['dosen'] },
+    // === DOSEN ===
+    { 
+      name: 'Publikasi', 
+      path: '/publication', 
+      icon: FileText, 
+      roles: ['dosen'],
+      // children = submenu items (kategori dokumen publikasi)
+      children: [
+        { name: 'HKI', path: '/publication?kategori=HKI', icon: Award, categoryFilter: 'HKI' },
+        { name: 'Jurnal Internasional', path: '/publication?kategori=Jurnal Internasional', icon: BookOpen, categoryFilter: 'Jurnal Internasional' },
+        { name: 'Jurnal Nasional', path: '/publication?kategori=Jurnal Nasional', icon: BookOpen, categoryFilter: 'Jurnal Nasional' },
+      ]
+    },
+    { 
+      name: 'Penelitian', 
+      path: '/research', 
+      icon: Beaker, 
+      roles: ['dosen'],
+      // children = submenu items (hasil penelitian + dokumen penunjang)
+      children: [
+        { name: 'Hasil Penelitian', path: '/research', icon: Beaker },
+        { name: 'Proposal', path: '/research/proposal', icon: FileSignature, categoryFilter: 'Proposal' },
+        { name: 'Laporan', path: '/research/laporan', icon: ClipboardList, categoryFilter: 'Laporan' },
+      ]
+    },
+    // === ADMIN / PRODI ===
     { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Verifikasi', path: '/admin/verify', icon: CheckSquare, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin prodi'] },
+    // === HIDDEN (selalu di-hidden dari nav) ===
     { name: 'Profil Saya', path: '/profile', icon: Users, roles: ['admin lppm', 'admin prodi', 'dosen'], hidden: true },
   ];
 
-  const currentPage = navItems.find(item => item.path === location.pathname);
+  // Cari nama halaman aktif (termasuk children)
+  const currentPage = (() => {
+    for (const item of navItems) {
+      if (item.children) {
+        for (const child of item.children) {
+          // Match by exact path atau child path tanpa query
+          const childPathBase = child.path.split('?')[0];
+          if (location.pathname === childPathBase) return child;
+        }
+        // Fallback ke parent (misal /documents tanpa query)
+        if (item.path.split('?')[0] === location.pathname) return item;
+      } else {
+        if (item.path === location.pathname) return item;
+      }
+    }
+    return null;
+  })();
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-zinc-950 flex font-sans selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden text-gray-900 dark:text-zinc-100">
@@ -82,6 +125,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
         user={user}
         navItems={navItems}
         currentPath={location.pathname}
+        currentSearch={location.search}
       />
 
       {/* Main Content */}
@@ -103,7 +147,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
         <div className="p-4 sm:p-6 lg:p-10 flex-1">
           <AnimatePresence mode="wait">
             <motion.div
-              key={location.pathname}
+              key={location.pathname + location.search}
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}

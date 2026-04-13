@@ -18,6 +18,7 @@ import AdminSync from './pages/admin/AdminSync';
 import AdminAllDocuments from './pages/admin/AdminAllDocuments';
 import Research from './pages/Research';
 import Home from './pages/Home';
+import ResearchDocs from './pages/ResearchDocs';
 import LecturerList from './pages/dashboard/LecturerList';
 import LecturerProfileDashboard from './pages/dashboard/LecturerProfileDashboard';
 import DepartementList from './pages/dashboard/DepartementList';
@@ -80,6 +81,8 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
           <Route path="/publication" element={user?.role === 'dosen' ? <Publication user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
+          <Route path="/research/proposal" element={user?.role === 'dosen' ? <ResearchDocs user={user} /> : <Navigate to="/dashboard" />} />
+          <Route path="/research/laporan" element={user?.role === 'dosen' ? <ResearchDocs user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/documents/all" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/verify" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminVerification /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/lecturers" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />

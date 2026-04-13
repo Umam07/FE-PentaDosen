@@ -4,7 +4,7 @@ import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Ar
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 
-export default function Publication({ user }: { user: any }) {
+export default function DocumentVault({ user }: { user: any }) {
   const location = useLocation();
   // Baca filter kategori dari URL query param (?kategori=HKI dsb)
   const urlKategori = new URLSearchParams(location.search).get('kategori') || '';
@@ -43,13 +43,6 @@ export default function Publication({ user }: { user: any }) {
     loadDocuments();
   }, []);
 
-  // Sync category state saat user berpindah sub-kategori di sidebar
-  useEffect(() => {
-    if (urlKategori) {
-      setCategory(urlKategori);
-    }
-  }, [urlKategori]);
-
   const fetchDocuments = async () => {
     try {
       const res = await fetch(`/api/users/${user.id}/documents`);
@@ -66,10 +59,15 @@ export default function Publication({ user }: { user: any }) {
       const res = await fetch('/api/weights');
       const data = await res.json();
       setWeights(data.weights);
-      // Kategori di-set dari urlKategori (pilihan sidebar), bukan dari dropdown
+      // Jika urlKategori ada, set Kategori ke nilai tersebut, jika tidak fallback ke kategori pertama
       if (urlKategori) {
-        setCategory(urlKategori);
-      } else if (data.weights.length > 0) {
+        const matchedWeight = data.weights.find((w: any) => w.category.toLowerCase() === urlKategori.toLowerCase());
+        if (matchedWeight) {
+          setCategory(matchedWeight.category);
+        } else if (data.weights.length > 0 && !category) {
+          setCategory(data.weights[0].category);
+        }
+      } else if (data.weights.length > 0 && !category) {
         setCategory(data.weights[0].category);
       }
     } catch (err) {
@@ -79,8 +77,15 @@ export default function Publication({ user }: { user: any }) {
     }
   };
 
-
-
+  // Sync state category jika urlKategori berubah
+  useEffect(() => {
+    if (urlKategori && weights.length > 0) {
+      const matchedWeight = weights.find((w: any) => w.category.toLowerCase() === urlKategori.toLowerCase());
+      if (matchedWeight) {
+        setCategory(matchedWeight.category);
+      }
+    }
+  }, [urlKategori, weights]);
   const scoringPreview = useMemo(() => {
     if (docType === 'arsip') {
       return {
@@ -278,7 +283,7 @@ export default function Publication({ user }: { user: any }) {
       {/* Upload Form Section */}
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Unggah Publikasi Baru</h3>
+          <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Unggah Dokumen Baru</h3>
           
           <AnimatePresence>
             {message && (
@@ -354,7 +359,7 @@ export default function Publication({ user }: { user: any }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label htmlFor="title" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Judul Publikasi
+                  Judul Dokumen
                 </label>
                 <div className="relative group">
                   <input
@@ -395,30 +400,19 @@ export default function Publication({ user }: { user: any }) {
                 </div>
               </div>
 
-              {/* Kategori otomatis dari pilihan sidebar — ditampilkan sebagai badge readonly */}
-              {category && (() => {
-                const activeWeight = weights.find((w: any) => w.category === category);
-                return (
-                  <div className="space-y-2">
-                    <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                      Kategori Publikasi
-                    </label>
-                    <div className="w-full px-4 py-3 bg-primary-50 dark:bg-primary-950/20 border-2 border-primary-200 dark:border-primary-800/40 rounded-xl flex items-center gap-3">
-                      <Shield className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                      <span className="text-sm font-black text-primary-800 dark:text-primary-200 uppercase tracking-tight flex-1">
-                        {category}
-                      </span>
-                      {activeWeight && (
-                        <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-1 rounded-lg border border-emerald-100 dark:border-emerald-900/30 flex-shrink-0">
-                          +{activeWeight.weight_value} PTS
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })()}
-              {/* Hidden input agar form validation tetap berjalan */}
-              <input type="hidden" value={category} />
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                  Kategori Dokumen
+                </label>
+                <div className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold text-sm text-gray-900 dark:text-zinc-100 flex items-center justify-between opacity-80 cursor-not-allowed">
+                  <span>{category || (urlKategori || 'Memuat...')}</span>
+                  {category && weights.find((w: any) => w.category === category) && (
+                    <span className="text-[10px] font-black opacity-70 bg-gray-200 dark:bg-zinc-700 px-2 py-0.5 rounded-md">
+                      +{weights.find((w: any) => w.category === category).weight_value} PTS
+                    </span>
+                  )}
+                </div>
+              </div>
 
               <div className="space-y-2">
                 <label htmlFor="published_at" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
@@ -659,14 +653,14 @@ export default function Publication({ user }: { user: any }) {
       {/* Document History Table - FULLY RESPONSIVE */}
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
-          <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Publikasi</h3>
+          <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Dokumen</h3>
         </div>
         
         <div className="w-full overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
             <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
               <tr>
-                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Publikasi</th>
+                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Dokumen</th>
                 <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori</th>
                 <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tgl. Terbit</th>
                 <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
@@ -794,7 +788,7 @@ export default function Publication({ user }: { user: any }) {
                   onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
                   className="bg-gray-100 dark:bg-zinc-800 border-none rounded-lg text-xs font-bold text-gray-600 dark:text-zinc-300 py-1 pl-2 pr-6 focus:ring-2 focus:ring-primary-200 outline-none cursor-pointer"
                 >
-                  {[10, 25, 50, 100].map(val => (
+                  {[5, 10, 25, 50].map(val => (
                     <option key={val} value={val}>{val}</option>
                   ))}
                 </select>
