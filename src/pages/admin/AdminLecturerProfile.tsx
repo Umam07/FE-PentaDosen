@@ -75,8 +75,8 @@ const ProfileTrendChart = memo(({ chartData, leftDomainMax, rightDomainMax }: an
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart 
             data={chartData} 
-            /* Margin sedikit disesuaikan agar lebih proporsional */
-            margin={{ top: 25, right: 60, bottom: 35, left: 60 }} 
+            /* Margin disesuaikan agar label tidak terpotong dan lebih proporsional */
+            margin={{ top: 40, right: 60, bottom: 35, left: 60 }} 
             onMouseMove={(state: any) => {
               if (state && state.isTooltipActive && state.activeCoordinate) {
                 setCrosshair({ 
@@ -94,8 +94,40 @@ const ProfileTrendChart = memo(({ chartData, leftDomainMax, rightDomainMax }: an
             
             <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dy={10} />
             
-            <YAxis yAxisId="left" orientation="left" domain={[0, leftDomainMax]} tick={{ fill: '#0d9488', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dx={-10} label={{ value: 'Publikasi', angle: -90, position: 'insideLeft', fill: '#0d9488', fontWeight: 'bold' }} />
-            <YAxis yAxisId="right" orientation="right" domain={[0, rightDomainMax]} tick={{ fill: '#a855f7', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dx={10} label={{ value: 'Sitasi', angle: 90, position: 'insideRight', fill: '#a855f7', fontWeight: 'bold' }} />
+            <YAxis 
+              yAxisId="left" 
+              orientation="left" 
+              domain={[0, leftDomainMax]} 
+              tick={{ fill: '#0d9488', fontSize: 12, fontWeight: 500 }} 
+              tickLine={false} 
+              axisLine={false} 
+              dx={-10} 
+              label={{ 
+                value: 'Publikasi', 
+                position: 'top', 
+                offset: 20, 
+                fill: '#0d9488', 
+                fontWeight: 'bold',
+                style: { textAnchor: 'start', fontStyle: 'normal' }
+              }} 
+            />
+            <YAxis 
+              yAxisId="right" 
+              orientation="right" 
+              domain={[0, rightDomainMax]} 
+              tick={{ fill: '#a855f7', fontSize: 12, fontWeight: 500 }} 
+              tickLine={false} 
+              axisLine={false} 
+              dx={10} 
+              label={{ 
+                value: 'Sitasi', 
+                position: 'top', 
+                offset: 20, 
+                fill: '#a855f7', 
+                fontWeight: 'bold',
+                style: { textAnchor: 'end', fontStyle: 'normal' }
+              }} 
+            />
             
             <Tooltip content={<CustomTooltip />} cursor={false} />
             <Legend wrapperStyle={{ paddingTop: '25px', fontSize: '12px', fontWeight: 500 }} />

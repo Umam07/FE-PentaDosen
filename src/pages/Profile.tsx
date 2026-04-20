@@ -9,12 +9,16 @@ import {
 
 export default function Profile({ user, setUser }: { user: any; setUser: any }) {
   const [scholarId, setScholarId] = useState(user?.scholar_id || '');
+  const [scopusId, setScopusId] = useState(user?.scopus_id || '');
   const [scholarData, setScholarData] = useState<any>(null);
+  const [scopusData, setScopusData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [checkingInfo, setCheckingInfo] = useState(false);
+  const [checkingScopus, setCheckingScopus] = useState(false);
   const [checkedAuthor, setCheckedAuthor] = useState<any>(null);
+  const [checkedScopusAuthor, setCheckedScopusAuthor] = useState<any>(null);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' | '' }>({ text: '', type: '' });
-  const [activeTab, setActiveTab] = useState<'info' | 'scholar'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'integrasi'>('info');
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -24,7 +28,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         if (res.ok) {
           const data = await res.json();
           setScholarData(data.scholarData);
+          setScopusData(data.scopusData);
           setScholarId(data.user.scholar_id || '');
+          setScopusId(data.user.scopus_id || '');
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
@@ -78,6 +84,51 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     }
   };
 
+  const handleCheckScopusId = async () => {
+    if (!scopusId) {
+      setMessage({ text: 'Masukkan Scopus Author ID terlebih dahulu.', type: 'error' });
+      return;
+    }
+    try {
+      setCheckingScopus(true);
+      setMessage({ text: '', type: '' });
+      setCheckedScopusAuthor(null);
+      const res = await fetch(`/api/scopus/check/${scopusId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setCheckedScopusAuthor(data);
+        setMessage({ text: 'ID Scopus ditemukan! Silakan verifikasi dan simpan.', type: 'success' });
+      } else {
+        const errData = await res.json();
+        setMessage({ text: `Error: ${errData.error || 'ID Scopus tidak ditemukan'}`, type: 'error' });
+      }
+    } catch (err) {
+      setMessage({ text: 'Gagal mengecek Scopus ID.', type: 'error' });
+    } finally {
+      setCheckingScopus(false);
+    }
+  };
+
+  const handleSaveScopusId = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/users/${user.id}/scopus`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scopus_id: scopusId }),
+      });
+      if (res.ok) {
+        setMessage({ text: 'Scopus ID berhasil disimpan.', type: 'success' });
+        setUser({ ...user, scopus_id: scopusId });
+        setCheckedScopusAuthor(null);
+      }
+    } catch (err) {
+      setMessage({ text: 'Gagal menyimpan Scopus ID.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSync = async () => {
     if (!scholarId) {
       setMessage({ text: 'Simpan Google Scholar ID terlebih dahulu.', type: 'error' });
@@ -89,16 +140,42 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         method: 'POST',
       });
       if (res.ok) {
-        setMessage({ text: 'Data berhasil disinkronisasi.', type: 'success' });
+        setMessage({ text: 'Data Scholar berhasil disinkronisasi.', type: 'success' });
         const profileRes = await fetch(`/api/users/${user.id}`);
         const data = await profileRes.json();
         setScholarData(data.scholarData);
         setUser(data.user);
       } else {
-        setMessage({ text: 'Gagal sinkronisasi data.', type: 'error' });
+        setMessage({ text: 'Gagal sinkronisasi data Scholar.', type: 'error' });
       }
     } catch (err) {
-      setMessage({ text: 'Error sinkronisasi data.', type: 'error' });
+      setMessage({ text: 'Error sinkronisasi data Scholar.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSyncScopus = async () => {
+    if (!scopusId) {
+      setMessage({ text: 'Simpan Scopus ID terlebih dahulu.', type: 'error' });
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/users/${user.id}/sync-scopus`, {
+        method: 'POST',
+      });
+      if (res.ok) {
+        setMessage({ text: 'Data Scopus berhasil disinkronisasi.', type: 'success' });
+        const profileRes = await fetch(`/api/users/${user.id}`);
+        const data = await profileRes.json();
+        setScopusData(data.scopusData);
+        setUser(data.user);
+      } else {
+        setMessage({ text: 'Gagal sinkronisasi data Scopus.', type: 'error' });
+      }
+    } catch (err) {
+      setMessage({ text: 'Error sinkronisasi data Scopus.', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -168,11 +245,11 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
           Detail Informasi
         </button>
         <button 
-          onClick={() => setActiveTab('scholar')}
-          className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 ${activeTab === 'scholar' ? 'bg-white dark:bg-zinc-900 text-primary-600 dark:text-primary-400 shadow-md transform scale-[1.02]' : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-gray-200/50 dark:hover:bg-zinc-700/50'}`}
+          onClick={() => setActiveTab('integrasi')}
+          className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 ${activeTab === 'integrasi' ? 'bg-white dark:bg-zinc-900 text-primary-600 dark:text-primary-400 shadow-md transform scale-[1.02]' : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-gray-200/50 dark:hover:bg-zinc-700/50'}`}
         >
           <Globe className="w-4 h-4" />
-          Google Scholar
+          Integrasi Publikasi
         </button>
       </div>
 
@@ -222,7 +299,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                         ))}
 
                         <div className="group p-5 bg-gradient-to-br from-primary-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 rounded-2xl border border-primary-100/50 dark:border-primary-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/10">
-                          <label className="block text-[10px] font-black text-primary-600/70 dark:text-primary-400/70 uppercase tracking-[0.15em] mb-3">Total KPI Points</label>
+                          <label className="block text-[10px] font-black text-primary-600/70 dark:text-primary-400/70 uppercase tracking-[0.15em) mb-3">Total KPI Points</label>
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-xl bg-white dark:bg-zinc-900 flex items-center justify-center shadow-sm text-primary-600 dark:text-primary-400">
                               <Award className="w-5 h-5" />
@@ -263,46 +340,44 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
               </motion.div>
             ) : (
               <motion.div 
-                key="scholar"
+                key="integrasi"
                 variants={tabVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="space-y-6"
+                className="space-y-8"
               >
-                <div className="bg-white dark:bg-zinc-900 rounded-[2rem] border border-gray-100 dark:border-zinc-800/60 p-8 sm:p-10 shadow-sm">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
+                {/* Global Message Area */}
+                <AnimatePresence>
+                  {message.text && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                      className={`flex items-center gap-3 px-6 py-4 rounded-[1.5rem] text-sm font-bold shadow-lg backdrop-blur-md ${message.type === 'success' ? 'bg-green-500/10 text-green-600 border border-green-500/20' : 'bg-red-500/10 text-red-600 border border-red-500/20'}`}
+                    >
+                      {message.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                      {message.text}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Google Scholar Section */}
+                <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-gray-100 dark:border-zinc-800/60 p-8 sm:p-10 shadow-sm">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                     <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-widest flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
                         <Globe className="w-6 h-6" />
                       </div>
-                      Integrasi Scholar
+                      Google Scholar
                     </h3>
-                    
-                    <AnimatePresence>
-                      {message.text && (
-                        <motion.div 
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
-                          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${message.type === 'success' ? 'bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-500/20' : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20'}`}
-                        >
-                          {message.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                          {message.text}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </div>
 
-                  <div className="space-y-10">
-                    {/* Search Field Area */}
-                    <div className="bg-gray-50/50 dark:bg-zinc-800/20 p-6 rounded-3xl border border-gray-100 dark:border-zinc-700/50">
-                      <label className="block text-[11px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-[0.2em] mb-4">Set ID Google Scholar</label>
+                  <div className="space-y-8">
+                    <div className="bg-gray-50/50 dark:bg-zinc-800/20 p-6 rounded-[2rem] border border-gray-100 dark:border-zinc-700/50">
+                      <label className="block text-[11px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-[0.2em] mb-4">ID Google Scholar</label>
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="relative flex-1 group">
-                          <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <Search className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                          </div>
+                        <div className="relative flex-1">
                           <input
                             type="text"
                             placeholder="Contoh: xxxxxxxAAAAJ"
@@ -311,116 +386,155 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                               setScholarId(e.target.value);
                               setCheckedAuthor(null);
                             }}
-                            className="block w-full pl-14 pr-5 py-4 bg-white dark:bg-zinc-900 border-2 border-transparent ring-1 ring-gray-200 dark:ring-zinc-700 rounded-2xl text-sm font-bold text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+                            className="block w-full pl-6 pr-5 py-4 bg-white dark:bg-zinc-900 border-2 border-transparent ring-1 ring-gray-200 dark:ring-zinc-700 rounded-2xl text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 transition-all shadow-sm"
                           />
                         </div>
                         <div className="flex gap-3">
                           <button
                             onClick={handleCheckId}
                             disabled={checkingInfo || !scholarId}
-                            className="px-6 py-4 bg-white dark:bg-zinc-800 border ring-1 ring-gray-200 dark:ring-zinc-700 border-transparent text-gray-700 dark:text-zinc-200 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-zinc-700 hover:ring-gray-300 transition-all disabled:opacity-50 shadow-sm flex items-center gap-2"
+                            className="px-6 py-4 bg-white dark:bg-zinc-800 border ring-1 ring-gray-200 dark:ring-zinc-700 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-zinc-700 transition-all disabled:opacity-50 flex items-center gap-2"
                           >
                             {checkingInfo ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Cek ID'}
                           </button>
                           <button
                             onClick={handleSaveScholarId}
                             disabled={loading || !scholarId || (scholarId !== user.scholar_id && !checkedAuthor)}
-                            className="px-8 py-4 bg-blue-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/30 active:scale-95"
+                            className="px-8 py-4 bg-blue-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/30"
                           >
                             Simpan
                           </button>
                         </div>
                       </div>
-                      <p className="mt-4 text-[11px] font-bold text-gray-400 dark:text-zinc-500 flex items-center gap-2">
-                        <AlertCircle className="w-3.5 h-3.5 text-blue-400" />
-                        ID dapat ditemukan pada parameter <code className="bg-gray-200 dark:bg-zinc-700 px-1.5 py-0.5 rounded text-gray-700 dark:text-zinc-300">user=...</code> di URL profil Scholar Anda.
-                      </p>
                     </div>
 
-                    {/* Check Result Card */}
                     {checkedAuthor && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border border-blue-100/50 dark:border-blue-500/20 rounded-3xl flex flex-col md:flex-row items-center gap-6 shadow-sm"
-                      >
-                        <div className="w-24 h-24 rounded-[1.5rem] bg-white dark:bg-zinc-800 p-1.5 shadow-md flex-shrink-0">
-                          {checkedAuthor.thumbnail ? (
-                            <img src={checkedAuthor.thumbnail} alt={checkedAuthor.name} className="w-full h-full object-cover rounded-2xl" />
-                          ) : (
-                            <div className="w-full h-full rounded-2xl bg-gray-100 dark:bg-zinc-700 flex items-center justify-center">
-                              <User className="w-10 h-10 text-gray-400" />
-                            </div>
-                          )}
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-blue-50 dark:bg-blue-900/10 rounded-3xl flex items-center gap-6 border border-blue-100 dark:border-blue-500/20">
+                        <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white shadow-sm">
+                           {checkedAuthor.thumbnail ? <img src={checkedAuthor.thumbnail} className="w-full h-full object-cover" /> : <User className="w-full h-full p-3 text-gray-300" />}
                         </div>
-                        <div className="text-center md:text-left flex-1 min-w-0">
-                          <h4 className="text-xl font-black text-gray-900 dark:text-white truncate flex items-center justify-center md:justify-start gap-2">
-                            {checkedAuthor.name}
-                            <ExternalLink className="w-4 h-4 text-blue-500" />
-                          </h4>
-                          <p className="text-sm font-bold text-gray-500 dark:text-zinc-400 mt-2 leading-relaxed">{checkedAuthor.affiliations}</p>
+                        <div className="flex-1">
+                          <h4 className="font-black text-gray-900 dark:text-white uppercase tracking-wider">{checkedAuthor.name}</h4>
+                          <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 mt-1">{checkedAuthor.affiliations}</p>
                         </div>
-                        <div className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-green-100 dark:border-green-900/30">
-                          <CheckCircle className="w-5 h-5 text-green-500" />
-                          <span className="text-[10px] font-black text-gray-700 dark:text-zinc-200 uppercase tracking-wider">Terkonfirmasi</span>
-                        </div>
+                        <CheckCircle className="w-6 h-6 text-green-500" />
                       </motion.div>
                     )}
 
-                    {/* Statistics Data */}
-                    {scholarData && (
-                      <div className="border-t-2 border-dashed border-gray-100 dark:border-zinc-800 pt-10">
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
-                          <div>
-                            <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
-                              <Award className="w-5 h-5 text-yellow-500" />
-                              Statistik Publikasi
-                            </h4>
-                            <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 mt-2">Update terakhir: {new Date(scholarData.last_synced).toLocaleString('id-ID')}</p>
+                    {scholarData ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                        {[
+                          { label: 'Sitasi', value: scholarData.total_citations, color: 'text-blue-500' },
+                          { label: 'H-Index', value: scholarData.h_index, color: 'text-purple-500' },
+                          { label: 'i10-Index', value: scholarData.i10_index, color: 'text-orange-500' },
+                        ].map((s, i) => (
+                          <div key={i} className="bg-gray-50/50 dark:bg-zinc-800/40 p-5 rounded-2xl border border-gray-100 dark:border-zinc-700/50">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{s.label}</p>
+                            <p className={`text-2xl font-black ${s.color}`}>{s.value || 0}</p>
                           </div>
+                        ))}
+                      </div>
+                    ) : (
+                       <div className="flex items-center gap-3 p-4 bg-amber-50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-400 rounded-2xl border border-amber-200/50 text-xs font-bold">
+                         <AlertCircle className="w-4 h-4" /> Belum ada data statistik Scholar. Silakan sync data.
+                       </div>
+                    )}
+
+                    <button
+                      onClick={handleSync}
+                      disabled={loading || !scholarId}
+                      className="w-full py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3"
+                    >
+                      <RefreshCw className={loading ? 'animate-spin' : ''} /> Sync Google Scholar
+                    </button>
+                  </div>
+                </div>
+
+                {/* Scopus Section */}
+                <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-gray-100 dark:border-zinc-800/60 p-8 sm:p-10 shadow-sm">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+                    <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-widest flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-pink-50 dark:bg-pink-500/10 flex items-center justify-center text-pink-600 dark:text-pink-400 shadow-inner">
+                        <Hash className="w-6 h-6" />
+                      </div>
+                      Scopus
+                    </h3>
+                  </div>
+
+                  <div className="space-y-8">
+                    <div className="bg-gray-50/50 dark:bg-zinc-800/20 p-6 rounded-[2rem] border border-gray-100 dark:border-zinc-700/50">
+                      <label className="block text-[11px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-[0.2em] mb-4">Author ID Scopus</label>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="relative flex-1">
+                          <input
+                            type="text"
+                            placeholder="Contoh: 57211234567"
+                            value={scopusId}
+                            onChange={(e) => {
+                              setScopusId(e.target.value);
+                              setCheckedScopusAuthor(null);
+                            }}
+                            className="block w-full pl-6 pr-5 py-4 bg-white dark:bg-zinc-900 border-2 border-transparent ring-1 ring-gray-200 dark:ring-zinc-700 rounded-2xl text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-pink-500 transition-all shadow-sm"
+                          />
+                        </div>
+                        <div className="flex gap-3">
                           <button
-                            onClick={handleSync}
-                            disabled={loading || !scholarId}
-                            className="w-full sm:w-auto px-6 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-gray-800 dark:hover:bg-gray-100 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-gray-900/20 dark:shadow-white/10 active:scale-95"
+                            onClick={handleCheckScopusId}
+                            disabled={checkingScopus || !scopusId}
+                            className="px-6 py-4 bg-white dark:bg-zinc-800 border ring-1 ring-gray-200 dark:ring-zinc-700 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-zinc-700 transition-all disabled:opacity-50 flex items-center gap-2"
                           >
-                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                            Sync Data
+                            {checkingScopus ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Cek ID'}
+                          </button>
+                          <button
+                            onClick={handleSaveScopusId}
+                            disabled={loading || !scopusId || (scopusId !== user.scopus_id && !checkedScopusAuthor)}
+                            className="px-8 py-4 bg-pink-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-pink-700 transition-all disabled:opacity-50 shadow-lg shadow-pink-500/30"
+                          >
+                            Simpan
                           </button>
                         </div>
+                      </div>
+                    </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                          {[
-                            { label: 'Total Sitasi', value: scholarData.total_citations, icon: ExternalLink, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-500/10' },
-                            { label: 'H-Index', value: scholarData.h_index, icon: Award, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-500/10' },
-                            { label: 'i10-Index', value: scholarData.i10_index, icon: BookOpen, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-500/10' },
-                          ].map((stat, idx) => (
-                            <div key={idx} className="bg-white dark:bg-zinc-800 p-6 rounded-[2rem] border border-gray-100 dark:border-zinc-700 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
-                              <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full ${stat.bg} opacity-50 group-hover:scale-150 transition-transform duration-500`} />
-                              <div className="relative z-10">
-                                <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center mb-6`}>
-                                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                                </div>
-                                <p className="text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-widest mb-2">{stat.label}</p>
-                                <p className="text-4xl font-black text-gray-900 dark:text-white font-mono">{stat.value || 0}</p>
-                              </div>
-                            </div>
-                          ))}
+                    {checkedScopusAuthor && (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-pink-50 dark:bg-pink-900/10 rounded-3xl flex items-center gap-6 border border-pink-100 dark:border-pink-500/20">
+                        <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white shadow-sm flex items-center justify-center">
+                           <User className="w-8 h-8 text-pink-300" />
                         </div>
-                      </div>
-                    )}
-                    
-                    {/* Empty State */}
-                    {!scholarData && !checkingInfo && (
-                      <div className="text-center py-24 bg-gray-50/50 dark:bg-zinc-800/30 rounded-[2.5rem] border-2 border-dashed border-gray-200 dark:border-zinc-700">
-                        <div className="w-24 h-24 bg-white dark:bg-zinc-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center mx-auto mb-6">
-                           <Globe className="w-10 h-10 text-gray-300 dark:text-zinc-600" />
+                        <div className="flex-1">
+                          <h4 className="font-black text-gray-900 dark:text-white uppercase tracking-wider">{checkedScopusAuthor.name}</h4>
+                          <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 mt-1">{checkedScopusAuthor.affiliations}</p>
                         </div>
-                        <h4 className="text-lg font-black text-gray-900 dark:text-white mb-2">Belum Ada Data Ditarik</h4>
-                        <p className="text-sm font-bold text-gray-500 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed">
-                          Masukkan ID Scholar dan klik "Sync Data" untuk memuat statistik publikasi Anda secara *real-time*.
-                        </p>
-                      </div>
+                        <CheckCircle className="w-6 h-6 text-green-500" />
+                      </motion.div>
                     )}
+
+                    {scopusData ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                        {[
+                          { label: 'Dokumen', value: scopusData.document_count, color: 'text-blue-500' },
+                          { label: 'Sitasi', value: scopusData.total_citations, color: 'text-pink-500' },
+                          { label: 'H-Index', value: scopusData.h_index, color: 'text-purple-500' },
+                        ].map((s, i) => (
+                          <div key={i} className="bg-gray-50/50 dark:bg-zinc-800/40 p-5 rounded-2xl border border-gray-100 dark:border-zinc-700/50">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{s.label}</p>
+                            <p className={`text-2xl font-black ${s.color}`}>{s.value || 0}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                       <div className="flex items-center gap-3 p-4 bg-amber-50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-400 rounded-2xl border border-amber-200/50 text-xs font-bold">
+                         <AlertCircle className="w-4 h-4" /> Belum ada data statistik Scopus. Silakan sync data.
+                       </div>
+                    )}
+
+                    <button
+                      onClick={handleSyncScopus}
+                      disabled={loading || !scopusId}
+                      className="w-full py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-sm active:scale-95 transition-transform"
+                    >
+                      <RefreshCw className={loading ? 'animate-spin' : ''} /> Sync Scopus
+                    </button>
                   </div>
                 </div>
               </motion.div>

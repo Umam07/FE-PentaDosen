@@ -184,7 +184,14 @@ export default function AdminVerification() {
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
                         <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight line-clamp-1">{activeTab === 'documents' ? item.user_name : item.user?.name}</p>
-                        <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">Dosen Pengaju</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Dosen Pengaju</p>
+                          {user?.role === 'admin lppm' && (
+                            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Prodi' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
+                              {item.status === 'Verified by Prodi' ? 'PRODI VERIFIED' : 'BYPASSING PRODI'}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <span className="text-[9px] font-black text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-3 py-1.5 rounded-xl border border-primary-100 dark:border-primary-900/30 uppercase tracking-widest shadow-sm">
                         {activeTab === 'documents' ? item.category : item.program}
@@ -270,7 +277,14 @@ export default function AdminVerification() {
                             <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight group-hover:text-primary-600 transition-colors">
                                {activeTab === 'documents' ? item.user_name : item.user?.name}
                             </p>
-                            <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">{item.fakultas || 'Program Studi'}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{item.fakultas || 'Program Studi'}</p>
+                              {user?.role === 'admin lppm' && (
+                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Prodi' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
+                                  {item.status === 'Verified by Prodi' ? 'PRODI VERIFIED' : 'BYPASSING PRODI'}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 py-6">

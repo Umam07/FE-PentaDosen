@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter } from 'lucide-react';
+import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 
@@ -13,7 +13,8 @@ export default function Publication({ user }: { user: any }) {
   const [weights, setWeights] = useState([]);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
-  const [publishedAt, setPublishedAt] = useState('');
+  const [tahun, setTahun] = useState(new Date().getFullYear().toString());
+  const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
   
@@ -94,7 +95,7 @@ export default function Publication({ user }: { user: any }) {
       };
     }
 
-    if (!publishedAt) return null;
+    if (!tahun) return null;
 
     const selectedWeight = weights.find((w: any) => w.category === category);
     const pts = selectedWeight ? (selectedWeight as any).weight_value : 0;
@@ -104,7 +105,7 @@ export default function Publication({ user }: { user: any }) {
       message: `Masuk Penghitungan KPI: +${pts} Poin`,
       points: pts,
     };
-  }, [publishedAt, docType, category, weights]);
+  }, [tahun, docType, category, weights]);
 
   // Filter dokumen berdasarkan kategori dari sidebar (query param)
   const filteredDocuments = useMemo(() => {
@@ -145,7 +146,7 @@ export default function Publication({ user }: { user: any }) {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file || !title || !category || !publishedAt) {
+    if (!file || !title || !category || !tahun) {
       setMessage('Harap lengkapi semua field.');
       setMessageType('error');
       return;
@@ -162,7 +163,7 @@ export default function Publication({ user }: { user: any }) {
     formData.append('title', title);
     formData.append('category', category);
     formData.append('user_id', user.id);
-    formData.append('published_at', publishedAt);
+    formData.append('published_at', `${tahun}-01-01`);
     formData.append('doc_type', docType);
 
     try {
@@ -177,7 +178,7 @@ export default function Publication({ user }: { user: any }) {
         setMessageType('success');
         setTitle('');
         setFile(null);
-        setPublishedAt('');
+        setTahun(new Date().getFullYear().toString());
         
         setIsTableLoading(true);
         await fetchDocuments();
@@ -484,19 +485,60 @@ export default function Publication({ user }: { user: any }) {
                 );
               })()}
 
-              <div className="space-y-2">
-                <label htmlFor="published_at" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+              <div className="space-y-2 relative">
+                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
                   <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
-                  Tanggal Terbit
+                  Tahun Penelitian
                 </label>
-                <input
-                  type="date"
-                  id="published_at"
-                  required
-                  value={publishedAt}
-                  onChange={(e) => setPublishedAt(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
-                />
+                <button
+                  type="button"
+                  onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-left flex justify-between items-center"
+                >
+                  <span className="text-gray-900 dark:text-zinc-100">{tahun}</span>
+                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isYearDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                <AnimatePresence>
+                  {isYearDropdownOpen && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-20" 
+                        onClick={() => setIsYearDropdownOpen(false)} 
+                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute z-30 w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden origin-top"
+                      >
+                        <div className="max-h-64 overflow-y-auto p-3 grid grid-cols-3 sm:grid-cols-4 gap-2">
+                          {Array.from({ length: 24 }, (_, i) => {
+                            const y = (new Date().getFullYear() - 10 + i).toString();
+                            return (
+                              <button
+                                key={y}
+                                type="button"
+                                onClick={() => {
+                                  setTahun(y);
+                                  setIsYearDropdownOpen(false);
+                                }}
+                                className={`py-2.5 rounded-xl text-sm font-bold transition-all border ${
+                                  tahun === y 
+                                    ? 'bg-primary-600 border-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none' 
+                                    : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 dark:text-zinc-300 hover:border-primary-200 dark:hover:border-primary-800 hover:bg-primary-50 dark:hover:bg-primary-950/30 hover:text-primary-600 dark:hover:text-primary-400'
+                                }`}
+                              >
+                                {y}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div className="flex items-end">
@@ -732,7 +774,7 @@ export default function Publication({ user }: { user: any }) {
               <tr>
                 <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Publikasi</th>
                 <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori</th>
-                <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tgl. Terbit</th>
+                <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tahun</th>
                 <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
                 <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Klasifikasi</th>
                 <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin</th>
@@ -771,7 +813,7 @@ export default function Publication({ user }: { user: any }) {
                         <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-sm">
                           <p className="text-[11px] sm:text-xs lg:text-sm font-extrabold text-gray-900 dark:text-zinc-100 truncate tracking-tight uppercase" title={doc.title}>{doc.title}</p>
                           <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate mt-0.5" title={doc.category}>
-                            <span className="lg:hidden">{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'} • </span>
+                            <span className="lg:hidden">{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
                             {doc.category}
                           </p>
                         </div>
@@ -783,7 +825,7 @@ export default function Publication({ user }: { user: any }) {
                     </td>
                     
                     <td className="hidden md:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle text-xs font-black text-gray-500 dark:text-zinc-400 font-mono tracking-tighter italic">
-                      {doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'}
+                      {doc.published_at ? new Date(doc.published_at).getFullYear() : '-'}
                     </td>
                     
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
