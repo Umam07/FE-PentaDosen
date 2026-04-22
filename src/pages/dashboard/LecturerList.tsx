@@ -162,8 +162,8 @@ export default function LecturerList() {
                           lecturer.name.charAt(0)
                         )}
                       </div>
-                      <div className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ID: {lecturer.id}</p>
+                      <div className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Penta ID: <span className="text-slate-900 dark:text-white">{lecturer.penta_id || `712400${index + 1}`}</span></p>
                       </div>
                     </div>
 
