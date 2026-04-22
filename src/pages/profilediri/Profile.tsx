@@ -24,18 +24,33 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const [activeTab, setActiveTab] = useState<'info' | 'integrasi' | 'insights'>('info');
   const [insightsSubTab, setInsightsSubTab] = useState<'publikasi' | 'penelitian' | 'hki' | 'buku'>('publikasi');
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar'>('scopus');
+  const [publications, setPublications] = useState<any[]>([]);
+  const [scopusPublications, setScopusPublications] = useState<any[]>([]);
+  const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!user?.id) return;
       try {
-        const res = await fetch(`/api/users/${user.id}`);
-        if (res.ok) {
-          const data = await res.json();
+        const [profileRes, docsRes] = await Promise.all([
+          fetch(`/api/users/${user.id}`),
+          fetch(`/api/users/${user.id}/documents`)
+        ]);
+
+        if (profileRes.ok) {
+          const data = await profileRes.json();
           setScholarData(data.scholarData);
           setScopusData(data.scopusData);
+          setPublications(data.publications || []);
+          setScopusPublications(data.scopusPublications || []);
           setScholarId(data.user.scholar_id || '');
           setScopusId(data.user.scopus_id || '');
+          setUser(data.user);
+        }
+
+        if (docsRes.ok) {
+          const docsData = await docsRes.json();
+          setInternalDocuments(docsData.documents || []);
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
@@ -69,9 +84,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   }, [user]);
 
   const scholarChartData = useMemo(() => {
-    if (!scholarData?.publications) return { chartData: [], leftMax: 10, rightMax: 10 };
+    if (!publications || publications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
     const chartDataMap = new Map();
-    scholarData.publications.forEach((pub: any) => {
+    publications.forEach((pub: any) => {
        if (pub.year && pub.year !== 'Unknown') {
          const yearKey = String(pub.year).trim();
          if (!chartDataMap.has(yearKey)) {
@@ -97,9 +112,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   }, [scholarData]);
 
   const scopusChartData = useMemo(() => {
-    if (!scopusData?.publications) return { chartData: [], leftMax: 10, rightMax: 10 };
+    if (!scopusPublications || scopusPublications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
     const chartDataMap = new Map();
-    scopusData.publications.forEach((pub: any) => {
+    scopusPublications.forEach((pub: any) => {
        if (pub.year && pub.year !== 'Unknown') {
          const yearKey = String(pub.year).trim();
          if (!chartDataMap.has(yearKey)) {
@@ -229,6 +244,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         const profileRes = await fetch(`/api/users/${user.id}`);
         const data = await profileRes.json();
         setScholarData(data.scholarData);
+        setPublications(data.publications || []);
         setUser(data.user);
       } else {
         setMessage({ text: 'Gagal sinkronisasi data Scholar.', type: 'error' });
@@ -255,6 +271,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         const profileRes = await fetch(`/api/users/${user.id}`);
         const data = await profileRes.json();
         setScopusData(data.scopusData);
+        setScopusPublications(data.scopusPublications || []);
         setUser(data.user);
       } else {
         setMessage({ text: 'Gagal sinkronisasi data Scopus.', type: 'error' });
@@ -305,6 +322,13 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                   {user?.name || 'User'}
                 </h2>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user?.program_studi || 'Lecturer'}</p>
+                
+                {user?.penta_id && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20 mt-3 mx-auto">
+                    <Fingerprint className="w-3.5 h-3.5" />
+                    <span className="text-[10px] font-black tracking-[0.1em]">{user.penta_id}</span>
+                  </div>
+                )}
               </div>
 
             </div>
@@ -428,6 +452,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                   scholarChartData={scholarChartData}
                   scopusData={scopusData}
                   scholarData={scholarData}
+                  publications={publications}
+                  scopusPublications={scopusPublications}
+                  internalDocuments={internalDocuments}
                   tabVariants={tabVariants}
                 />
               )}

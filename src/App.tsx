@@ -26,12 +26,20 @@ import LecturerList from './pages/dashboard/LecturerList';
 import LecturerProfileInsights from './pages/dashboard/LecturerProfileInsights';
 import DepartementList from './pages/dashboard/DepartementList';
 import ScrollToTop from './components/layout/ScrollToTop';
+import { OnboardingDialog } from './components/ui/onboarding-dialog';
 
 function DashboardRedirect({ user }: { user: any }) {
   if (!user) return <Navigate to="/login" />;
   if (user.role === 'admin lppm' || user.role === 'admin prodi') {
     return <Navigate to="/admin/verify" />;
   }
+  
+  // Redirect new dosen users to profile page to complete setup
+  const hasSeenOnboarding = localStorage.getItem('penta_onboarding_seen');
+  if (!hasSeenOnboarding && user.role === 'dosen') {
+    return <Navigate to="/profile" />;
+  }
+  
   return <Navigate to="/publication" />;
 }
 
@@ -158,6 +166,8 @@ export default function App() {
           <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
         </Route>
       </Routes>
+
+      {user?.role === 'dosen' && <OnboardingDialog />}
 
       {/* Session Expired Modal */}
       <AnimatePresence>
