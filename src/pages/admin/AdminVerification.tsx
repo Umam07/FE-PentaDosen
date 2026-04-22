@@ -66,7 +66,7 @@ export default function AdminVerification() {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, role: user?.role }),
+        body: JSON.stringify({ status, role: user?.role, admin_id: user?.id }),
       });
       if (res.ok) {
         if (activeTab === 'documents') await fetchPendingDocuments();

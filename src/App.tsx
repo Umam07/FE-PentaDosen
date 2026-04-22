@@ -18,6 +18,7 @@ import AdminLecturers from './pages/admin/AdminLecturers';
 import AdminLecturerProfile from './pages/admin/AdminLecturerProfile';
 import AdminSync from './pages/admin/AdminSync';
 import AdminAllDocuments from './pages/admin/AdminAllDocuments';
+import AdminActivityLogs from './pages/admin/AdminActivityLogs';
 import Research from './pages/Research';
 import Home from './pages/Home';
 import ResearchDocs from './pages/ResearchDocs';
@@ -153,6 +154,7 @@ export default function App() {
           <Route path="/admin/lecturers" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/lecturers/:id" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/sync" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminSync /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/activity-logs" element={user?.role === 'admin lppm' ? <AdminActivityLogs /> : <Navigate to="/dashboard" />} />
           <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
         </Route>
       </Routes>

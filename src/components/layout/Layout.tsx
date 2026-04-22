@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FileText, CheckSquare, Users, 
   RefreshCw, FolderOpen, Beaker, Award, BookOpen,
-  ClipboardList, FileSignature
+  ClipboardList, FileSignature, Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Sidebar from './Sidebar';
@@ -78,6 +78,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     { name: 'Verifikasi', path: '/admin/verify', icon: CheckSquare, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin prodi'] },
+    { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm'] },
     // === HIDDEN (selalu di-hidden dari nav) ===
     { name: 'Profil Saya', path: '/profile', icon: Users, roles: ['admin lppm', 'admin prodi', 'dosen'], hidden: true },
   ];
