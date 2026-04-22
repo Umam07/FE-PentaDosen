@@ -10,7 +10,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import { LogOut, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import DashboardAll from './pages/dashboard/Dashboard';
+import Insights from './pages/dashboard/Insights';
 import Profile from './pages/Profile';
 import Publication from './pages/Publication';
 import AdminVerification from './pages/admin/AdminVerification';
@@ -22,7 +22,7 @@ import Research from './pages/Research';
 import Home from './pages/Home';
 import ResearchDocs from './pages/ResearchDocs';
 import LecturerList from './pages/dashboard/LecturerList';
-import LecturerProfileDashboard from './pages/dashboard/LecturerProfileDashboard';
+import LecturerProfileInsights from './pages/dashboard/LecturerProfileInsights';
 import DepartementList from './pages/dashboard/DepartementList';
 import ScrollToTop from './components/layout/ScrollToTop';
 
@@ -135,10 +135,10 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/dashboard-all" element={user ? <Navigate to="/dashboard" /> : <DashboardAll />} />
+        <Route path="/insights" element={user ? <Navigate to="/dashboard" /> : <Insights />} />
         <Route path="/departments" element={<DepartementList />} />
         <Route path="/lecturers" element={<LecturerList />} />
-        <Route path="/lecturer/:id" element={<LecturerProfileDashboard />} />
+        <Route path="/lecturer/:id" element={<LecturerProfileInsights />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
         <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register setUser={setUser} />} />
 

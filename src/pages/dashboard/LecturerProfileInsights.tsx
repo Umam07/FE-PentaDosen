@@ -10,7 +10,7 @@ import {
 import Navbar from '../../components/Home/Navbar';
 import Footer from '../../components/Home/Footer';
 
-export default function LecturerProfileDashboard() {
+export default function LecturerProfileInsights() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);

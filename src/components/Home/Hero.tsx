@@ -1,5 +1,6 @@
-import { motion } from 'motion/react';
-import { LayoutDashboard, Play, Terminal, CheckCircle2, ShieldCheck, Database, Activity, Code2, Braces, Award } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
+import { LayoutDashboard, Terminal, CheckCircle2, ShieldCheck, Database, Activity, Code2, Braces, Award, MousePointer2, MoveRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Hero() {
@@ -22,6 +23,57 @@ export default function Hero() {
 
   const typingText = "Mengkalkulasi poin KPI evaluasi dosen...";
 
+  // Logic untuk Panah Penunjuk Button
+  const buttonRef = useRef<HTMLAnchorElement>(null);
+  const [rotation, setRotation] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  // Spring effect untuk pergerakan halus
+  const springX = useSpring(mouseX, { damping: 25, stiffness: 200 });
+  const springY = useSpring(mouseY, { damping: 25, stiffness: 200 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Hanya aktifkan di desktop atau layar lebar
+      if (window.innerWidth < 1024) return;
+      
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+      
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Kalkulasi sudut antara mouse dan tengah button
+        const angle = Math.atan2(centerY - e.clientY, centerX - e.clientX) * (180 / Math.PI);
+        setRotation(angle);
+        
+        // Tampilkan panah jika mouse berada di area hero
+        const heroSection = document.getElementById('hero');
+        if (heroSection) {
+          const heroRect = heroSection.getBoundingClientRect();
+          if (
+            e.clientX >= heroRect.left && 
+            e.clientX <= heroRect.right && 
+            e.clientY >= heroRect.top && 
+            e.clientY <= heroRect.bottom
+          ) {
+            setIsVisible(true);
+          } else {
+            setIsVisible(false);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [mouseX, mouseY]);
+
   return (
     <section id="hero" className="relative pt-32 pb-20 md:pt-48 md:pb-40 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-300">
       {/* Background Decor */}
@@ -36,18 +88,7 @@ export default function Hero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24 relative">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 px-4 py-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-primary-100 dark:border-primary-900/50 rounded-full mb-8 shadow-sm transition-colors duration-300"
-          >
-            <span className="flex h-2.5 w-2.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-600 dark:bg-primary-500"></span>
-            </span>
-            <span className="text-[10px] md:text-xs font-bold text-primary-800 dark:text-primary-300 uppercase tracking-[0.2em]">Platform Evaluasi Kinerja Dosen #1</span>
-          </motion.div>
+
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -82,10 +123,11 @@ export default function Hero() {
           >
             {/* Primary Button */}
             <Link
-              to="/dashboard-all"
+              ref={buttonRef}
+              to="/insights"
               className="w-full sm:w-auto flex items-center justify-center gap-3 bg-slate-900 dark:bg-primary-600 hover:bg-primary-600 dark:hover:bg-primary-500 text-white font-bold text-base px-10 py-5 rounded-2xl shadow-2xl shadow-slate-200 dark:shadow-none transition-all duration-300 group overflow-hidden relative"
             >
-              <span className="relative z-10">PentaDashboard</span>
+              <span className="relative z-10">PentaInsights</span>
               <LayoutDashboard className="w-5 h-5 group-hover:rotate-12 transition-transform relative z-10" />
               <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
@@ -97,14 +139,7 @@ export default function Hero() {
               />
             </Link>
 
-            {/* Secondary Button */}
-            <a
-              href="#about"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border-2 border-slate-100 dark:border-slate-800 font-bold text-base px-10 py-5 rounded-2xl transition-all duration-300 shadow-sm dark:shadow-none"
-            >
-              <Play className="w-5 h-5 fill-current text-primary-600 dark:text-primary-400" />
-              Pelajari Fitur
-            </a>
+
           </motion.div>
         </div>
 
@@ -292,6 +327,73 @@ export default function Hero() {
           <div className="absolute -inset-4 bg-gradient-to-r from-primary-600 to-indigo-600 rounded-[2rem] opacity-20 blur-2xl -z-10 group-hover:opacity-30 transition-opacity duration-500"></div>
         </motion.div>
       </div>
+
+      {/* Directional Arrow Overlay (Premium Cyber-Guidance) */}
+      <motion.div
+        className="fixed top-0 left-0 pointer-events-none z-[9999] hidden lg:block"
+        style={{
+          x: springX,
+          y: springY,
+          opacity: isVisible ? 1 : 0,
+        }}
+      >
+        <motion.div
+          animate={{ 
+            rotate: rotation,
+            scale: isVisible ? 1 : 0.5,
+          }}
+          transition={{ type: "spring", damping: 15, stiffness: 100 }}
+          className="relative"
+        >
+          {/* Main Arrow Container */}
+          <div className="relative flex items-center justify-center -translate-x-1/2 -translate-y-1/2">
+            
+            {/* Outer Rotating Ring (Decorative) */}
+            <motion.div 
+               animate={{ rotate: 360 }}
+               transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+               className="absolute w-20 h-20 border-2 border-dashed border-primary-500/20 rounded-full"
+            />
+            
+            {/* Pulsing Brackets */}
+            <motion.div 
+               animate={{ 
+                 scale: [1, 1.1, 1],
+                 opacity: [0.3, 0.6, 0.3]
+               }}
+               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute w-16 h-16 border-x-2 border-primary-500/40 rounded-xl"
+            />
+
+            {/* Glowing Core */}
+            <div className="relative group">
+               <div className="absolute -inset-2 bg-gradient-to-r from-primary-600 to-indigo-600 rounded-full blur-md opacity-40 group-hover:opacity-70 transition-opacity" />
+               
+               <div className="relative bg-white/10 dark:bg-slate-900/40 backdrop-blur-xl p-4 rounded-full border border-white/20 dark:border-primary-500/30 shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center justify-center overflow-hidden">
+                  {/* Internal Scanning Line */}
+                  <motion.div 
+                    animate={{ x: [-20, 20, -20] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-0 bottom-0 w-0.5 bg-primary-400/30 blur-sm"
+                  />
+                  
+                  <MoveRight className="w-6 h-6 text-primary-600 dark:text-white relative z-10" strokeWidth={3} />
+               </div>
+            </div>
+
+            {/* Floating Info Tag */}
+            <motion.div 
+               style={{ rotate: -rotation }} // Keep text level
+               className="absolute left-16 px-3 py-1 bg-slate-900/90 dark:bg-primary-600/90 text-white text-[10px] rounded-lg font-black uppercase tracking-tighter shadow-xl border border-white/20 flex flex-col items-start min-w-[100px]"
+            >
+               <span className="opacity-60 text-[8px]">TARGET LOCKED</span>
+               <span className="flex items-center gap-1">
+                 PANEL INSIGHTS <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" />
+               </span>
+            </motion.div>
+          </div>
+        </motion.div>
+      </motion.div>
 
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes blob {

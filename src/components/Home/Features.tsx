@@ -77,14 +77,6 @@ export default function Features() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-20 flex flex-col items-center">
-          <motion.div
-            style={{ opacity: 0 }}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center px-4 py-1.5 bg-primary-50/80 dark:bg-primary-950/30 backdrop-blur-sm border border-primary-100/50 dark:border-primary-800/30 rounded-full mb-6 shadow-sm shadow-primary-50/50"
-          >
-            <span className="text-xs font-black tracking-wider uppercase text-primary-600 dark:text-primary-400">Platform Features</span>
-          </motion.div>
 
           <motion.h2
             style={{ opacity: 0 }}

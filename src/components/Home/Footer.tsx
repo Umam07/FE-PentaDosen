@@ -1,6 +1,17 @@
 import { MouseEvent } from 'react';
-import { MapPin, Mail, Phone, Hexagon, ArrowRight, Github, Twitter, Linkedin } from 'lucide-react';
+import { MapPin, Mail, Phone, Hexagon, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function Footer() {
   const handleScrollTo = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -33,17 +44,7 @@ export default function Footer() {
             <p className="text-sm font-bold text-gray-400 leading-relaxed max-w-sm">
               Sistem terintegrasi untuk pendataan publikasi, sitasi, serta administrasi dokumen dosen secara aman dan dinamis.
             </p>
-            <div className="flex items-center gap-3">
-              <a href="#" className="p-2 border border-gray-800 rounded-xl hover:bg-gray-800 hover:text-white transition-all">
-                <Github className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 border border-gray-800 rounded-xl hover:bg-gray-800 hover:text-white transition-all">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 border border-gray-800 rounded-xl hover:bg-gray-800 hover:text-white transition-all">
-                <Twitter className="w-5 h-5" />
-              </a>
-            </div>
+
           </div>
 
           {/* Navigation Links */}
@@ -113,8 +114,89 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-xs font-bold text-gray-600">
           <p>© {new Date().getFullYear()} PentaDosen Team. All rights reserved.</p>
           <div className="flex items-center gap-4 mt-4 sm:mt-0">
-            <a href="#" className="hover:text-gray-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-gray-400 transition-colors">Terms of Service</a>
+            {/* Privacy Policy Modal */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="hover:text-gray-400 transition-colors uppercase tracking-widest text-[10px]">Privacy Policy</button>
+              </DialogTrigger>
+              <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg [&>button:last-child]:top-3.5 bg-[#0B0F19] border-gray-800 text-gray-300">
+                <DialogHeader className="contents space-y-0 text-left">
+                  <DialogTitle className="border-b border-gray-800 px-6 py-4 text-base font-black text-white uppercase tracking-tighter">
+                    Privacy Policy
+                  </DialogTitle>
+                  <div className="overflow-y-auto">
+                    <DialogDescription asChild>
+                      <div className="px-6 py-6 text-sm leading-relaxed space-y-6">
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">1. Pengumpulan Data</h4>
+                          <p>Kami mengumpulkan informasi yang Anda berikan secara langsung kepada kami saat mendaftar, termasuk nama, email, dan data publikasi ilmiah Anda.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">2. Penggunaan Informasi</h4>
+                          <p>Informasi yang dikumpulkan digunakan untuk mengelola akun Anda, memvalidasi data publikasi melalui sistem TiDB, dan meningkatkan layanan kami.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">3. Keamanan Data</h4>
+                          <p>Kami menerapkan standar keamanan enkripsi SSL 256-bit untuk melindungi dokumen dan data pribadi Anda dari akses tidak sah.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">4. Berbagi Data</h4>
+                          <p>Kami tidak akan menjual data pribadi Anda kepada pihak ketiga. Data hanya dibagikan untuk kepentingan administrasi kampus sesuai regulasi yang berlaku.</p>
+                        </div>
+                      </div>
+                    </DialogDescription>
+                    <DialogFooter className="px-6 pb-6 sm:justify-end">
+                      <DialogClose asChild>
+                        <Button type="button" className="bg-primary-500 hover:bg-primary-600 text-white font-bold uppercase tracking-widest text-[10px] px-6">Mengerti</Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </div>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+
+            <span className="text-gray-800">•</span>
+
+            {/* Terms of Service Modal */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="hover:text-gray-400 transition-colors uppercase tracking-widest text-[10px]">Terms of Service</button>
+              </DialogTrigger>
+              <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg [&>button:last-child]:top-3.5 bg-[#0B0F19] border-gray-800 text-gray-300">
+                <DialogHeader className="contents space-y-0 text-left">
+                  <DialogTitle className="border-b border-gray-800 px-6 py-4 text-base font-black text-white uppercase tracking-tighter">
+                    Terms of Service
+                  </DialogTitle>
+                  <div className="overflow-y-auto">
+                    <DialogDescription asChild>
+                      <div className="px-6 py-6 text-sm leading-relaxed space-y-6">
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">1. Penerimaan Ketentuan</h4>
+                          <p>Dengan menggunakan platform PentaDosen, Anda setuju untuk terikat oleh syarat dan ketentuan penggunaan yang berlaku.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">2. Akurasi Data</h4>
+                          <p>Dosen bertanggung jawab atas kebenaran data publikasi dan dokumen yang diunggah ke dalam sistem.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">3. Batasan Tanggung Jawab</h4>
+                          <p>Tim PentaDosen tidak bertanggung jawab atas kerugian yang timbul akibat kesalahan input data oleh pengguna atau penyalahgunaan akun.</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-black text-white uppercase text-xs tracking-widest">4. Perubahan Ketentuan</h4>
+                          <p>Kami berhak memperbarui syarat dan ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan melalui platform kami.</p>
+                        </div>
+                      </div>
+                    </DialogDescription>
+                    <DialogFooter className="px-6 pb-6 sm:justify-end">
+                      <DialogClose asChild>
+                        <Button type="button" className="bg-primary-500 hover:bg-primary-600 text-white font-bold uppercase tracking-widest text-[10px] px-6">Setuju</Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </div>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>

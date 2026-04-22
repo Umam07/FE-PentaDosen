@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Quote, Instagram } from 'lucide-react';
+import { CircularTestimonials } from '../ui/circular-testimonials';
 
 export default function AboutUs() {
   const members = [
@@ -10,6 +11,7 @@ export default function AboutUs() {
       image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Kiki_l5i0u9.jpg',
       bgColor: 'primary',
       instagram: 'https://www.instagram.com/kim.aimarr?igsh=ZXRnNzM2cnJvbWV5',
+      bio: "Fokus pada integrasi data dan performa sistem untuk memastikan pengalaman pengguna yang mulus."
     },
     {
       name: "Muhammad Syafi'ul Umam",
@@ -18,6 +20,7 @@ export default function AboutUs() {
       image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Mamz_oz4gxx.jpg',
       bgColor: 'blue',
       instagram: 'https://www.instagram.com/umammskyy?igsh=MWY4Z212M3U5OGloag==',
+      bio: "Menciptakan antarmuka yang modern, responsif, dan intuitif menggunakan teknologi web terkini."
     },
     {
       name: 'Rafi Daniswara',
@@ -26,8 +29,17 @@ export default function AboutUs() {
       image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Denis_ohil78.jpg',
       bgColor: 'violet',
       instagram: 'https://www.instagram.com/ravidnss?igsh=MWkyaWZmNWI4N3hxOQ==',
+      bio: "Membangun arsitektur server yang kokoh dan scalable untuk mendukung seluruh ekosistem aplikasi."
     },
   ];
+
+  // Map members to the format expected by CircularTestimonials
+  const teamTestimonials = members.map(m => ({
+    name: m.name,
+    designation: `${m.role} • ${m.npm}`,
+    quote: m.bio,
+    src: m.image
+  }));
 
   return (
     <section id="about" className="py-20 md:py-32 bg-[#F8FAFC] dark:bg-slate-950 relative overflow-hidden">
@@ -61,87 +73,72 @@ export default function AboutUs() {
           </motion.p>
         </div>
 
-        {/* Members Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto mb-24">
-          {members.map((member, index) => (
-            <motion.div
-              key={member.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
-              /* FIX GECKO 1: Tambahkan transform-gpu, backface-hidden, dan translate-z-0 di parent pembungkus paling luar */
-              className="group relative rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary-500/20 transition-all duration-500 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 isolate transform-gpu backface-hidden translate-z-0"
-            >
-              {/* Image Container */}
-              <div 
-                /* FIX GECKO 2: Pastikan properti 3D juga ada di container gambar */
-                className="aspect-[4/5] relative overflow-hidden bg-gray-200 dark:bg-slate-800 transform-gpu backface-hidden translate-z-0"
-                style={{ 
-                  WebkitMaskImage: '-webkit-radial-gradient(white, black)',
-                  /* FIX GECKO 3: Tambahkan properti mask-image standar untuk Firefox/Zen */
-                  maskImage: 'radial-gradient(white, black)'
-                }} 
-              >
-                <img 
-                  src={member.image} 
-                  alt={member.name}
-                  loading="lazy"
-                  decoding="async"
-                  /* FIX GECKO 4: backface-hidden di img sangat penting untuk Firefox agar sudut tidak pecah */
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out transform-gpu will-change-transform group-hover:scale-110 backface-hidden translate-z-0"
-                />
-                
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300 pointer-events-none" />
-                
-                {/* Social Links */}
-                <div className="absolute top-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20">
-                  <a 
-                    href={member.instagram} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-primary-500 text-white transition-colors"
-                  >
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                </div>
-
-                {/* Info Container */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-10">
-                  <span className="inline-block px-3 py-1 mb-3 text-xs font-bold text-primary-100 bg-primary-600/80 backdrop-blur-sm rounded-full tracking-wider">
-                    {member.npm}
-                  </span>
-                  <h4 className="text-2xl font-black text-white mb-1">{member.name}</h4>
-                  <p className="text-sm font-medium text-gray-300">{member.role}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+        {/* Team Members Circular Section */}
+        <div className="flex justify-center mb-20">
+          <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[3rem] p-4 md:p-12 shadow-2xl border border-white/20 dark:border-slate-800 w-full flex justify-center">
+            <CircularTestimonials
+              testimonials={teamTestimonials}
+              autoplay={true}
+              colors={{
+                name: "var(--color-primary-600)",
+                designation: "var(--color-slate-500)",
+                testimony: "var(--color-slate-700)",
+                arrowBackground: "var(--color-slate-900)",
+                arrowForeground: "#fff",
+                arrowHoverBackground: "var(--color-primary-500)",
+              }}
+              fontSizes={{
+                name: "32px",
+                designation: "18px",
+                quote: "20px",
+              }}
+            />
+          </div>
         </div>
 
-        {/* Philosophy Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="relative max-w-5xl mx-auto rounded-[2.5rem] p-10 md:p-16 bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-900 dark:to-black shadow-2xl overflow-hidden group mb-10"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+        {/* Philosophy Section - Connected Style */}
+        <div className="relative pt-10">
+          {/* Connector Glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-32 bg-gradient-to-b from-primary-500/20 to-transparent -translate-y-24 hidden md:block" />
           
-          <Quote className="w-32 h-32 text-white/5 absolute -top-6 -left-6 -z-0 group-hover:scale-110 group-hover:text-white/10 transition-all duration-700 rotate-12" />
-          
-          <div className="relative z-10 text-center flex flex-col items-center">
-             <h4 className="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">
-               Filosofi Tim Kami
-             </h4>
-             <h3 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-blue-400 leading-tight max-w-3xl">
-               "Fokus pada kesederhanaan, hasilkan keunggulan."
-             </h3>
-          </div>
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.21, 1.02, 0.47, 0.98] }}
+            className="relative max-w-4xl mx-auto"
+          >
+            {/* Background Glows */}
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-full h-full bg-primary-500/5 blur-[100px] -z-10" />
+            
+            <div className="bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl rounded-[3rem] p-10 md:p-20 border border-white/20 dark:border-slate-800/50 shadow-2xl overflow-hidden group">
+              {/* Decorative Quote Mark */}
+              <Quote className="w-32 h-32 text-primary-500/5 absolute -top-6 -left-6 -z-0 group-hover:rotate-12 group-hover:scale-110 transition-all duration-700 pointer-events-none" />
+              <Quote className="w-24 h-24 text-blue-500/5 absolute -bottom-4 -right-4 -z-0 -rotate-12 group-hover:-rotate-12 group-hover:scale-110 transition-all duration-700 pointer-events-none" />
+              
+              <div className="relative z-10 text-center flex flex-col items-center">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="px-4 py-1.5 rounded-full bg-primary-500/10 dark:bg-primary-500/20 border border-primary-500/20 mb-8"
+                >
+                  <span className="text-[10px] md:text-xs font-black text-primary-600 dark:text-primary-400 uppercase tracking-[0.3em]">
+                    Visi & Dedikasi
+                  </span>
+                </motion.div>
+                
+                <h3 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] mb-2">
+                  "Fokus pada <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-blue-500 dark:from-primary-400 dark:to-blue-400">kesederhanaan</span>,
+                </h3>
+                <h3 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.1]">
+                  hasilkan <span className="italic font-serif text-primary-600 dark:text-primary-400">keunggulan</span>."
+                </h3>
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
       </div>
     </section>

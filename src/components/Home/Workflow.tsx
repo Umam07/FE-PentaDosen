@@ -1,182 +1,214 @@
-import { motion } from 'motion/react';
-import { UserPlus, UploadCloud, CheckSquare, BarChart2 } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { useRef } from 'react';
+import { 
+  UserCheck, 
+  FileText, 
+  ShieldCheck, 
+  Award, 
+  PieChart,
+  ArrowRight,
+  User,
+  Users,
+  Settings
+} from 'lucide-react';
 
 export default function Workflow() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start 85%", "start 15%"]
+  });
+
   const steps = [
     {
-      number: '01',
-      title: 'Daftar & Login',
-      description: 'Dosen mendaftarkan akun dengan mengisi data diri serta memilih Institusi atau Fakultas terkait.',
-      icon: UserPlus,
-      glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(45,212,191,0.5)]',
-      iconTheme: 'text-teal-500',
-      bgTheme: 'bg-teal-500/10',
-      strokeColor: 'text-teal-500',
+      id: 1,
+      title: 'Otentikasi & Integrasi',
+      subtitle: 'Seamless Access',
+      description: 'Login menggunakan akun institusi (SSO) yang terhubung dengan LDAP dan sinkronisasi otomatis SINTA/Sister.',
+      icon: UserCheck,
+      role: 'Dosen',
+      color: 'blue'
     },
     {
-      number: '02',
-      title: 'Berbagi Dokumen',
-      description: 'Lengkapi berkas Publikasi, HKI, maupun laporan Penelitian Anda ke penyimpanan berkas utama.',
-      icon: UploadCloud,
-      glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)]',
-      iconTheme: 'text-blue-500',
-      bgTheme: 'bg-blue-500/10',
-      strokeColor: 'text-blue-500',
+      id: 2,
+      title: 'Manajemen Kinerja',
+      subtitle: 'Unified Portfolio',
+      description: 'Input terpusat untuk publikasi, HKI, penelitian, dan pengabdian masyarakat dalam satu dasbor intuitif.',
+      icon: FileText,
+      role: 'Dosen',
+      color: 'blue'
     },
     {
-      number: '03',
-      title: 'Verifikasi Berkas',
-      description: 'Dokumen masuk ke tahap pemeriksaan oleh Tim Verifikator sebelum disinkronkan ke nilai pimpinan.',
-      icon: CheckSquare,
-      glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)]',
-      iconTheme: 'text-emerald-500',
-      bgTheme: 'bg-emerald-500/10',
-      strokeColor: 'text-emerald-500',
+      id: 3,
+      title: 'Verifikasi Berjenjang',
+      subtitle: 'Initial Audit',
+      description: 'Review komprehensif oleh Admin Program Studi untuk menjamin validitas berkas sebelum diproses lebih lanjut.',
+      icon: ShieldCheck,
+      role: 'Admin Prodi',
+      color: 'blue'
     },
     {
-      number: '04',
-      title: 'Hasil Visualisasi',
-      description: 'Dapatkan rekapitulasi nilai kumulatif, statistik sitasi, dan grafik representatif di dashboard Anda.',
-      icon: BarChart2,
-      glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.5)]',
-      iconTheme: 'text-violet-500',
-      bgTheme: 'bg-violet-500/10',
-      strokeColor: 'text-violet-500',
+      id: 4,
+      title: 'Validasi Akhir LPPM',
+      subtitle: 'Final Accreditation',
+      description: 'Verifikasi tingkat universitas oleh LPPM untuk sinkronisasi skor SIKD dan penetapan status kinerja.',
+      icon: Award,
+      role: 'Admin LPPM',
+      color: 'blue'
     },
+    {
+      id: 5,
+      title: 'Analisis Statistik',
+      subtitle: 'Executive Insight',
+      description: 'Visualisasi skor kinerja dan tren produktivitas dosen secara real-time untuk pengambilan keputusan strategis.',
+      icon: PieChart,
+      role: 'Dosen & Pimpinan',
+      color: 'blue'
+    }
   ];
 
   return (
-    <section id="workflow" className="py-24 md:py-40 bg-[#FAFAFA] dark:bg-[#0A0A0A] relative overflow-hidden font-sans">
-      
-      {/* Background Texture Overlay */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none z-0"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px] opacity-40 z-0"></div>
+    <section 
+      id="workflow" 
+      ref={containerRef}
+      className="py-32 md:py-48 bg-[#FAFAFA] dark:bg-[#030303] relative overflow-hidden font-sans"
+    >
+      {/* Premium Background Backgrounds */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(37,99,235,0.03),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay pointer-events-none" />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
         {/* Header Section */}
-        <div className="text-center max-w-3xl mx-auto mb-32 relative">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm mb-8"
-          >
-            <span className="flex h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse"></span>
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Live Tracker Process</span>
-          </motion.div>
-
+        <div className="text-center max-w-4xl mx-auto mb-32">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl md:text-5xl lg:text-7xl font-black text-gray-900 dark:text-white tracking-tighter leading-tight mb-6"
+            transition={{ duration: 0.6 }}
+             className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-none mb-6"
           >
-            Sistem Kerja <br />
-            Yang <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 via-blue-500 to-violet-500">Terstruktur</span>
+            Alur Kerja Produktivitas <br />
+            <span className="text-blue-600 dark:text-blue-500">Penta Dosen</span>
           </motion.h2>
+          
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-base md:text-lg font-bold text-gray-500 dark:text-gray-400 leading-relaxed max-w-3xl mx-auto"
           >
-            Pantau setiap tahapan secara real-time. Alur kerja dinamis yang dirancang untuk mempercepat birokrasi dan meningkatkan kinerja publikasi Anda.
+            Sistem terintegrasi yang menghubungkan Dosen, Admin, dan Pimpinan dalam satu ekosistem produktivitas yang transparan.
           </motion.p>
         </div>
 
-        {/* Timeline Sequence - Zig Zag Layout */}
-        <div className="relative mt-20">
-          
-          {/* Main Horizontal Progress Bar Axis (Desktop Only) */}
-          {/* Diposisikan tepat di tengah-tengah secara vertikal */}
-          <div className="hidden lg:block absolute top-[40%] left-[10%] right-[10%] h-1 bg-gray-200 dark:bg-gray-800/80 rounded-full z-0 overflow-hidden shadow-inner">
-            <motion.div
-              initial={{ width: "0%" }}
-              whileInView={{ width: "100%" }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 2.5, ease: "easeInOut" }}
-              className="h-full bg-gradient-to-r from-teal-500 via-blue-500 to-violet-500 relative"
-            >
-              {/* Glowing tip */}
-              <div className="absolute top-0 right-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent blur-[2px]" />
-            </motion.div>
+        {/* Workflow Timeline */}
+        <div className="relative" ref={timelineRef}>
+          {/* Central Progress Line Logic */}
+          <div className="hidden lg:block absolute top-[60px] left-10 right-10 h-[2px] z-0 overflow-hidden">
+             {/* Background Line */}
+            <div className="h-full w-full bg-gray-200 dark:bg-gray-800/60 rounded-full" />
+            
+            {/* Active Filling Line */}
+            <motion.div 
+              className="absolute top-0 left-0 h-full bg-blue-600 dark:bg-blue-500 origin-left"
+              style={{ scaleX: scrollYProgress }}
+            />
+
+            {/* Moving Particle Effect */}
+            <motion.div 
+              className="absolute top-0 w-20 h-full bg-gradient-to-r from-transparent via-blue-400 to-transparent z-10"
+              animate={{ left: ['0%', '100%'] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+            />
           </div>
 
-          {/* Grid Container */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative z-10 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-6 relative z-10">
             {steps.map((step, index) => {
               const Icon = step.icon;
-              // Logika Zig-Zag: Index ganjil (1, 3) akan turun, genap (0, 2) akan naik.
-              const isStaggeredDown = index % 2 !== 0;
               
+              // More aggressive activation mapping
+              const stepTrigger = index / steps.length;
+              const isActive = useTransform(
+                scrollYProgress,
+                [stepTrigger, Math.min(stepTrigger + 0.1, 1)],
+                [0, 1]
+              );
+              const scale = useTransform(isActive, [0, 1], [0.95, 1.05]);
+              const opacity = useTransform(isActive, [0, 1], [0.4, 1]);
+
               return (
                 <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, y: isStaggeredDown ? 80 : -20 }}
-                  whileInView={{ opacity: 1, y: isStaggeredDown ? 48 : -48 }} // 48px offset (translate-y-12)
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ duration: 0.7, delay: index * 0.15, type: 'spring', stiffness: 80 }}
-                  className="relative group flex flex-col items-center text-center w-full"
+                  key={step.id}
+                  style={{ scale, opacity }}
+                  className="relative group pt-4"
                 >
-                  
-                  {/* Floating Number Watermark (Dipindah ke belakang) */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 text-[140px] font-black text-gray-100/60 dark:text-white/[0.02] transition-transform duration-700 group-hover:-translate-y-4 pointer-events-none z-0 select-none">
-                    {step.number}
-                  </div>
-
-                  {/* Circular Progress & Icon Node */}
-                  <div className="relative w-40 h-40 flex items-center justify-center mb-8 z-10">
-                    
-                    {/* SVG Circular Progress Ring */}
-                    <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-xl transition-transform duration-500 group-hover:scale-105" viewBox="0 0 100 100">
-                      <circle 
-                        cx="50" cy="50" r="46" 
-                        stroke="currentColor" strokeWidth="1" fill="none" 
-                        className="text-gray-200 dark:text-gray-800/80" 
+                  <div className="flex flex-col items-center">
+                    {/* Node Icon Cluster */}
+                    <div className="relative mb-8">
+                      {/* Active Pulse Aura */}
+                      <motion.div 
+                         style={{ scale: isActive, opacity: isActive }}
+                         className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full"
                       />
-                      <motion.circle
-                        cx="50" cy="50" r="46"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        fill="none"
-                        strokeLinecap="round"
-                        className={step.strokeColor}
-                        initial={{ strokeDasharray: 290, strokeDashoffset: 290 }}
-                        whileInView={{ strokeDashoffset: 0 }}
-                        viewport={{ once: true, margin: "-50px" }}
-                        transition={{ duration: 1.2, delay: (index * 0.4) + 0.3, ease: "easeOut" }}
-                      />
-                    </svg>
+                      
+                      <motion.div 
+                        whileHover={{ rotateY: 15, rotateX: -5, scale: 1.1 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                        className="w-24 h-24 lg:w-28 lg:h-28 rounded-3xl bg-white dark:bg-white/[0.03] backdrop-blur-2xl border border-gray-100 dark:border-white/5 flex items-center justify-center shadow-2xl relative z-20 group-hover:border-blue-500/30 transition-colors"
+                      >
+                         <Icon className={`w-10 h-10 lg:w-12 lg:h-12 text-blue-600 dark:text-blue-500 transition-transform duration-300 group-hover:scale-110`} />
+                         
+                         {/* Step Badge */}
+                         <div className="absolute -top-3 -right-3 w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-black shadow-lg">
+                           {step.id}
+                         </div>
+                      </motion.div>
 
-                    {/* Inner Icon Orb */}
-                    <div className={`w-24 h-24 rounded-full bg-white dark:bg-black/80 backdrop-blur-sm border border-gray-100 dark:border-gray-800/50 flex items-center justify-center shadow-2xl relative z-10 ${step.glow} transition-all duration-500 group-hover:scale-110 overflow-hidden`}>
-                      <div className={`absolute inset-0 ${step.bgTheme} opacity-40 dark:opacity-20`} />
-                      <Icon className={`w-10 h-10 ${step.iconTheme} relative z-10 transition-transform duration-300 group-hover:rotate-6`} />
+                      {/* Role Floating Label */}
+                      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1 bg-white dark:bg-gray-900 border border-gray-100 dark:border-white/10 rounded-full shadow-md z-30">
+                         <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-1">
+                           <User size={10} className="text-blue-500" /> {step.role}
+                         </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Text Content */}
-                  <div className="relative z-10 px-4 bg-white/50 dark:bg-[#0A0A0A]/50 backdrop-blur-md py-4 rounded-2xl">
-                    <div className="inline-block mb-3 px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs font-extrabold tracking-wider text-gray-500 dark:text-gray-400 uppercase">
-                      Tahap {parseInt(step.number)}
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight mb-3 transition-colors duration-300 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-gray-500 dark:group-hover:from-white dark:group-hover:to-gray-400">
-                      {step.title}
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
-                      {step.description}
-                    </p>
-                  </div>
+                    {/* Content Glass Card */}
+                    <motion.div 
+                      whileHover={{ y: -10 }}
+                      className="w-full bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-[40px] p-8 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] group-hover:bg-white dark:group-hover:bg-white/[0.05]"
+                    >
+                      <h4 className="text-[10px] font-black text-blue-600/60 uppercase tracking-[.2em] mb-3">
+                        {step.subtitle}
+                      </h4>
+                      <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-4 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm lg:text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                        {step.description}
+                      </p>
 
+                      <div className="mt-8 pt-6 border-t border-gray-50 dark:border-white/5 flex items-center justify-between">
+                         <span className="text-[10px] font-bold text-gray-300 dark:text-gray-700">0{step.id} / 05</span>
+                         <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <ArrowRight size={14} className="text-blue-600" />
+                         </div>
+                      </div>
+                    </motion.div>
+                  </div>
                 </motion.div>
               );
             })}
           </div>
         </div>
       </div>
+
+      {/* Modern Grid Overlays */}
+      <div className="absolute top-[20%] left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-800 to-transparent pointer-events-none" />
+      <div className="absolute bottom-[20%] left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-800 to-transparent pointer-events-none" />
     </section>
   );
 }

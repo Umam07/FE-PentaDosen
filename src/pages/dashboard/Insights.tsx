@@ -89,7 +89,7 @@ const renderActiveShape = (props: any) => {
   );
 };
 
-export default function DashboardAll() {
+export default function Insights() {
   const { isCollapsed } = (useOutletContext<{ isCollapsed: boolean }>() || { isCollapsed: false });
   const navigate = useNavigate();
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
@@ -119,7 +119,7 @@ export default function DashboardAll() {
         setFakultasData(fakData.data || []);
         setStats(sData);
       } catch (error) {
-        console.error('Failed to fetch dashboard data', error);
+        console.error('Failed to fetch insights data', error);
       } finally {
         setLoading(false);
       }
@@ -191,22 +191,11 @@ export default function DashboardAll() {
           
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             <div className="lg:col-span-7 space-y-10">
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-900/5 dark:bg-white/5 backdrop-blur-md border border-slate-900/10 dark:border-white/10 text-slate-600 dark:text-slate-300 text-[11px] font-black uppercase tracking-[0.2em]"
-              >
-                <div className="flex gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-ping"></span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-                </div>
-                Quantum Intelligence Engine
-              </motion.div>
+
               
               <div className="space-y-6">
                 <h1 className="text-6xl lg:text-8xl font-black tracking-tight text-slate-900 dark:text-white leading-[0.95]">
-                  Dasbor<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-emerald-500">Penta</span>
+                  Penta<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-emerald-500">Insights</span>
                 </h1>
                 <p className="text-slate-500 dark:text-slate-400 text-xl font-medium max-w-2xl leading-relaxed">
                   Analisis cerdas untuk ekosistem akademik. Pantau pertumbuhan KPI dan output riset dengan <span className="relative inline-block">
