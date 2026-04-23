@@ -23,7 +23,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' | '' }>({ text: '', type: '' });
   const [activeTab, setActiveTab] = useState<'info' | 'integrasi' | 'insights'>('info');
   const [insightsSubTab, setInsightsSubTab] = useState<'publikasi' | 'penelitian' | 'hki' | 'buku'>('publikasi');
-  const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar'>('scopus');
+  const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed'>('scopus');
   const [publications, setPublications] = useState<any[]>([]);
   const [scopusPublications, setScopusPublications] = useState<any[]>([]);
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);

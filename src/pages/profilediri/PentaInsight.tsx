@@ -9,8 +9,8 @@ import { ProfileTrendChart } from './ProfileCharts';
 interface PentaInsightProps {
   insightsSubTab: 'publikasi' | 'penelitian' | 'hki' | 'buku';
   setInsightsSubTab: (tab: 'publikasi' | 'penelitian' | 'hki' | 'buku') => void;
-  publicationSubTab: 'scopus' | 'scholar';
-  setPublicationSubTab: (tab: 'scopus' | 'scholar') => void;
+  publicationSubTab: 'scopus' | 'scholar' | 'cross_indexed';
+  setPublicationSubTab: (tab: 'scopus' | 'scholar' | 'cross_indexed') => void;
   scopusChartData: any;
   scholarChartData: any;
   scopusData: any;
@@ -53,6 +53,15 @@ export default function PentaInsight({
   const researchDocs = getCategorizedDocs(['penelitian', 'proposal', 'laporan']);
   const hkiDocs = getCategorizedDocs(['hki', 'kekayaan intelektual']);
   const bookDocs = getCategorizedDocs(['buku', 'ajar']);
+
+  const normalizeTitle = (title: string) => {
+    return title?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+  };
+
+  const crossIndexedDocs = (publications || []).filter(scholarDoc => {
+    const scholarTitle = normalizeTitle(scholarDoc.title);
+    return (scopusPublications || []).some(scopusDoc => normalizeTitle(scopusDoc.title) === scholarTitle);
+  });
 
   // Pagination Helper Component
   const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: { 
@@ -172,7 +181,8 @@ export default function PentaInsight({
                <div className="flex items-center gap-10 border-b border-slate-100 dark:border-slate-800">
                   {[
                     { id: 'scopus', label: 'Scopus Indexed' },
-                    { id: 'scholar', label: 'Google Scholar' }
+                    { id: 'scholar', label: 'Google Scholar' },
+                    { id: 'cross_indexed', label: 'Cross-Indexed (Irisan)' }
                   ].map((sub) => (
                     <button
                       key={sub.id}
@@ -262,8 +272,11 @@ export default function PentaInsight({
                                              <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
                                           </div>
                                           <div className="flex-1 min-w-0">
-                                             <div className="flex items-center gap-3 mb-2">
+                                             <div className="flex flex-wrap items-center gap-3 mb-2">
                                                 <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 rounded-md text-[7px] font-black uppercase tracking-widest">Scopus</span>
+                                                {crossIndexedDocs.some(c => normalizeTitle(c.title) === normalizeTitle(doc.title)) && (
+                                                   <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Juga di Scholar</span>
+                                                )}
                                                 <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
                                                    <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
                                                 </span>
@@ -308,7 +321,7 @@ export default function PentaInsight({
                            </div>
                         )}
                      </div>
-                  ) : (
+                  ) : publicationSubTab === 'scholar' ? (
                      <div className="space-y-10">
                         {scholarChartData.chartData.length > 0 ? (
                            <>
@@ -374,8 +387,11 @@ export default function PentaInsight({
                                              <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
                                           </div>
                                           <div className="flex-1 min-w-0">
-                                             <div className="flex items-center gap-3 mb-2">
+                                             <div className="flex flex-wrap items-center gap-3 mb-2">
                                                 <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-md text-[7px] font-black uppercase tracking-widest">Scholar</span>
+                                                {crossIndexedDocs.some(c => normalizeTitle(c.title) === normalizeTitle(doc.title)) && (
+                                                   <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Juga di Scopus</span>
+                                                )}
                                                 <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
                                                    <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
                                                 </span>
@@ -419,7 +435,71 @@ export default function PentaInsight({
                            </div>
                         )}
                      </div>
-                  )}
+                  ) : publicationSubTab === 'cross_indexed' ? (
+                     <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                           <div className="flex flex-col">
+                              <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Publikasi Terindeks Ganda</h4>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Sistem menyatukan publikasi yang sama (Deduplikasi Poin)</p>
+                           </div>
+                           <div className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
+                              {crossIndexedDocs?.length || 0} Total
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4">
+                           {crossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
+                              <motion.div 
+                                 key={idx}
+                                 initial={{ opacity: 0, y: 10 }}
+                                 animate={{ opacity: 1, y: 0 }}
+                                 transition={{ delay: idx * 0.05 }}
+                                 className="group flex items-center gap-6 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300"
+                              >
+                                 <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-emerald-100 dark:border-slate-700">
+                                    <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                                 </div>
+                                 <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3 mb-2">
+                                       <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Scopus & Scholar</span>
+                                       <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                                          <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
+                                       </span>
+                                    </div>
+                                    <a 
+                                       href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block line-clamp-2"
+                                    >
+                                       {doc.title}
+                                    </a>
+                                 </div>
+                                 <a 
+                                    href={doc.link || '#'}
+                                    target="_blank"
+                                    className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-emerald-500 hover:text-white transition-all"
+                                 >
+                                    <ExternalLink className="w-4 h-4" />
+                                 </a>
+                              </motion.div>
+                           ))}
+                           {crossIndexedDocs.length === 0 && (
+                              <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">
+                                 <div className="text-center">
+                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400">Belum Ada Publikasi Terindeks Ganda</p>
+                                 </div>
+                              </div>
+                           )}
+                        </div>
+                        <Pagination 
+                           totalItems={crossIndexedDocs?.length || 0} 
+                           currentPage={currentPage} 
+                           onPageChange={setCurrentPage}
+                           itemsPerPage={itemsPerPage}
+                           setItemsPerPage={setItemsPerPage}
+                        />
+                     </div>
+                  ) : null}
                </div>
             </div>
          )}
