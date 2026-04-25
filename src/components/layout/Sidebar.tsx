@@ -293,34 +293,7 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Profile Section at Bottom */}
-      <div className="p-4 border-t border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-        <div 
-          onClick={() => navigate('/profile')}
-          className={`flex items-center gap-3 p-3 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-gray-50 dark:hover:bg-zinc-800 group ${isCollapsed && !isMobile ? 'justify-center' : ''}`}
-        >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white shadow-lg flex-shrink-0 overflow-hidden ring-2 ring-transparent group-hover:ring-primary-500/20 transition-all">
-            {user?.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-lg font-black">{user?.name?.charAt(0) || 'U'}</span>
-            )}
-          </div>
-          
-          {showLabels && (
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-black text-gray-900 dark:text-zinc-100 truncate uppercase tracking-tight">{user?.name}</p>
-              <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 truncate uppercase tracking-widest">{user?.role}</p>
-            </div>
-          )}
 
-          {!isCollapsed && (
-            <div className="w-6 h-6 rounded-lg bg-gray-50 dark:bg-zinc-800 flex items-center justify-center text-gray-400 group-hover:text-primary-600 transition-colors">
-              <ChevronDown className="w-3.5 h-3.5 rotate-[-90deg]" />
-            </div>
-          )}
-        </div>
-      </div>
     </motion.aside>
   );
 }
