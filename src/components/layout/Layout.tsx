@@ -54,24 +54,22 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       path: '/publication', 
       icon: FileText, 
       roles: ['dosen'],
-      // children = submenu items (kategori dokumen publikasi)
       children: [
         { name: 'Jurnal Internasional', path: '/publication?kategori=Jurnal Internasional', icon: BookOpen, categoryFilter: 'Jurnal Internasional', points: 40 },
         { name: 'Jurnal Nasional', path: '/publication?kategori=Jurnal Nasional', icon: BookOpen, categoryFilter: 'Jurnal Nasional', points: 20 },
-        { name: 'HKI', path: '/publication?kategori=HKI', icon: Award, categoryFilter: 'HKI' },
       ]
     },
     { 
-      name: 'Penelitian', 
+      name: 'HKI', 
+      path: '/publication?kategori=HKI', 
+      icon: Award, 
+      roles: ['dosen'] 
+    },
+    { 
+      name: 'Hasil Penelitian', 
       path: '/research', 
       icon: Beaker, 
-      roles: ['dosen'],
-      // children = submenu items (hasil penelitian + dokumen penunjang)
-      children: [
-        { name: 'Hasil Penelitian', path: '/research', icon: Beaker },
-        { name: 'Proposal', path: '/research/proposal', icon: FileSignature, categoryFilter: 'Proposal' },
-        { name: 'Laporan', path: '/research/laporan', icon: ClipboardList, categoryFilter: 'Laporan' },
-      ]
+      roles: ['dosen'] 
     },
     // === ADMIN / PRODI ===
     { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin lppm', 'admin prodi'] },

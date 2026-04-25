@@ -37,31 +37,53 @@ export default function PentaInsight({
 }: PentaInsightProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isFilter3Years, setIsFilter3Years] = useState(false);
 
   // Reset page when switching tabs
   useEffect(() => {
     setCurrentPage(1);
-  }, [insightsSubTab, publicationSubTab]);
+  }, [insightsSubTab, publicationSubTab, isFilter3Years]);
 
-  // Helper to filter internal documents
   const getCategorizedDocs = (categoryKeywords: string[]) => {
     return internalDocuments.filter(d => 
       categoryKeywords.some(k => d.category?.toLowerCase().includes(k))
     );
   };
 
-  const researchDocs = getCategorizedDocs(['penelitian', 'proposal', 'laporan']);
+  const rawResearchDocs = getCategorizedDocs(['penelitian', 'proposal', 'laporan']);
   const hkiDocs = getCategorizedDocs(['hki', 'kekayaan intelektual']);
   const bookDocs = getCategorizedDocs(['buku', 'ajar']);
+
+  const currentYear = new Date().getFullYear();
+  const threeYearsAgo = currentYear - 2;
+
+  const researchDocs = isFilter3Years
+    ? rawResearchDocs.filter(doc => {
+        const year = doc.published_at ? new Date(doc.published_at).getFullYear() : Number(doc.tahun_pelaksanaan || currentYear);
+        return year >= threeYearsAgo;
+      })
+    : rawResearchDocs;
 
   const normalizeTitle = (title: string) => {
     return title?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
   };
 
-  const crossIndexedDocs = (publications || []).filter(scholarDoc => {
+  const baseCrossIndexedDocs = (publications || []).filter(scholarDoc => {
     const scholarTitle = normalizeTitle(scholarDoc.title);
     return (scopusPublications || []).some(scopusDoc => normalizeTitle(scopusDoc.title) === scholarTitle);
   });
+
+  const scopusList = isFilter3Years 
+    ? (scopusPublications || []).filter(doc => Number(doc.year) >= threeYearsAgo)
+    : (scopusPublications || []);
+
+  const scholarList = isFilter3Years
+    ? (publications || []).filter(doc => Number(doc.year) >= threeYearsAgo)
+    : (publications || []);
+
+  const crossIndexedDocs = isFilter3Years
+    ? baseCrossIndexedDocs.filter(doc => Number(doc.year) >= threeYearsAgo)
+    : baseCrossIndexedDocs;
 
   // Pagination Helper Component
   const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: { 
@@ -178,30 +200,48 @@ export default function PentaInsight({
          {insightsSubTab === 'publikasi' && (
             <div className="space-y-10 relative z-10">
                {/* Nested Publication Sub-tabs - Underline Style */}
-               <div className="flex items-center gap-10 border-b border-slate-100 dark:border-slate-800">
-                  {[
-                    { id: 'scopus', label: 'Scopus Indexed' },
-                    { id: 'scholar', label: 'Google Scholar' },
-                    { id: 'cross_indexed', label: 'Cross-Indexed (Irisan)' }
-                  ].map((sub) => (
-                    <button
-                      key={sub.id}
-                      onClick={() => setPublicationSubTab(sub.id as any)}
-                      className={`relative pb-5 text-[10px] font-black uppercase tracking-widest transition-colors ${
-                        publicationSubTab === sub.id 
-                          ? 'text-primary-600 dark:text-primary-400' 
-                          : 'text-slate-400 hover:text-slate-600'
-                      }`}
-                    >
-                      {sub.label}
-                      {publicationSubTab === sub.id && (
-                        <motion.div 
-                          layoutId="insights-subtab-indicator"
-                          className="absolute bottom-0 left-0 right-0 h-1 bg-primary-600 dark:bg-primary-500 rounded-full" 
-                        />
-                      )}
-                    </button>
-                  ))}
+               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-2">
+                  <div className="flex items-center gap-10">
+                     {[
+                       { id: 'scopus', label: 'Scopus Indexed' },
+                       { id: 'scholar', label: 'Google Scholar' },
+                       { id: 'cross_indexed', label: 'Cross-Indexed (Irisan)' }
+                     ].map((sub) => (
+                       <button
+                         key={sub.id}
+                         onClick={() => setPublicationSubTab(sub.id as any)}
+                         className={`relative pb-3 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                           publicationSubTab === sub.id 
+                             ? 'text-primary-600 dark:text-primary-400' 
+                             : 'text-slate-400 hover:text-slate-600'
+                         }`}
+                       >
+                         {sub.label}
+                         {publicationSubTab === sub.id && (
+                           <motion.div 
+                             layoutId="insights-subtab-indicator"
+                             className="absolute bottom-[-9px] left-0 right-0 h-1 bg-primary-600 dark:bg-primary-500 rounded-full" 
+                           />
+                         )}
+                       </button>
+                     ))}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                     <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                       Filter 3 Tahun Terakhir (Dianggap KPI)
+                     </span>
+                     <button
+                        onClick={() => setIsFilter3Years(!isFilter3Years)}
+                        className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${
+                           isFilter3Years ? 'bg-primary-600' : 'bg-slate-300 dark:bg-slate-700'
+                        }`}
+                     >
+                        <span className={`absolute top-1 left-1 bg-white w-3 h-3 rounded-full transition-transform duration-300 ${
+                           isFilter3Years ? 'transform translate-x-5' : ''
+                        }`} />
+                     </button>
+                  </div>
                </div>
 
                {/* Publication Content */}
@@ -252,14 +292,16 @@ export default function PentaInsight({
                                  <div className="flex items-center justify-between">
                                     <div className="flex flex-col">
                                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Dokumen</h4>
-                                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Terindeks oleh Scopus Database</p>
+                                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                          Terindeks oleh Scopus Database {isFilter3Years && '(3 Tahun Terakhir)'}
+                                       </p>
                                     </div>
                                     <div className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                                       {scopusPublications?.length || 0} Total
+                                       {scopusList?.length || 0} Total
                                     </div>
                                  </div>
                                   <div className="grid grid-cols-1 gap-4">
-                                    {scopusPublications?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
+                                    {scopusList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
                                        <motion.div 
                                           key={idx}
                                           initial={{ opacity: 0, y: 10 }}
@@ -301,7 +343,7 @@ export default function PentaInsight({
                                     ))}
                                  </div>
                                  <Pagination 
-                                    totalItems={scopusPublications?.length || 0} 
+                                    totalItems={scopusList?.length || 0} 
                                     currentPage={currentPage} 
                                     onPageChange={setCurrentPage}
                                     itemsPerPage={itemsPerPage}
@@ -367,14 +409,16 @@ export default function PentaInsight({
                                  <div className="flex items-center justify-between">
                                     <div className="flex flex-col">
                                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Dokumen Scholar</h4>
-                                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Data publikasi dari Google Scholar</p>
+                                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                          Data publikasi dari Google Scholar {isFilter3Years && '(3 Tahun Terakhir)'}
+                                       </p>
                                     </div>
                                     <div className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
-                                       {publications?.length || 0} Total
+                                       {scholarList?.length || 0} Total
                                     </div>
                                  </div>
                                   <div className="grid grid-cols-1 gap-4">
-                                    {publications?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
+                                    {scholarList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
                                        <motion.div 
                                           key={idx}
                                           initial={{ opacity: 0, y: 10 }}
@@ -416,7 +460,7 @@ export default function PentaInsight({
                                     ))}
                                  </div>
                                  <Pagination 
-                                    totalItems={publications?.length || 0} 
+                                    totalItems={scholarList?.length || 0} 
                                     currentPage={currentPage} 
                                     onPageChange={setCurrentPage}
                                     itemsPerPage={itemsPerPage}
@@ -440,7 +484,7 @@ export default function PentaInsight({
                         <div className="flex items-center justify-between">
                            <div className="flex flex-col">
                               <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Publikasi Terindeks Ganda</h4>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Sistem menyatukan publikasi yang sama (Deduplikasi Poin)</p>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Sistem menyatukan publikasi yang sama (Deduplikasi Poin) {isFilter3Years && ' - 3 Tahun Terakhir'}</p>
                            </div>
                            <div className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
                               {crossIndexedDocs?.length || 0} Total
@@ -459,8 +503,9 @@ export default function PentaInsight({
                                     <ShieldCheck className="w-6 h-6 text-emerald-500" />
                                  </div>
                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 mb-2">
+                                    <div className="flex flex-wrap items-center gap-3 mb-2">
                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Scopus & Scholar</span>
+                                       <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-orange-500/20">Poin Scopus (+40 PTS)</span>
                                        <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
                                           <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
                                        </span>

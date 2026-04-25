@@ -256,7 +256,10 @@ export default function Sidebar({
               }
 
               // === PLAIN ITEM (no children) ===
-              const isActive = currentPath === item.path;
+              const itemPathBase = item.path.split('?')[0];
+              const itemSearch = item.path.includes('?') ? '?' + item.path.split('?')[1] : '';
+              const isActive = currentPath === itemPathBase && currentSearch === itemSearch;
+              
               return (
                 <Link
                   key={item.name}
