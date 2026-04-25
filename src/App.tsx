@@ -21,6 +21,7 @@ import AdminActivityLogs from './pages/admin/AdminActivityLogs';
 import Research from './pages/dosen/Research';
 import Home from './pages/Home';
 import ResearchDocs from './pages/dosen/ResearchDocs';
+import Buku from './pages/dosen/Buku';
 import LecturerList from './pages/dashboard/LecturerList';
 import LecturerProfileInsights from './pages/dashboard/LecturerProfileInsights';
 import DepartementList from './pages/dashboard/DepartementList';
@@ -154,6 +155,7 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
           <Route path="/publication" element={user?.role === 'dosen' ? <Publication user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
+          <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/research/proposal" element={user?.role === 'dosen' ? <ResearchDocs user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/research/laporan" element={user?.role === 'dosen' ? <ResearchDocs user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/documents/all" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />

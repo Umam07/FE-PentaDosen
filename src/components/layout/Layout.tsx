@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FileText, CheckSquare, Users, 
-  RefreshCw, FolderOpen, Beaker, Award, BookOpen,
+  RefreshCw, FolderOpen, Beaker, Award, BookOpen, Book,
   ClipboardList, FileSignature, Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -69,6 +69,12 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       name: 'Hasil Penelitian', 
       path: '/research', 
       icon: Beaker, 
+      roles: ['dosen'] 
+    },
+    { 
+      name: 'Buku', 
+      path: '/buku', 
+      icon: Book, 
       roles: ['dosen'] 
     },
     // === ADMIN / PRODI ===

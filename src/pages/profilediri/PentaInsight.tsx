@@ -6,6 +6,243 @@ import {
 } from 'lucide-react';
 import { ProfileTrendChart } from './ProfileCharts';
 
+// === Sub-component: Scholar row with per-doc points + breakdown ===
+function ScholarDocRow({ doc, docPoints, isAlsoScopus, idx }: {
+  doc: any; docPoints: number; isAlsoScopus: boolean; idx: number; normalizeTitle?: (t: string) => string;
+}) {
+  const [showBreakdown, setShowBreakdown] = React.useState(false);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.05 }}
+      className="group flex items-start gap-6 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300"
+    >
+      <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors flex-shrink-0">
+        <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{doc.citations || 0}</span>
+        <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-md text-[7px] font-black uppercase tracking-widest">Scholar</span>
+          {isAlsoScopus && (
+            <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Juga di Scopus</span>
+          )}
+          <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
+            <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
+          </span>
+        </div>
+        <a
+          href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition-colors block line-clamp-2 mb-3"
+        >
+          {doc.title}
+        </a>
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-1 bg-blue-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest">
+            +{docPoints.toFixed(1)} PTS
+          </span>
+          <button
+            onClick={() => setShowBreakdown(!showBreakdown)}
+            className="px-2 py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-black text-slate-500 hover:text-blue-600 hover:border-blue-300 transition-all uppercase tracking-widest"
+          >
+            {showBreakdown ? '↑ Sembunyikan' : '? Rincian'}
+          </button>
+        </div>
+        {showBreakdown && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 space-y-1.5"
+          >
+            <p className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Rincian Perhitungan Poin:</p>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">Dokumen (×1)</span>
+              <span className="text-[10px] font-black text-blue-600">+0.5 pts</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">Sitasi (×{doc.citations || 0} × 0.1)</span>
+              <span className="text-[10px] font-black text-blue-600">+{((doc.citations || 0) * 0.1).toFixed(1)} pts</span>
+            </div>
+            <div className="pt-1.5 mt-1 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 uppercase">Total</span>
+              <span className="text-[10px] font-black text-blue-700 dark:text-blue-400">= {docPoints.toFixed(1)} pts</span>
+            </div>
+          </motion.div>
+        )}
+      </div>
+      <a
+        href={doc.link || '#'}
+        target="_blank"
+        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-blue-500 hover:text-white transition-all flex-shrink-0"
+      >
+        <ExternalLink className="w-4 h-4" />
+      </a>
+    </motion.div>
+  );
+}
+
+// === Sub-component: Scopus row — 40 pts per doc + 1 pt per citation ===
+function ScopusDocRow({ doc, isAlsoScholar, idx }: {
+  doc: any; isAlsoScholar: boolean; idx: number;
+}) {
+  const [showBreakdown, setShowBreakdown] = React.useState(false);
+  const docPoints = 40 + (doc.citations || 0) * 1;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.05 }}
+      className="group flex items-start gap-6 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-primary-500/30 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+    >
+      <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-primary-50 group-hover:border-primary-100 transition-colors flex-shrink-0">
+        <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{doc.citations || 0}</span>
+        <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 rounded-md text-[7px] font-black uppercase tracking-widest">Scopus</span>
+          {isAlsoScholar && (
+            <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Juga di Scholar</span>
+          )}
+          <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
+            <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
+          </span>
+        </div>
+        <a
+          href={doc.link || `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug hover:text-primary-600 dark:hover:text-primary-400 transition-colors block line-clamp-2 mb-3"
+        >
+          {doc.title}
+        </a>
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-1 bg-orange-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest">
+            +{docPoints} PTS
+          </span>
+          <button
+            onClick={() => setShowBreakdown(!showBreakdown)}
+            className="px-2 py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-black text-slate-500 hover:text-orange-600 hover:border-orange-300 transition-all uppercase tracking-widest"
+          >
+            {showBreakdown ? '↑ Sembunyikan' : '? Rincian'}
+          </button>
+        </div>
+        {showBreakdown && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mt-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 space-y-1.5"
+          >
+            <p className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Rincian Perhitungan Poin:</p>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">Jurnal/Dokumen (×1)</span>
+              <span className="text-[10px] font-black text-orange-600">+40 pts</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">Sitasi (×{doc.citations || 0} × 1)</span>
+              <span className="text-[10px] font-black text-orange-600">+{(doc.citations || 0)} pts</span>
+            </div>
+            <div className="pt-1.5 mt-1 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 uppercase">Total</span>
+              <span className="text-[10px] font-black text-orange-700 dark:text-orange-400">= {docPoints} pts</span>
+            </div>
+          </motion.div>
+        )}
+      </div>
+      <a
+        href={doc.link || '#'}
+        target="_blank"
+        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-primary-500 hover:text-white transition-all flex-shrink-0"
+      >
+        <ExternalLink className="w-4 h-4" />
+      </a>
+    </motion.div>
+  );
+}
+
+// === Sub-component: Cross-Indexed row — use Scopus points (40 + citations) ===
+function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
+  doc: any; scopusDoc: any | undefined; idx: number;
+}) {
+  const [showBreakdown, setShowBreakdown] = React.useState(false);
+  const citations = (scopusDoc?.citations ?? doc.citations) || 0;
+  const docPoints = 40 + citations;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.05 }}
+      className="group flex items-start gap-6 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300"
+    >
+      <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-emerald-100 dark:border-slate-700 flex-shrink-0">
+        <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{citations}</span>
+        <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Scopus & Scholar</span>
+          <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-orange-500/20">Poin Scopus (Lebih Besar)</span>
+          <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
+            <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
+          </span>
+        </div>
+        <a
+          href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block line-clamp-2 mb-3"
+        >
+          {doc.title}
+        </a>
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest">
+            +{docPoints} PTS
+          </span>
+          <button
+            onClick={() => setShowBreakdown(!showBreakdown)}
+            className="px-2 py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-black text-slate-500 hover:text-emerald-600 hover:border-emerald-300 transition-all uppercase tracking-widest"
+          >
+            {showBreakdown ? '↑ Sembunyikan' : '? Rincian'}
+          </button>
+        </div>
+        {showBreakdown && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mt-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 space-y-1.5"
+          >
+            <p className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Rincian Poin Scopus (diambil karena lebih besar):</p>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">Jurnal/Dokumen (×1)</span>
+              <span className="text-[10px] font-black text-emerald-600">+40 pts</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">Sitasi Scopus (×{citations} × 1)</span>
+              <span className="text-[10px] font-black text-emerald-600">+{citations} pts</span>
+            </div>
+            <div className="pt-1.5 mt-1 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
+              <span className="text-[10px] font-black text-slate-700 dark:text-slate-200 uppercase">Total</span>
+              <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-400">= {docPoints} pts</span>
+            </div>
+          </motion.div>
+        )}
+      </div>
+      <a
+        href={doc.link || '#'}
+        target="_blank"
+        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-emerald-500 hover:text-white transition-all flex-shrink-0"
+      >
+        <ExternalLink className="w-4 h-4" />
+      </a>
+    </motion.div>
+  );
+}
+
+
 interface PentaInsightProps {
   insightsSubTab: 'publikasi' | 'penelitian' | 'hki' | 'buku';
   setInsightsSubTab: (tab: 'publikasi' | 'penelitian' | 'hki' | 'buku') => void;
@@ -296,51 +533,44 @@ export default function PentaInsight({
                                           Terindeks oleh Scopus Database {isFilter3Years && '(3 Tahun Terakhir)'}
                                        </p>
                                     </div>
-                                    <div className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                                       {scopusList?.length || 0} Total
+                                    <div className="flex items-center gap-3">
+                                       <div className="text-right">
+                                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Poin Scopus</p>
+                                          <p className="text-lg font-black text-orange-600">
+                                             {scopusList.reduce((acc: number, doc: any) => acc + 40 + (doc.citations || 0), 0)} pts
+                                          </p>
+                                       </div>
+                                       <div className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                                          {scopusList?.length || 0} Total
+                                       </div>
                                     </div>
                                  </div>
+
+                                 {/* Skema poin Scopus banner */}
+                                 <div className="flex items-start gap-3 p-4 bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
+                                    <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                       <span className="text-orange-600 text-[10px] font-black">i</span>
+                                    </div>
+                                    <div>
+                                       <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Skema Poin Scopus</p>
+                                       <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-1">
+                                          +40 poin per jurnal/dokumen &nbsp;·&nbsp; +1 poin per sitasi
+                                       </p>
+                                    </div>
+                                 </div>
+
                                   <div className="grid grid-cols-1 gap-4">
-                                    {scopusList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
-                                       <motion.div 
+                                    {scopusList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                                       const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
+                                       return (
+                                       <ScopusDocRow
                                           key={idx}
-                                          initial={{ opacity: 0, y: 10 }}
-                                          animate={{ opacity: 1, y: 0 }}
-                                          transition={{ delay: idx * 0.05 }}
-                                          className="group flex items-center gap-6 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-primary-500/30 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
-                                       >
-                                          <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-primary-50 group-hover:border-primary-100 transition-colors">
-                                             <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{doc.citations || 0}</span>
-                                             <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
-                                          </div>
-                                          <div className="flex-1 min-w-0">
-                                             <div className="flex flex-wrap items-center gap-3 mb-2">
-                                                <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 rounded-md text-[7px] font-black uppercase tracking-widest">Scopus</span>
-                                                {crossIndexedDocs.some(c => normalizeTitle(c.title) === normalizeTitle(doc.title)) && (
-                                                   <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Juga di Scholar</span>
-                                                )}
-                                                <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
-                                                   <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
-                                                </span>
-                                             </div>
-                                             <a 
-                                                href={doc.link || `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug hover:text-primary-600 dark:hover:text-primary-400 transition-colors block line-clamp-2"
-                                             >
-                                                {doc.title}
-                                             </a>
-                                          </div>
-                                          <a 
-                                             href={doc.link || '#'}
-                                             target="_blank"
-                                             className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-primary-500 hover:text-white transition-all"
-                                          >
-                                             <ExternalLink className="w-4 h-4" />
-                                          </a>
-                                       </motion.div>
-                                    ))}
+                                          doc={doc}
+                                          isAlsoScholar={isAlsoScholar}
+                                          idx={idx}
+                                       />
+                                       );
+                                    })}
                                  </div>
                                  <Pagination 
                                     totalItems={scopusList?.length || 0} 
@@ -413,51 +643,47 @@ export default function PentaInsight({
                                           Data publikasi dari Google Scholar {isFilter3Years && '(3 Tahun Terakhir)'}
                                        </p>
                                     </div>
-                                    <div className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
-                                       {scholarList?.length || 0} Total
+                                    <div className="flex items-center gap-3">
+                                       <div className="text-right">
+                                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Poin GS</p>
+                                          <p className="text-lg font-black text-blue-600">
+                                             {scholarList.reduce((acc: number, doc: any) => acc + 0.5 + (doc.citations || 0) * 0.1, 0).toFixed(1)} pts
+                                          </p>
+                                       </div>
+                                       <div className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
+                                          {scholarList?.length || 0} Total
+                                       </div>
                                     </div>
                                  </div>
+
+                                 {/* Skema poin banner */}
+                                 <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-2xl">
+                                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                       <span className="text-blue-600 text-[10px] font-black">i</span>
+                                    </div>
+                                    <div>
+                                       <p className="text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">Skema Poin Google Scholar</p>
+                                       <p className="text-[10px] font-bold text-blue-600/70 dark:text-blue-400/70 mt-1">
+                                          +0.5 poin per dokumen &nbsp;·&nbsp; +0.1 poin per sitasi
+                                       </p>
+                                    </div>
+                                 </div>
+
                                   <div className="grid grid-cols-1 gap-4">
-                                    {scholarList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
-                                       <motion.div 
+                                    {scholarList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                                       const docPoints = 0.5 + (doc.citations || 0) * 0.1;
+                                       const isAlsoScopus = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
+                                       return (
+                                       <ScholarDocRow
                                           key={idx}
-                                          initial={{ opacity: 0, y: 10 }}
-                                          animate={{ opacity: 1, y: 0 }}
-                                          transition={{ delay: idx * 0.05 }}
-                                          className="group flex items-center gap-6 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300"
-                                       >
-                                          <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
-                                             <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{doc.citations || 0}</span>
-                                             <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
-                                          </div>
-                                          <div className="flex-1 min-w-0">
-                                             <div className="flex flex-wrap items-center gap-3 mb-2">
-                                                <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-md text-[7px] font-black uppercase tracking-widest">Scholar</span>
-                                                {crossIndexedDocs.some(c => normalizeTitle(c.title) === normalizeTitle(doc.title)) && (
-                                                   <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Juga di Scopus</span>
-                                                )}
-                                                <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
-                                                   <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
-                                                </span>
-                                             </div>
-                                             <a 
-                                                href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition-colors block line-clamp-2"
-                                             >
-                                                {doc.title}
-                                             </a>
-                                          </div>
-                                          <a 
-                                             href={doc.link || '#'}
-                                             target="_blank"
-                                             className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-blue-500 hover:text-white transition-all"
-                                          >
-                                             <ExternalLink className="w-4 h-4" />
-                                          </a>
-                                       </motion.div>
-                                    ))}
+                                          doc={doc}
+                                          docPoints={docPoints}
+                                          isAlsoScopus={isAlsoScopus}
+                                          idx={idx}
+                                          normalizeTitle={normalizeTitle}
+                                       />
+                                       );
+                                    })}
                                  </div>
                                  <Pagination 
                                     totalItems={scholarList?.length || 0} 
@@ -484,50 +710,49 @@ export default function PentaInsight({
                         <div className="flex items-center justify-between">
                            <div className="flex flex-col">
                               <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Publikasi Terindeks Ganda</h4>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Sistem menyatukan publikasi yang sama (Deduplikasi Poin) {isFilter3Years && ' - 3 Tahun Terakhir'}</p>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Poin diambil dari Scopus (lebih besar) {isFilter3Years && ' - 3 Tahun Terakhir'}</p>
                            </div>
-                           <div className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
-                              {crossIndexedDocs?.length || 0} Total
+                           <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Poin</p>
+                                 <p className="text-lg font-black text-emerald-600">
+                                    {crossIndexedDocs.reduce((acc: number, doc: any) => {
+                                       const sd = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
+                                       return acc + 40 + ((sd?.citations ?? doc.citations) || 0);
+                                    }, 0)} pts
+                                 </p>
+                              </div>
+                              <div className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
+                                 {crossIndexedDocs?.length || 0} Total
+                              </div>
                            </div>
                         </div>
+
+                        {/* Info banner cross-indexed */}
+                        <div className="flex items-start gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl">
+                           <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <span className="text-emerald-600 text-[10px] font-black">i</span>
+                           </div>
+                           <div>
+                              <p className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Deduplikasi Otomatis — Poin Scopus Digunakan</p>
+                              <p className="text-[10px] font-bold text-emerald-600/70 dark:text-emerald-400/70 mt-1">
+                                 Ketika judul ada di Scopus & Scholar, sistem memakai poin Scopus (40 + sitasi) karena lebih besar.
+                              </p>
+                           </div>
+                        </div>
+
                         <div className="grid grid-cols-1 gap-4">
-                           {crossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
-                              <motion.div 
+                           {crossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                              const scopusDoc = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
+                              return (
+                              <CrossIndexedDocRow
                                  key={idx}
-                                 initial={{ opacity: 0, y: 10 }}
-                                 animate={{ opacity: 1, y: 0 }}
-                                 transition={{ delay: idx * 0.05 }}
-                                 className="group flex items-center gap-6 p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300"
-                              >
-                                 <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-emerald-100 dark:border-slate-700">
-                                    <ShieldCheck className="w-6 h-6 text-emerald-500" />
-                                 </div>
-                                 <div className="flex-1 min-w-0">
-                                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                                       <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">Scopus & Scholar</span>
-                                       <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 rounded-md text-[7px] font-black uppercase tracking-widest border border-orange-500/20">Poin Scopus (+40 PTS)</span>
-                                       <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
-                                          <Calendar className="w-3 h-3" /> {doc.year || 'Unknown'}
-                                       </span>
-                                    </div>
-                                    <a 
-                                       href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
-                                       target="_blank"
-                                       rel="noopener noreferrer"
-                                       className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors block line-clamp-2"
-                                    >
-                                       {doc.title}
-                                    </a>
-                                 </div>
-                                 <a 
-                                    href={doc.link || '#'}
-                                    target="_blank"
-                                    className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-emerald-500 hover:text-white transition-all"
-                                 >
-                                    <ExternalLink className="w-4 h-4" />
-                                 </a>
-                              </motion.div>
-                           ))}
+                                 doc={doc}
+                                 scopusDoc={scopusDoc}
+                                 idx={idx}
+                              />
+                              );
+                           })}
                            {crossIndexedDocs.length === 0 && (
                               <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">
                                  <div className="text-center">
