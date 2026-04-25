@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
 import { LogOut, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Insights from './pages/dashboard/Insights';
@@ -149,7 +148,7 @@ export default function App() {
         <Route path="/lecturers" element={<LecturerList />} />
         <Route path="/lecturer/:id" element={<LecturerProfileInsights />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
-        <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register setUser={setUser} />} />
+
 
         <Route element={<Layout user={user} setUser={setUser} />}>
           <Route path="/dashboard" element={<DashboardRedirect user={user} />} />

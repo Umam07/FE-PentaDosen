@@ -283,6 +283,43 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     }
   };
 
+  const handleSyncAll = async () => {
+    if (!scholarId && !scopusId) {
+      setMessage({ text: 'Simpan setidaknya satu ID (Scholar atau Scopus) terlebih dahulu.', type: 'error' });
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setMessage({ text: 'Sedang sinkronisasi data...', type: '' });
+      
+      const syncPromises = [];
+      if (scholarId) syncPromises.push(fetch(`/api/users/${user.id}/sync`, { method: 'POST' }));
+      if (scopusId) syncPromises.push(fetch(`/api/users/${user.id}/sync-scopus`, { method: 'POST' }));
+      
+      const results = await Promise.all(syncPromises);
+      const allOk = results.every(res => res.ok);
+      
+      if (allOk) {
+        setMessage({ text: 'Semua data berhasil disinkronisasi.', type: 'success' });
+        // Refresh data
+        const profileRes = await fetch(`/api/users/${user.id}`);
+        const data = await profileRes.json();
+        setScholarData(data.scholarData);
+        setPublications(data.publications || []);
+        setScopusData(data.scopusData);
+        setScopusPublications(data.scopusPublications || []);
+        setUser(data.user);
+      } else {
+        setMessage({ text: 'Beberapa data gagal disinkronisasi.', type: 'error' });
+      }
+    } catch (err) {
+      setMessage({ text: 'Error saat sinkronisasi data.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const tabVariants = {
     hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
@@ -440,6 +477,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                   handleSaveScopusId={handleSaveScopusId}
                   handleSync={handleSync}
                   handleSyncScopus={handleSyncScopus}
+                  handleSyncAll={handleSyncAll}
                   tabVariants={tabVariants}
                 />
               ) : (

@@ -37,19 +37,20 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
                 <GraduationCap className="w-4 h-4 text-primary-500" /> Informasi Institusi
                 <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                   { label: 'Alamat Email', value: user?.email, icon: Mail, color: 'text-blue-500', bg: 'bg-blue-500/5' },
+                  { label: 'Nomor Telepon', value: user?.phone, icon: User, color: 'text-green-500', bg: 'bg-green-500/5' },
                   { label: 'Fakultas', value: user?.fakultas, icon: BookOpen, color: 'text-purple-500', bg: 'bg-purple-500/5' },
                   { label: 'Program Studi', value: user?.program_studi, icon: GraduationCap, color: 'text-orange-500', bg: 'bg-orange-500/5' },
                 ].map((item, idx) => (
                   <div key={idx} className="group p-5 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all duration-300 hover:border-primary-500/30">
                     <label className="block text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">{item.label}</label>
                     <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center ${item.color}`}>
+                      <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center ${item.color} shrink-0`}>
                         <item.icon className="w-5 h-5" />
                       </div>
-                      <p className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate flex-1">{item.value || '-'}</p>
+                      <p className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate flex-1" title={item.value || ''}>{item.value || '-'}</p>
                     </div>
                   </div>
                 ))}
