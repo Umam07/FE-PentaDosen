@@ -170,11 +170,18 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       const res = await fetch(`/api/users/${user.id}/scholar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scholar_id: scholarId }),
+        body: JSON.stringify({ 
+          scholar_id: scholarId,
+          avatar: checkedAuthor?.thumbnail 
+        }),
       });
       if (res.ok) {
         setMessage({ text: 'Scholar ID berhasil disimpan.', type: 'success' });
-        setUser({ ...user, scholar_id: scholarId });
+        setUser({ 
+          ...user, 
+          scholar_id: scholarId,
+          avatar: checkedAuthor?.thumbnail || user.avatar
+        });
         setCheckedAuthor(null);
       }
     } catch (err) {
@@ -345,9 +352,17 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             <div className="px-6 pb-8 -mt-12 relative z-10 text-center">
               <div className="inline-block relative">
                 <div className="w-24 h-24 rounded-3xl bg-white dark:bg-slate-800 p-1 shadow-xl">
-                  <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center text-white text-3xl font-black border-2 border-white dark:border-slate-900">
-                    {user?.name?.charAt(0) || 'U'}
-                  </div>
+                  {user?.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name} 
+                      className="w-full h-full object-cover rounded-2xl border-2 border-white dark:border-slate-900"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center text-white text-3xl font-black border-2 border-white dark:border-slate-900">
+                      {user?.name?.charAt(0) || 'U'}
+                    </div>
+                  )}
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-white dark:bg-slate-900 rounded-lg shadow-lg flex items-center justify-center border border-slate-100 dark:border-slate-800">
                   <ShieldCheck className="w-4 h-4 text-emerald-500" />

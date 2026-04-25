@@ -257,6 +257,21 @@ export default function AdminSync() {
       
       setSyncProgress({ current: count, total: count, status: 'Selesai!' });
       
+      // Log the mass sync action
+      try {
+        await fetch('/api/admin/activity-logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: user.id,
+            action: 'Mass Sync',
+            description: `Admin melakukan sinkronisasi massal untuk ${validLecturers.length} dosen`
+          })
+        });
+      } catch (e) {
+        console.error('Failed to log mass sync', e);
+      }
+
       // Refresh lecturers list
       const res = await fetch(`/api/admin/lecturers?role=${user?.role}&user_id=${user?.id}`);
       const data = await res.json();

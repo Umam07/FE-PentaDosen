@@ -139,8 +139,16 @@ export default function Topbar({
           <button             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 p-1.5 rounded-xl transition-all duration-200"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white shadow-lg flex-shrink-0">
-              <span className="text-lg font-black">{user?.name?.charAt(0) || 'U'}</span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white shadow-lg flex-shrink-0 overflow-hidden">
+              {user?.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.name} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-lg font-black">{user?.name?.charAt(0) || 'U'}</span>
+              )}
             </div>
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
@@ -154,32 +162,38 @@ export default function Topbar({
           {/* Dropdown Menu */}
           <AnimatePresence>
             {isDropdownOpen && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-800 py-1.5 z-30"
-              >
-                <button 
-                  onClick={() => {
-                    navigate('/profile');
-                    setIsDropdownOpen(false);
-                  }} 
-                  className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-zinc-300 hover:bg-primary-50 dark:hover:bg-zinc-800 hover:text-primary-600 w-full text-left transition-colors uppercase tracking-wider"
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-100 dark:border-zinc-800 py-3 z-30 overflow-hidden"
                 >
-                  <User className="w-4 h-4 text-primary-500" />
-                  Lihat Profil
-                </button>
-                <div className="border-t border-gray-100 dark:border-zinc-800 my-1"></div>
-                <button 
-                  onClick={handleLogout} 
-                  className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 w-full text-left transition-colors uppercase tracking-wider"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Log Out
-                </button>
-              </motion.div>
+
+
+                  <button 
+                    onClick={() => {
+                      navigate('/profile');
+                      setIsDropdownOpen(false);
+                    }} 
+                    className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-gray-700 dark:text-zinc-300 hover:bg-primary-50 dark:hover:bg-zinc-800 hover:text-primary-600 w-full text-left transition-colors uppercase tracking-widest"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
+                      <User className="w-4 h-4 text-primary-500" />
+                    </div>
+                    Pengaturan Profil
+                  </button>
+                  <div className="border-t border-gray-100 dark:border-zinc-800 my-1"></div>
+                  <button 
+                    onClick={handleLogout} 
+                    className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 w-full text-left transition-colors uppercase tracking-widest"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <LogOut className="w-4 h-4" />
+                    </div>
+                    Log Out Sistem
+                  </button>
+                </motion.div>
             )}
           </AnimatePresence>
         </div>

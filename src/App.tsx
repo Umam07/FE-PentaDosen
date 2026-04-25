@@ -79,7 +79,18 @@ export default function App() {
     };
   }, []);
 
-  const handleSessionExpiredAction = () => {
+  const handleSessionExpiredAction = async () => {
+    try {
+      if (user?.id) {
+        await fetch('/api/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: user.id })
+        });
+      }
+    } catch (error) {
+      console.error('Logout logging failed', error);
+    }
     setIsSessionExpired(false);
     setUser(null);
     window.location.href = '/login';
