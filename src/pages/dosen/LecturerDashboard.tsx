@@ -2,8 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Award, TrendingUp, Zap, FileText, Beaker, ShieldCheck, Book, 
-  Calendar, Search, ChevronLeft, ChevronRight, Info, Globe, ArrowUpRight
+  Calendar, Search, ChevronLeft, ChevronRight, Info, Globe, ArrowUpRight,
+  BookMarked
 } from 'lucide-react';
+
+import PentaInsight from '../profilediri/PentaInsight';
 
 export default function LecturerDashboard({ user }: { user: any }) {
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
@@ -14,6 +17,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [activeView, setActiveView] = useState<'all' | 'internal' | 'external'>('all');
   const [isKPIFilter, setIsKPIFilter] = useState(false); // Filter for 3-year points (KPI)
+  const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed'>('scopus');
 
   useEffect(() => {
 
@@ -152,12 +156,78 @@ export default function LecturerDashboard({ user }: { user: any }) {
   }, [approvedDocs, apiPoints, internalPoints]);
 
 
+  const scholarChartData = useMemo(() => {
+    const publications = profileData?.publications || [];
+    if (!publications || publications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
+    const chartDataMap = new Map();
+    publications.forEach((pub: any) => {
+       if (pub.year && pub.year !== 'Unknown') {
+         const yearKey = String(pub.year).trim();
+         if (!chartDataMap.has(yearKey)) {
+            chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
+         }
+         const current = chartDataMap.get(yearKey);
+         current.publications += 1;
+         current.citations += (Number(pub.citations) || 0);
+       }
+    });
+    const chartData = Array.from(chartDataMap.values()).sort((a: any, b: any) => parseInt(a.name) - parseInt(b.name));
+    const getNiceMax = (max: number) => {
+      if (!max || max <= 0) return 10;
+      const roughMax = max * 1.15; 
+      const magnitude = Math.pow(10, Math.floor(Math.log10(roughMax)));
+      return Math.ceil(roughMax / magnitude) * magnitude;
+    };
+    return { 
+      chartData, 
+      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)), 
+      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0)) 
+    };
+  }, [profileData]);
+
+  const scopusChartData = useMemo(() => {
+    const scopusPublications = profileData?.scopusPublications || [];
+    if (!scopusPublications || scopusPublications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
+    const chartDataMap = new Map();
+    scopusPublications.forEach((pub: any) => {
+       if (pub.year && pub.year !== 'Unknown') {
+         const yearKey = String(pub.year).trim();
+         if (!chartDataMap.has(yearKey)) {
+            chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
+         }
+         const current = chartDataMap.get(yearKey);
+         current.publications += 1;
+         current.citations += (Number(pub.citations) || 0);
+       }
+    });
+    const chartData = Array.from(chartDataMap.values()).sort((a: any, b: any) => parseInt(a.name) - parseInt(b.name));
+    const getNiceMax = (max: number) => {
+      if (!max || max <= 0) return 10;
+      const roughMax = max * 1.15; 
+      const magnitude = Math.pow(10, Math.floor(Math.log10(roughMax)));
+      return Math.ceil(roughMax / magnitude) * magnitude;
+    };
+    return { 
+      chartData, 
+      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)), 
+      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0)) 
+    };
+  }, [profileData]);
+
   const categories = [
     { id: 'all', label: 'Semua', icon: FileText },
     { id: 'penelitian', label: 'Penelitian', icon: Beaker },
     { id: 'hki', label: 'HKI', icon: ShieldCheck },
     { id: 'buku', label: 'Buku', icon: Book },
+    { id: 'jurnal internasional', label: 'Jurnal Internasional', icon: Globe },
+    { id: 'jurnal nasional', label: 'Jurnal Nasional', icon: BookMarked },
   ];
+
+  const tabVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+    exit: { opacity: 0, y: -15, transition: { duration: 0.2, ease: "easeIn" } }
+  };
 
   const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: any) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -477,53 +547,17 @@ export default function LecturerDashboard({ user }: { user: any }) {
 
       {activeView === 'external' && (
         <div className="space-y-8">
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-8 shadow-sm">
-             <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-8">Daftar Publikasi API</h2>
-             {profileData?.publications?.length > 0 || profileData?.scopusPublications?.length > 0 ? (
-               <div className="space-y-4">
-                  {[...(profileData.scopusPublications || []).map(s => ({...s, source: 'Scopus'})), ...(profileData.publications || []).map(s => ({...s, source: 'Scholar'}))]
-                    .filter(pub => !isKPIFilter || (pub.year && Number(pub.year) >= threeYearsAgo))
-                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                    .map((pub, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="group flex items-center gap-6 p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-transparent hover:border-blue-500/30 transition-all"
-                    >
-                      <div className={`w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm ${pub.source === 'Scopus' ? 'group-hover:bg-orange-50' : 'group-hover:bg-blue-50'}`}>
-                        <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{pub.citations || 0}</span>
-                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">SITASI</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className={`px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-widest ${pub.source === 'Scopus' ? 'bg-orange-500/10 text-orange-600' : 'bg-blue-500/10 text-blue-600'}`}>{pub.source}</span>
-                          <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5" /> {pub.year || '-'}
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug line-clamp-1">{pub.title}</h3>
-                      </div>
-                    </motion.div>
-                  ))}
-                  <Pagination 
-                    totalItems={
-                      [...(profileData.scopusPublications || []), ...(profileData.publications || [])]
-                        .filter(pub => !isKPIFilter || (pub.year && Number(pub.year) >= threeYearsAgo))
-                        .length
-                    } 
-                    currentPage={currentPage} 
-                    onPageChange={setCurrentPage}
-                    itemsPerPage={itemsPerPage}
-                  />
-               </div>
-             ) : (
-               <div className="py-24 text-center">
-                 <Search className="w-12 h-12 mx-auto mb-4 text-slate-200" />
-                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Tidak ada publikasi API ditemukan</p>
-               </div>
-             )}
-          </div>
+          <PentaInsight 
+            publicationSubTab={publicationSubTab}
+            setPublicationSubTab={setPublicationSubTab}
+            scopusChartData={scopusChartData}
+            scholarChartData={scholarChartData}
+            scopusData={profileData?.scopusData}
+            scholarData={profileData?.scholarData}
+            publications={profileData?.publications || []}
+            scopusPublications={profileData?.scopusPublications || []}
+            tabVariants={tabVariants}
+          />
 
           <div className="flex items-center gap-6">
              <div className="p-4 bg-blue-500/10 rounded-3xl border border-blue-500/20">

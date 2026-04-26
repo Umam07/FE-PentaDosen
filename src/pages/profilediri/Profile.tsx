@@ -8,7 +8,6 @@ import {
 // Import sub-components
 import DetailInformasi from './DetailInformasi';
 import Konfigurasi from './Konfigurasi';
-import PentaInsight from './PentaInsight';
 
 export default function Profile({ user, setUser }: { user: any; setUser: any }) {
   const [scholarId, setScholarId] = useState(user?.scholar_id || '');
@@ -21,8 +20,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const [checkedAuthor, setCheckedAuthor] = useState<any>(null);
   const [checkedScopusAuthor, setCheckedScopusAuthor] = useState<any>(null);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' | '' }>({ text: '', type: '' });
-  const [activeTab, setActiveTab] = useState<'info' | 'integrasi' | 'insights'>('info');
-  const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed'>('scopus');
+  const [activeTab, setActiveTab] = useState<'info' | 'integrasi'>('info');
   const [publications, setPublications] = useState<any[]>([]);
   const [scopusPublications, setScopusPublications] = useState<any[]>([]);
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
@@ -414,7 +412,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             {[
               { id: 'info', label: 'Detail Informasi', icon: User, color: 'text-blue-500' },
               { id: 'integrasi', label: 'Konfigurasi ID', icon: Settings, color: 'text-indigo-500' },
-              { id: 'insights', label: 'Penta Insights', icon: TrendingUp, color: 'text-emerald-500' },
             ].map((tab) => (
               <button 
                 key={tab.id}
@@ -483,7 +480,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             >
               {activeTab === 'info' ? (
                 <DetailInformasi user={user} tabVariants={tabVariants} />
-              ) : activeTab === 'integrasi' ? (
+              ) : (
                 <Konfigurasi 
                   user={user}
                   setUser={setUser}
@@ -516,18 +513,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                   handleSync={handleSync}
                   handleSyncScopus={handleSyncScopus}
                   handleSyncAll={handleSyncAll}
-                  tabVariants={tabVariants}
-                />
-              ) : (
-                <PentaInsight 
-                  publicationSubTab={publicationSubTab}
-                  setPublicationSubTab={setPublicationSubTab}
-                  scopusChartData={scopusChartData}
-                  scholarChartData={scholarChartData}
-                  scopusData={scopusData}
-                  scholarData={scholarData}
-                  publications={publications}
-                  scopusPublications={scopusPublications}
                   tabVariants={tabVariants}
                 />
               )}
