@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User, GraduationCap, Settings, TrendingUp, Building2,
-  Fingerprint, ShieldCheck, Zap, Award, BookMarked
+  Fingerprint, ShieldCheck, Zap, Award, BookMarked, Globe, FileText
 } from 'lucide-react';
 
 // Import sub-components
@@ -25,12 +25,16 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed'>('scopus');
   const [publications, setPublications] = useState<any[]>([]);
   const [scopusPublications, setScopusPublications] = useState<any[]>([]);
+  const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!user?.id) return;
       try {
-        const profileRes = await fetch(`/api/users/${user.id}`);
+        const [profileRes, docsRes] = await Promise.all([
+          fetch(`/api/users/${user.id}`),
+          fetch(`/api/users/${user.id}/documents`)
+        ]);
 
         if (profileRes.ok) {
           const data = await profileRes.json();
@@ -41,6 +45,11 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
           setScholarId(data.user.scholar_id || '');
           setScopusId(data.user.scopus_id || '');
           setUser(data.user);
+        }
+
+        if (docsRes.ok) {
+          const docsData = await docsRes.json();
+          setInternalDocuments(docsData.documents || []);
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
@@ -68,43 +77,34 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     );
     const extTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
 
-    // Poin eksternal 3 tahun
-    const ext3YCross   = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title)) && Number(s.year) >= threeYearsAgo).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
-    const ext3YScopus  = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) >= threeYearsAgo).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
-    const ext3YScholar = parseFloat(
-      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) >= threeYearsAgo).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
-    );
-    const ext3Y = parseFloat((ext3YCross + ext3YScopus + ext3YScholar).toFixed(1));
+    // Poin internal dokumen (hanya yang upload mandiri/internal)
+    const internalTotal = (internalDocuments || [])
+      .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '')
+      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
 
-    // Poin eksternal tahun ini
-    const extTYCross   = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title)) && Number(s.year) === currentYear).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
-    const extTYScopus  = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) === currentYear).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
-    const extTYScholar = parseFloat(
-      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) === currentYear).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
-    );
-    const extThisYear = parseFloat((extTYCross + extTYScopus + extTYScholar).toFixed(1));
+    const grandTotal = parseFloat((extTotal + internalTotal).toFixed(1));
 
     return [
       { 
-        label: 'Total API Points', 
-        val: extTotal.toLocaleString(), 
+        label: 'Total Performance', 
+        val: grandTotal.toLocaleString(), 
         icon: Award, 
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
       },
       { 
-        label: 'API Score 3 Tahun',
-        val: ext3Y.toLocaleString(),
-        icon: TrendingUp, 
+        label: 'Poin API (External)',
+        val: extTotal.toLocaleString(),
+        icon: Globe, 
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
       },
       { 
-        label: 'API Tahun Ini',
-        val: extThisYear.toLocaleString(),
-        icon: Zap, 
+        label: 'Poin Upload (Internal)',
+        val: internalTotal.toLocaleString(),
+        icon: FileText, 
         color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
       }
     ];
-  }, [user, publications, scopusPublications]);
+  }, [user, publications, scopusPublications, internalDocuments]);
 
   const scholarChartData = useMemo(() => {
     if (!publications || publications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
