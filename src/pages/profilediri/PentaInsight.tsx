@@ -481,6 +481,51 @@ export default function PentaInsight({
                   </div>
                </div>
 
+               {/* ===== RINGKASAN POIN PUBLIKASI INTERNAL ===== */}
+               {(() => {
+                  const normalizeT = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                  const crossTitles = new Set(
+                    (scholarList).filter(sd =>
+                      (scopusList).some(s => normalizeT(s.title) === normalizeT(sd.title))
+                    ).map(d => normalizeT(d.title))
+                  );
+                  const crossPts   = scopusList.filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+                  const scopusOnly = scopusList.filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+                  const scholarOnly = parseFloat(scholarList.filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1));
+                  const grandTotal = parseFloat((crossPts + scopusOnly + scholarOnly).toFixed(1));
+                  const scopusOnlyCount = scopusList.length - crossTitles.size;
+                  const scholarOnlyCount = scholarList.length - crossTitles.size;
+
+                  return (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {/* Scopus-only */}
+                      <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-2xl border border-orange-100 dark:border-orange-900/30">
+                        <p className="text-[8px] font-black text-orange-500 uppercase tracking-widest mb-1">Scopus-Only</p>
+                        <p className="text-xl font-black text-orange-700 dark:text-orange-300">{scopusOnly} <span className="text-[9px] font-bold">pts</span></p>
+                        <p className="text-[9px] font-bold text-orange-400 mt-1">{scopusOnlyCount} dokumen · 40+sitasi/dok</p>
+                      </div>
+                      {/* Scholar-only */}
+                      <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-2xl border border-blue-100 dark:border-blue-900/30">
+                        <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-1">Scholar-Only</p>
+                        <p className="text-xl font-black text-blue-700 dark:text-blue-300">{scholarOnly} <span className="text-[9px] font-bold">pts</span></p>
+                        <p className="text-[9px] font-bold text-blue-400 mt-1">{scholarOnlyCount} dokumen · 0.5+sitasi×0.1/dok</p>
+                      </div>
+                      {/* Cross-indexed */}
+                      <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
+                        <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-1">Cross-Indexed</p>
+                        <p className="text-xl font-black text-emerald-700 dark:text-emerald-300">{crossPts} <span className="text-[9px] font-bold">pts</span></p>
+                        <p className="text-[9px] font-bold text-emerald-400 mt-1">{crossTitles.size} irisan · poin Scopus dipakai</p>
+                      </div>
+                      {/* Grand Total */}
+                      <div className="p-4 bg-violet-50 dark:bg-violet-950/20 rounded-2xl border border-violet-200 dark:border-violet-900/30">
+                        <p className="text-[8px] font-black text-violet-500 uppercase tracking-widest mb-1">Total (No Double-Count)</p>
+                        <p className="text-xl font-black text-violet-700 dark:text-violet-300">{grandTotal} <span className="text-[9px] font-bold">pts</span></p>
+                        <p className="text-[9px] font-bold text-violet-400 mt-1">Scopus + Scholar + Cross</p>
+                      </div>
+                    </div>
+                  );
+               })()}
+
                {/* Publication Content */}
                <div className="space-y-12">
                   {publicationSubTab === 'scopus' ? (

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User, GraduationCap, Settings, TrendingUp, Building2,
-  Fingerprint, ShieldCheck, Zap, Award
+  Fingerprint, ShieldCheck, Zap, Award, BookMarked
 } from 'lucide-react';
 
 // Import sub-components
@@ -59,29 +59,78 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     fetchProfileData();
   }, [user?.id]);
 
+  const currentYear = new Date().getFullYear();
+  const threeYearsAgo = currentYear - 2;
+
   const stats = useMemo(() => {
     if (!user) return null;
+
+    // Poin internal dokumen (dari DB, sudah di-approved)
+    const approvedDocs = internalDocuments.filter((d: any) => d.status === 'Approved');
+    const internalTotal = approvedDocs.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
+    const internal3Y = approvedDocs
+      .filter((d: any) => {
+        const y = d.published_at ? new Date(d.published_at).getFullYear() : 0;
+        return y >= threeYearsAgo;
+      })
+      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
+    const internalThisYear = approvedDocs
+      .filter((d: any) => {
+        const y = d.published_at ? new Date(d.published_at).getFullYear() : 0;
+        return y === currentYear;
+      })
+      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
+
+    // Poin eksternal (Scopus + Scholar + Cross, tanpa double-count)
+    const normalizeT = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const crossTitles = new Set(
+      (publications || []).filter(sd => (scopusPublications || []).some(s => normalizeT(s.title) === normalizeT(sd.title)))
+        .map(d => normalizeT(d.title))
+    );
+    const extCross    = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const extScopus   = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const extScholar  = parseFloat(
+      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
+    );
+    const extTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
+
+    // Poin eksternal 3 tahun
+    const ext3YCross   = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title)) && Number(s.year) >= threeYearsAgo).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const ext3YScopus  = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) >= threeYearsAgo).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const ext3YScholar = parseFloat(
+      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) >= threeYearsAgo).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
+    );
+    const ext3Y = parseFloat((ext3YCross + ext3YScopus + ext3YScholar).toFixed(1));
+
+    // Poin eksternal tahun ini
+    const extTYCross   = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title)) && Number(s.year) === currentYear).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const extTYScopus  = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) === currentYear).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const extTYScholar = parseFloat(
+      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title)) && Number(s.year) === currentYear).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
+    );
+    const extThisYear = parseFloat((extTYCross + extTYScopus + extTYScholar).toFixed(1));
+
     return [
       { 
         label: 'Total KPI Overall', 
-        val: user.total_kpi_points?.toLocaleString() || '0', 
+        val: parseFloat((internalTotal + extTotal).toFixed(1)).toLocaleString(), 
         icon: Award, 
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
       },
       { 
-        label: 'KPI Score 3 Tahun', 
-        val: (user.total_kpi_points * 0.8).toFixed(0),
+        label: 'KPI Score 3 Tahun',
+        val: parseFloat((internal3Y + ext3Y).toFixed(1)).toLocaleString(),
         icon: TrendingUp, 
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
       },
       { 
-        label: 'KPI Tahun Ini', 
-        val: (user.total_kpi_points * 0.3).toFixed(0),
+        label: 'KPI Tahun Ini',
+        val: parseFloat((internalThisYear + extThisYear).toFixed(1)).toLocaleString(),
         icon: Zap, 
         color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
       }
     ];
-  }, [user]);
+  }, [user, internalDocuments, publications, scopusPublications]);
 
   const scholarChartData = useMemo(() => {
     if (!publications || publications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
