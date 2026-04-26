@@ -253,6 +253,7 @@ interface PentaInsightProps {
   publications: any[];
   scopusPublications: any[];
   tabVariants: any;
+  isKPIFilter?: boolean;
 }
 
 export default function PentaInsight({
@@ -264,16 +265,16 @@ export default function PentaInsight({
   scholarData,
   publications,
   scopusPublications,
-  tabVariants
+  tabVariants,
+  isKPIFilter = false
 }: PentaInsightProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [isFilter3Years, setIsFilter3Years] = useState(false);
 
   // Reset page when switching tabs
   useEffect(() => {
     setCurrentPage(1);
-  }, [publicationSubTab, isFilter3Years]);
+  }, [publicationSubTab]);
 
   const currentYear = new Date().getFullYear();
   const threeYearsAgo = currentYear - 2;
@@ -287,15 +288,15 @@ export default function PentaInsight({
     return (scopusPublications || []).some(scopusDoc => normalizeTitle(scopusDoc.title) === scholarTitle);
   });
 
-  const scopusList = isFilter3Years 
+  const scopusList = isKPIFilter 
     ? (scopusPublications || []).filter(doc => Number(doc.year) >= threeYearsAgo)
     : (scopusPublications || []);
 
-  const scholarList = isFilter3Years
+  const scholarList = isKPIFilter
     ? (publications || []).filter(doc => Number(doc.year) >= threeYearsAgo)
     : (publications || []);
 
-  const crossIndexedDocs = isFilter3Years
+  const crossIndexedDocs = isKPIFilter
     ? baseCrossIndexedDocs.filter(doc => Number(doc.year) >= threeYearsAgo)
     : baseCrossIndexedDocs;
 
@@ -422,16 +423,11 @@ export default function PentaInsight({
                      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                        Filter 3 Tahun Terakhir (Dianggap KPI)
                      </span>
-                     <button
-                        onClick={() => setIsFilter3Years(!isFilter3Years)}
-                        className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${
-                           isFilter3Years ? 'bg-primary-600' : 'bg-slate-300 dark:bg-slate-700'
-                        }`}
-                     >
-                        <span className={`absolute top-1 left-1 bg-white w-3 h-3 rounded-full transition-transform duration-300 ${
-                           isFilter3Years ? 'transform translate-x-5' : ''
-                        }`} />
-                     </button>
+                     <div className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                       isKPIFilter ? 'bg-primary-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                     }`}>
+                       {isKPIFilter ? 'Aktif' : 'Nonaktif'}
+                     </div>
                   </div>
                </div>
 
@@ -529,7 +525,7 @@ export default function PentaInsight({
                                     <div className="flex flex-col">
                                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Dokumen</h4>
                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                                          Terindeks oleh Scopus Database {isFilter3Years && '(3 Tahun Terakhir)'}
+                                          Terindeks oleh Scopus Database {isKPIFilter && '(3 Tahun Terakhir)'}
                                        </p>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -639,7 +635,7 @@ export default function PentaInsight({
                                     <div className="flex flex-col">
                                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Dokumen Scholar</h4>
                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                                          Data publikasi dari Google Scholar {isFilter3Years && '(3 Tahun Terakhir)'}
+                                          Data publikasi dari Google Scholar {isKPIFilter && '(3 Tahun Terakhir)'}
                                        </p>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -709,7 +705,7 @@ export default function PentaInsight({
                         <div className="flex items-center justify-between">
                            <div className="flex flex-col">
                               <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Publikasi Terindeks Ganda</h4>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Poin diambil dari Scopus (lebih besar) {isFilter3Years && ' - 3 Tahun Terakhir'}</p>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Poin diambil dari Scopus (lebih besar) {isKPIFilter && ' - 3 Tahun Terakhir'}</p>
                            </div>
                            <div className="flex items-center gap-3">
                               <div className="text-right">

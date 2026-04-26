@@ -557,6 +557,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
             publications={profileData?.publications || []}
             scopusPublications={profileData?.scopusPublications || []}
             tabVariants={tabVariants}
+            isKPIFilter={isKPIFilter}
           />
 
           <div className="flex items-center gap-6">

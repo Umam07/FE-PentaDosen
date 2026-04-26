@@ -100,8 +100,6 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm'] },
-    // === HIDDEN (selalu di-hidden dari nav) ===
-    { name: 'Profil Saya', path: '/profile', icon: Users, roles: ['admin lppm', 'admin prodi', 'dosen'], hidden: false },
   ];
 
   // Cari nama halaman aktif (termasuk children)
