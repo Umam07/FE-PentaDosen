@@ -211,27 +211,47 @@ export default function LecturerProfileInsights() {
   const stats = useMemo(() => {
     if (!profile || !profile.user) return null;
     const user = profile.user;
+
+    // Calculate API points from publications
+    const { publications = [], scopusPublications = [] } = profile;
+    const normalizeT = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const crossTitles = new Set(
+      (publications || []).filter((sd: any) => (scopusPublications || []).some((s: any) => normalizeT(s.title) === normalizeT(sd.title)))
+        .map((d: any) => normalizeT(d.title))
+    );
+    const extCross    = (scopusPublications || []).filter((s: any) => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const extScopus   = (scopusPublications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+    const extScholar  = parseFloat(
+      (publications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
+    );
+    const apiTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
+
+    // Calculate Internal points from approved documents with file_url
+    const internalTotal = documents
+      .filter(d => d.status === 'Approved' && d.file_url && d.file_url !== '')
+      .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0);
+
     return [
       { 
-        label: 'Total KPI Overall', 
-        val: user.total_kpi_points?.toLocaleString() || '0', 
-        icon: Award, 
+        label: 'API Points (Scopus/GS)', 
+        val: apiTotal.toLocaleString(), 
+        icon: Globe, 
+        color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' 
+      },
+      { 
+        label: 'Internal Points (Upload)', 
+        val: internalTotal.toLocaleString(),
+        icon: FileText, 
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
       },
       { 
-        label: 'KPI Score 3 Tahun', 
-        val: (user.total_kpi_points * 0.8).toFixed(0), // Dummy calculation if not in profile
-        icon: TrendingUp, 
-        color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
-      },
-      { 
-        label: 'KPI Tahun Ini', 
-        val: (user.total_kpi_points * 0.3).toFixed(0), // Dummy calculation
-        icon: Zap, 
+        label: 'Total Performance', 
+        val: (apiTotal + internalTotal).toLocaleString(), 
+        icon: Award, 
         color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
       }
     ];
-  }, [profile]);
+  }, [profile, documents]);
 
   // Publication Data Processing
   const publicationData = useMemo(() => {
@@ -421,7 +441,7 @@ export default function LecturerProfileInsights() {
             <div className="hidden lg:flex flex-col items-center gap-2 bg-slate-900 dark:bg-white p-10 rounded-[2.5rem] shadow-2xl">
                 <p className="text-[10px] font-black text-white/40 dark:text-slate-500 uppercase tracking-widest">Performance Score</p>
                 <div className="text-4xl font-black text-white dark:text-slate-900 tracking-tighter flex items-center gap-2">
-                   {user.total_kpi_points?.toLocaleString() || '0'}
+                   {stats ? stats[2].val : '0'}
                 </div>
             </div>
           </div>

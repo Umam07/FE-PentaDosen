@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  BookOpen, Zap, ShieldCheck, Book, TrendingUp, Calendar, ExternalLink, Search, AlertCircle,
+  BookOpen, Zap, ShieldCheck, Book, TrendingUp, Calendar, ExternalLink, Search,
   ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { ProfileTrendChart } from './ProfileCharts';
@@ -244,8 +244,6 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
 
 
 interface PentaInsightProps {
-  insightsSubTab: 'publikasi' | 'penelitian' | 'hki' | 'buku';
-  setInsightsSubTab: (tab: 'publikasi' | 'penelitian' | 'hki' | 'buku') => void;
   publicationSubTab: 'scopus' | 'scholar' | 'cross_indexed';
   setPublicationSubTab: (tab: 'scopus' | 'scholar' | 'cross_indexed') => void;
   scopusChartData: any;
@@ -254,13 +252,10 @@ interface PentaInsightProps {
   scholarData: any;
   publications: any[];
   scopusPublications: any[];
-  internalDocuments: any[];
   tabVariants: any;
 }
 
 export default function PentaInsight({
-  insightsSubTab,
-  setInsightsSubTab,
   publicationSubTab,
   setPublicationSubTab,
   scopusChartData,
@@ -269,7 +264,6 @@ export default function PentaInsight({
   scholarData,
   publications,
   scopusPublications,
-  internalDocuments,
   tabVariants
 }: PentaInsightProps) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -279,27 +273,10 @@ export default function PentaInsight({
   // Reset page when switching tabs
   useEffect(() => {
     setCurrentPage(1);
-  }, [insightsSubTab, publicationSubTab, isFilter3Years]);
-
-  const getCategorizedDocs = (categoryKeywords: string[]) => {
-    return internalDocuments.filter(d => 
-      categoryKeywords.some(k => d.category?.toLowerCase().includes(k))
-    );
-  };
-
-  const rawResearchDocs = getCategorizedDocs(['penelitian', 'proposal', 'laporan']);
-  const hkiDocs = getCategorizedDocs(['hki', 'kekayaan intelektual']);
-  const bookDocs = getCategorizedDocs(['buku', 'ajar']);
+  }, [publicationSubTab, isFilter3Years]);
 
   const currentYear = new Date().getFullYear();
   const threeYearsAgo = currentYear - 2;
-
-  const researchDocs = isFilter3Years
-    ? rawResearchDocs.filter(doc => {
-        const year = doc.published_at ? new Date(doc.published_at).getFullYear() : Number(doc.tahun_pelaksanaan || currentYear);
-        return year >= threeYearsAgo;
-      })
-    : rawResearchDocs;
 
   const normalizeTitle = (title: string) => {
     return title?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
@@ -321,6 +298,7 @@ export default function PentaInsight({
   const crossIndexedDocs = isFilter3Years
     ? baseCrossIndexedDocs.filter(doc => Number(doc.year) >= threeYearsAgo)
     : baseCrossIndexedDocs;
+
 
   // Pagination Helper Component
   const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: { 
@@ -409,32 +387,8 @@ export default function PentaInsight({
       exit="exit"
       className="space-y-8"
     >
-      {/* Insights Sub-Navigation - More Elegant Style */}
-      <div className="flex flex-wrap items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
-        {[
-          { id: 'publikasi', label: 'Publikasi', icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-          { id: 'penelitian', label: 'Penelitian', icon: Zap, color: 'text-orange-500', bg: 'bg-orange-500/10' },
-          { id: 'hki', label: 'HKI', icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-          { id: 'buku', label: 'Buku & Modul', icon: Book, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setInsightsSubTab(tab.id as any)}
-            className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 min-w-[140px] ${
-              insightsSubTab === tab.id 
-                ? `${tab.bg} ${tab.color} ring-1 ring-inset ring-current/20` 
-                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
-            }`}
-          >
-            <tab.icon className={`w-4 h-4 ${insightsSubTab === tab.id ? tab.color : 'text-slate-400'}`} />
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
-
       {/* Main Content Card */}
       <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-8 sm:p-10 shadow-sm min-h-[500px] relative overflow-hidden">
-         {insightsSubTab === 'publikasi' && (
             <div className="space-y-10 relative z-10">
                {/* Nested Publication Sub-tabs - Underline Style */}
                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -817,162 +771,6 @@ export default function PentaInsight({
                   ) : null}
                </div>
             </div>
-         )}
-
-         {insightsSubTab === 'penelitian' && (
-            <div className="space-y-8 relative z-10">
-               <div className="flex flex-col">
-                  <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Penelitian</h4>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Data penelitian yang terdaftar di database</p>
-               </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {researchDocs.length > 0 ? (
-                    <>
-                      {researchDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
-                        <motion.div 
-                          key={idx}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.05 }}
-                          className="group p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 hover:border-orange-500/30 hover:shadow-xl transition-all"
-                        >
-                          <div className="flex items-center gap-4 mb-6">
-                            <div className="p-3 bg-orange-500/10 rounded-2xl">
-                              <Zap className="w-5 h-5 text-orange-500" />
-                            </div>
-                            <div>
-                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{doc.category || 'Penelitian'}</p>
-                              <h5 className="text-base font-black text-slate-900 dark:text-white leading-tight mt-1">{doc.title}</h5>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between pt-6 border-t border-slate-50 dark:border-slate-800">
-                            <div className="flex items-center gap-2">
-                               <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{doc.status || 'Verified'}</span>
-                            </div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                               {doc.published_at ? new Date(doc.published_at).getFullYear() : '2024'}
-                            </span>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </>
-                  ) : (
-                    <div className="col-span-2 py-24 text-center bg-slate-50/50 dark:bg-slate-800/30 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800">
-                      <Zap className="w-10 h-10 mx-auto mb-4 text-slate-300" />
-                      <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Data Penelitian Tidak Ditemukan</p>
-                    </div>
-                  )}
-               </div>
-               {researchDocs.length > 0 && (
-                 <Pagination 
-                   totalItems={researchDocs.length} 
-                   currentPage={currentPage} 
-                   onPageChange={setCurrentPage}
-                   itemsPerPage={itemsPerPage}
-                   setItemsPerPage={setItemsPerPage}
-                 />
-               )}
-            </div>
-         )}
-
-         {insightsSubTab === 'hki' && (
-            <div className="space-y-8 relative z-10">
-               <div className="flex flex-col">
-                  <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Hak Kekayaan Intelektual</h4>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Daftar Paten, Hak Cipta, dan HKI lainnya</p>
-               </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {hkiDocs.length > 0 ? (
-                    <>
-                      {hkiDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
-                        <motion.div 
-                          key={idx}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="group p-8 bg-slate-900 dark:bg-black rounded-[2.5rem] shadow-2xl relative overflow-hidden"
-                        >
-                          <div className="relative z-10">
-                            <ShieldCheck className="w-10 h-10 text-emerald-400 mb-6" />
-                            <h5 className="text-lg font-black text-white mb-4 leading-tight">{doc.title}</h5>
-                            <div className="inline-flex px-3 py-1.5 bg-white/10 rounded-xl">
-                              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
-                                 {doc.identifier || `REG-IDN-${new Date(doc.published_at).getFullYear() || 2024}-${idx}`}
-                              </span>
-                            </div>
-                          </div>
-                          <TrendingUp className="absolute -right-10 -bottom-10 w-32 h-32 opacity-10 text-white" />
-                        </motion.div>
-                      ))}
-                    </>
-                  ) : (
-                    <div className="col-span-2 py-24 text-center bg-slate-50/50 dark:bg-slate-800/30 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800">
-                      <ShieldCheck className="w-10 h-10 mx-auto mb-4 text-slate-300" />
-                      <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Data HKI Tidak Ditemukan</p>
-                    </div>
-                  )}
-               </div>
-               {hkiDocs.length > 0 && (
-                 <Pagination 
-                   totalItems={hkiDocs.length} 
-                   currentPage={currentPage} 
-                   onPageChange={setCurrentPage}
-                   itemsPerPage={itemsPerPage}
-                   setItemsPerPage={setItemsPerPage}
-                 />
-               )}
-            </div>
-         )}
-
-         {insightsSubTab === 'buku' && (
-            <div className="space-y-8 relative z-10">
-               <div className="flex flex-col">
-                  <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Buku & Modul</h4>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Karya tulis, buku ajar, dan modul akademik</p>
-               </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {bookDocs.length > 0 ? (
-                    <>
-                      {bookDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => (
-                        <motion.div 
-                          key={idx}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="group p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 hover:border-purple-500/30 hover:shadow-xl transition-all"
-                        >
-                          <div className="flex gap-6">
-                            <div className="w-24 h-32 bg-slate-50 dark:bg-slate-800 rounded-xl flex-shrink-0 flex items-center justify-center border border-slate-100 dark:border-slate-700">
-                              <Book className="w-8 h-8 text-slate-300" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-[9px] font-black text-purple-500 uppercase tracking-[0.2em] mb-2">{doc.category || 'Buku'}</p>
-                              <h5 className="text-base font-black text-slate-900 dark:text-white leading-tight mb-4 group-hover:text-purple-600 transition-colors">{doc.title}</h5>
-                              <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase">
-                                <span className="px-2 py-0.5 border border-slate-200 dark:border-slate-700 rounded-md">ISBN Verified</span>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </>
-                  ) : (
-                    <div className="col-span-2 py-24 text-center bg-slate-50/50 dark:bg-slate-800/30 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800">
-                      <Book className="w-10 h-10 mx-auto mb-4 text-slate-300" />
-                      <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Data Buku Tidak Ditemukan</p>
-                    </div>
-                  )}
-               </div>
-               {bookDocs.length > 0 && (
-                 <Pagination 
-                   totalItems={bookDocs.length} 
-                   currentPage={currentPage} 
-                   onPageChange={setCurrentPage}
-                   itemsPerPage={itemsPerPage}
-                   setItemsPerPage={setItemsPerPage}
-                 />
-               )}
-            </div>
-         )}
       </div>
     </motion.div>
   );

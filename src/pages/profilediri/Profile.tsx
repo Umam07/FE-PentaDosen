@@ -22,20 +22,15 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const [checkedScopusAuthor, setCheckedScopusAuthor] = useState<any>(null);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' | '' }>({ text: '', type: '' });
   const [activeTab, setActiveTab] = useState<'info' | 'integrasi' | 'insights'>('info');
-  const [insightsSubTab, setInsightsSubTab] = useState<'publikasi' | 'penelitian' | 'hki' | 'buku'>('publikasi');
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed'>('scopus');
   const [publications, setPublications] = useState<any[]>([]);
   const [scopusPublications, setScopusPublications] = useState<any[]>([]);
-  const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!user?.id) return;
       try {
-        const [profileRes, docsRes] = await Promise.all([
-          fetch(`/api/users/${user.id}`),
-          fetch(`/api/users/${user.id}/documents`)
-        ]);
+        const profileRes = await fetch(`/api/users/${user.id}`);
 
         if (profileRes.ok) {
           const data = await profileRes.json();
@@ -46,11 +41,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
           setScholarId(data.user.scholar_id || '');
           setScopusId(data.user.scopus_id || '');
           setUser(data.user);
-        }
-
-        if (docsRes.ok) {
-          const docsData = await docsRes.json();
-          setInternalDocuments(docsData.documents || []);
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
@@ -65,23 +55,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const stats = useMemo(() => {
     if (!user) return null;
 
-    // Poin internal dokumen (dari DB, sudah di-approved)
-    const approvedDocs = internalDocuments.filter((d: any) => d.status === 'Approved');
-    const internalTotal = approvedDocs.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
-    const internal3Y = approvedDocs
-      .filter((d: any) => {
-        const y = d.published_at ? new Date(d.published_at).getFullYear() : 0;
-        return y >= threeYearsAgo;
-      })
-      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
-    const internalThisYear = approvedDocs
-      .filter((d: any) => {
-        const y = d.published_at ? new Date(d.published_at).getFullYear() : 0;
-        return y === currentYear;
-      })
-      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
-
-    // Poin eksternal (Scopus + Scholar + Cross, tanpa double-count)
+    // Poin eksternal (Scopus + Scholar + Cross, tanpa double-count) - Pure API Data
     const normalizeT = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     const crossTitles = new Set(
       (publications || []).filter(sd => (scopusPublications || []).some(s => normalizeT(s.title) === normalizeT(sd.title)))
@@ -112,25 +86,25 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
 
     return [
       { 
-        label: 'Total KPI Overall', 
-        val: parseFloat((internalTotal + extTotal).toFixed(1)).toLocaleString(), 
+        label: 'Total API Points', 
+        val: extTotal.toLocaleString(), 
         icon: Award, 
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
       },
       { 
-        label: 'KPI Score 3 Tahun',
-        val: parseFloat((internal3Y + ext3Y).toFixed(1)).toLocaleString(),
+        label: 'API Score 3 Tahun',
+        val: ext3Y.toLocaleString(),
         icon: TrendingUp, 
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
       },
       { 
-        label: 'KPI Tahun Ini',
-        val: parseFloat((internalThisYear + extThisYear).toFixed(1)).toLocaleString(),
+        label: 'API Tahun Ini',
+        val: extThisYear.toLocaleString(),
         icon: Zap, 
         color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
       }
     ];
-  }, [user, internalDocuments, publications, scopusPublications]);
+  }, [user, publications, scopusPublications]);
 
   const scholarChartData = useMemo(() => {
     if (!publications || publications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
@@ -546,8 +520,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                 />
               ) : (
                 <PentaInsight 
-                  insightsSubTab={insightsSubTab}
-                  setInsightsSubTab={setInsightsSubTab}
                   publicationSubTab={publicationSubTab}
                   setPublicationSubTab={setPublicationSubTab}
                   scopusChartData={scopusChartData}
@@ -556,7 +528,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                   scholarData={scholarData}
                   publications={publications}
                   scopusPublications={scopusPublications}
-                  internalDocuments={internalDocuments}
                   tabVariants={tabVariants}
                 />
               )}

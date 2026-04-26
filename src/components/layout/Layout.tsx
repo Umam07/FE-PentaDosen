@@ -61,6 +61,12 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
   const navItems = [
     // === DOSEN ===
     { 
+      name: 'Dashboard Poin', 
+      path: '/lecturer-dashboard', 
+      icon: Activity, 
+      roles: ['dosen'] 
+    },
+    { 
       name: 'Publikasi', 
       path: '/publication', 
       icon: FileText, 

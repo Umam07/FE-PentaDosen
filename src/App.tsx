@@ -22,6 +22,7 @@ import Research from './pages/dosen/Research';
 import Home from './pages/Home';
 import ResearchDocs from './pages/dosen/ResearchDocs';
 import Buku from './pages/dosen/Buku';
+import LecturerDashboard from './pages/dosen/LecturerDashboard';
 import LecturerList from './pages/dashboard/LecturerList';
 import LecturerProfileInsights from './pages/dashboard/LecturerProfileInsights';
 import DepartementList from './pages/dashboard/DepartementList';
@@ -164,6 +165,7 @@ export default function App() {
 
         <Route element={<Layout user={user} setUser={setUser} />}>
           <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
+          <Route path="/lecturer-dashboard" element={user?.role === 'dosen' ? <LecturerDashboard user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/publication" element={user?.role === 'dosen' ? <Publication user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
