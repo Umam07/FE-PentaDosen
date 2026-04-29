@@ -301,6 +301,7 @@ export default function Research({ user }: { user: any }) {
         setMessage(`Mengimpor ${data.length} data...`);
         let successCount = 0;
         let failCount = 0;
+        let lastErrorMessage = '';
 
         for (let i = 0; i < data.length; i++) {
           const row: any = data[i];
@@ -323,10 +324,23 @@ export default function Research({ user }: { user: any }) {
             successCount++;
           } else {
             failCount++;
+            try {
+              const errData = await res.json();
+              if (errData.errors) {
+                const firstErrorKey = Object.keys(errData.errors)[0];
+                lastErrorMessage = errData.errors[firstErrorKey][0];
+              } else if (errData.message) {
+                lastErrorMessage = errData.message;
+              }
+            } catch (e) {}
           }
         }
 
-        setMessage(`Import selesai. Berhasil: ${successCount}, Gagal: ${failCount}`);
+        let finalMsg = `Import selesai. Berhasil: ${successCount}, Gagal: ${failCount}`;
+        if (failCount > 0 && lastErrorMessage) {
+          finalMsg += ` (Error: ${lastErrorMessage})`;
+        }
+        setMessage(finalMsg);
         setMessageType(failCount === 0 ? 'success' : 'error');
         
         setIsTableLoading(true);
