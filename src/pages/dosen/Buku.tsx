@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Upload, BookOpen, CheckCircle, XCircle, Clock, CalendarDays, ChevronLeft, ChevronRight, Filter, ChevronDown, AlertCircle } from 'lucide-react';
+import { Upload, BookOpen, CheckCircle, XCircle, Clock, CalendarDays, ChevronLeft, ChevronRight, Filter, ChevronDown, AlertCircle, Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const BUKU_CATEGORIES = [
   { label: 'Buku Referensi', value: 'Buku Referensi', points: 40 },
@@ -24,6 +27,8 @@ export default function Buku({ user }: { user: any }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filterKategori, setFilterKategori] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => (currentYear - i).toString());
@@ -83,6 +88,173 @@ export default function Buku({ user }: { user: any }) {
     );
   }, [title, documents]);
 
+  const handleDownloadTemplate = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Template');
+
+    sheet.columns = [
+      { header: 'Judul Buku', key: 'judul', width: 40 },
+      { header: 'Kategori', key: 'kategori', width: 25 },
+      { header: 'Tahun Terbit', key: 'tahun', width: 15 },
+      { header: 'Tipe Dokumen', key: 'tipe', width: 20 },
+    ];
+
+    sheet.addRow({
+      judul: 'Dasar-Dasar Kecerdasan Buatan',
+      kategori: 'Buku Referensi',
+      tahun: new Date().getFullYear(),
+      tipe: 'kpi'
+    });
+
+    for (let i = 2; i <= 1000; i++) {
+      sheet.getCell(`B${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"Buku Referensi,Buku Ajar,Buku Monograf"'],
+        showErrorMessage: true,
+        errorTitle: 'Input Tidak Valid',
+        error: 'Silakan pilih kategori dari daftar dropdown.'
+      };
+      
+      sheet.getCell(`D${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"kpi,arsip"'],
+        showErrorMessage: true,
+        errorTitle: 'Input Tidak Valid',
+        error: 'Silakan pilih tipe dokumen (kpi / arsip).'
+      };
+    }
+
+    sheet.getRow(1).font = { bold: true };
+    sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0E0E0' } };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), 'Template_Import_Buku.xlsx');
+  };
+
+  const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        setMessage(`Mengimpor ${data.length} data...`);
+        let successCount = 0;
+        let failCount = 0;
+        let lastErrorMessage = '';
+
+        for (let i = 0; i < data.length; i++) {
+          const row: any = data[i];
+          const formData = new FormData();
+          formData.append('user_id', user.id);
+          formData.append('title', row['Judul Buku'] || '');
+          formData.append('category', row['Kategori'] || 'Buku Referensi');
+          formData.append('published_at', `${row['Tahun Terbit'] || new Date().getFullYear()}-01-01`);
+          formData.append('doc_type', (row['Tipe Dokumen'] || 'kpi').toLowerCase());
+
+          const res = await fetch('/api/documents', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: formData,
+          });
+
+          if (res.ok) {
+            successCount++;
+          } else {
+            failCount++;
+            try {
+              const errData = await res.json();
+              if (errData.errors) {
+                const firstErrorKey = Object.keys(errData.errors)[0];
+                lastErrorMessage = errData.errors[firstErrorKey][0];
+              } else if (errData.message) {
+                lastErrorMessage = errData.message;
+              }
+            } catch (e) {}
+          }
+        }
+
+        let finalMsg = `Import selesai. Berhasil: ${successCount}, Gagal: ${failCount}`;
+        if (failCount > 0 && lastErrorMessage) {
+          finalMsg += ` (Error: ${lastErrorMessage})`;
+        }
+        setMessage(finalMsg);
+        setMessageType(failCount === 0 ? 'success' : 'error');
+        
+        setIsTableLoading(true);
+        await fetchDocuments();
+        setCurrentPage(1);
+        setIsTableLoading(false);
+      } catch (err) {
+        console.error(err);
+        setMessage('Terjadi kesalahan saat membaca file Excel.');
+        setMessageType('error');
+      } finally {
+        setIsImporting(false);
+        if (e.target) e.target.value = '';
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleUploadPdf = async (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (!file.type.includes('pdf') && !file.type.includes('image')) {
+      setMessage('Hanya file PDF atau gambar yang diperbolehkan.');
+      setMessageType('error');
+      return;
+    }
+    
+    if (file.size > 10 * 1024 * 1024) {
+      setMessage('Ukuran file maksimal 10MB.');
+      setMessageType('error');
+      return;
+    }
+
+    setUploadingPdfId(id);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch(`/api/documents/${id}/upload-pdf`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Dokumen berhasil diunggah!');
+        setMessageType('success');
+        
+        setIsTableLoading(true);
+        await fetchDocuments();
+        setIsTableLoading(false);
+      } else {
+        setMessage(data.message || 'Gagal mengunggah dokumen.');
+        setMessageType('error');
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage('Terjadi kesalahan saat mengunggah.');
+      setMessageType('error');
+    } finally {
+      setUploadingPdfId(null);
+      if (e.target) e.target.value = '';
+    }
+  };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title || !category || !tahun) {
@@ -106,7 +278,14 @@ export default function Buku({ user }: { user: any }) {
         setMessage(data.message || 'Buku berhasil diunggah!'); setMessageType('success');
         setTitle(''); setFile(null); setTahun(currentYear.toString());
         setIsTableLoading(true); await fetchDocuments(); setCurrentPage(1); setIsTableLoading(false);
-      } else { setMessage('Gagal mengunggah.'); setMessageType('error'); }
+      } else {
+        let errorMsg = data.message || 'Gagal mengunggah.';
+        if (data.errors && data.errors.title) {
+          errorMsg = data.errors.title[0];
+        }
+        setMessage(errorMsg); 
+        setMessageType('error'); 
+      }
     } catch { setMessage('Terjadi kesalahan.'); setMessageType('error'); }
     finally { setLoading(false); }
   };
@@ -262,6 +441,23 @@ export default function Buku({ user }: { user: any }) {
               {loading ? 'Mengunggah...' : 'Unggah Buku'}
             </button>
           </form>
+
+          {/* Import Excel */}
+          <div className="pt-6 mt-6 border-t border-gray-100 dark:border-zinc-800">
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Import dari Excel</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <button type="button" onClick={handleDownloadTemplate}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-300 font-bold text-[10px] uppercase tracking-widest rounded-xl transition-all">
+                <Download className="w-3.5 h-3.5" /> Template
+              </button>
+              
+              <label className={`flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] uppercase tracking-widest rounded-xl transition-all cursor-pointer ${isImporting ? 'opacity-50 cursor-wait' : ''}`}>
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                {isImporting ? 'Proses...' : 'Import'}
+                <input type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImportExcel} disabled={isImporting} />
+              </label>
+            </div>
+          </div>
         </div>
 
         {/* Document List */}
@@ -309,6 +505,22 @@ export default function Buku({ user }: { user: any }) {
                               <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 rounded-md text-[7px] font-black uppercase tracking-widest">
                                 {catInfo.label}
                               </span>
+                            )}
+                            {doc.file_url && doc.file_url !== '-' ? (
+                              <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 text-[7px] font-black uppercase tracking-widest transition-colors">
+                                <FileText className="w-2.5 h-2.5" /> Lihat
+                              </a>
+                            ) : (
+                              <label className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 hover:text-purple-600 hover:bg-purple-50 text-[7px] font-black uppercase tracking-widest transition-colors cursor-pointer">
+                                {uploadingPdfId === doc.id ? (
+                                  <span className="animate-pulse">Uploading...</span>
+                                ) : (
+                                  <>
+                                    <Upload className="w-2.5 h-2.5" /> Upload File
+                                    <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
+                                  </>
+                                )}
+                              </label>
                             )}
                             <span className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-[7px] font-black uppercase tracking-widest ${getStatusColor(doc.status)}`}>
                               {getStatusIcon(doc.status)} {doc.status}
