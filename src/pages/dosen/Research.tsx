@@ -4,10 +4,13 @@ import {
   Upload, FileText, CheckCircle, XCircle, Clock, 
   CalendarDays, Award, Zap, ChevronLeft, ChevronRight,
   Landmark, Globe, Home, DollarSign, Beaker, ChevronDown,
-  PieChart as PieChartIcon
+  PieChart as PieChartIcon, Download, FileSpreadsheet
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart as ReChartsPie, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
+import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export default function Research({ user }: { user: any }) {
   const location = useLocation();
@@ -43,6 +46,8 @@ export default function Research({ user }: { user: any }) {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [isDragging, setIsDragging] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
 
   // === State untuk Pagination ===
   const [currentPage, setCurrentPage] = useState(1);
@@ -157,7 +162,11 @@ export default function Research({ user }: { user: any }) {
         setCurrentPage(1);
         setIsTableLoading(false);
       } else {
-        setMessage(data.message || 'Gagal mengunggah penelitian.');
+        let errorMsg = data.message || 'Gagal mengunggah penelitian.';
+        if (data.errors && data.errors.judul_penelitian) {
+          errorMsg = data.errors.judul_penelitian[0];
+        }
+        setMessage(errorMsg);
         setMessageType('error');
       }
     } catch (err) {
@@ -194,6 +203,195 @@ export default function Research({ user }: { user: any }) {
         setMessage('Hanya file PDF yang diperbolehkan.');
         setMessageType('error');
       }
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Template');
+
+    sheet.columns = [
+      { header: 'Judul Penelitian', key: 'judul', width: 35 },
+      { header: 'Dana Disetujui', key: 'dana', width: 20 },
+      { header: 'Program', key: 'program', width: 25 },
+      { header: 'Skema', key: 'skema', width: 20 },
+      { header: 'Fokus', key: 'fokus', width: 20 },
+      { header: 'Tahun', key: 'tahun', width: 15 },
+    ];
+
+    // Example row
+    sheet.addRow({
+      judul: 'Analisis Sistem AI',
+      dana: 10000000,
+      program: 'hibah internal',
+      skema: 'kompetisi',
+      fokus: 'kesehatan',
+      tahun: 2024
+    });
+
+    // Add validation for rows 2 to 1000
+    for (let i = 2; i <= 1000; i++) {
+      // Program (C)
+      sheet.getCell(`C${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"hibah internal,hibah dikti,hibah luar negeri"'],
+        showErrorMessage: true,
+        errorTitle: 'Input Tidak Valid',
+        error: 'Silakan pilih program dari daftar dropdown.'
+      };
+      
+      // Skema (D)
+      sheet.getCell(`D${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"kompetisi,pembinaan"'],
+        showErrorMessage: true,
+        errorTitle: 'Input Tidak Valid',
+        error: 'Silakan pilih skema dari daftar dropdown.'
+      };
+      
+      // Fokus (E)
+      sheet.getCell(`E${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"kesehatan,ekonomi"'],
+        showErrorMessage: true,
+        errorTitle: 'Input Tidak Valid',
+        error: 'Silakan pilih fokus dari daftar dropdown.'
+      };
+    }
+
+    // Protect header row (optional visual enhancement)
+    sheet.getRow(1).font = { bold: true };
+    sheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), 'Template_Import_Penelitian.xlsx');
+  };
+
+  const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    setMessage('Membaca file excel...');
+    setMessageType('success');
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        if (data.length === 0) {
+          setMessage('File excel kosong.');
+          setMessageType('error');
+          setIsImporting(false);
+          return;
+        }
+
+        setMessage(`Mengimpor ${data.length} data...`);
+        let successCount = 0;
+        let failCount = 0;
+
+        for (let i = 0; i < data.length; i++) {
+          const row: any = data[i];
+          const formData = new FormData();
+          formData.append('user_id', user.id);
+          formData.append('judul_penelitian', row['Judul Penelitian'] || '');
+          formData.append('dana_disetujui', (row['Dana Disetujui'] || '').toString().replace(/\./g, ''));
+          formData.append('program', (row['Program'] || '').toLowerCase());
+          formData.append('skema', (row['Skema'] || '').toLowerCase());
+          formData.append('fokus', (row['Fokus'] || '').toLowerCase());
+          formData.append('tahun', (row['Tahun'] || '').toString());
+          
+          const res = await fetch('/api/penelitian', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: formData,
+          });
+
+          if (res.ok) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        }
+
+        setMessage(`Import selesai. Berhasil: ${successCount}, Gagal: ${failCount}`);
+        setMessageType(failCount === 0 ? 'success' : 'error');
+        
+        setIsTableLoading(true);
+        await fetchResearch();
+        setCurrentPage(1);
+        setIsTableLoading(false);
+
+      } catch (err) {
+        console.error(err);
+        setMessage('Terjadi kesalahan saat mengimpor excel.');
+        setMessageType('error');
+      } finally {
+        setIsImporting(false);
+        if (e.target) e.target.value = '';
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleUploadPdfForResearch = async (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.type !== 'application/pdf') {
+      setMessage('Hanya file PDF yang diperbolehkan.');
+      setMessageType('error');
+      return;
+    }
+    
+    if (file.size > 10 * 1024 * 1024) {
+      setMessage('Ukuran file maksimal 10MB.');
+      setMessageType('error');
+      return;
+    }
+
+    setUploadingPdfId(id);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch(`/api/penelitian/${id}/upload-pdf`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('PDF berhasil diunggah!');
+        setMessageType('success');
+        
+        setIsTableLoading(true);
+        await fetchResearch();
+        setIsTableLoading(false);
+      } else {
+        setMessage(data.message || 'Gagal mengunggah PDF.');
+        setMessageType('error');
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage('Terjadi kesalahan saat mengunggah PDF.');
+      setMessageType('error');
+    } finally {
+      setUploadingPdfId(null);
+      if (e.target) e.target.value = '';
     }
   };
 
@@ -250,7 +448,24 @@ export default function Research({ user }: { user: any }) {
       {/* Upload Form Section */}
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Input Hasil Penelitian</h3>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Input Hasil Penelitian</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <button 
+                type="button"
+                onClick={handleDownloadTemplate}
+                className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" />
+                Template Excel
+              </button>
+              <label className={`inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+                <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                {isImporting ? 'Importing...' : 'Import Excel'}
+                <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
+              </label>
+            </div>
+          </div>
           
           <AnimatePresence>
             {message && (
@@ -587,6 +802,7 @@ export default function Research({ user }: { user: any }) {
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Tahun</th>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Program & Skema</th>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Dana</th>
+                <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Dokumen</th>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
                 <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Poin</th>
               </tr>
@@ -595,7 +811,7 @@ export default function Research({ user }: { user: any }) {
               {isTableLoading ? (
                 [1, 2, 3].map(i => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={6} className="px-6 py-4 bg-gray-50/50 h-16"></td>
+                    <td colSpan={7} className="px-6 py-4 bg-gray-50/50 h-16"></td>
                   </tr>
                 ))
               ) : currentItems.length > 0 ? (
@@ -628,6 +844,26 @@ export default function Research({ user }: { user: any }) {
                       {formatCurrency(res.dana_disetujui)}
                     </td>
                     <td className="px-6 py-4">
+                      {res.file_url && res.file_url !== '-' ? (
+                        <a href={res.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-2 py-1 rounded-md">
+                          <FileText className="w-3.5 h-3.5 mr-1" />
+                          Lihat
+                        </a>
+                      ) : (
+                        <label className="inline-flex items-center text-xs font-bold text-gray-500 hover:text-primary-600 cursor-pointer bg-gray-50 hover:bg-primary-50 px-2 py-1 rounded-md transition-colors">
+                          {uploadingPdfId === res.id ? (
+                            <span className="animate-pulse">Uploading...</span>
+                          ) : (
+                            <>
+                              <Upload className="w-3.5 h-3.5 mr-1" />
+                              Upload
+                              <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdfForResearch(e, res.id)} disabled={uploadingPdfId === res.id} />
+                            </>
+                          )}
+                        </label>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
                       <div className={`inline-flex items-center px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest ${
                         res.status === 'Approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
                         res.status === 'Rejected' ? 'bg-red-50 text-red-700 border border-red-100' :
@@ -644,7 +880,7 @@ export default function Research({ user }: { user: any }) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 font-bold italic uppercase text-xs tracking-widest">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-400 font-bold italic uppercase text-xs tracking-widest">
                     Belum ada data penelitian.
                   </td>
                 </tr>
