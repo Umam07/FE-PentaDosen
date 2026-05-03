@@ -8,7 +8,7 @@ import { ProfileTrendChart } from './ProfileCharts';
 
 // === Sub-component: Scholar row with per-doc points + breakdown ===
 function ScholarDocRow({ doc, docPoints, isAlsoScopus, idx }: {
-  doc: any; docPoints: number; isAlsoScopus: boolean; idx: number; normalizeTitle?: (t: string) => string;
+  doc: any; docPoints: number; isAlsoScopus: boolean; idx: number; normalizeTitle?: (t: string) => string; key?: React.Key;
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
   return (
@@ -87,7 +87,7 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, idx }: {
 
 // === Sub-component: Scopus row — 40 pts per doc + 1 pt per citation ===
 function ScopusDocRow({ doc, isAlsoScholar, idx }: {
-  doc: any; isAlsoScholar: boolean; idx: number;
+  doc: any; isAlsoScholar: boolean; idx: number; key?: React.Key;
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
   const docPoints = 40 + (doc.citations || 0) * 1;
@@ -166,7 +166,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
 
 // === Sub-component: Cross-Indexed row — use Scopus points (40 + citations) ===
 function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
-  doc: any; scopusDoc: any | undefined; idx: number;
+  doc: any; scopusDoc: any | undefined; idx: number; key?: React.Key;
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
   const citations = (scopusDoc?.citations ?? doc.citations) || 0;

@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter, ChevronDown } from 'lucide-react';
+import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter, ChevronDown, Download, FileSpreadsheet } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
+import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export default function Publication({ user }: { user: any }) {
   const location = useLocation();
@@ -27,6 +30,7 @@ export default function Publication({ user }: { user: any }) {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [isDragging, setIsDragging] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   // === State untuk Pagination ===
   const [currentPage, setCurrentPage] = useState(1);
@@ -220,6 +224,143 @@ export default function Publication({ user }: { user: any }) {
     }
   };
 
+  const handleDownloadTemplate = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Template');
+    const refSheet = workbook.addWorksheet('Referensi');
+    refSheet.state = 'hidden';
+
+    const validCategories = weights.map((w: any) => w.category);
+    validCategories.forEach((cat, idx) => {
+      refSheet.getCell(`A${idx + 1}`).value = cat;
+    });
+
+    sheet.columns = [
+      { header: 'Judul Publikasi', key: 'judul', width: 40 },
+      { header: 'Kategori', key: 'kategori', width: 30 },
+      { header: 'Tahun Terbit', key: 'tahun', width: 15 },
+      { header: 'Tipe Dokumen', key: 'tipe', width: 20 },
+    ];
+
+    sheet.addRow({
+      judul: 'Implementasi AI dalam Pendidikan',
+      kategori: validCategories[0] || 'Jurnal Internasional',
+      tahun: new Date().getFullYear(),
+      tipe: 'kpi'
+    });
+
+    for (let i = 2; i <= 1000; i++) {
+      if (validCategories.length > 0) {
+        sheet.getCell(`B${i}`).dataValidation = {
+          type: 'list',
+          allowBlank: true,
+          formulae: [`Referensi!$A$1:$A$${validCategories.length}`],
+          showErrorMessage: true,
+          errorTitle: 'Input Tidak Valid',
+          error: 'Silakan pilih kategori dari daftar dropdown.'
+        };
+      }
+      sheet.getCell(`D${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"kpi,arsip"'],
+        showErrorMessage: true,
+        errorTitle: 'Input Tidak Valid',
+        error: 'Silakan pilih tipe dokumen (kpi / arsip).'
+      };
+    }
+
+    sheet.getRow(1).font = { bold: true };
+    sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0E0E0' } };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), 'Template_Import_Publikasi.xlsx');
+  };
+
+  const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    setMessage('Membaca file excel...');
+    setMessageType('success');
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        if (data.length === 0) {
+          setMessage('File excel kosong.');
+          setMessageType('error');
+          setIsImporting(false);
+          return;
+        }
+
+        setMessage(`Mengimpor ${data.length} data...`);
+        let successCount = 0;
+        let failCount = 0;
+        let lastErrorMessage = '';
+
+        for (let i = 0; i < data.length; i++) {
+          const row: any = data[i];
+          const formData = new FormData();
+          formData.append('user_id', user.id);
+          formData.append('title', row['Judul Publikasi'] || '');
+          formData.append('category', row['Kategori'] || '');
+          formData.append('published_at', `${row['Tahun Terbit'] || new Date().getFullYear()}-01-01`);
+          formData.append('doc_type', (row['Tipe Dokumen'] || 'kpi').toLowerCase());
+
+          const res = await fetch('/api/documents', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: formData,
+          });
+
+          if (res.ok) {
+            successCount++;
+          } else {
+            failCount++;
+            try {
+              const errData = await res.json();
+              if (errData.errors) {
+                const firstErrorKey = Object.keys(errData.errors)[0];
+                lastErrorMessage = errData.errors[firstErrorKey][0];
+              } else if (errData.message) {
+                lastErrorMessage = errData.message;
+              }
+            } catch (e) {}
+          }
+        }
+
+        let finalMsg = `Import selesai. Berhasil: ${successCount}, Gagal: ${failCount}`;
+        if (failCount > 0 && lastErrorMessage) {
+          finalMsg += ` (Error: ${lastErrorMessage})`;
+        }
+        setMessage(finalMsg);
+        setMessageType(failCount === 0 ? 'success' : 'error');
+        
+        setIsTableLoading(true);
+        await fetchDocuments();
+        setCurrentPage(1);
+        setIsTableLoading(false);
+
+      } catch (err) {
+        console.error(err);
+        setMessage('Terjadi kesalahan saat mengimpor excel.');
+        setMessageType('error');
+      } finally {
+        setIsImporting(false);
+        if (e.target) e.target.value = '';
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
   // === Logika Pagination (gunakan filteredDocuments) ===
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -283,7 +424,24 @@ export default function Publication({ user }: { user: any }) {
       {/* Upload Form Section */}
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Unggah Publikasi Baru</h3>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Unggah Publikasi Baru</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <button 
+                type="button"
+                onClick={handleDownloadTemplate}
+                className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" />
+                Template Excel
+              </button>
+              <label className={`inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+                <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                {isImporting ? 'Importing...' : 'Import Excel'}
+                <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
+              </label>
+            </div>
+          </div>
           
           <AnimatePresence>
             {message && (

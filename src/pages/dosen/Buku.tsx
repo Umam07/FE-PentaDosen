@@ -351,7 +351,24 @@ export default function Buku({ user }: { user: any }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Upload Form */}
         <div className="lg:col-span-1 bg-white dark:bg-zinc-900 rounded-[2rem] border border-gray-100 dark:border-zinc-800 p-7 shadow-sm space-y-5">
-          <h2 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Unggah Buku</h2>
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+             <h2 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Unggah Buku</h2>
+             <div className="flex flex-wrap items-center gap-2">
+              <button 
+                type="button"
+                onClick={handleDownloadTemplate}
+                className="inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm"
+              >
+                <Download className="w-3 h-3 mr-1" />
+                Template
+              </button>
+              <label className={`inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+                <FileSpreadsheet className="w-3 h-3 mr-1" />
+                {isImporting ? 'Proses...' : 'Import'}
+                <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
+              </label>
+            </div>
+          </div>
 
           <AnimatePresence>
             {message && (
@@ -442,22 +459,7 @@ export default function Buku({ user }: { user: any }) {
             </button>
           </form>
 
-          {/* Import Excel */}
-          <div className="pt-6 mt-6 border-t border-gray-100 dark:border-zinc-800">
-            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Import dari Excel</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <button type="button" onClick={handleDownloadTemplate}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-300 font-bold text-[10px] uppercase tracking-widest rounded-xl transition-all">
-                <Download className="w-3.5 h-3.5" /> Template
-              </button>
-              
-              <label className={`flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] uppercase tracking-widest rounded-xl transition-all cursor-pointer ${isImporting ? 'opacity-50 cursor-wait' : ''}`}>
-                <FileSpreadsheet className="w-3.5 h-3.5" />
-                {isImporting ? 'Proses...' : 'Import'}
-                <input type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImportExcel} disabled={isImporting} />
-              </label>
-            </div>
-          </div>
+          {/* Remove bottom import section */}
         </div>
 
         {/* Document List */}
