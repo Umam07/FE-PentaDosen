@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import { 
   User, GraduationCap, Settings, TrendingUp, Building2,
-  Fingerprint, ShieldCheck, Zap, Award, BookMarked, Globe, FileText
+  Fingerprint, ShieldCheck, Zap, Award, BookMarked, Globe, FileText,
+  AlertCircle, ArrowRight
 } from 'lucide-react';
 
 // Import sub-components
@@ -10,7 +12,8 @@ import DetailInformasi from './DetailInformasi';
 import Konfigurasi from './Konfigurasi';
 
 export default function Profile({ user, setUser }: { user: any; setUser: any }) {
-  const [scholarId, setScholarId] = useState(user?.scholar_id || '');
+  const location = useLocation();
+  const [scholarId, setScholarId] = useState('');useState(user?.scholar_id || '');
   const [scopusId, setScopusId] = useState(user?.scopus_id || '');
   const [scholarData, setScholarData] = useState<any>(null);
   const [scopusData, setScopusData] = useState<any>(null);
@@ -19,7 +22,19 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const [checkingScopus, setCheckingScopus] = useState(false);
   const [checkedAuthor, setCheckedAuthor] = useState<any>(null);
   const [checkedScopusAuthor, setCheckedScopusAuthor] = useState<any>(null);
-  const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' | '' }>({ text: '', type: '' });
+  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (user && (!user.scholar_id || !user.scopus_id)) {
+      setShowWarningModal(true);
+      if (params.get('warning') === 'true') {
+        setActiveTab('integrasi');
+      }
+    }
+  }, [user, location.search]);
+
   const [activeTab, setActiveTab] = useState<'info' | 'integrasi'>('info');
   const [publications, setPublications] = useState<any[]>([]);
   const [scopusPublications, setScopusPublications] = useState<any[]>([]);
@@ -257,6 +272,57 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     }
   };
 
+  const handleDeleteScholarId = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/users/${user.id}/scholar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          scholar_id: null,
+          avatar: null 
+        }),
+      });
+      if (res.ok) {
+        setMessage({ text: 'Scholar ID berhasil dihapus.', type: 'success' });
+        setScholarId('');
+        setScholarData(null);
+        setPublications([]);
+        setUser({ 
+          ...user, 
+          scholar_id: null,
+          avatar: null
+        });
+      }
+    } catch (err) {
+      setMessage({ text: 'Gagal menghapus Scholar ID.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteScopusId = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/users/${user.id}/scopus`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scopus_id: null }),
+      });
+      if (res.ok) {
+        setMessage({ text: 'Scopus ID berhasil dihapus.', type: 'success' });
+        setScopusId('');
+        setScopusData(null);
+        setScopusPublications([]);
+        setUser({ ...user, scopus_id: null });
+      }
+    } catch (err) {
+      setMessage({ text: 'Gagal menghapus Scopus ID.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSync = async () => {
     if (!scholarId) {
       setMessage({ text: 'Simpan Google Scholar ID terlebih dahulu.', type: 'error' });
@@ -356,6 +422,60 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
 
   return (
     <div className="max-w-[1600px] mx-auto px-4 py-8 sm:px-6 lg:px-10 min-h-screen">
+      <AnimatePresence>
+        {showWarningModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-8 md:p-12 shadow-2xl max-w-lg w-full text-center relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full -ml-16 -mb-16 blur-3xl"></div>
+
+              <div className="relative z-10">
+                <div className="w-20 h-20 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
+                  <AlertCircle className="w-10 h-10 text-amber-500" />
+                </div>
+                
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-4">
+                  ID Publikasi Diperlukan
+                </h3>
+                
+                <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed mb-10">
+                  Untuk sinkronisasi poin performa Anda secara otomatis, Anda <span className="text-primary-600 dark:text-primary-400">diwajibkan</span> mengisi ID Google Scholar dan Scopus pada tab <span className="text-slate-900 dark:text-white">Konfigurasi ID</span>.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => {
+                      setShowWarningModal(false);
+                      setActiveTab('integrasi');
+                    }}
+                    className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                  >
+                    Lengkapi ID Sekarang
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setShowWarningModal(false)}
+                    className="w-full py-4 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all"
+                  >
+                    Nanti Saja
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* New Professional Dashboard Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
@@ -510,6 +630,8 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                   handleSaveScholarId={handleSaveScholarId}
                   handleCheckScopusId={handleCheckScopusId}
                   handleSaveScopusId={handleSaveScopusId}
+                  handleDeleteScholarId={handleDeleteScholarId}
+                  handleDeleteScopusId={handleDeleteScopusId}
                   handleSync={handleSync}
                   handleSyncScopus={handleSyncScopus}
                   handleSyncAll={handleSyncAll}

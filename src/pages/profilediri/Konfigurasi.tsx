@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Globe, Hash, TrendingUp, RefreshCw, CheckCircle, AlertCircle, User, Zap,
@@ -34,6 +35,8 @@ interface KonfigurasiProps {
   handleSaveScholarId: () => Promise<void>;
   handleCheckScopusId: () => Promise<void>;
   handleSaveScopusId: () => Promise<void>;
+  handleDeleteScholarId: () => Promise<void>;
+  handleDeleteScopusId: () => Promise<void>;
   handleSync: () => Promise<void>;
   handleSyncScopus: () => Promise<void>;
   handleSyncAll: () => Promise<void>;
@@ -72,8 +75,21 @@ export default function Konfigurasi({
   handleSync,
   handleSyncScopus,
   handleSyncAll,
+  handleDeleteScholarId,
+  handleDeleteScopusId,
   tabVariants
 }: KonfigurasiProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ type: 'scholar' | 'scopus' | null }>({ type: null });
+
+  const confirmDelete = async () => {
+    if (showDeleteConfirm.type === 'scholar') {
+      await handleDeleteScholarId();
+    } else if (showDeleteConfirm.type === 'scopus') {
+      await handleDeleteScopusId();
+    }
+    setShowDeleteConfirm({ type: null });
+  };
+
   return (
     <motion.div 
       key="integrasi"
@@ -83,6 +99,46 @@ export default function Konfigurasi({
       exit="exit"
       className="space-y-8"
     >
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteConfirm.type && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-slate-200 dark:border-slate-800"
+            >
+              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2">Konfirmasi Hapus</h3>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed mb-8">
+                Apakah Anda yakin ingin menghapus ID {showDeleteConfirm.type === 'scholar' ? 'Google Scholar' : 'Scopus'}? Data yang tersinkronisasi akan dihapus dari profil Anda.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteConfirm({ type: null })}
+                  className="flex-1 py-3 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black uppercase tracking-widest text-[10px] transition-all shadow-lg shadow-red-500/20"
+                >
+                  Ya, Hapus
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Status Notifications */}
       <AnimatePresence>
         {message.text && (
@@ -185,6 +241,14 @@ export default function Konfigurasi({
                       >
                         Simpan ID
                       </button>
+                      {user.scholar_id && (
+                        <button
+                          onClick={() => setShowDeleteConfirm({ type: 'scholar' })}
+                          className="px-4 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-all"
+                        >
+                          Hapus
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -270,6 +334,14 @@ export default function Konfigurasi({
                       >
                         Simpan ID
                       </button>
+                      {user.scopus_id && (
+                        <button
+                          onClick={() => setShowDeleteConfirm({ type: 'scopus' })}
+                          className="px-4 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-all"
+                        >
+                          Hapus
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
