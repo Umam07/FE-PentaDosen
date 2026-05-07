@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { 
   Award, TrendingUp, Zap, FileText, Beaker, ShieldCheck, Book, 
   Calendar, Search, ChevronLeft, ChevronRight, Info, Globe, ArrowUpRight,
-  BookMarked
+  BookMarked, RefreshCw
 } from 'lucide-react';
 
 import PentaInsight from '../profilediri/PentaInsight';
@@ -19,32 +19,32 @@ export default function LecturerDashboard({ user }: { user: any }) {
   const [isKPIFilter, setIsKPIFilter] = useState(false); // Filter for 3-year points (KPI)
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed'>('scopus');
 
-  useEffect(() => {
+  const fetchData = async () => {
+    if (!user?.id) return;
+    setLoading(true);
+    try {
+      const [docsRes, profileRes] = await Promise.all([
+        fetch(`/api/users/${user.id}/documents`),
+        fetch(`/api/users/${user.id}`)
+      ]);
 
-    const fetchData = async () => {
-      if (!user?.id) return;
-      setLoading(true);
-      try {
-        const [docsRes, profileRes] = await Promise.all([
-          fetch(`/api/users/${user.id}/documents`),
-          fetch(`/api/users/${user.id}`)
-        ]);
-
-        if (docsRes.ok) {
-          const data = await docsRes.json();
-          setInternalDocuments(data.documents || []);
-        }
-
-        if (profileRes.ok) {
-          const data = await profileRes.json();
-          setProfileData(data);
-        }
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      } finally {
-        setLoading(false);
+      if (docsRes.ok) {
+        const data = await docsRes.json();
+        setInternalDocuments(data.documents || []);
       }
-    };
+
+      if (profileRes.ok) {
+        const data = await profileRes.json();
+        setProfileData(data);
+      }
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [user?.id]);
 
@@ -310,6 +310,15 @@ export default function LecturerDashboard({ user }: { user: any }) {
               <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{isKPIFilter ? 'Rentang 3 Tahun (KPI)' : 'Seluruh Dokumen (Total)'}</span>
            </div>
            <button
+              onClick={fetchData}
+              disabled={loading}
+              className="px-6 py-3.5 bg-white dark:bg-slate-900 text-slate-500 hover:text-primary-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200/60 dark:border-slate-700 shadow-sm transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Refreshing...' : 'Refresh Dokumen'}
+            </button>
+
+            <button
               onClick={() => setIsKPIFilter(!isKPIFilter)}
               className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${
                  isKPIFilter ? 'bg-primary-600' : 'bg-slate-200 dark:bg-slate-700'

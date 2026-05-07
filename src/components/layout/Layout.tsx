@@ -3,7 +3,8 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FileText, CheckSquare, Users, 
   RefreshCw, FolderOpen, Beaker, Award, BookOpen, Book,
-  ClipboardList, FileSignature, Activity
+  ClipboardList, FileSignature, Activity,
+  ShieldCheck, PlusCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Sidebar from './Sidebar';
@@ -96,7 +97,18 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     },
     // === ADMIN / PRODI ===
     { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin lppm', 'admin prodi'] },
-    { name: 'Verifikasi', path: '/admin/verify', icon: CheckSquare, roles: ['admin lppm', 'admin prodi'] },
+    { 
+      name: 'Verifikasi', 
+      path: '/admin/verify', 
+      icon: ShieldCheck, 
+      roles: ['admin lppm', 'admin prodi'] 
+    },
+    { 
+      name: 'Input Dokumen', 
+      path: '/admin/input-document', 
+      icon: PlusCircle, 
+      roles: ['admin lppm'] 
+    },
     { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin prodi'] },
     { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm'] },
