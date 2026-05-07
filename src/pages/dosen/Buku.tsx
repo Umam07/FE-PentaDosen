@@ -321,9 +321,9 @@ export default function Buku({ user }: { user: any }) {
         </div>
         <div className="flex gap-3">
           {BUKU_CATEGORIES.map(bc => (
-            <div key={bc.value} className="px-3 py-1.5 bg-purple-50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900 rounded-xl text-center">
-              <p className="text-[8px] font-black text-purple-500 uppercase tracking-widest">{bc.label}</p>
-              <p className="text-sm font-black text-purple-700 dark:text-purple-300">+{bc.points} pts</p>
+            <div key={bc.value} className="px-3 py-1.5 bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 rounded-xl text-center">
+              <p className="text-[8px] font-black text-primary-500 uppercase tracking-widest">{bc.label}</p>
+              <p className="text-sm font-black text-primary-700 dark:text-primary-300">+{bc.points} pts</p>
             </div>
           ))}
         </div>
@@ -332,7 +332,7 @@ export default function Buku({ user }: { user: any }) {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total Buku', value: stats.total, icon: BookOpen, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950/20' },
+          { label: 'Total Buku', value: stats.total, icon: BookOpen, color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-950/20' },
           { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
           { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/20' },
           { label: 'Total Poin KPI', value: `${stats.points} pts`, icon: CalendarDays, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/20' },
@@ -391,14 +391,14 @@ export default function Buku({ user }: { user: any }) {
             <div>
               <label className="block text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-1.5">Judul Buku</label>
               <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Masukkan judul buku..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold text-gray-800 dark:text-white placeholder-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all" />
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold text-gray-800 dark:text-white placeholder-gray-300 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 outline-none transition-all" />
             </div>
 
             {/* Kategori */}
             <div>
               <label className="block text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-1.5">Kategori</label>
               <select value={category} onChange={e => setCategory(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer">
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold text-gray-800 dark:text-white focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 outline-none cursor-pointer">
                 {BUKU_CATEGORIES.map(bc => <option key={bc.value} value={bc.value}>{bc.label} (+{bc.points} pts)</option>)}
               </select>
             </div>
@@ -414,7 +414,7 @@ export default function Buku({ user }: { user: any }) {
                 <div className="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-xl max-h-48 overflow-auto">
                   {years.map(y => (
                     <button key={y} type="button" onClick={() => { setTahun(y); setIsYearDropdownOpen(false); }}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-bold transition-colors ${tahun === y ? 'bg-purple-50 text-purple-700' : 'text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-700'}`}>
+                      className={`w-full px-4 py-2.5 text-left text-sm font-bold transition-colors ${tahun === y ? 'bg-primary-50 text-primary-700' : 'text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-700'}`}>
                       {y}
                     </button>
                   ))}
@@ -428,7 +428,7 @@ export default function Buku({ user }: { user: any }) {
               <div className="grid grid-cols-2 gap-2">
                 {(['kpi', 'arsip'] as const).map(t => (
                   <button key={t} type="button" onClick={() => setDocType(t)}
-                    className={`px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${docType === t ? 'bg-purple-600 text-white border-purple-600' : 'bg-white dark:bg-zinc-800 text-gray-500 border-gray-200 dark:border-zinc-700 hover:border-purple-300'}`}>
+                    className={`px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${docType === t ? 'bg-primary-600 text-white border-primary-600' : 'bg-white dark:bg-zinc-800 text-gray-500 border-gray-200 dark:border-zinc-700 hover:border-primary-300'}`}>
                     {t === 'kpi' ? '📊 KPI' : '🗄️ Arsip'}
                   </button>
                 ))}
@@ -437,7 +437,7 @@ export default function Buku({ user }: { user: any }) {
 
             {/* Scoring preview */}
             {scoringPreview && (
-              <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest ${scoringPreview.type === 'kpi' ? 'bg-purple-50 dark:bg-purple-950/20 border-purple-100 text-purple-700 dark:text-purple-400' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-500'}`}>
+              <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest ${scoringPreview.type === 'kpi' ? 'bg-primary-50 dark:bg-primary-950/20 border-primary-100 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-500'}`}>
                 {scoringPreview.type === 'kpi' ? '⭐' : '🗄️'} {scoringPreview.message}
               </div>
             )}
@@ -445,16 +445,16 @@ export default function Buku({ user }: { user: any }) {
             {/* Upload zona */}
             <div onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)} onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${isDragging ? 'border-purple-400 bg-purple-50/50' : 'border-gray-200 dark:border-zinc-700 hover:border-purple-300'}`}
+              className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${isDragging ? 'border-primary-400 bg-primary-50/50' : 'border-gray-200 dark:border-zinc-700 hover:border-primary-300'}`}
               onClick={() => document.getElementById('buku-file-input')?.click()}>
               <input id="buku-file-input" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
               <Upload className="w-6 h-6 mx-auto mb-2 text-gray-300" />
-              {file ? <p className="text-xs font-bold text-purple-600 truncate">{file.name}</p>
+              {file ? <p className="text-xs font-bold text-primary-600 truncate">{file.name}</p>
                 : <p className="text-xs font-bold text-gray-400">Klik atau seret file ke sini</p>}
             </div>
 
             <button type="submit" disabled={loading || !!duplicateFound}
-              className="w-full py-3.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg shadow-purple-500/20">
+              className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg shadow-primary-500/20">
               {loading ? 'Mengunggah...' : 'Unggah Buku'}
             </button>
           </form>
@@ -471,7 +471,7 @@ export default function Buku({ user }: { user: any }) {
             </div>
             {['', ...BUKU_CATEGORIES.map(b => b.value)].map(k => (
               <button key={k} onClick={() => { setFilterKategori(k); setCurrentPage(1); }}
-                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterKategori === k ? 'bg-purple-600 text-white' : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-200 dark:border-zinc-700 hover:border-purple-300'}`}>
+                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterKategori === k ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-200 dark:border-zinc-700 hover:border-primary-300'}`}>
                 {k || 'Semua'}
               </button>
             ))}
@@ -479,7 +479,7 @@ export default function Buku({ user }: { user: any }) {
 
           {isTableLoading ? (
             <div className="flex items-center justify-center py-24">
-              <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+              <div className="w-8 h-8 border-4 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
             </div>
           ) : filteredDocuments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-zinc-900 rounded-[2rem] border border-dashed border-gray-200 dark:border-zinc-700">
@@ -497,14 +497,14 @@ export default function Buku({ user }: { user: any }) {
                     <motion.div key={doc.id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                       className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 p-5 hover:shadow-md transition-all">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-950/20 flex items-center justify-center flex-shrink-0">
-                          <BookOpen className="w-6 h-6 text-purple-500" />
+                        <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/20 flex items-center justify-center flex-shrink-0">
+                          <BookOpen className="w-6 h-6 text-primary-500" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-black text-gray-900 dark:text-white leading-snug line-clamp-2">{doc.title}</p>
                           <div className="flex flex-wrap items-center gap-2 mt-2">
                             {catInfo && (
-                              <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 rounded-md text-[7px] font-black uppercase tracking-widest">
+                              <span className="px-2 py-0.5 bg-primary-100 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 rounded-md text-[7px] font-black uppercase tracking-widest">
                                 {catInfo.label}
                               </span>
                             )}
@@ -513,7 +513,7 @@ export default function Buku({ user }: { user: any }) {
                                 <FileText className="w-2.5 h-2.5" /> Lihat
                               </a>
                             ) : (
-                              <label className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 hover:text-purple-600 hover:bg-purple-50 text-[7px] font-black uppercase tracking-widest transition-colors cursor-pointer">
+                              <label className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 hover:text-primary-600 hover:bg-primary-50 text-[7px] font-black uppercase tracking-widest transition-colors cursor-pointer">
                                 {uploadingPdfId === doc.id ? (
                                   <span className="animate-pulse">Uploading...</span>
                                 ) : (
@@ -551,12 +551,12 @@ export default function Buku({ user }: { user: any }) {
                   </span>
                   <div className="flex items-center gap-2">
                     <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}
-                      className="p-2 rounded-xl border border-gray-200 dark:border-zinc-700 disabled:opacity-40 hover:text-purple-600 transition-all">
+                      className="p-2 rounded-xl border border-gray-200 dark:border-zinc-700 disabled:opacity-40 hover:text-primary-600 transition-all">
                       <ChevronLeft className="w-4 h-4" />
                     </button>
                     <span className="text-[10px] font-black text-gray-600 dark:text-zinc-300 px-3">{currentPage} / {totalPages}</span>
                     <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}
-                      className="p-2 rounded-xl border border-gray-200 dark:border-zinc-700 disabled:opacity-40 hover:text-purple-600 transition-all">
+                      className="p-2 rounded-xl border border-gray-200 dark:border-zinc-700 disabled:opacity-40 hover:text-primary-600 transition-all">
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -569,3 +569,6 @@ export default function Buku({ user }: { user: any }) {
     </div>
   );
 }
+
+
+
