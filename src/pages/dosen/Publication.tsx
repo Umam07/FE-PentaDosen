@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter, ChevronDown, Download, FileSpreadsheet } from 'lucide-react';
+import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter, ChevronDown, Download, FileSpreadsheet, Link } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import * as XLSX from 'xlsx';
@@ -32,12 +32,19 @@ export default function Publication({ user }: { user: any }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
+  // Link Research States
+  const [approvedResearch, setApprovedResearch] = useState([]);
+  const [isLinkingModalOpen, setIsLinkingModalOpen] = useState(false);
+  const [docToLink, setDocToLink] = useState<any>(null);
+  const [isLinkingLoading, setIsLinkingLoading] = useState(false);
+
   // === State untuk Pagination ===
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     fetchWeights();
+    fetchApprovedResearch();
 
     const loadDocuments = async () => {
       setIsTableLoading(true);
@@ -85,6 +92,44 @@ export default function Publication({ user }: { user: any }) {
       console.error(err);
     } finally {
       setIsWeightsLoading(false);
+    }
+  };
+
+  const fetchApprovedResearch = async () => {
+    try {
+      const res = await fetch(`/api/users/${user.id}/approved-penelitian`);
+      const data = await res.json();
+      if (data.success) {
+        setApprovedResearch(data.penelitian);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleLinkToResearch = async (penelitianId: number) => {
+    if (!docToLink) return;
+    try {
+      setIsLinkingLoading(true);
+      const res = await fetch(`/api/documents/${docToLink.id}/link-penelitian`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ penelitian_id: penelitianId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage('Dokumen berhasil dihubungkan ke penelitian!');
+        setMessageType('success');
+        setIsLinkingModalOpen(false);
+        fetchDocuments(); // Refresh to show linked research title
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage('Gagal menghubungkan dokumen.');
+      setMessageType('error');
+    } finally {
+      setIsLinkingLoading(false);
+      setDocToLink(null);
     }
   };
 
@@ -974,6 +1019,32 @@ export default function Publication({ user }: { user: any }) {
                             <span className="lg:hidden">{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
                             {doc.category}
                           </p>
+                          
+                          {/* Link Research Button */}
+                          <div className="mt-2 flex items-center gap-2">
+                            {doc.penelitian ? (
+                              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 rounded-md border border-indigo-100 dark:border-indigo-800/50">
+                                <Link className="w-2.5 h-2.5" />
+                                <span className="text-[8px] font-black uppercase tracking-tight truncate max-w-[100px]" title={doc.penelitian.judul_penelitian}>
+                                  {doc.penelitian.judul_penelitian}
+                                </span>
+                                <button 
+                                  onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
+                                  className="ml-1 text-[8px] font-black text-indigo-400 hover:text-indigo-600 uppercase"
+                                >
+                                  Ubah
+                                </button>
+                              </div>
+                            ) : (
+                              <button 
+                                onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
+                                className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 dark:bg-zinc-800 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-md border border-gray-100 dark:border-zinc-700 text-[8px] font-black uppercase tracking-tight"
+                              >
+                                <Link className="w-2.5 h-2.5" />
+                                Pilih Asal Penelitian
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -1107,6 +1178,79 @@ export default function Publication({ user }: { user: any }) {
           </motion.div>
         )}
       </section>
+
+      {/* Linking Modal */}
+      <AnimatePresence>
+        {isLinkingModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setIsLinkingModalOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden"
+            >
+              <div className="p-8 lg:p-10">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl text-indigo-600">
+                    <Link className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Pilih Asal Penelitian</h3>
+                    <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Hubungkan dokumen ini dengan penelitian yang relevan</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {approvedResearch.length > 0 ? (
+                    approvedResearch.map((res: any) => (
+                      <button
+                        key={res.id}
+                        disabled={isLinkingLoading}
+                        onClick={() => handleLinkToResearch(res.id)}
+                        className="w-full text-left p-5 rounded-2xl border-2 border-gray-50 dark:border-zinc-800 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all group"
+                      >
+                        <div className="flex justify-between items-start gap-4">
+                          <div className="min-w-0">
+                            <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight group-hover:text-indigo-700 dark:group-hover:text-indigo-300 leading-tight">
+                              {res.judul_penelitian}
+                            </p>
+                            <div className="flex items-center gap-3 mt-2">
+                              <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{res.tahun}</span>
+                              <span className="px-2 py-0.5 bg-gray-100 dark:bg-zinc-800 text-gray-500 text-[8px] font-black uppercase tracking-widest rounded-md">{res.program}</span>
+                            </div>
+                          </div>
+                          <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg text-gray-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40 group-hover:text-indigo-600 transition-colors">
+                            <ChevronRight className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="py-12 text-center">
+                      <AlertCircle className="w-10 h-10 text-gray-200 mx-auto mb-4" />
+                      <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Tidak ada penelitian yang disetujui</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-gray-50 dark:border-zinc-800">
+                  <button 
+                    onClick={() => setIsLinkingModalOpen(false)}
+                    className="w-full py-4 bg-gray-50 dark:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all"
+                  >
+                    Batalkan
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
