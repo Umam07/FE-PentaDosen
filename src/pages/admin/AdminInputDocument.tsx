@@ -20,6 +20,7 @@ export default function AdminInputDocument() {
   
   const [title, setTitle] = useState('');
   const [mainCategory, setMainCategory] = useState('Penelitian');
+  const [isMainCategoryDropdownOpen, setIsMainCategoryDropdownOpen] = useState(false);
   const [subCategory, setSubCategory] = useState('');
   const [tahun, setTahun] = useState(new Date().getFullYear().toString());
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
@@ -28,7 +29,6 @@ export default function AdminInputDocument() {
 
   // Penelitian Specific States
   const [danaDisetujui, setDanaDisetujui] = useState('');
-  const [skema, setSkema] = useState('kompetisi');
   const [fokus, setFokus] = useState('kesehatan');
   
   // UI States
@@ -169,7 +169,7 @@ export default function AdminInputDocument() {
       formData.append('judul_penelitian', title);
       formData.append('dana_disetujui', danaDisetujui.replace(/\D/g, ''));
       formData.append('program', subCategory);
-      formData.append('skema', skema);
+      formData.append('skema', 'kompetisi'); // Default value as it's removed from UI
       formData.append('fokus', fokus);
       formData.append('tahun', tahun);
     } else {
@@ -204,6 +204,8 @@ export default function AdminInputDocument() {
       setLoading(false);
     }
   };
+
+  const selectedMainCategory = mainCategories.find(c => c.id === mainCategory);
 
   return (
     <div className="max-w-none space-y-8 pb-12">
@@ -304,21 +306,48 @@ export default function AdminInputDocument() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Kategori Utama</label>
-                    <div className="flex flex-wrap gap-2">
-                      {mainCategories.map((cat) => (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => setMainCategory(cat.id)}
-                          className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${mainCategory === cat.id ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-md' : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'}`}
-                        >
-                          <cat.icon className="w-4 h-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">{cat.label}</span>
-                        </button>
-                      ))}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsMainCategoryDropdownOpen(!isMainCategoryDropdownOpen)}
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-2xl flex items-center justify-between transition-all hover:border-primary-500"
+                    >
+                      <div className="flex items-center gap-3">
+                        {selectedMainCategory?.icon && <selectedMainCategory.icon className="w-5 h-5 text-primary-500" />}
+                        <span className="text-sm font-black uppercase tracking-tight text-gray-700 dark:text-zinc-200">{selectedMainCategory?.label}</span>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isMainCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {isMainCategoryDropdownOpen && (
+                        <>
+                          <div className="fixed inset-0 z-[45]" onClick={() => setIsMainCategoryDropdownOpen(false)} />
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="absolute z-[50] left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden"
+                          >
+                            {mainCategories.map((cat) => (
+                              <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => {
+                                  setMainCategory(cat.id);
+                                  setIsMainCategoryDropdownOpen(false);
+                                }}
+                                className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors border-b border-gray-50 dark:border-zinc-800 last:border-none ${mainCategory === cat.id ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
+                              >
+                                <cat.icon className={`w-5 h-5 ${mainCategory === cat.id ? 'text-primary-600' : 'text-gray-400'}`} />
+                                <span className={`text-sm font-black uppercase tracking-tight ${mainCategory === cat.id ? 'text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-zinc-400'}`}>{cat.label}</span>
+                              </button>
+                            ))}
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   {subCategoryOptions.length > 0 && (
@@ -364,29 +393,16 @@ export default function AdminInputDocument() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Skema</label>
-                          <select
-                            value={skema}
-                            onChange={(e) => setSkema(e.target.value)}
-                            className="w-full px-4 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none"
-                          >
-                            <option value="kompetisi">Kompetisi</option>
-                            <option value="pembinaan">Pembinaan</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Fokus</label>
-                          <select
-                            value={fokus}
-                            onChange={(e) => setFokus(e.target.value)}
-                            className="w-full px-4 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none"
-                          >
-                            <option value="kesehatan">Kesehatan</option>
-                            <option value="ekonomi">Ekonomi</option>
-                          </select>
-                        </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Fokus</label>
+                        <select
+                          value={fokus}
+                          onChange={(e) => setFokus(e.target.value)}
+                          className="w-full px-4 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none appearance-none"
+                        >
+                          <option value="kesehatan">Kesehatan</option>
+                          <option value="ekonomi">Ekonomi</option>
+                        </select>
                       </div>
                     </>
                   )}
@@ -427,19 +443,56 @@ export default function AdminInputDocument() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Tahun</label>
-                    <select
-                      required
-                      value={tahun}
-                      onChange={(e) => setTahun(e.target.value)}
-                      className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
+                  <div className="space-y-2 relative">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 flex items-center">
+                      <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
+                      Tahun
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold text-left flex justify-between items-center transition-all hover:border-primary-500"
                     >
-                      {Array.from({ length: 15 }, (_, i) => {
-                        const y = (new Date().getFullYear() - i).toString();
-                        return <option key={y} value={y}>{y}</option>;
-                      })}
-                    </select>
+                      <span className="text-gray-900 dark:text-zinc-100">{tahun}</span>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isYearDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {isYearDropdownOpen && (
+                        <>
+                          <div className="fixed inset-0 z-[45]" onClick={() => setIsYearDropdownOpen(false)} />
+                          <motion.div
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            className="absolute z-[50] w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden origin-top"
+                          >
+                            <div className="max-h-64 overflow-y-auto p-3 grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              {Array.from({ length: 15 }, (_, i) => {
+                                const y = (new Date().getFullYear() - i).toString();
+                                return (
+                                  <button
+                                    key={y}
+                                    type="button"
+                                    onClick={() => {
+                                      setTahun(y);
+                                      setIsYearDropdownOpen(false);
+                                    }}
+                                    className={`py-2.5 rounded-xl text-xs font-black uppercase transition-all border ${
+                                      tahun === y 
+                                        ? 'bg-primary-600 border-primary-600 text-white shadow-md' 
+                                        : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 dark:text-zinc-400 hover:border-primary-200 hover:bg-primary-50'
+                                    }`}
+                                  >
+                                    {y}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>
@@ -466,7 +519,7 @@ export default function AdminInputDocument() {
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${file ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
                     {file ? <CheckCircle className="w-8 h-8" /> : <Upload className="w-8 h-8" />}
                   </div>
-                  <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                  <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight text-center">
                     {file ? file.name : 'Klik untuk pilih PDF'}
                   </p>
                   
