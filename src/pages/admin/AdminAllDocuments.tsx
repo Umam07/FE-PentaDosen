@@ -1,34 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   FileText, CheckCircle, XCircle, Clock, Download, 
   Search, FileDown, Award, Archive, CalendarDays, Filter,
-  ChevronLeft, ChevronRight, Globe, User, GraduationCap, ShieldCheck, Zap
+  ChevronLeft, ChevronRight, Globe, User, GraduationCap, ShieldCheck, Zap, Eye,
+  Beaker, Landmark
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOutletContext } from 'react-router-dom';
+import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
 export default function AdminAllDocuments() {
   const { user } = useOutletContext<{ user: any }>();
+  const [activeTab, setActiveTab ] = useState<'publikasi' | 'hki' | 'penelitian' | 'buku'>('publikasi');
   const [documents, setDocuments] = useState<any[]>([]);
+  const [research, setResearch] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFakultas, setSelectedFakultas] = useState('');
-  const [kpiPeriod, setKpiPeriod] = useState<any>(null);
-  const [periodFilter, setPeriodFilter] = useState('all');
 
   // State untuk Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // === State Preview Modal ===
+  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
+
   useEffect(() => {
-    fetchDocuments();
-    fetchPeriods();
-  }, []);
+    if (activeTab === 'penelitian') {
+      fetchResearch();
+    } else {
+      fetchDocuments();
+    }
+  }, [activeTab]);
 
   // Kembalikan ke halaman 1 setiap kali melakukan pencarian atau filter
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, periodFilter, selectedFakultas]);
+  }, [searchTerm, selectedFakultas]);
 
   const fetchDocuments = async () => {
     try {
@@ -36,7 +44,7 @@ export default function AdminAllDocuments() {
       const res = await fetch(`/api/admin/documents/all?role=${user?.role}&user_id=${user?.id}`);
       if (res.ok) {
         const data = await res.json();
-        setDocuments(data.documents);
+        setDocuments(data.documents || []);
       }
     } catch (err) {
       console.error(err);
@@ -45,15 +53,18 @@ export default function AdminAllDocuments() {
     }
   };
 
-  const fetchPeriods = async () => {
+  const fetchResearch = async () => {
     try {
-      const res = await fetch('/api/accreditation-periods');
+      setLoading(true);
+      const res = await fetch(`/api/penelitian?role=${user?.role}&user_id=${user?.id}&all=true`);
       if (res.ok) {
         const data = await res.json();
-        setKpiPeriod(data.kpi_period);
+        setResearch(data.penelitian || []);
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,23 +97,37 @@ export default function AdminAllDocuments() {
     }
   };
 
-  const filteredDocuments = documents.filter(doc => {
-    const matchSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      doc.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.category.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Period filter: all, kpi or archive
-    const matchPeriod = periodFilter === 'all' 
-      ? true
-      : periodFilter === 'kpi'
-        ? doc.is_kpi_counted === true || doc.is_kpi_counted === 1
-        : periodFilter === 'archive'
-          ? !doc.is_kpi_counted || doc.is_kpi_counted === 0
-          : true;
-          
-    const matchFakultas = selectedFakultas ? doc.fakultas === selectedFakultas : true;
+  // Dynamic Filtering based on activeTab
+  const filteredDocsByTab = useMemo(() => {
+    if (activeTab === 'penelitian') return research;
+    if (activeTab === 'hki') {
+      return documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('hki'));
+    }
+    if (activeTab === 'buku') {
+      return documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('buku'));
+    }
+    if (activeTab === 'publikasi') {
+      return documents.filter((doc: any) => 
+        !(doc.category || '').toLowerCase().includes('hki') && 
+        !(doc.category || '').toLowerCase().includes('buku')
+      );
+    }
+    return documents;
+  }, [activeTab, documents, research]);
 
-    return matchSearch && matchPeriod && matchFakultas;
+  const filteredDocuments = filteredDocsByTab.filter(doc => {
+    const titleText = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
+    const authorText = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
+    const catText = activeTab === 'penelitian' ? doc.program : doc.category;
+
+    const matchSearch = (titleText || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (authorText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (catText || '').toLowerCase().includes(searchTerm.toLowerCase());
+          
+    const itemFakultas = activeTab === 'penelitian' ? doc.user?.fakultas : doc.fakultas;
+    const matchFakultas = selectedFakultas ? itemFakultas === selectedFakultas : true;
+
+    return matchSearch && matchFakultas;
   });
 
   // Hitungan untuk Pagination
@@ -114,15 +139,27 @@ export default function AdminAllDocuments() {
   const handleExportCSV = () => {
     if (filteredDocuments.length === 0) return;
 
-    const headers = ['ID,Judul Dokumen,Kategori,Dosen Pengaju,Status,Tgl Publikasi,Sumber,KPI,Points,Tanggal Pengajuan'];
+    const isResearch = activeTab === 'penelitian';
+    const headers = isResearch 
+      ? ['ID,Judul Penelitian,Program,Skema,Fokus,Dosen Pengaju,Status,Dana,Points,Tanggal Pengajuan']
+      : ['ID,Judul Dokumen,Kategori,Dosen Pengaju,Status,Tgl Publikasi,Sumber,KPI,Points,Tanggal Pengajuan'];
 
     const rows = filteredDocuments.map(doc => {
-      const title = doc.title.replace(/"/g, '""');
-      const dateStr = new Date(doc.created_at).toLocaleDateString('id-ID');
-      const pubDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-';
-      const kpiStatus = doc.is_kpi_counted ? 'KPI Aktif' : 'Arsip';
-      const source = doc.file_url ? 'Manual' : 'Synced';
-      return `"${doc.id}","${title}","${doc.category}","${doc.user_name}","${doc.status}","${pubDate}","${source}","${kpiStatus}","${doc.awarded_points || 0}","${dateStr}"`;
+      if (isResearch) {
+        const title = (doc.judul_penelitian || '').replace(/"/g, '""');
+        const author = doc.user?.name || '';
+        const dateStr = new Date(doc.created_at).toLocaleDateString('id-ID');
+        const dana = doc.dana_disetujui || 0;
+        return `"${doc.id}","${title}","${doc.program}","${doc.skema}","${doc.fokus}","${author}","${doc.status}","${dana}","${doc.awarded_points || 0}","${dateStr}"`;
+      } else {
+        const title = (doc.title || '').replace(/"/g, '""');
+        const author = doc.user_name || '';
+        const dateStr = new Date(doc.created_at).toLocaleDateString('id-ID');
+        const pubDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-';
+        const kpiStatus = doc.is_kpi_counted ? 'KPI Aktif' : 'Arsip';
+        const source = doc.file_url ? 'Manual' : 'Synced';
+        return `"${doc.id}","${title}","${doc.category}","${author}","${doc.status}","${pubDate}","${source}","${kpiStatus}","${doc.awarded_points || 0}","${dateStr}"`;
+      }
     });
 
     const csvContent = headers.concat(rows).join('\n');
@@ -130,17 +167,17 @@ export default function AdminAllDocuments() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     
-    const exportLabel = periodFilter === 'all' ? 'Semua' : periodFilter;
     link.href = url;
-    link.setAttribute('download', `Data_Dokumen_${exportLabel}_PentaDosen.csv`);
+    link.setAttribute('download', `Vault_Data_${activeTab.toUpperCase()}_PentaDosen.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Count stats
-  const kpiCount = documents.filter(d => d.is_kpi_counted === true || d.is_kpi_counted === 1).length;
-  const archiveCount = documents.filter(d => !d.is_kpi_counted || d.is_kpi_counted === 0).length;
+  // Dynamic counts for top cards based on tab
+  const totalCount = filteredDocsByTab.length;
+  const approvedCount = filteredDocsByTab.filter(d => d.status === 'Approved').length;
+  const pendingCount = filteredDocsByTab.filter(d => d.status === 'Pending' || d.status === 'Verified by Prodi').length;
 
   return (
     <div className="space-y-8 pb-12">
@@ -158,16 +195,16 @@ export default function AdminAllDocuments() {
           className="flex items-center justify-center px-6 py-3 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-sm text-xs font-black uppercase tracking-widest text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all disabled:opacity-50 active:scale-95"
         >
           <FileDown className="h-4 w-4 mr-2 text-primary-600" />
-          Export CSV {periodFilter !== 'all' && `(${periodFilter})`}
+          Export CSV ({activeTab.toUpperCase()})
         </button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {[
-          { label: 'Total Dokumen', value: documents.length, icon: FileText, color: 'primary' },
-          { label: 'KPI Aktif', value: kpiCount, icon: Award, color: 'emerald' },
-          { label: 'Arsip Umum', value: archiveCount, icon: Archive, color: 'gray' }
+          { label: `Total ${activeTab}`, value: totalCount, icon: FileText, color: 'primary' },
+          { label: 'Telah Disetujui', value: approvedCount, icon: Award, color: 'emerald' },
+          { label: 'Menunggu Verifikasi', value: pendingCount, icon: Archive, color: 'gray' }
         ].map((stat, i) => (
           <motion.div 
             key={i}
@@ -195,18 +232,60 @@ export default function AdminAllDocuments() {
         ))}
       </div>
 
-      {/* Navigation & Filters */}
+      {/* Navigation & Filters Card */}
       <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 overflow-hidden">
+        
+        {/* Card Header Tab Bar */}
+        <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 overflow-x-auto scrollbar-hide">
+          {(['publikasi', 'hki', 'penelitian', 'buku'] as const).map((tab) => (
+             <button
+               key={tab}
+               onClick={() => setActiveTab(tab)}
+               className={`px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] border-b-2 transition-all whitespace-nowrap ${
+                 activeTab === tab 
+                   ? 'border-primary-600 text-primary-600 dark:text-primary-400 bg-white dark:bg-zinc-900' 
+                   : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+               }`}
+             >
+               {tab}
+             </button>
+          ))}
+        </div>
+
         <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10 backdrop-blur-sm">
           <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+              <div className="hidden md:flex p-3 bg-primary-50 dark:bg-primary-900/20 rounded-2xl text-primary-600 dark:text-primary-400 shadow-sm border border-primary-100/50 dark:border-primary-900/30">
+                 {activeTab === 'penelitian' ? <Beaker className="h-6 w-6" /> : <FileText className="h-6 w-6" />}
+              </div>
+              <div>
+                 <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                   Daftar {activeTab === 'publikasi' ? 'Publikasi' : activeTab === 'hki' ? 'HKI' : activeTab === 'buku' ? 'Buku' : 'Penelitian'}
+                 </h3>
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Prodi'} • Arsip & Validasi</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+              {/* Search Bar */}
+              <div className="relative w-full xl:w-[400px]">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  className="block w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-zinc-700 rounded-[1.25rem] bg-white dark:bg-zinc-800 text-sm font-bold text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 outline-none transition-all shadow-inner"
+                  placeholder={`Cari judul, dosen, atau kategori ${activeTab}...`}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
               {/* Fakultas Filter Component */}
               {user?.role === 'admin lppm' && (
-                <div className="relative w-full sm:w-auto">
+                <div className="relative w-full sm:w-[220px]">
                   <select
                     value={selectedFakultas}
                     onChange={(e) => setSelectedFakultas(e.target.value)}
-                    className="appearance-none text-[11px] font-black uppercase tracking-widest border border-gray-200 dark:border-zinc-700 rounded-2xl pl-10 pr-10 py-3 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 outline-none w-full sm:w-[220px] transition-all"
+                    className="appearance-none w-full px-5 py-3 pl-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm"
                   >
                     <option value="">Semua Fakultas</option>
                     <option value="Fakultas Kedokteran">Kedokteran</option>
@@ -216,34 +295,10 @@ export default function AdminAllDocuments() {
                     <option value="Fakultas Hukum">Hukum</option>
                     <option value="Fakultas Psikologi">Psikologi</option>
                   </select>
-                  <GraduationCap className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-300 pointer-events-none" />
                 </div>
               )}
-
-              {/* Period Filter */}
-              <div className="relative w-full sm:w-auto">
-                <select
-                  value={periodFilter}
-                  onChange={(e) => setPeriodFilter(e.target.value)}
-                  className="appearance-none text-[11px] font-black uppercase tracking-widest border border-gray-200 dark:border-zinc-700 rounded-2xl pl-10 pr-10 py-3 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 outline-none w-full sm:w-[220px] transition-all"
-                >
-                  <option value="all">Semua Dokumen</option>
-                  <option value="kpi">KPI Aktif {kpiPeriod ? `(${kpiPeriod.label})` : ''}</option>
-                  <option value="archive">Arsip Saja</option>
-                </select>
-                <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              </div>
-            </div>
-
-            <div className="relative w-full xl:w-[400px]">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                className="block w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-zinc-700 rounded-[1.25rem] bg-white dark:bg-zinc-800 text-sm font-bold text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 outline-none transition-all shadow-inner"
-                placeholder="Cari judul, dosen, atau kategori..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
             </div>
           </div>
         </div>
@@ -265,79 +320,115 @@ export default function AdminAllDocuments() {
             <div>
               {/* Tampilan Mobile (Card List) */}
               <div className="md:hidden divide-y divide-gray-50 dark:divide-zinc-800/50">
-                {currentItems.map((doc) => (
-                  <div key={doc.id} className="p-6 space-y-4 bg-white dark:bg-zinc-900">
-                    <div className="flex justify-between items-start gap-4">
-                      <div className="flex-1">
-                        <h4 className="text-sm font-black text-gray-900 dark:text-zinc-100 leading-snug uppercase tracking-tight">
-                          {doc.title}
-                        </h4>
-                        <div className="mt-2 flex items-center gap-2">
-                           <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-primary-50 dark:bg-primary-900/20 text-primary-600 uppercase tracking-tight border border-primary-100/50">
-                              {doc.category}
-                           </span>
-                           {!doc.file_url && (
-                             <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 uppercase tracking-tight border border-orange-100/50 flex items-center gap-1">
-                                <Globe className="w-2.5 h-2.5" /> Synced
+                {currentItems.map((doc) => {
+                  const title = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
+                  const author = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
+                  const category = activeTab === 'penelitian' ? doc.program : doc.category;
+                  const dateVal = activeTab === 'penelitian' ? doc.created_at : doc.published_at;
+
+                  return (
+                    <div key={doc.id} className="p-6 space-y-4 bg-white dark:bg-zinc-900">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1">
+                          <h4 className="text-sm font-black text-gray-900 dark:text-zinc-100 leading-snug uppercase tracking-tight">
+                            {title}
+                          </h4>
+                          <div className="mt-2 flex items-center gap-2">
+                             <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-primary-50 dark:bg-primary-900/20 text-primary-600 uppercase tracking-tight border border-primary-100/50">
+                                {category}
                              </span>
-                           )}
+                             {activeTab !== 'penelitian' && !doc.file_url && (
+                               <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 uppercase tracking-tight border border-orange-100/50 flex items-center gap-1">
+                                  <Globe className="w-2.5 h-2.5" /> Synced
+                               </span>
+                             )}
+                          </div>
+                        </div>
+                        <div className="shrink-0">{getStatusBadge(doc.status)}</div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 bg-gray-50/50 dark:bg-zinc-800/30 p-4 rounded-2xl border border-gray-100/50 dark:border-zinc-800/50">
+                        <div>
+                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Dosen</p>
+                          <p className="text-[11px] font-bold text-gray-800 dark:text-zinc-300 truncate">{author}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
+                            {activeTab === 'penelitian' ? 'Diajukan' : 'Publikasi'}
+                          </p>
+                          <p className="text-[11px] font-bold text-gray-600 dark:text-zinc-400 flex items-center gap-1">
+                            <CalendarDays className="h-3 w-3" />
+                            {dateVal ? new Date(dateVal).toLocaleDateString('id-ID') : '-'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
+                            {activeTab === 'penelitian' ? 'Skema / Fokus' : 'Status KPI'}
+                          </p>
+                          <div className="mt-0.5">
+                            {activeTab === 'penelitian' ? (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 uppercase">
+                                {doc.skema} / {doc.fokus}
+                              </span>
+                            ) : doc.is_kpi_counted ? (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 uppercase">
+                                {doc.accreditation_period}
+                              </span>
+                            ) : (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-400 uppercase">
+                                Arsip
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
+                            {activeTab === 'penelitian' ? 'Dana Disetujui' : 'Poin Achieved'}
+                          </p>
+                          <p className="text-sm font-black text-gray-900 dark:text-zinc-100">
+                            {activeTab === 'penelitian' 
+                              ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(doc.dana_disetujui)
+                              : `+${doc.awarded_points || 0} PTS`}
+                          </p>
                         </div>
                       </div>
-                      <div className="shrink-0">{getStatusBadge(doc.status)}</div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-4 bg-gray-50/50 dark:bg-zinc-800/30 p-4 rounded-2xl border border-gray-100/50 dark:border-zinc-800/50">
-                      <div>
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Dosen</p>
-                        <p className="text-[11px] font-bold text-gray-800 dark:text-zinc-300 truncate">{doc.user_name}</p>
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Publikasi</p>
-                        <p className="text-[11px] font-bold text-gray-600 dark:text-zinc-400 flex items-center gap-1">
-                          <CalendarDays className="h-3 w-3" />
-                          {doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Status KPI</p>
-                        <div className="mt-0.5">
-                          {doc.is_kpi_counted ? (
-                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 uppercase">
-                              {doc.accreditation_period}
-                            </span>
-                          ) : (
-                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-400 uppercase">
-                              Arsip
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Poin Achieved</p>
-                        <p className="text-sm font-black text-gray-900 dark:text-zinc-100">+{doc.awarded_points || 0} PTS</p>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end pt-2">
-                      {doc.file_url ? (
-                        <a 
-                          href={doc.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-500/20 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
-                        >
-                          <Download className="w-4 h-4 mr-1.5" />
-                          Unduh Berkas
-                        </a>
-                      ) : (
-                        <div className="inline-flex items-center px-4 py-2 bg-gray-50 dark:bg-zinc-800 text-gray-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-gray-100 dark:border-zinc-700 cursor-not-allowed italic">
-                          <Globe className="w-3.5 h-3.5 mr-2" />
-                          No File (Synced)
+                      {doc.status === 'Rejected' && doc.catatan && (
+                        <div className="text-[10px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 p-3 rounded-xl border border-red-100 dark:border-red-900/30">
+                          Catatan Umpan Balik: {doc.catatan}
                         </div>
                       )}
+
+                      <div className="flex justify-end pt-2 gap-2">
+                        {doc.file_url && doc.file_url !== '-' && doc.file_url !== '' ? (
+                          <>
+                            <button
+                              onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title, category })}
+                              className="inline-flex items-center px-4 py-2.5 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white border border-primary-100 dark:border-primary-900/30 hover:border-primary-600 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
+                            >
+                              <Eye className="w-4 h-4 mr-1.5" />
+                              Preview
+                            </button>
+                            <a 
+                              href={doc.file_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center px-4 py-2.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 hover:border-primary-500 hover:text-primary-600 text-gray-600 dark:text-zinc-300 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 shadow-sm"
+                            >
+                              <Download className="w-4 h-4 mr-1.5" />
+                              Unduh
+                            </a>
+                          </>
+                        ) : (
+                          <div className="inline-flex items-center px-4 py-2 bg-gray-50 dark:bg-zinc-800 text-gray-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-gray-100 dark:border-zinc-700 cursor-not-allowed italic">
+                            <Globe className="w-3.5 h-3.5 mr-2" />
+                            No File (Synced)
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Tampilan Desktop (Table) */}
@@ -345,77 +436,106 @@ export default function AdminAllDocuments() {
                 <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800">
                   <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
                     <tr>
-                      <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Dokumen & Kategori</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">{activeTab === 'penelitian' ? 'Penelitian & Program' : 'Dokumen & Kategori'}</th>
                       <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Kontributor</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Publikasi</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Tanggal</th>
                       <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Status</th>
-                      <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Sumber</th>
+                      <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">
+                        {activeTab === 'penelitian' ? 'Dana' : 'Sumber'}
+                      </th>
                       <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Poin</th>
                       <th className="px-6 py-5 text-right text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
-                    {currentItems.map((doc) => (
-                      <tr key={doc.id} className="group hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/[0.03] transition-colors">
-                        <td className="px-6 py-6 max-w-[300px]">
-                          <div className="flex flex-col">
-                            <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight line-clamp-2">{doc.title}</span>
-                            <span className="mt-1.5 text-[9px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-widest">{doc.category}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-[10px] font-black text-gray-500">
-                                {doc.user_name?.charAt(0)}
-                             </div>
-                             <span className="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-tight">{doc.user_name}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6 whitespace-nowrap">
-                          <div className="flex items-center text-[11px] font-bold text-gray-500 dark:text-zinc-500 italic">
-                            <CalendarDays className="h-4 w-4 mr-1.5 text-gray-300" />
-                            {doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-'}
-                          </div>
-                        </td>
-                        <td className="px-6 py-6 whitespace-nowrap text-center">
-                          {getStatusBadge(doc.status)}
-                        </td>
-                        <td className="px-6 py-6 whitespace-nowrap text-center">
-                          {doc.file_url ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest bg-gray-100 dark:bg-zinc-800 px-2.5 py-1 rounded-lg">
-                               <User className="w-3 h-3" /> Manual
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/20 px-2.5 py-1 rounded-lg border border-orange-100 dark:border-orange-900/30">
-                               <Globe className="w-3 h-3" /> Synced
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-6 whitespace-nowrap text-center">
-                           <div className="flex flex-col items-center">
-                              <span className="text-sm font-black text-gray-900 dark:text-zinc-100">+{doc.awarded_points || 0}</span>
-                              {doc.is_kpi_counted && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">KPI Verified</span>}
-                           </div>
-                        </td>
-                        <td className="px-6 py-6 whitespace-nowrap text-right">
-                          {doc.file_url ? (
-                            <a 
-                              href={doc.file_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 hover:border-primary-500 hover:text-primary-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
-                            >
-                              <Download className="w-3.5 h-3.5" />
-                              Unduh
-                            </a>
-                          ) : (
-                            <div className="inline-flex items-center gap-2 px-4 py-2 text-gray-300 dark:text-zinc-700 text-[10px] font-black uppercase tracking-widest italic cursor-not-allowed">
-                               <Zap className="w-3.5 h-3.5" /> Auto-Sync
+                    {currentItems.map((doc) => {
+                      const title = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
+                      const author = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
+                      const category = activeTab === 'penelitian' ? doc.program : doc.category;
+                      const dateVal = activeTab === 'penelitian' ? doc.created_at : doc.published_at;
+
+                      return (
+                        <tr key={doc.id} className="group hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/[0.03] transition-colors">
+                          <td className="px-6 py-6 max-w-[300px]">
+                            <div className="flex flex-col">
+                              <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight line-clamp-2">{title}</span>
+                              <span className="mt-1.5 text-[9px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-widest">{category}</span>
+                              {doc.status === 'Rejected' && doc.catatan && (
+                                <span className="mt-2 text-[9px] font-black text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-0.5 rounded border border-red-100 dark:border-red-900/30 w-fit lowercase tracking-wide leading-tight">
+                                  Catatan: {doc.catatan}
+                                </span>
+                              )}
                             </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-6 py-6">
+                            <div className="flex items-center gap-3">
+                               <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-[10px] font-black text-gray-500">
+                                  {(author || 'D').charAt(0)}
+                               </div>
+                               <span className="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-tight">{author}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-6 whitespace-nowrap">
+                            <div className="flex items-center text-[11px] font-bold text-gray-500 dark:text-zinc-500 italic">
+                              <CalendarDays className="h-4 w-4 mr-1.5 text-gray-300" />
+                              {dateVal ? new Date(dateVal).toLocaleDateString('id-ID') : '-'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-6 whitespace-nowrap text-center">
+                            {getStatusBadge(doc.status)}
+                          </td>
+                          <td className="px-6 py-6 whitespace-nowrap text-center">
+                            {activeTab === 'penelitian' ? (
+                              <span className="text-xs font-black text-emerald-600 tabular-nums">
+                                {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(doc.dana_disetujui || 0)}
+                              </span>
+                            ) : doc.file_url ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest bg-gray-100 dark:bg-zinc-800 px-2.5 py-1 rounded-lg">
+                                 <User className="w-3 h-3" /> Manual
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/20 px-2.5 py-1 rounded-lg border border-orange-100 dark:border-orange-900/30">
+                                 <Globe className="w-3 h-3" /> Synced
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-6 whitespace-nowrap text-center">
+                             <div className="flex flex-col items-center">
+                                <span className="text-sm font-black text-gray-900 dark:text-zinc-100">+{doc.awarded_points || 0}</span>
+                                {activeTab !== 'penelitian' && doc.is_kpi_counted && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">KPI Verified</span>}
+                             </div>
+                          </td>
+                          <td className="px-6 py-6 whitespace-nowrap text-right">
+                            {doc.file_url && doc.file_url !== '-' && doc.file_url !== '' ? (
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title, category })}
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white rounded-xl border border-primary-100 dark:border-primary-900/30 hover:border-primary-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
+                                  title="Preview Dokumen"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Preview
+                                </button>
+                                <a 
+                                  href={doc.file_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 hover:border-primary-500 hover:text-primary-600 text-gray-500 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
+                                  title="Unduh File"
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                  Unduh
+                                </a>
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center gap-2 px-4 py-2 text-gray-300 dark:text-zinc-700 text-[10px] font-black uppercase tracking-widest italic cursor-not-allowed">
+                                 <Zap className="w-3.5 h-3.5" /> Auto-Sync
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -470,7 +590,7 @@ export default function AdminAllDocuments() {
                         onClick={() => setCurrentPage(p)}
                         className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
                           currentPage === p 
-                            ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30 ring-4 ring-primary-100 dark:ring-primary-900/20' 
+                            ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30' 
                             : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 hover:text-primary-600 shadow-sm'
                         }`}
                       >
@@ -491,6 +611,15 @@ export default function AdminAllDocuments() {
           </motion.div>
         )}
       </div>
+
+      {/* PDF Preview Modal */}
+      <PdfPreviewModal
+        isOpen={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        fileUrl={previewDoc?.fileUrl ?? null}
+        title={previewDoc?.title}
+        category={previewDoc?.category}
+      />
     </div>
   );
 }

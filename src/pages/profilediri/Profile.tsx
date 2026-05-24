@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { 
   User, GraduationCap, Settings, TrendingUp, Building2,
   Fingerprint, ShieldCheck, Zap, Award, BookMarked, Globe, FileText,
-  AlertCircle, ArrowRight
+  AlertCircle, ArrowRight, CheckCircle, XCircle
 } from 'lucide-react';
 
 // Import sub-components
@@ -24,10 +24,23 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   const [checkedScopusAuthor, setCheckedScopusAuthor] = useState<any>(null);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
   const [showWarningModal, setShowWarningModal] = useState(false);
+  // Flag untuk melacak apakah user sudah dismiss modal dalam kunjungan ini.
+  // useRef tidak trigger re-render dan akan reset saat komponen di-unmount
+  // (yaitu saat user navigasi keluar dari halaman Profile).
+  const warningDismissedRef = useRef(false);
+
+  useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => {
+        setMessage({ text: '', type: '' });
+      }, 4500);
+      return () => clearTimeout(timer);
+    }
+  }, [message.text]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (user && (!user.scholar_id || !user.scopus_id)) {
+    if (user && (!user.scholar_id || !user.scopus_id) && !warningDismissedRef.current) {
       setShowWarningModal(true);
       if (params.get('warning') === 'true') {
         setActiveTab('integrasi');
@@ -464,7 +477,10 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                     <ArrowRight className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => setShowWarningModal(false)}
+                    onClick={() => {
+                      warningDismissedRef.current = true;
+                      setShowWarningModal(false);
+                    }}
                     className="w-full py-4 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all"
                   >
                     Nanti Saja
@@ -641,6 +657,31 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             </motion.div>
           </AnimatePresence>
         </div>
+      </div>
+
+      {/* Floating Toast Notification */}
+      <div className="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
+        <AnimatePresence>
+          {message.text && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.9 }}
+              className={`pointer-events-auto flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl border ${
+                message.type === 'success'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/90 backdrop-blur border-emerald-100 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-400'
+                  : 'bg-red-50 dark:bg-red-950/90 backdrop-blur border-red-100 dark:border-red-900/50 text-red-800 dark:text-red-400'
+              }`}
+            >
+              {message.type === 'success' ? (
+                <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              ) : (
+                <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
+              )}
+              <span className="text-xs font-bold">{message.text}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

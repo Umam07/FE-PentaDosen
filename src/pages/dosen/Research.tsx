@@ -4,13 +4,14 @@ import {
   Upload, FileText, CheckCircle, XCircle, Clock, 
   CalendarDays, Award, Zap, ChevronLeft, ChevronRight,
   Landmark, Globe, Home, DollarSign, Beaker, ChevronDown,
-  PieChart as PieChartIcon, Download, FileSpreadsheet
+  PieChart as PieChartIcon, Download, FileSpreadsheet, Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart as ReChartsPie, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
 export default function Research({ user }: { user: any }) {
   const location = useLocation();
@@ -48,6 +49,10 @@ export default function Research({ user }: { user: any }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  // === State Preview Modal ===
+  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
   // === State untuk Pagination ===
   const [currentPage, setCurrentPage] = useState(1);
@@ -156,6 +161,7 @@ export default function Research({ user }: { user: any }) {
         setSkema('');
         setFokus('');
         setFile(null);
+        setIsUploadModalOpen(false); // Tutup modal saat sukses
         
         setIsTableLoading(true);
         await fetchResearch();
@@ -169,9 +175,11 @@ export default function Research({ user }: { user: any }) {
         setMessage(errorMsg);
         setMessageType('error');
       }
+      setTimeout(() => setMessage(''), 4500);
     } catch (err) {
       setMessage('Terjadi kesalahan saat mengunggah.');
       setMessageType('error');
+      setTimeout(() => setMessage(''), 4500);
     } finally {
       setLoading(false);
     }
@@ -342,16 +350,19 @@ export default function Research({ user }: { user: any }) {
         }
         setMessage(finalMsg);
         setMessageType(failCount === 0 ? 'success' : 'error');
+        setIsUploadModalOpen(false); // Tutup modal saat sukses
         
         setIsTableLoading(true);
         await fetchResearch();
         setCurrentPage(1);
         setIsTableLoading(false);
+        setTimeout(() => setMessage(''), 4500);
 
       } catch (err) {
         console.error(err);
         setMessage('Terjadi kesalahan saat mengimpor excel.');
         setMessageType('error');
+        setTimeout(() => setMessage(''), 4500);
       } finally {
         setIsImporting(false);
         if (e.target) e.target.value = '';
@@ -399,10 +410,12 @@ export default function Research({ user }: { user: any }) {
         setMessage(data.message || 'Gagal mengunggah PDF.');
         setMessageType('error');
       }
+      setTimeout(() => setMessage(''), 4500);
     } catch (err) {
       console.error(err);
       setMessage('Terjadi kesalahan saat mengunggah PDF.');
       setMessageType('error');
+      setTimeout(() => setMessage(''), 4500);
     } finally {
       setUploadingPdfId(null);
       if (e.target) e.target.value = '';
@@ -459,351 +472,50 @@ export default function Research({ user }: { user: any }) {
         ))}
       </section>
 
-      {/* Upload Form Section */}
-      <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
-        <div className="px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Input Hasil Penelitian</h3>
-            <div className="flex flex-wrap items-center gap-2">
-              <button 
-                type="button"
-                onClick={handleDownloadTemplate}
-                className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm"
-              >
-                <Download className="w-3.5 h-3.5 mr-1.5" />
-                Template Excel
-              </button>
-              <label className={`inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
-                <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
-                {isImporting ? 'Importing...' : 'Import Excel'}
-                <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
-              </label>
-            </div>
+      {/* Upload Action Bar Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6"
+      >
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shadow-sm">
+            <Beaker className="w-6 h-6" />
           </div>
-          
-          <AnimatePresence>
-            {message && (
-              <motion.div 
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className={`text-xs font-bold px-4 py-2 rounded-full flex items-center shadow-sm ${
-                  messageType === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30' : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/30'
-                }`}
-              >
-                {messageType === 'success' ? <CheckCircle className="w-3.5 h-3.5 mr-2" /> : <XCircle className="w-3.5 h-3.5 mr-2" />}
-                {message}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div className="p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          <form onSubmit={handleUpload} className="lg:col-span-2 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { id: 'hibah internal', label: 'Internal Institusi', icon: Home, color: 'blue', pts: 40 },
-                { id: 'hibah dikti', label: 'Eksternal (Dikti)', icon: Landmark, color: 'emerald', pts: 50 },
-                { id: 'hibah luar negeri', label: 'Luar Negeri', icon: Globe, color: 'purple', pts: 60 },
-              ].map((prog) => (
-                <motion.button
-                  key={prog.id}
-                  type="button"
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setProgram(prog.id)}
-                  className={`group relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 ${
-                    program === prog.id
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10 shadow-md'
-                      : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-black/50'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-all duration-300 ${
-                    program === prog.id 
-                      ? 'bg-primary-100 dark:bg-primary-900/40 scale-110' 
-                      : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30'
-                  }`}>
-                    <prog.icon className={`w-5 h-5 transition-colors ${program === prog.id ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
-                  </div>
-                  <p className={`text-[10px] sm:text-xs font-black uppercase text-center tracking-tight ${program === prog.id ? 'text-primary-900 dark:text-primary-100' : 'text-gray-500 dark:text-zinc-400 group-hover:text-gray-900 dark:group-hover:text-zinc-200'}`}>
-                    {prog.label}
-                  </p>
-                  <p className={`text-[9px] font-bold mt-1.5 transition-colors ${program === prog.id ? 'text-primary-500' : 'text-gray-400 group-hover:text-primary-400'}`}>{prog.pts} Poin</p>
-                  
-                  <AnimatePresence>
-                    {program === prog.id && (
-                      <motion.div 
-                        initial={{ scale: 0, opacity: 0 }} 
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="absolute top-2 right-2"
-                      >
-                        <CheckCircle className="w-4 h-4 text-primary-500" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Judul Penelitian
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={judulPenelitian}
-                  onChange={(e) => setJudulPenelitian(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm"
-                  placeholder="Contoh: Analisis AI untuk Sistem Pendidikan Tinggi..."
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
-                  <DollarSign className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
-                  Dana Disetujui (Rupiah)
-                </label>
-                <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400 tracking-widest">RP</div>
-                  <input
-                    type="text"
-                    required
-                    value={danaDisetujui}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, '');
-                      if (val === '') {
-                        setDanaDisetujui('');
-                      } else {
-                        const formatted = new Intl.NumberFormat('id-ID').format(Number(val));
-                        setDanaDisetujui(formatted);
-                      }
-                    }}
-                    className="w-full pl-12 pr-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm"
-                    placeholder="Contoh: 10.000.000"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Skema Penelitian
-                </label>
-                <div className="relative">
-                  <select
-                    required
-                    value={skema}
-                    onChange={(e) => setSkema(e.target.value)}
-                    className={`w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm appearance-none cursor-pointer ${!skema ? 'text-gray-400' : 'text-gray-900 dark:text-zinc-100'}`}
-                  >
-                    <option value="" disabled hidden>Pilih Skema Penelitian...</option>
-                    <option value="kompetisi" className="text-gray-900 dark:text-zinc-100 font-bold">Kompetisi</option>
-                    <option value="pembinaan" className="text-gray-900 dark:text-zinc-100 font-bold">Pembinaan</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Fokus Penelitian
-                </label>
-                <div className="relative">
-                  <select
-                    required
-                    value={fokus}
-                    onChange={(e) => setFokus(e.target.value)}
-                    className={`w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm appearance-none cursor-pointer ${!fokus ? 'text-gray-400' : 'text-gray-900 dark:text-zinc-100'}`}
-                  >
-                    <option value="" disabled hidden>Pilih Fokus Penelitian...</option>
-                    <option value="kesehatan" className="text-gray-900 dark:text-zinc-100 font-bold">Kesehatan</option>
-                    <option value="ekonomi" className="text-gray-900 dark:text-zinc-100 font-bold">Ekonomi</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              <div className="space-y-2 relative">
-                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
-                  <CalendarDays className="w-3.5 h-3.5 mr-1.5 text-primary-500" />
-                  Tahun Penelitian
-                </label>
-                
-                <button
-                  type="button"
-                  onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
-                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-left flex justify-between items-center"
-                >
-                  <span className="text-gray-900 dark:text-zinc-100">{tahun}</span>
-                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isYearDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-
-                <AnimatePresence>
-                  {isYearDropdownOpen && (
-                    <>
-                      <div 
-                        className="fixed inset-0 z-20" 
-                        onClick={() => setIsYearDropdownOpen(false)} 
-                      />
-                      <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute z-30 w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden origin-top"
-                      >
-                        <div className="max-h-64 overflow-y-auto p-3 grid grid-cols-3 sm:grid-cols-4 gap-2">
-                          {Array.from({ length: 24 }, (_, i) => {
-                            const y = (new Date().getFullYear() - 10 + i).toString();
-                            return (
-                              <button
-                                key={y}
-                                type="button"
-                                onClick={() => {
-                                  setTahun(y);
-                                  setIsYearDropdownOpen(false);
-                                }}
-                                className={`py-2.5 rounded-xl text-sm font-bold transition-all border ${
-                                  tahun === y 
-                                    ? 'bg-primary-600 border-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none' 
-                                    : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 dark:text-zinc-300 hover:border-primary-200 dark:hover:border-primary-800 hover:bg-primary-50 dark:hover:bg-primary-950/30 hover:text-primary-600 dark:hover:text-primary-400'
-                                }`}
-                              >
-                                {y}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Dokumen Hasil Penelitian (PDF)
-                </label>
-                <div 
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={() => document.getElementById('file-upload')?.click()}
-                  className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-2xl transition-all duration-300 cursor-pointer ${
-                    isDragging 
-                      ? 'border-primary-500 bg-primary-50 ring-8 ring-primary-500/10 scale-[1.01]' 
-                      : file 
-                        ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/10' 
-                        : 'border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-800 hover:border-primary-400'
-                  }`}
-                >
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept=".pdf"
-                    className="sr-only"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  />
-                  <div className="space-y-3 text-center">
-                    <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all ${
-                      file ? 'bg-emerald-100 text-emerald-600' : 'bg-white dark:bg-zinc-800 text-gray-400 group-hover:text-primary-600 shadow-sm'
-                    }`}>
-                      {file ? <CheckCircle className="h-6 w-6 animate-bounce" /> : <Upload className="h-6 w-6" />}
-                    </div>
-                    <div>
-                      <p className={`text-sm font-black ${file ? 'text-emerald-900' : 'text-gray-900 dark:text-zinc-100'}`}>
-                        {file ? 'File Terpilih' : 'Upload PDF (Maks 10MB)'}
-                      </p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-                        {file ? file.name : 'Seret file ke sini atau klik'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-4 border-t border-gray-50 dark:border-zinc-800">
-               {scoringPreview ? (
-                 <div className="flex items-center gap-4 bg-primary-50 dark:bg-primary-950/20 px-5 py-3 rounded-2xl border border-primary-100 dark:border-primary-900/30">
-                    <div className="p-2 bg-white dark:bg-zinc-800 rounded-lg shadow-sm font-black text-primary-600 text-xs">
-                      {scoringPreview.total}
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-primary-700/60 tracking-widest leading-none mb-1">Estimated Points</p>
-                      <p className="text-xs font-black text-primary-900 dark:text-primary-100">{scoringPreview.message}</p>
-                    </div>
-                 </div>
-               ) : <div />}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full sm:w-auto inline-flex items-center justify-center py-4 px-10 shadow-xl shadow-primary-200 dark:shadow-primary-900/30 text-sm font-black rounded-2xl text-white bg-primary-600 hover:bg-primary-700 transition-all uppercase tracking-widest disabled:opacity-50"
-              >
-                {loading ? 'Processing...' : 'Submit Penelitian'}
-                {!loading && <Zap className="w-4 h-4 ml-2 fill-white" />}
-              </button>
-            </div>
-          </form>
-
-          <div className="space-y-6">
-            <div className="bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800 rounded-2xl p-5">
-              <div className="flex items-center gap-2 mb-4 border-b border-gray-100 dark:border-zinc-800 pb-3">
-                <Award className="w-4 h-4 text-primary-600" />
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Rule Poin Penelitian</h4>
-              </div>
-              <div className="space-y-3">
-                {[
-                  { label: 'Hibah Luar Negeri', pts: 60 },
-                  { label: 'Hibah Eksternal', pts: 50 },
-                  { label: 'Hibah Internal', pts: 40 },
-                  { label: 'Dana Penelitian', pts: '0.05 / Juta' }
-                ].map(r => (
-                  <div key={r.label} className="flex justify-between items-center bg-white dark:bg-zinc-900 p-3 rounded-xl border border-gray-50 dark:border-zinc-800 shadow-sm">
-                    <span className="text-[10px] font-bold text-gray-600 dark:text-zinc-400 uppercase">{r.label}</span>
-                    <span className="text-[10px] font-black text-primary-600">{r.pts} {typeof r.pts === 'number' && 'PTS'}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {researchList.length > 0 && programStats.length > 0 && (
-              <div className="bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800 rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-4 border-b border-gray-100 dark:border-zinc-800 pb-3">
-                  <PieChartIcon className="w-4 h-4 text-primary-600" />
-                  <h4 className="text-[10px] font-black uppercase tracking-widest">Distribusi Program</h4>
-                </div>
-                <div className="h-40 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ReChartsPie>
-                      <Pie
-                        data={programStats}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={40}
-                        outerRadius={60}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {programStats.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={['#3B82F6', '#10B981', '#8B5CF6'][index % 3]} />
-                        ))}
-                      </Pie>
-                      <RechartsTooltip />
-                    </ReChartsPie>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            )}
+          <div>
+            <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Kelola Hasil Penelitian</h3>
+            <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">Registrasikan penelitian baru atau impor data dari Excel secara massal</p>
           </div>
         </div>
-      </section>
 
-      {/* History Table */}
-      <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="w-full md:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95"
+          >
+            Unggah Penelitian Baru
+            <Zap className="w-4 h-4 ml-2 fill-white" />
+          </button>
+          <button 
+            type="button"
+            onClick={handleDownloadTemplate}
+            className="inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm uppercase tracking-wider"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Template
+          </button>
+          <label className={`inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer uppercase tracking-wider ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+            <FileSpreadsheet className="w-4 h-4 mr-2" />
+            {isImporting ? 'Importing...' : 'Import Excel'}
+            <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
+          </label>
+        </div>
+      </motion.div>
+
+
+
+          {/* History Table */}
+          <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
           <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Penelitian</h3>
         </div>
@@ -839,6 +551,11 @@ export default function Research({ user }: { user: any }) {
                         <div className="min-w-0">
                           <p className="font-extrabold text-gray-900 dark:text-zinc-100 uppercase tracking-tight truncate max-w-md">{res.judul_penelitian}</p>
                           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">ID: #RES-{res.id.toString().padStart(4, '0')}</p>
+                          {res.status === 'Rejected' && res.catatan && (
+                            <div className="mt-2 text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded-lg border border-red-100 dark:border-red-900/30 w-fit uppercase tracking-tight">
+                              Catatan Umpan Balik: {res.catatan}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -859,10 +576,13 @@ export default function Research({ user }: { user: any }) {
                     </td>
                     <td className="px-6 py-4">
                       {res.file_url && res.file_url !== '-' ? (
-                        <a href={res.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-2 py-1 rounded-md">
+                        <button
+                          onClick={() => setPreviewDoc({ fileUrl: res.file_url, title: res.judul_penelitian, category: res.program })}
+                          className="inline-flex items-center text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-2 py-1 rounded-md"
+                        >
                           <FileText className="w-3.5 h-3.5 mr-1" />
                           Lihat
-                        </a>
+                        </button>
                       ) : (
                         <label className="inline-flex items-center text-xs font-bold text-gray-500 hover:text-primary-600 cursor-pointer bg-gray-50 hover:bg-primary-50 px-2 py-1 rounded-md transition-colors">
                           {uploadingPdfId === res.id ? (
@@ -971,7 +691,386 @@ export default function Research({ user }: { user: any }) {
             </div>
           </motion.div>
         )}
-      </section>
-    </div>
+          </section>
+
+
+  {/* Upload Penelitian Modal Pop-up */}
+  <AnimatePresence>
+    {isUploadModalOpen && (
+      <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-gray-950/60 backdrop-blur-md"
+          onClick={() => setIsUploadModalOpen(false)}
+        />
+
+        {/* Modal Container */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full max-w-6xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
+        >
+          {/* Modal Header */}
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 shrink-0">
+            <div>
+              <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
+                <Beaker className="w-5 h-5 text-primary-500" />
+                Unggah Penelitian Baru
+              </h3>
+              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Registrasikan hasil penelitian hibah eksternal, internal, atau luar negeri</p>
+            </div>
+            <button
+              onClick={() => setIsUploadModalOpen(false)}
+              className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors"
+            >
+              <XCircle className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div className="flex-1 overflow-y-auto p-6 lg:p-8 scrollbar-hide">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+              {/* Left Side: Upload Form */}
+              <div className="lg:col-span-2">
+                <form onSubmit={handleUpload} className="space-y-6">
+                  {/* Program Selector */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori Program Penelitian</label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {[
+                        { key: 'hibah internal', label: 'Hibah Internal', icon: Home, pts: 40 },
+                        { key: 'hibah dikti', label: 'Hibah Dikti', icon: Landmark, pts: 50 },
+                        { key: 'hibah luar negeri', label: 'Hibah Luar Negeri', icon: Globe, pts: 60 },
+                      ].map(item => (
+                        <button
+                          key={item.key}
+                          type="button"
+                          onClick={() => setProgram(item.key)}
+                          className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                            program === item.key
+                              ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-950/20 text-primary-700 dark:text-primary-400 font-extrabold shadow-sm'
+                              : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 hover:border-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                          }`}
+                        >
+                          <item.icon className="w-5 h-5 mb-2" />
+                          <span className="text-[10px] font-black uppercase tracking-wider">{item.label}</span>
+                          <span className="text-[9px] font-bold text-gray-400 mt-1 uppercase">{item.pts} Pts Base</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Judul Penelitian */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Judul Penelitian</label>
+                    <input
+                      type="text"
+                      required
+                      value={judulPenelitian}
+                      onChange={(e) => setJudulPenelitian(e.target.value)}
+                      placeholder="Masukkan judul penelitian..."
+                      className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Skema */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Skema Penelitian</label>
+                      <select
+                        value={skema}
+                        onChange={(e) => setSkema(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
+                      >
+                        <option value="">Pilih Skema...</option>
+                        <option value="kompetisi">Kompetisi</option>
+                        <option value="pembinaan">Pembinaan</option>
+                        <option value="lainnya">Lainnya</option>
+                      </select>
+                    </div>
+
+                    {/* Fokus */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Fokus Penelitian</label>
+                      <select
+                        value={fokus}
+                        onChange={(e) => setFokus(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
+                      >
+                        <option value="">Pilih Fokus...</option>
+                        <option value="kesehatan">Kesehatan</option>
+                        <option value="ekonomi">Ekonomi</option>
+                        <option value="teknologi">Teknologi</option>
+                        <option value="sosial">Sosial</option>
+                        <option value="lainnya">Lainnya</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Dana Disetujui */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Dana Disetujui</label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <span className="text-sm font-black text-gray-400 uppercase">Rp</span>
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          value={danaDisetujui}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            const formatted = val ? Number(val).toLocaleString('id-ID') : '';
+                            setDanaDisetujui(formatted);
+                          }}
+                          placeholder="Contoh: 10.000.000"
+                          className="w-full pl-12 pr-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Tahun */}
+                    <div className="space-y-2 relative">
+                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+                        <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
+                        Tahun Pelaksanaan
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                        className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-left flex justify-between items-center text-gray-900 dark:text-zinc-100"
+                      >
+                        <span>{tahun}</span>
+                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isYearDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      <AnimatePresence>
+                        {isYearDropdownOpen && (
+                          <>
+                            <div className="fixed inset-0 z-20" onClick={() => setIsYearDropdownOpen(false)} />
+                            <motion.div
+                              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                              className="absolute z-30 w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden origin-top"
+                            >
+                              <div className="max-h-48 overflow-y-auto p-2.5 grid grid-cols-3 gap-1.5">
+                                {Array.from({ length: 24 }, (_, i) => {
+                                  const y = (new Date().getFullYear() - 10 + i).toString();
+                                  return (
+                                    <button
+                                      key={y}
+                                      type="button"
+                                      onClick={() => { setTahun(y); setIsYearDropdownOpen(false); }}
+                                      className={`py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                                        tahun === y
+                                          ? 'bg-primary-600 border-primary-600 text-white'
+                                          : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 dark:text-zinc-300 hover:border-primary-200'
+                                      }`}
+                                    >
+                                      {y}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          </>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+
+                  {/* Drag and Drop PDF */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Laporan Kemajuan / Akhir (PDF)</label>
+                    <div
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      className={`border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer ${
+                        isDragging ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20' : 'border-gray-200 dark:border-zinc-700 hover:border-primary-300'
+                      }`}
+                      onClick={() => document.getElementById('res-file-input-modal')?.click()}
+                    >
+                      <input id="res-file-input-modal" type="file" accept=".pdf" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                      {file ? (
+                        <p className="text-xs font-bold text-primary-600 truncate">{file.name}</p>
+                      ) : (
+                        <p className="text-xs font-bold text-gray-400">Klik atau seret file PDF di sini (Maksimal 10MB)</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+                    {scoringPreview ? (
+                      <div className="px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400">
+                        <Award className="h-5 w-5 shrink-0 text-emerald-600" />
+                        <div className="min-w-0">
+                          <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
+                          <p className="text-xs font-black truncate">{scoringPreview.message}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50"
+                    >
+                      {loading ? 'Mengunggah...' : 'Unggah Penelitian'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Right Side: Guidelines & Stats */}
+              <div className="lg:col-span-1 space-y-6">
+                {/* 1. Card Panduan Poin Penelitian */}
+                <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5">
+                  <div className="flex items-center gap-2 mb-4 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                    <div className="p-1.5 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
+                      <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Panduan Poin Penelitian</h4>
+                  </div>
+                  <div className="space-y-2.5">
+                    {[
+                      { label: 'Hibah Luar Negeri', pts: '60 Pts Base', desc: 'Penelitian tingkat internasional' },
+                      { label: 'Hibah Dikti (Eksternal)', pts: '50 Pts Base', desc: 'Hibah nasional / kementerian' },
+                      { label: 'Hibah Internal Institusi', pts: '40 Pts Base', desc: 'Pendanaan internal kampus' },
+                      { label: 'Multiplier Dana', pts: '+0.05 / Juta', desc: 'Tambahan poin dari dana disetujui' },
+                    ].map((w) => (
+                      <div key={w.label} className="flex justify-between items-center bg-white dark:bg-zinc-900 p-3 rounded-xl border border-gray-50 dark:border-zinc-800 hover:border-gray-100 dark:hover:border-zinc-700 transition-colors">
+                        <div>
+                          <span className="block text-[10px] font-black text-gray-800 dark:text-zinc-300 uppercase tracking-wide">{w.label}</span>
+                          <span className="block text-[9px] font-bold text-gray-400 mt-0.5">{w.desc}</span>
+                        </div>
+                        <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30 shrink-0">
+                          {w.pts}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2. Card Visual Chart Distribusi Program */}
+                {researchList.length > 0 && programStats.length > 0 && (
+                  <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 flex flex-col items-center">
+                    <div className="w-full flex items-center gap-2 mb-2 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                      <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg">
+                        <PieChartIcon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                      </div>
+                      <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Distribusi Program</h4>
+                    </div>
+
+                    <div className="h-40 w-full relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ReChartsPie>
+                          <Pie
+                            data={programStats}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={45}
+                            outerRadius={65}
+                            paddingAngle={4}
+                            dataKey="value"
+                          >
+                            {programStats.map((entry, index) => {
+                              const color = entry.name.includes('luar negeri') ? '#3b82f6' : entry.name.includes('dikti') || entry.name.includes('eksternal') ? '#0d9488' : '#8b5cf6';
+                              return (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={color}
+                                  className="stroke-white dark:stroke-zinc-900 stroke-2 outline-none"
+                                />
+                              );
+                            })}
+                          </Pie>
+                          <RechartsTooltip
+                            content={({ active, payload }: any) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 p-2 rounded-xl shadow-lg ring-1 ring-black/5">
+                                    <p className="text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400">{payload[0].name}</p>
+                                    <p className="text-sm font-black text-gray-900 dark:text-white">{payload[0].value} <span className="text-xs font-bold text-gray-400 font-sans">Berkas</span></p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                        </ReChartsPie>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Custom Legend */}
+                    <div className="grid grid-cols-1 gap-y-1.5 w-full mt-2 border-t border-gray-100/80 dark:border-zinc-800/80 pt-3">
+                      {programStats.map((item, index) => {
+                        const color = item.name.includes('luar negeri') ? '#3b82f6' : item.name.includes('dikti') || item.name.includes('eksternal') ? '#0d9488' : '#8b5cf6';
+                        return (
+                          <div key={item.name} className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }}></div>
+                              <span className="text-[9px] font-black text-gray-500 dark:text-zinc-400 truncate uppercase tracking-wide" title={item.name}>{item.name}</span>
+                            </div>
+                            <span className="text-[9px] font-black text-gray-700 dark:text-zinc-300 ml-2">{item.value} Berkas</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    )}
+  </AnimatePresence>
+
+  {/* Floating Toast Notification */}
+  <div className="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
+    <AnimatePresence>
+      {message && (
+        <motion.div
+          initial={{ opacity: 0, y: -20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.9 }}
+          className={`pointer-events-auto flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl border ${
+            messageType === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950/90 backdrop-blur border-emerald-100 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-400'
+              : 'bg-red-50 dark:bg-red-950/90 backdrop-blur border-red-100 dark:border-red-900/50 text-red-800 dark:text-red-400'
+          }`}
+        >
+          {messageType === 'success' ? (
+            <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          ) : (
+            <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
+          )}
+          <span className="text-xs font-bold">{message}</span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+  {/* PDF Preview Modal */}
+  <PdfPreviewModal
+    isOpen={!!previewDoc}
+    onClose={() => setPreviewDoc(null)}
+    fileUrl={previewDoc?.fileUrl ?? null}
+    title={previewDoc?.title}
+    category={previewDoc?.category}
+  />
+</div>
   );
 }

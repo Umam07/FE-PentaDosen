@@ -1,34 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { 
   Check, X, FileText, ExternalLink, Award, Archive, 
   CalendarDays, ShieldAlert, CheckCircle2, Zap, 
-  ChevronLeft, ChevronRight, Beaker, Landmark, Globe, DollarSign,
-  Filter, GraduationCap, ShieldCheck, Clock
+  ChevronLeft, ChevronRight, Beaker, Landmark, Globe,
+  Filter, GraduationCap, ShieldCheck, Clock, Eye, Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
 export default function AdminVerification() {
   const { user } = useOutletContext<{ user: any }>();
-  const [activeTab, setActiveTab ] = useState<'documents' | 'research'>('documents');
+  const [activeTab, setActiveTab ] = useState<'publikasi' | 'hki' | 'penelitian' | 'buku'>('publikasi');
   const [documents, setDocuments] = useState([]);
   const [research, setResearch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [selectedFakultas, setSelectedFakultas] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // === State Catatan Penolakan & Modal ===
+  const [rejectingItem, setRejectingItem] = useState<{ id: string; title: string; type: 'documents' | 'research' } | null>(null);
+  const [feedbackText, setFeedbackText] = useState('');
+
+  // === State Preview Modal ===
+  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    if (activeTab === 'documents') {
-      fetchPendingDocuments();
-    } else {
+    if (activeTab === 'penelitian') {
       fetchPendingResearch();
+    } else {
+      fetchPendingDocuments();
     }
     setCurrentPage(1);
   }, [activeTab, selectedFakultas]);
+
+  // Reset page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const fetchPendingDocuments = async () => {
     try {
@@ -56,21 +70,21 @@ export default function AdminVerification() {
     }
   };
 
-  const handleVerify = async (docId: string, status: 'Approved' | 'Rejected') => {
+  const handleVerify = async (docId: string, status: 'Approved' | 'Rejected', catatan?: string) => {
     try {
       setActionLoading(docId);
-      const endpoint = activeTab === 'documents' 
-        ? `/api/admin/documents/${docId}/verify`
-        : `/api/penelitian/${docId}/verify`;
+      const endpoint = activeTab === 'penelitian' 
+        ? `/api/penelitian/${docId}/verify`
+        : `/api/admin/documents/${docId}/verify`;
         
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, role: user?.role, admin_id: user?.id }),
+        body: JSON.stringify({ status, role: user?.role, admin_id: user?.id, catatan }),
       });
       if (res.ok) {
-        if (activeTab === 'documents') await fetchPendingDocuments();
-        else await fetchPendingResearch();
+        if (activeTab === 'penelitian') await fetchPendingResearch();
+        else await fetchPendingDocuments();
       }
     } catch (err) {
       console.error(err);
@@ -79,12 +93,40 @@ export default function AdminVerification() {
     }
   };
 
-  // Pagination Logic
-  const activeItems = (activeTab === 'documents' ? documents : research).filter((item: any) => {
-    if (!selectedFakultas) return true;
-    const itemFakultas = activeTab === 'documents' ? item.fakultas : item.user?.fakultas;
-    return itemFakultas === selectedFakultas;
+  // Dynamic Filtering by activeTab
+  const filteredDocsByTab = useMemo(() => {
+    if (activeTab === 'penelitian') return research;
+    if (activeTab === 'hki') {
+      return documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('hki'));
+    }
+    if (activeTab === 'buku') {
+      return documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('buku'));
+    }
+    if (activeTab === 'publikasi') {
+      return documents.filter((doc: any) => 
+        !(doc.category || '').toLowerCase().includes('hki') && 
+        !(doc.category || '').toLowerCase().includes('buku')
+      );
+    }
+    return documents;
+  }, [activeTab, documents, research]);
+
+  // Pagination Logic with Search
+  const activeItems = filteredDocsByTab.filter((item: any) => {
+    const titleText = activeTab === 'penelitian' ? item.judul_penelitian : item.title;
+    const authorText = activeTab === 'penelitian' ? item.user?.name : item.user_name;
+    const catText = activeTab === 'penelitian' ? item.program : item.category;
+
+    const matchSearch = (titleText || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (authorText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (catText || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+    const itemFakultas = activeTab === 'penelitian' ? item.user?.fakultas : item.fakultas;
+    const matchFakultas = selectedFakultas ? itemFakultas === selectedFakultas : true;
+
+    return matchSearch && matchFakultas;
   });
+
   const totalPages = Math.ceil(activeItems.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -108,21 +150,7 @@ export default function AdminVerification() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-gray-100 dark:bg-zinc-800 p-1.5 rounded-2xl w-full md:w-auto shadow-inner">
-             <button 
-                onClick={() => setActiveTab('documents')}
-                className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'documents' ? 'bg-white dark:bg-zinc-700 text-primary-600 shadow-md ring-1 ring-gray-200 dark:ring-zinc-600' : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'}`}
-             >
-                Dokumen
-             </button>
-             <button 
-                onClick={() => setActiveTab('research')}
-                className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'research' ? 'bg-white dark:bg-zinc-700 text-primary-600 shadow-md ring-1 ring-gray-200 dark:ring-zinc-600' : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'}`}
-             >
-                Penelitian
-             </button>
-          </div>
-          <div className="hidden lg:flex items-center gap-2 bg-amber-50 dark:bg-amber-950/20 px-5 py-3 rounded-2xl border border-amber-100 dark:border-amber-900/30">
+          <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/20 px-5 py-3 rounded-2xl border border-amber-100 dark:border-amber-900/30">
              <div className="w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
              <span className="text-[11px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-[0.2em]">
                 {loading ? 'SYNCING...' : `${activeItems.length} PENDING`}
@@ -131,23 +159,55 @@ export default function AdminVerification() {
         </div>
       </div>
 
-      {/* Filters Section */}
+      {/* Filters & Content Section */}
       <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 overflow-hidden">
-        <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10 backdrop-blur-sm">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        
+        {/* Card Header Premium Tab Bar */}
+        <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 overflow-x-auto scrollbar-hide">
+          {(['publikasi', 'hki', 'penelitian', 'buku'] as const).map((tab) => (
+             <button
+               key={tab}
+               onClick={() => setActiveTab(tab)}
+               className={`px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] border-b-2 transition-all whitespace-nowrap ${
+                 activeTab === tab 
+                   ? 'border-primary-600 text-primary-600 dark:text-primary-400 bg-white dark:bg-zinc-900' 
+                   : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+               }`}
+             >
+               {tab}
+             </button>
+          ))}
+        </div>
+
+        <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/5 backdrop-blur-sm">
+          <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
+             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
                <div className="hidden md:flex p-3 bg-primary-50 dark:bg-primary-900/20 rounded-2xl text-primary-600 dark:text-primary-400 shadow-sm border border-primary-100/50 dark:border-primary-900/30">
-                  {activeTab === 'documents' ? <ShieldAlert className="h-6 w-6" /> : <Beaker className="h-6 w-6" />}
+                  {activeTab === 'penelitian' ? <Beaker className="h-6 w-6" /> : <ShieldAlert className="h-6 w-6" />}
                </div>
                <div>
-                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Queue {activeTab === 'documents' ? 'Verifikasi Dokumen' : 'Verifikasi Penelitian'}</h3>
+                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                    Queue Verifikasi {activeTab === 'publikasi' ? 'Publikasi' : activeTab === 'hki' ? 'HKI' : activeTab === 'buku' ? 'Buku' : 'Penelitian'}
+                  </h3>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Prodi'} • Pending Approval</p>
                </div>
              </div>
 
-             <div className="flex items-center gap-3 w-full md:w-auto">
+             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+                {/* Search Bar */}
+                <div className="relative w-full xl:w-[400px]">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    className="block w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-zinc-700 rounded-[1.25rem] bg-white dark:bg-zinc-800 text-sm font-bold text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 outline-none transition-all shadow-inner"
+                    placeholder={`Cari judul, dosen, atau kategori ${activeTab}...`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+
                 {user?.role === 'admin lppm' && (
-                  <div className="relative w-full md:w-[240px]">
+                  <div className="relative w-full sm:w-[220px]">
                     <select
                       value={selectedFakultas}
                       onChange={(e) => setSelectedFakultas(e.target.value)}
@@ -183,7 +243,7 @@ export default function AdminVerification() {
                   <div key={item.id} className="p-6 space-y-5 bg-white dark:bg-zinc-900">
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
-                        <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight line-clamp-1">{activeTab === 'documents' ? item.user_name : item.user?.name}</p>
+                        <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight line-clamp-1">{activeTab === 'penelitian' ? item.user?.name : item.user_name}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Dosen Pengaju</p>
                           {user?.role === 'admin lppm' && (
@@ -194,49 +254,68 @@ export default function AdminVerification() {
                         </div>
                       </div>
                       <span className="text-[9px] font-black text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-3 py-1.5 rounded-xl border border-primary-100 dark:border-primary-900/30 uppercase tracking-widest shadow-sm">
-                        {activeTab === 'documents' ? item.category : item.program}
+                        {activeTab === 'penelitian' ? item.program : item.category}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-4 bg-gray-50/50 dark:bg-zinc-800/50 p-4 rounded-2xl border border-gray-100/50 dark:border-zinc-800/50">
                       <div className="p-3 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-700 text-gray-400">
-                        {activeTab === 'documents' ? <FileText className="h-5 w-5" /> : <Beaker className="h-5 w-5" />}
+                        {activeTab === 'penelitian' ? <Beaker className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <a 
-                          href={item.file_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-sm font-black text-gray-800 dark:text-zinc-200 hover:text-primary-600 flex items-center gap-1.5 uppercase tracking-tight line-clamp-2 leading-snug"
-                        >
-                          {activeTab === 'documents' ? item.title : item.judul_penelitian}
-                          <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" />
-                        </a>
+                        <p className="text-sm font-black text-gray-800 dark:text-zinc-200 uppercase tracking-tight line-clamp-2 leading-snug">
+                          {activeTab === 'penelitian' ? item.judul_penelitian : item.title}
+                        </p>
                         <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 mt-2 uppercase tracking-widest flex items-center">
                           <CalendarDays className="w-3.5 h-3.5 mr-1.5 text-primary-500/70" />
-                          {activeTab === 'documents' ? (item.published_at ? new Date(item.published_at).toLocaleDateString('id-ID') : '-') : new Date(item.created_at).toLocaleDateString('id-ID')}
+                          {activeTab === 'penelitian' ? new Date(item.created_at).toLocaleDateString('id-ID') : (item.published_at ? new Date(item.published_at).toLocaleDateString('id-ID') : '-')}
                         </p>
                       </div>
                     </div>
 
-                    {activeTab === 'research' && (
+                    {activeTab === 'penelitian' && (
                       <div className="grid grid-cols-2 gap-3">
                          <div className="bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
                             <p className="text-[8px] font-black uppercase text-emerald-600 tracking-widest mb-1.5 leading-none">Dana Disetujui</p>
-                            <p className="text-sm font-black text-emerald-900 dark:text-emerald-100">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.dana_disetujui)}</p>
+                            <p className="text-sm font-black text-emerald-900 dark:text-emerald-100">
+                              {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.dana_disetujui)}
+                            </p>
                          </div>
-                         <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-2xl border border-blue-100 dark:border-blue-900/30">
+                         <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-2xl border border-blue-100/50 dark:border-blue-900/30">
                             <p className="text-[8px] font-black uppercase text-blue-600 tracking-widest mb-1.5 leading-none">Skema/Fokus</p>
                             <p className="text-xs font-black text-blue-900 dark:text-blue-100 truncate">{item.skema}</p>
                          </div>
                       </div>
                     )}
 
-                    <div className="flex justify-end items-center gap-3 pt-3 border-t border-gray-100 dark:border-zinc-800">
+                    {/* Action buttons — Preview + Approve + Reject (Mobile Side-By-Side Layout) */}
+                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-zinc-800">
+                      {/* Preview file button — muncul jika ada file */}
+                      {(() => {
+                        const fileUrl = item.file_url;
+                        const judul = activeTab === 'penelitian' ? item.judul_penelitian : item.title;
+                        const kategori = activeTab === 'penelitian' ? item.program : item.category;
+                        return fileUrl && fileUrl !== '-' && fileUrl !== '' ? (
+                          <button
+                            onClick={() => setPreviewDoc({ fileUrl, title: judul, category: kategori })}
+                            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white rounded-xl border border-primary-100 dark:border-primary-900/30 hover:border-primary-600 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                          >
+                            <Eye className="h-4 w-4" />
+                            Preview
+                          </button>
+                        ) : (
+                          <div className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 rounded-xl border border-gray-100 dark:border-zinc-700 text-[10px] font-black uppercase tracking-widest cursor-not-allowed italic whitespace-nowrap">
+                            <FileText className="h-4 w-4" />
+                            No File
+                          </div>
+                        );
+                      })()}
+                      
+                      {/* Approve Button */}
                       <button
                         onClick={() => handleVerify(item.id, 'Approved')}
                         disabled={actionLoading === item.id}
-                        className="flex-1 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+                        className="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50 whitespace-nowrap"
                       >
                         {actionLoading === item.id ? (
                           <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -245,12 +324,21 @@ export default function AdminVerification() {
                         )}
                         Approve
                       </button>
+
+                      {/* Reject Button */}
                       <button
-                        onClick={() => handleVerify(item.id, 'Rejected')}
+                        onClick={() => {
+                          setRejectingItem({
+                            id: item.id,
+                            title: activeTab === 'penelitian' ? item.judul_penelitian : item.title,
+                            type: activeTab === 'penelitian' ? 'research' : 'documents'
+                          });
+                          setFeedbackText('');
+                        }}
                         disabled={actionLoading === item.id}
-                        className="p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all border border-red-100 dark:border-red-900/30 hover:border-red-500 active:scale-95 disabled:opacity-50"
+                        className="p-2.5 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all border border-red-100 dark:border-red-900/30 hover:border-red-500 active:scale-95 disabled:opacity-50 shrink-0"
                       >
-                        <X className="h-5 w-5" />
+                        <X className="h-4.5 w-4.5" />
                       </button>
                     </div>
                   </div>
@@ -262,7 +350,7 @@ export default function AdminVerification() {
                 <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800">
                   <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
                     <tr>
-                      {['Dosen Pengaju', 'Informasi Detail', 'Program / Kategori', activeTab === 'research' ? 'Fiskal / Dana' : 'Status Performa', 'Verifikasi'].map((h, i) => (
+                      {['Dosen Pengaju', 'Informasi Detail', 'Program / Kategori', activeTab === 'penelitian' ? 'Dana' : 'Status Performa', 'Verifikasi'].map((h, i) => (
                         <th key={i} className={`px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em] ${h === 'Verifikasi' ? 'text-right' : ''}`}>
                           {h}
                         </th>
@@ -275,10 +363,10 @@ export default function AdminVerification() {
                         <td className="px-6 py-6 align-top">
                           <div className="flex flex-col">
                             <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight group-hover:text-primary-600 transition-colors">
-                               {activeTab === 'documents' ? item.user_name : item.user?.name}
+                               {activeTab === 'penelitian' ? item.user?.name : item.user_name}
                             </p>
                             <div className="flex items-center gap-2 mt-1">
-                              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{item.fakultas || 'Program Studi'}</p>
+                              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{(activeTab === 'penelitian' ? item.user?.fakultas : item.fakultas) || 'Program Studi'}</p>
                               {user?.role === 'admin lppm' && (
                                 <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Prodi' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
                                   {item.status === 'Verified by Prodi' ? 'PRODI VERIFIED' : 'BYPASSING PRODI'}
@@ -290,24 +378,18 @@ export default function AdminVerification() {
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-5">
                             <div className="shrink-0 p-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl group-hover:bg-primary-100/50 transition-colors border border-gray-100 dark:border-zinc-800">
-                              {activeTab === 'documents' ? <FileText className="h-6 w-6 text-gray-400 group-hover:text-primary-600" /> : <Beaker className="h-6 w-6 text-gray-400 group-hover:text-primary-600" />}
+                              {activeTab === 'penelitian' ? <Beaker className="h-6 w-6 text-gray-400 group-hover:text-primary-600" /> : <FileText className="h-6 w-6 text-gray-400 group-hover:text-primary-600" />}
                             </div>
-                            <div className="max-w-[300px] lg:max-w-[450px]">
-                              <a 
-                                href={item.file_url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-sm font-black text-gray-800 dark:text-zinc-200 hover:text-primary-600 flex items-center gap-2 group/link uppercase tracking-tight leading-snug"
-                              >
-                                {activeTab === 'documents' ? item.title : item.judul_penelitian}
-                                <ExternalLink className="h-3.5 w-3.5 opacity-0 group-hover/link:opacity-100 transition-opacity flex-shrink-0" />
-                              </a>
+                            <div className="max-w-[300px] lg:max-w-[400px]">
+                              <p className="text-sm font-black text-gray-800 dark:text-zinc-200 uppercase tracking-tight leading-snug line-clamp-2">
+                                {activeTab === 'penelitian' ? item.judul_penelitian : item.title}
+                              </p>
                               <div className="flex items-center gap-4 mt-2">
                                  <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest flex items-center">
                                    <CalendarDays className="w-4 h-4 mr-1.5 text-primary-500/70" />
-                                   {activeTab === 'documents' ? 'Published: ' + (item.published_at ? new Date(item.published_at).toLocaleDateString('id-ID') : '-') : 'Submitted: ' + new Date(item.created_at).toLocaleDateString('id-ID')}
+                                   {activeTab === 'penelitian' ? 'Submitted: ' + new Date(item.created_at).toLocaleDateString('id-ID') : 'Published: ' + (item.published_at ? new Date(item.published_at).toLocaleDateString('id-ID') : '-')}
                                  </p>
-                                  {activeTab === 'research' && (
+                                  {activeTab === 'penelitian' && (
                                    <div className="flex gap-2">
                                      <span className="text-[9px] font-black text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-lg border border-blue-100/50 uppercase tracking-tight">
                                         {item.skema}
@@ -323,21 +405,30 @@ export default function AdminVerification() {
                         </td>
                         <td className="px-6 py-6 align-top">
                           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-primary-50 dark:bg-primary-950/20 text-primary-700 dark:text-primary-400 rounded-xl border border-primary-100 dark:border-primary-900/30 text-[10px] font-black uppercase tracking-widest shadow-sm">
-                             {activeTab === 'documents' ? (
-                               <>
-                                  <Award className="w-3.5 h-3.5" />
-                                  {item.category}
-                               </>
-                             ) : (
+                             {activeTab === 'penelitian' ? (
                                <>
                                   {item.program === 'hibah luar negeri' ? <Globe className="w-3.5 h-3.5" /> : <Landmark className="w-3.5 h-3.5" />}
                                   {item.program}
+                               </>
+                             ) : (
+                               <>
+                                  <Award className="w-3.5 h-3.5" />
+                                  {item.category}
                                </>
                              )}
                           </div>
                         </td>
                         <td className="px-6 py-6 align-top">
-                          {activeTab === 'documents' ? (
+                          {activeTab === 'penelitian' ? (
+                            <div className="flex flex-col gap-1">
+                               <div className="flex items-center gap-2 text-emerald-600">
+                                  <span className="text-sm font-black tracking-tight">
+                                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.dana_disetujui)}
+                                  </span>
+                               </div>
+                               <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Dana Disetujui</p>
+                            </div>
+                          ) : (
                             item.is_kpi_counted ? (
                               <div className="flex flex-col">
                                  <div className="inline-flex items-center gap-2 text-[10px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-xl border border-emerald-100/50 w-fit uppercase tracking-widest">
@@ -351,33 +442,58 @@ export default function AdminVerification() {
                                 ARSIP
                               </div>
                             )
-                          ) : (
-                            <div className="flex flex-col gap-1">
-                               <div className="flex items-center gap-2 text-emerald-600">
-                                  <DollarSign className="w-4 h-4" />
-                                  <span className="text-sm font-black tracking-tight">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.dana_disetujui)}</span>
-                               </div>
-                               <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Dana Disetujui</p>
-                            </div>
                           )}
                         </td>
+                        
+                        {/* Desktop Verification Column - Side-by-Side Horizontal Buttons Layout */}
                         <td className="px-6 py-6 text-right align-top">
-                          <div className="flex items-center justify-end gap-3">
+                          <div className="flex items-center justify-end gap-2 w-full">
+                            {/* Tombol Preview File */}
+                            {(() => {
+                              const fileUrl = item.file_url;
+                              const judul = activeTab === 'penelitian' ? item.judul_penelitian : item.title;
+                              const kategori = activeTab === 'penelitian' ? item.program : item.category;
+                              return fileUrl && fileUrl !== '-' && fileUrl !== '' ? (
+                                <button
+                                  onClick={() => setPreviewDoc({ fileUrl, title: judul, category: kategori })}
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white rounded-xl border border-primary-100 dark:border-primary-900/30 hover:border-primary-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                                >
+                                  <Eye className="h-3.5 w-3.5" />
+                                  Preview
+                                </button>
+                              ) : (
+                                <div className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 rounded-xl border border-gray-100 dark:border-zinc-700 text-[9px] font-black uppercase tracking-widest cursor-not-allowed italic whitespace-nowrap">
+                                  <FileText className="h-3.5 w-3.5" />
+                                  No File
+                                </div>
+                              );
+                            })()}
+                            
+                            {/* Approve */}
                             <button
                               onClick={() => handleVerify(item.id, 'Approved')}
                               disabled={actionLoading === item.id}
-                              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/10 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
+                              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/10 transition-all active:scale-95 flex items-center gap-1.5 disabled:opacity-50 whitespace-nowrap font-sans font-black"
                             >
                               {actionLoading === item.id ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : <ShieldCheck className="h-4 w-4" />}
                               Approve
                             </button>
+
+                            {/* Reject */}
                             <button
-                              onClick={() => handleVerify(item.id, 'Rejected')}
+                              onClick={() => {
+                                setRejectingItem({
+                                  id: item.id,
+                                  title: activeTab === 'penelitian' ? item.judul_penelitian : item.title,
+                                  type: activeTab === 'penelitian' ? 'research' : 'documents'
+                                });
+                                setFeedbackText('');
+                              }}
                               disabled={actionLoading === item.id}
-                              className="p-2.5 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 text-red-500 dark:text-red-400 hover:text-white rounded-xl transition-all border border-red-100 dark:border-red-900/30 hover:border-red-500 active:scale-95 disabled:opacity-50"
+                              className="p-2 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 text-red-500 dark:text-red-400 hover:text-white rounded-xl transition-all border border-red-100 dark:border-red-900/30 hover:border-red-500 active:scale-95 disabled:opacity-50 shrink-0"
                               title="Reject"
                             >
-                              <X className="h-5 w-5" />
+                              <X className="h-4.5 w-4.5" />
                             </button>
                           </div>
                         </td>
@@ -466,6 +582,102 @@ export default function AdminVerification() {
           </motion.div>
         )}
       </div>
+
+      {/* Reject Confirmation Modal with Feedback */}
+      <AnimatePresence>
+        {rejectingItem && (
+          <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-gray-950/60 backdrop-blur-md"
+              onClick={() => setRejectingItem(null)}
+            />
+
+            {/* Modal Container */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden p-6 space-y-6"
+            >
+              <div>
+                <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
+                  <ShieldAlert className="w-5 h-5 text-red-500 animate-pulse" />
+                  Tolak Pengajuan
+                </h3>
+                <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
+                  Berikan alasan penolakan dokumen
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100 dark:border-zinc-800 text-xs font-bold text-gray-600 dark:text-zinc-300">
+                  <p className="text-[9px] uppercase tracking-widest text-gray-400 mb-1">Judul Pengajuan</p>
+                  <p className="uppercase leading-relaxed">{rejectingItem.title}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                    Catatan Umpan Balik <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    placeholder="Contoh: Dokumen PDF yang diunggah tidak terbaca atau salah file. Harap unggah ulang."
+                    rows={4}
+                    className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-red-100 dark:focus:ring-red-950/20 focus:border-red-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+                  />
+                  <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
+                    * Field ini wajib diisi sebelum mengonfirmasi penolakan.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setRejectingItem(null)}
+                  className="flex-1 px-5 py-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  disabled={!feedbackText.trim() || actionLoading !== null}
+                  onClick={async () => {
+                    if (!feedbackText.trim()) return;
+                    const docId = rejectingItem.id;
+                    await handleVerify(docId, 'Rejected', feedbackText);
+                    setRejectingItem(null);
+                  }}
+                  className="flex-1 px-5 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:opacity-50 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-500/10 transition-all flex items-center justify-center gap-2"
+                >
+                  {actionLoading ? (
+                    <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <ShieldAlert className="h-4 w-4" />
+                  )}
+                  Tolak Pengajuan
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* PDF Preview Modal */}
+      <PdfPreviewModal
+        isOpen={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        fileUrl={previewDoc?.fileUrl ?? null}
+        title={previewDoc?.title}
+        category={previewDoc?.category}
+      />
     </div>
   );
 }

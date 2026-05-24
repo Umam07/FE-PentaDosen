@@ -630,13 +630,23 @@ export default function AdminSync() {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
+            <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+              <div className="relative w-full xl:w-[400px]">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input 
+                  type="text" 
+                  placeholder="Cari nama dosen atau email..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="block w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-zinc-700 rounded-[1.25rem] bg-white dark:bg-zinc-800 text-sm font-bold text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 outline-none transition-all shadow-inner"
+                />
+              </div>
               {user?.role === 'admin lppm' && (
-                <div className="relative w-full sm:w-[240px]">
+                <div className="relative w-full sm:w-[220px]">
                   <select
                     value={selectedFakultas}
                     onChange={(e) => setSelectedFakultas(e.target.value)}
-                    className="appearance-none w-full px-5 py-3.5 pl-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 outline-none transition-all shadow-sm"
+                    className="appearance-none w-full px-5 py-3 pl-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm"
                   >
                     <option value="">Semua Fakultas</option>
                     <option value="Fakultas Kedokteran">Kedokteran</option>
@@ -650,16 +660,6 @@ export default function AdminSync() {
                   <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-300 pointer-events-none" />
                 </div>
               )}
-              <div className="relative w-full sm:w-[280px]">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="Cari Nama Dosen..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 outline-none transition-all shadow-inner"
-                />
-              </div>
             </div>
           </div>
         </div>

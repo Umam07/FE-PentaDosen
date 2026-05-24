@@ -21,8 +21,8 @@ import AdminAllDocuments from './pages/admin/AdminAllDocuments';
 import AdminActivityLogs from './pages/admin/AdminActivityLogs';
 import Research from './pages/dosen/Research';
 import Home from './pages/Home';
-import ResearchDocs from './pages/dosen/ResearchDocs';
 import Buku from './pages/dosen/Buku';
+import HKI from './pages/dosen/HKI';
 import LecturerDashboard from './pages/dosen/LecturerDashboard';
 import LecturerList from './pages/dashboard/LecturerList';
 import LecturerProfileInsights from './pages/dashboard/LecturerProfileInsights';
@@ -66,15 +66,18 @@ export default function App() {
   });
 
   const [isSessionExpired, setIsSessionExpired] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
 
-  // Global Interceptor for 429 (Rate Limit) and potentially 401 (Unauthorized)
+  // Global Interceptor for 429 (Rate Limit), 401 (Unauthorized), and 419 (Session Expired)
   useEffect(() => {
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       try {
         const response = await originalFetch(...args);
-        if (response.status === 429) {
+        if (response.status === 401 || response.status === 419) {
           setIsSessionExpired(true);
+        } else if (response.status === 429) {
+          setIsRateLimited(true);
         }
         return response;
       } catch (error) {
@@ -175,15 +178,14 @@ export default function App() {
           <Route path="/publication" element={user?.role === 'dosen' ? <Publication user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/research/proposal" element={user?.role === 'dosen' ? <ResearchDocs user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/research/laporan" element={user?.role === 'dosen' ? <ResearchDocs user={user} /> : <Navigate to="/dashboard" />} />
+          <Route path="/hki" element={user?.role === 'dosen' ? <HKI user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/documents/all" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/verify" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminVerification /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/lecturers" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/lecturers/:id" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />} />
           <Route path="/admin/sync" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminSync /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/input-document" element={user?.role === 'admin lppm' ? <AdminInputDocument /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/activity-logs" element={user?.role === 'admin lppm' ? <AdminActivityLogs /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/input-document" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminInputDocument /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/activity-logs" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />} />
           <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
         </Route>
       </Routes>
@@ -230,6 +232,58 @@ export default function App() {
                   >
                     Login Kembali
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  
+                  <p className="text-[10px] text-gray-400 dark:text-zinc-500 text-center font-black uppercase tracking-[0.2em]">
+                    PentaDosen Security Protocol
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Rate Limit Modal */}
+      <AnimatePresence>
+        {isRateLimited && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-gray-900/60 backdrop-blur-md"
+              onClick={() => setIsRateLimited(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-zinc-800 p-8 lg:p-10 overflow-hidden"
+            >
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -mr-16 -mt-16" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-500/5 rounded-full -ml-12 -mb-12" />
+              
+              <div className="relative">
+                <div className="w-20 h-20 bg-blue-50 dark:bg-blue-950/20 rounded-3xl flex items-center justify-center mb-8 mx-auto ring-8 ring-blue-50/50 dark:ring-blue-950/10">
+                  <AlertCircle className="w-10 h-10 text-blue-500" />
+                </div>
+                
+                <h3 className="text-2xl lg:text-3xl font-black text-gray-900 dark:text-zinc-100 text-center mb-4 tracking-tight uppercase">
+                  Terlalu Banyak Permintaan
+                </h3>
+                
+                <p className="text-gray-500 dark:text-zinc-400 text-center mb-10 font-bold leading-relaxed">
+                  Sistem mendeteksi aktivitas yang sangat cepat. Silakan tunggu beberapa saat sebelum mencoba kembali untuk kenyamanan dan keamanan data Anda.
+                </p>
+                
+                <div className="space-y-4">
+                  <button
+                    onClick={() => setIsRateLimited(false)}
+                    className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-200 dark:shadow-blue-900/20 transition-all flex items-center justify-center group"
+                  >
+                    Mengerti & Tutup
                   </button>
                   
                   <p className="text-[10px] text-gray-400 dark:text-zinc-500 text-center font-black uppercase tracking-[0.2em]">

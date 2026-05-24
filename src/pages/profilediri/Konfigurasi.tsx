@@ -139,24 +139,6 @@ export default function Konfigurasi({
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Status Notifications */}
-      <AnimatePresence>
-        {message.text && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl backdrop-blur-md border ${
-              message.type === 'success' 
-                ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' 
-                : 'bg-red-500/10 text-red-600 border-red-500/20'
-            }`}
-          >
-            {message.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-            {message.text}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Global Sync Action */}
       <motion.div 

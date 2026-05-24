@@ -45,7 +45,7 @@ export default function AdminInputDocument() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('/api/admin/lecturers');
+      const res = await fetch(`/api/admin/lecturers?role=${adminUser?.role}&user_id=${adminUser?.id}`);
       const data = await res.json();
       setUsers(data.lecturers || []);
     } catch (err) {

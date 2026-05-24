@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Upload, BookOpen, CheckCircle, XCircle, Clock, CalendarDays, ChevronLeft, ChevronRight, Filter, ChevronDown, AlertCircle, Download, FileSpreadsheet, FileText, Link } from 'lucide-react';
+import { Upload, BookOpen, CheckCircle, XCircle, Clock, CalendarDays, ChevronLeft, ChevronRight, Filter, ChevronDown, AlertCircle, Download, FileSpreadsheet, FileText, Link, Zap, Shield, Award, Archive, Info, Eye, PieChart as PieChartIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ResponsiveContainer, PieChart as ReChartsPie, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
 const BUKU_CATEGORIES = [
   { label: 'Buku Referensi', value: 'Buku Referensi', points: 40 },
@@ -29,6 +31,10 @@ export default function Buku({ user }: { user: any }) {
   const [filterKategori, setFilterKategori] = useState('');
   const [isImporting, setIsImporting] = useState(false);
   const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  // === State Preview Modal ===
+  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
   // Link Research States
   const [approvedResearch, setApprovedResearch] = useState([]);
@@ -91,10 +97,12 @@ export default function Buku({ user }: { user: any }) {
         setIsLinkingModalOpen(false);
         fetchDocuments();
       }
+      setTimeout(() => setMessage(''), 4500);
     } catch (err) {
       console.error(err);
       setMessage('Gagal menghubungkan buku.');
       setMessageType('error');
+      setTimeout(() => setMessage(''), 4500);
     } finally {
       setIsLinkingLoading(false);
       setDocToLink(null);
@@ -120,6 +128,17 @@ export default function Buku({ user }: { user: any }) {
       validCount: valid.length,
     };
   }, [filteredDocuments, currentYear]);
+
+  const categoryStats = useMemo(() => {
+    const map = new Map();
+    documents.forEach((doc: any) => {
+      const cat = doc.category || 'Belum Ada Kategori';
+      map.set(cat, (map.get(cat) || 0) + 1);
+    });
+    return Array.from(map.entries())
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [documents]);
 
   const selectedCat = BUKU_CATEGORIES.find(c => c.value === category);
   const scoringPreview = docType === 'arsip'
@@ -239,10 +258,12 @@ export default function Buku({ user }: { user: any }) {
         await fetchDocuments();
         setCurrentPage(1);
         setIsTableLoading(false);
+        setTimeout(() => setMessage(''), 4500);
       } catch (err) {
         console.error(err);
         setMessage('Terjadi kesalahan saat membaca file Excel.');
         setMessageType('error');
+        setTimeout(() => setMessage(''), 4500);
       } finally {
         setIsImporting(false);
         if (e.target) e.target.value = '';
@@ -290,10 +311,12 @@ export default function Buku({ user }: { user: any }) {
         setMessage(data.message || 'Gagal mengunggah dokumen.');
         setMessageType('error');
       }
+      setTimeout(() => setMessage(''), 4500);
     } catch (err) {
       console.error(err);
       setMessage('Terjadi kesalahan saat mengunggah.');
       setMessageType('error');
+      setTimeout(() => setMessage(''), 4500);
     } finally {
       setUploadingPdfId(null);
       if (e.target) e.target.value = '';
@@ -303,10 +326,16 @@ export default function Buku({ user }: { user: any }) {
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title || !category || !tahun) {
-      setMessage('Harap lengkapi semua field.'); setMessageType('error'); return;
+      setMessage('Harap lengkapi semua field.'); 
+      setMessageType('error'); 
+      setTimeout(() => setMessage(''), 4500);
+      return;
     }
     if (duplicateFound) {
-      setMessage('Dokumen ini sudah terdata.'); setMessageType('error'); return;
+      setMessage('Dokumen ini sudah terdata.'); 
+      setMessageType('error'); 
+      setTimeout(() => setMessage(''), 4500);
+      return;
     }
     const formData = new FormData();
     formData.append('file', file);
@@ -320,9 +349,16 @@ export default function Buku({ user }: { user: any }) {
       const res = await fetch('/api/documents', { method: 'POST', body: formData });
       const data = await res.json();
       if (res.ok) {
-        setMessage(data.message || 'Buku berhasil diunggah!'); setMessageType('success');
-        setTitle(''); setFile(null); setTahun(currentYear.toString());
-        setIsTableLoading(true); await fetchDocuments(); setCurrentPage(1); setIsTableLoading(false);
+        setMessage(data.message || 'Buku berhasil diunggah!'); 
+        setMessageType('success');
+        setTitle(''); 
+        setFile(null); 
+        setTahun(currentYear.toString());
+        setIsUploadModalOpen(false); // Tutup modal saat sukses
+        setIsTableLoading(true); 
+        await fetchDocuments(); 
+        setCurrentPage(1); 
+        setIsTableLoading(false);
       } else {
         let errorMsg = data.message || 'Gagal mengunggah.';
         if (data.errors && data.errors.title) {
@@ -331,7 +367,12 @@ export default function Buku({ user }: { user: any }) {
         setMessage(errorMsg); 
         setMessageType('error'); 
       }
-    } catch { setMessage('Terjadi kesalahan.'); setMessageType('error'); }
+      setTimeout(() => setMessage(''), 4500);
+    } catch { 
+      setMessage('Terjadi kesalahan.'); 
+      setMessageType('error'); 
+      setTimeout(() => setMessage(''), 4500);
+    }
     finally { setLoading(false); }
   };
 
@@ -356,239 +397,251 @@ export default function Buku({ user }: { user: any }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-none space-y-6 lg:space-y-10 pb-12">
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-3 px-5 py-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800/30 rounded-2xl"
+      >
+        <BookOpen className="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0" />
         <div>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Buku</h1>
-          <p className="text-sm font-bold text-gray-400 dark:text-zinc-500 mt-1 uppercase tracking-widest">Buku Referensi · Buku Ajar · Buku Monograf</p>
+          <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Pengelolaan Buku Dosen</p>
+          <p className="text-sm font-black uppercase tracking-tight">Buku Referensi, Ajar, dan Monograf Dosen</p>
         </div>
-        <div className="flex gap-3">
-          {BUKU_CATEGORIES.map(bc => (
-            <div key={bc.value} className="px-3 py-1.5 bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 rounded-xl text-center">
-              <p className="text-[8px] font-black text-primary-500 uppercase tracking-widest">{bc.label}</p>
-              <p className="text-sm font-black text-primary-700 dark:text-primary-300">+{bc.points} pts</p>
-            </div>
-          ))}
+        <div className="ml-auto text-[10px] font-bold opacity-75 uppercase tracking-widest hidden md:flex items-center gap-1.5">
+          <Info className="w-3.5 h-3.5" />
+          Registrasikan Karya Tulis dan Buku Akademik Anda
         </div>
-      </div>
+      </motion.div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {/* Dashboard Summary Section */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {[
-          { label: 'Total Buku', value: stats.total, icon: BookOpen, color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-950/20' },
-          { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
-          { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/20' },
-          { label: 'Total Poin KPI', value: `${stats.points} pts`, icon: CalendarDays, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/20' },
-        ].map((s, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-            className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 p-5 shadow-sm">
-            <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center mb-3`}>
-              <s.icon className={`w-5 h-5 ${s.color}`} />
+          { label: 'Total Buku', value: stats.total, icon: BookOpen, color: 'blue' },
+          { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
+          { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
+          { label: 'Poin Buku', value: stats.points, icon: Award, color: 'indigo' },
+        ].map((item, index) => (
+          <motion.div
+            key={item.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl border border-gray-100 dark:border-zinc-800 p-5 flex items-center gap-4 hover:shadow-md transition-shadow"
+          >
+            <div className={`p-3 rounded-xl ${
+              item.color === 'blue' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400' :
+              item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
+              item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
+              'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400'
+            }`}>
+              <item.icon className="h-6 w-6" />
             </div>
-            <p className="text-2xl font-black text-gray-900 dark:text-white">{s.value}</p>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{s.label}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Upload Form */}
-        <div className="lg:col-span-1 bg-white dark:bg-zinc-900 rounded-[2rem] border border-gray-100 dark:border-zinc-800 p-7 shadow-sm space-y-5">
-          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-             <h2 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Unggah Buku</h2>
-             <div className="flex flex-wrap items-center gap-2">
-              <button 
-                type="button"
-                onClick={handleDownloadTemplate}
-                className="inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm"
-              >
-                <Download className="w-3 h-3 mr-1" />
-                Template
-              </button>
-              <label className={`inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
-                <FileSpreadsheet className="w-3 h-3 mr-1" />
-                {isImporting ? 'Proses...' : 'Import'}
-                <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
-              </label>
-            </div>
-          </div>
-
-          <AnimatePresence>
-            {message && (
-              <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                className={`flex items-center gap-3 p-3 rounded-xl border text-xs font-bold ${messageType === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
-                {messageType === 'success' ? <CheckCircle className="w-4 h-4 flex-shrink-0" /> : <XCircle className="w-4 h-4 flex-shrink-0" />}
-                {message}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {duplicateFound && (
-            <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl text-[11px] font-bold text-amber-700 dark:text-amber-400">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" /> Judul ini sudah ada di database.
-            </div>
-          )}
-
-          <form onSubmit={handleUpload} className="space-y-4">
-            {/* Judul */}
-            <div>
-              <label className="block text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-1.5">Judul Buku</label>
-              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Masukkan judul buku..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold text-gray-800 dark:text-white placeholder-gray-300 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 outline-none transition-all" />
-            </div>
-
-            {/* Kategori */}
-            <div>
-              <label className="block text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-1.5">Kategori</label>
-              <select value={category} onChange={e => setCategory(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold text-gray-800 dark:text-white focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 outline-none cursor-pointer">
-                {BUKU_CATEGORIES.map(bc => <option key={bc.value} value={bc.value}>{bc.label} (+{bc.points} pts)</option>)}
-              </select>
-            </div>
-
-            {/* Tahun */}
-            <div className="relative">
-              <label className="block text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-1.5">Tahun Terbit</label>
-              <button type="button" onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold text-gray-800 dark:text-white flex items-center justify-between">
-                <span>{tahun}</span><ChevronDown className="w-4 h-4 text-gray-400" />
-              </button>
-              {isYearDropdownOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-xl max-h-48 overflow-auto">
-                  {years.map(y => (
-                    <button key={y} type="button" onClick={() => { setTahun(y); setIsYearDropdownOpen(false); }}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-bold transition-colors ${tahun === y ? 'bg-primary-50 text-primary-700' : 'text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-700'}`}>
-                      {y}
-                    </button>
-                  ))}
-                </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
+              {isTableLoading ? (
+                <div className="h-6 w-12 bg-gray-100 dark:bg-zinc-800 animate-pulse rounded mt-1"></div>
+              ) : (
+                <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100 mt-0.5">{item.value}</p>
               )}
             </div>
+          </motion.div>
+        ))}
+      </section>
 
-            {/* Tipe Dokumen */}
-            <div>
-              <label className="block text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-1.5">Tipe Dokumen</label>
-              <div className="grid grid-cols-2 gap-2">
-                {(['kpi', 'arsip'] as const).map(t => (
-                  <button key={t} type="button" onClick={() => setDocType(t)}
-                    className={`px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${docType === t ? 'bg-primary-600 text-white border-primary-600' : 'bg-white dark:bg-zinc-800 text-gray-500 border-gray-200 dark:border-zinc-700 hover:border-primary-300'}`}>
-                    {t === 'kpi' ? '📊 KPI' : '🗄️ Arsip'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Scoring preview */}
-            {scoringPreview && (
-              <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest ${scoringPreview.type === 'kpi' ? 'bg-primary-50 dark:bg-primary-950/20 border-primary-100 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-500'}`}>
-                {scoringPreview.type === 'kpi' ? '⭐' : '🗄️'} {scoringPreview.message}
-              </div>
-            )}
-
-            {/* Upload zona */}
-            <div onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)} onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${isDragging ? 'border-primary-400 bg-primary-50/50' : 'border-gray-200 dark:border-zinc-700 hover:border-primary-300'}`}
-              onClick={() => document.getElementById('buku-file-input')?.click()}>
-              <input id="buku-file-input" type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
-              <Upload className="w-6 h-6 mx-auto mb-2 text-gray-300" />
-              {file ? <p className="text-xs font-bold text-primary-600 truncate">{file.name}</p>
-                : <p className="text-xs font-bold text-gray-400">Klik atau seret file ke sini</p>}
-            </div>
-
-            <button type="submit" disabled={loading || !!duplicateFound}
-              className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg shadow-primary-500/20">
-              {loading ? 'Mengunggah...' : 'Unggah Buku'}
-            </button>
-          </form>
-
-          {/* Remove bottom import section */}
+      {/* Upload Action Bar Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6"
+      >
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shadow-sm">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Kelola Buku Referensi & Ajar</h3>
+            <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">Registrasikan buku baru atau impor data dari Excel secara massal</p>
+          </div>
         </div>
 
-        {/* Document List */}
-        <div className="lg:col-span-2 space-y-5">
-          {/* Filter bar */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-              <Filter className="w-3.5 h-3.5" /> Filter:
-            </div>
-            {['', ...BUKU_CATEGORIES.map(b => b.value)].map(k => (
-              <button key={k} onClick={() => { setFilterKategori(k); setCurrentPage(1); }}
-                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterKategori === k ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-200 dark:border-zinc-700 hover:border-primary-300'}`}>
-                {k || 'Semua'}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="w-full md:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95"
+          >
+            Unggah Buku Baru
+            <Zap className="w-4 h-4 ml-2 fill-white" />
+          </button>
+          <button 
+            type="button"
+            onClick={handleDownloadTemplate}
+            className="inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm uppercase tracking-wider"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Template
+          </button>
+          <label className={`inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer uppercase tracking-wider ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+            <FileSpreadsheet className="w-4 h-4 mr-2" />
+            {isImporting ? 'Importing...' : 'Import Excel'}
+            <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
+          </label>
+        </div>
+      </motion.div>
 
-          {isTableLoading ? (
-            <div className="flex items-center justify-center py-24">
-              <div className="w-8 h-8 border-4 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+          
+          <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
+            <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
+              <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Buku</h3>
             </div>
-          ) : filteredDocuments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-zinc-900 rounded-[2rem] border border-dashed border-gray-200 dark:border-zinc-700">
-              <BookOpen className="w-10 h-10 text-gray-200 mb-4" />
-              <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Belum ada dokumen buku</p>
+
+            {/* Filter bar */}
+            <div className="px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-3 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10">
+              <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                <Filter className="w-3.5 h-3.5" /> Filter:
+              </div>
+              {['', ...BUKU_CATEGORIES.map(b => b.value)].map(k => (
+                <button key={k} onClick={() => { setFilterKategori(k); setCurrentPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterKategori === k ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-200 dark:border-zinc-700 hover:border-primary-300'}`}>
+                  {k || 'Semua'}
+                </button>
+              ))}
             </div>
-          ) : (
-            <>
-              <div className="space-y-4">
-                {paginatedDocs.map((doc: any, i: number) => {
-                  const catInfo = BUKU_CATEGORIES.find(bc => bc.value === doc.category);
-                  const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : 0;
-                  const isValid = doc.status === 'Approved' && docYear >= currentYear - 2;
-                  return (
-                    <motion.div key={doc.id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                      className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 p-5 hover:shadow-md transition-all">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/20 flex items-center justify-center flex-shrink-0">
-                          <BookOpen className="w-6 h-6 text-primary-500" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-black text-gray-900 dark:text-white leading-snug line-clamp-2">{doc.title}</p>
-                          <div className="flex flex-wrap items-center gap-2 mt-2">
-                            {catInfo && (
-                              <span className="px-2 py-0.5 bg-primary-100 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 rounded-md text-[7px] font-black uppercase tracking-widest">
-                                {catInfo.label}
-                              </span>
-                            )}
-                            {doc.file_url && doc.file_url !== '-' ? (
-                              <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 text-[7px] font-black uppercase tracking-widest transition-colors">
-                                <FileText className="w-2.5 h-2.5" /> Lihat
-                              </a>
-                            ) : (
-                              <label className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 hover:text-primary-600 hover:bg-primary-50 text-[7px] font-black uppercase tracking-widest transition-colors cursor-pointer">
-                                {uploadingPdfId === doc.id ? (
-                                  <span className="animate-pulse">Uploading...</span>
-                                ) : (
-                                  <>
-                                    <Upload className="w-2.5 h-2.5" /> Upload File
-                                    <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
-                                  </>
+
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
+                <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
+                  <tr>
+                    <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Buku</th>
+                    <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori Buku</th>
+                    <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tahun</th>
+                    <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
+                    <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Klasifikasi</th>
+                    <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin</th>
+                    <th className="px-4 lg:px-8 py-4 text-right text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Penelitian Asal</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
+                  {isTableLoading ? (
+                    [1, 2, 3].map((i) => (
+                      <tr key={`skeleton-${i}`} className="animate-pulse">
+                        <td className="px-4 lg:px-8 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="h-8 w-8 bg-gray-100 dark:bg-zinc-800 rounded-lg shrink-0" />
+                            <div className="space-y-2 w-full max-w-[200px]">
+                              <div className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
+                              <div className="h-3 w-2/3 bg-gray-100 dark:bg-zinc-800 rounded" />
+                            </div>
+                          </div>
+                        </td>
+                        <td className="hidden lg:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
+                        <td className="hidden md:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-20 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
+                        <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
+                        <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-16 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
+                        <td className="px-4 lg:px-8 py-4"><div className="h-6 w-12 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
+                        <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
+                      </tr>
+                    ))
+                  ) : paginatedDocs.length > 0 ? (
+                    paginatedDocs.map((doc: any) => {
+                      const catInfo = BUKU_CATEGORIES.find(bc => bc.value === doc.category);
+                      const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : 0;
+                      return (
+                        <tr key={doc.id} className="hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-colors group">
+                          <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors shrink-0">
+                                <BookOpen className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400 dark:text-zinc-500 group-hover:text-primary-600" />
+                              </div>
+                              <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-sm">
+                                <p className="text-[11px] sm:text-xs lg:text-sm font-extrabold text-gray-900 dark:text-zinc-100 truncate tracking-tight uppercase" title={doc.title}>{doc.title}</p>
+                                <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate mt-0.5" title={doc.category}>
+                                  <span className="lg:hidden">{docYear || '-'} • </span>
+                                  {doc.category}
+                                </p>
+                                
+                                {/* Link PDF view inside information block */}
+                                <div className="mt-1 flex items-center gap-2">
+                                  {doc.file_url && doc.file_url !== '-' ? (
+                                    <button
+                                      onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[8px] font-black uppercase tracking-widest transition-colors"
+                                    >
+                                      <FileText className="w-2.5 h-2.5" /> Lihat Dokumen
+                                    </button>
+                                  ) : (
+                                    <label className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[8px] font-black uppercase tracking-widest transition-colors cursor-pointer">
+                                      {uploadingPdfId === doc.id ? (
+                                        <span className="animate-pulse">Uploading...</span>
+                                      ) : (
+                                        <>
+                                          <Upload className="w-2.5 h-2.5" /> Upload File
+                                          <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
+                                        </>
+                                      )}
+                                    </label>
+                                  )}
+                                </div>
+
+                                {doc.status === 'Rejected' && doc.catatan && (
+                                  <div className="mt-2 text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded-lg border border-red-100 dark:border-red-900/30 w-fit uppercase tracking-tight">
+                                    Catatan Umpan Balik: {doc.catatan}
+                                  </div>
                                 )}
-                              </label>
+                              </div>
+                            </div>
+                          </td>
+                          
+                          <td className="hidden lg:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                            <span className="text-xs font-bold text-gray-600 dark:text-zinc-300 uppercase tracking-wide truncate max-w-[150px] block" title={doc.category}>{doc.category}</span>
+                          </td>
+                          
+                          <td className="hidden md:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle text-xs font-black text-gray-500 dark:text-zinc-400 font-mono italic">
+                            {docYear || '-'}
+                          </td>
+                          
+                          <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                            <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest ${getStatusColor(doc.status)}`}>
+                              {getStatusIcon(doc.status)}
+                              <span className="ml-1">{doc.status}</span>
+                            </div>
+                          </td>
+                          
+                          <td className="hidden sm:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                            {doc.is_kpi_counted ? (
+                              <div className="inline-flex items-center gap-1.5 text-[9px] lg:text-[10px] font-black uppercase text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1.5 rounded-xl border border-primary-100">
+                                <Award className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
+                                KPI
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center gap-1.5 text-[9px] lg:text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800 px-2.5 py-1.5 rounded-xl border border-gray-100">
+                                <Archive className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
+                                Arsip
+                              </div>
                             )}
-                            <span className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-[7px] font-black uppercase tracking-widest ${getStatusColor(doc.status)}`}>
-                              {getStatusIcon(doc.status)} {doc.status}
-                            </span>
-                            <span className="text-[8px] font-bold text-gray-400 flex items-center gap-1">
-                              <CalendarDays className="w-3 h-3" /> {docYear || '—'}
-                            </span>
-                            {isValid && catInfo && (
-                              <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 rounded-md text-[7px] font-black uppercase tracking-widest">
-                                +{catInfo.points} PTS KPI
+                          </td>
+                          
+                          <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                            <div className="flex flex-col items-end sm:items-start">
+                              <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter">
+                                +{doc.awarded_points || 0} PTS
                               </span>
-                            )}
+                            </div>
+                          </td>
+
+                          {/* Connect to Research column */}
+                          <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle text-right sm:text-left">
                             {doc.penelitian ? (
-                              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 rounded-md border border-indigo-100 dark:border-indigo-800/50">
-                                <Link className="w-2.5 h-2.5" />
-                                <span className="text-[7px] font-black uppercase tracking-tight truncate max-w-[100px]" title={doc.penelitian.judul_penelitian}>
+                              <div className="flex items-center gap-1.5 px-2 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 rounded-md border border-indigo-100 max-w-[150px] truncate">
+                                <Link className="w-2.5 h-2.5 shrink-0" />
+                                <span className="text-[9px] font-black uppercase tracking-tight truncate" title={doc.penelitian.judul_penelitian}>
                                   {doc.penelitian.judul_penelitian}
                                 </span>
                                 <button 
                                   onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
-                                  className="ml-1 text-[7px] font-black text-indigo-400 hover:text-indigo-600 uppercase"
+                                  className="ml-auto text-[9px] font-black text-indigo-400 hover:text-indigo-600 uppercase"
                                 >
                                   Ubah
                                 </button>
@@ -596,42 +649,98 @@ export default function Buku({ user }: { user: any }) {
                             ) : (
                               <button 
                                 onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
-                                className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 text-[7px] font-black uppercase tracking-widest transition-colors cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 text-[9px] font-black uppercase tracking-widest rounded-md border transition-all"
                               >
-                                <Link className="w-2.5 h-2.5" /> Pilih Asal Penelitian
+                                <Link className="w-3 h-3" /> Pilih Penelitian Asal
                               </button>
                             )}
-                          </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="px-4 lg:px-8 py-16 text-center">
+                        <div className="flex flex-col items-center">
+                           <BookOpen className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
+                           <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest italic">Inventory Empty</p>
                         </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-zinc-800">
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                    {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, filteredDocuments.length)} / {filteredDocuments.length}
+            {/* Pagination Controls */}
+            {!isTableLoading && filteredDocuments.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="px-6 py-5 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/10 flex flex-col sm:flex-row items-center justify-between gap-4"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredDocuments.length)} of {filteredDocuments.length} entries
                   </span>
-                  <div className="flex items-center gap-2">
-                    <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}
-                      className="p-2 rounded-xl border border-gray-200 dark:border-zinc-700 disabled:opacity-40 hover:text-primary-600 transition-all">
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <span className="text-[10px] font-black text-gray-600 dark:text-zinc-300 px-3">{currentPage} / {totalPages}</span>
-                    <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}
-                      className="p-2 rounded-xl border border-gray-200 dark:border-zinc-700 disabled:opacity-40 hover:text-primary-600 transition-all">
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                  <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 mx-2 hidden sm:block" />
+                  <div className="hidden sm:flex items-center gap-1.5">
+                    <span className="text-[10px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Per Page:</span>
+                    <select 
+                      value={itemsPerPage} 
+                      onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                      className="bg-gray-100 dark:bg-zinc-800 border-none rounded-lg text-xs font-bold text-gray-600 dark:text-zinc-300 py-1 pl-2 pr-6 focus:ring-2 focus:ring-primary-200 outline-none cursor-pointer"
+                    >
+                      {[10, 25, 50, 100].map(val => (
+                        <option key={val} value={val}>{val}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                      .map((p, index, array) => (
+                        <React.Fragment key={p}>
+                          {index > 0 && array[index - 1] !== p - 1 && (
+                            <span className="px-2 text-gray-300 dark:text-zinc-600 font-bold">...</span>
+                          )}
+                          <button
+                            onClick={() => setCurrentPage(p)}
+                            className={`min-w-[36px] h-9 flex items-center justify-center rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                              currentPage === p 
+                                ? 'bg-primary-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900/30' 
+                                : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        </React.Fragment>
+                      ))}
+                  </div>
+
+                  <button
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </section>
+
 
       {/* Linking Modal */}
       <AnimatePresence>
@@ -705,6 +814,309 @@ export default function Buku({ user }: { user: any }) {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Upload Buku Modal Pop-up */}
+      <AnimatePresence>
+        {isUploadModalOpen && (
+          <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-gray-950/60 backdrop-blur-md"
+              onClick={() => setIsUploadModalOpen(false)}
+            />
+
+            {/* Modal Container */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-4xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
+                <div>
+                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-primary-500" />
+                    Unggah Buku Baru
+                  </h3>
+                  <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Daftarkan Buku Ajar, Referensi, atau Monograf</p>
+                </div>
+                <button
+                  onClick={() => setIsUploadModalOpen(false)}
+                  className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors"
+                >
+                  <XCircle className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 scrollbar-hide">
+                <form onSubmit={handleUpload} className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                  {/* Left Form part */}
+                  <div className="lg:col-span-2 space-y-6">
+                    {duplicateFound && (
+                      <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl text-[11px] font-bold text-amber-700 dark:text-amber-400">
+                        <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" /> Judul ini sudah ada di database.
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setDocType('kpi')}
+                        className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+                          docType === 'kpi'
+                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/10 ring-4 ring-emerald-500/10'
+                            : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                        }`}
+                      >
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+                          docType === 'kpi' ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-emerald-50'
+                        }`}>
+                          <Award className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
+                        </div>
+                        <div className="text-left min-w-0">
+                          <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-emerald-900 dark:text-emerald-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                            KPI Dosen
+                          </p>
+                          <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Automated Scoring</p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDocType('arsip')}
+                        className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+                          docType === 'arsip'
+                            ? 'border-gray-500 bg-gray-50 dark:bg-zinc-800 ring-4 ring-gray-500/10'
+                            : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                        }`}
+                      >
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+                          docType === 'arsip' ? 'bg-gray-200 dark:bg-zinc-700' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-gray-200/60'
+                        }`}>
+                          <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-gray-600 dark:text-zinc-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
+                        </div>
+                        <div className="text-left min-w-0">
+                          <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-gray-900 dark:text-zinc-100' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                            Arsip Umum
+                          </p>
+                          <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Storage Only (0 Pts)</p>
+                        </div>
+                      </button>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Judul Buku</label>
+                      <input 
+                        type="text"
+                        required
+                        value={title} 
+                        onChange={e => setTitle(e.target.value)} 
+                        placeholder="Masukkan judul buku..."
+                        className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100" 
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori</label>
+                        <div className="relative">
+                          <select 
+                            value={category} 
+                            onChange={e => setCategory(e.target.value)}
+                            className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm appearance-none cursor-pointer text-gray-900 dark:text-zinc-100"
+                          >
+                            {BUKU_CATEGORIES.map(bc => (
+                              <option key={bc.value} value={bc.value}>{bc.label} (+{bc.points} pts)</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 relative">
+                        <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+                          <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
+                          Tahun Terbit
+                        </label>
+                        <button 
+                          type="button" 
+                          onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                          className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-left flex justify-between items-center text-gray-950 dark:text-zinc-100"
+                        >
+                          <span>{tahun}</span>
+                          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isYearDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        
+                        <AnimatePresence>
+                          {isYearDropdownOpen && (
+                            <>
+                              <div className="fixed inset-0 z-20" onClick={() => setIsYearDropdownOpen(false)} />
+                              <motion.div 
+                                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                className="absolute z-30 w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden origin-top"
+                              >
+                                <div className="max-h-48 overflow-y-auto p-2.5 grid grid-cols-3 gap-1.5">
+                                  {years.map(y => (
+                                    <button 
+                                      key={y} 
+                                      type="button" 
+                                      onClick={() => { setTahun(y); setIsYearDropdownOpen(false); }}
+                                      className={`py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                                        tahun === y 
+                                          ? 'bg-primary-600 border-primary-600 text-white' 
+                                          : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 dark:text-zinc-300 hover:border-primary-200'
+                                      }`}
+                                    >
+                                      {y}
+                                    </button>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            </>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-end">
+                        {scoringPreview ? (
+                          <div className={`w-full px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400`}>
+                            <Award className="h-5 w-5 shrink-0 text-emerald-600" />
+                            <div className="min-w-0">
+                              <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
+                              <p className="text-xs font-black truncate">{scoringPreview.message}</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-full px-4 py-2.5 rounded-xl border-2 border-dashed border-gray-100 bg-gray-50/30 flex items-center gap-3">
+                            <Clock className="w-5 h-5 text-gray-300" />
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest italic">Menunggu...</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">File Buku (PDF)</label>
+                        <div 
+                          onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
+                          onDragLeave={() => setIsDragging(false)} 
+                          onDrop={handleDrop}
+                          className={`border-2 border-dashed rounded-xl p-4 text-center transition-all cursor-pointer ${
+                            isDragging ? 'border-primary-500 bg-primary-50' : 'border-gray-200 dark:border-zinc-700 hover:border-primary-300'
+                          }`}
+                          onClick={() => document.getElementById('buku-file-input-modal')?.click()}
+                        >
+                          <input id="buku-file-input-modal" type="file" accept=".pdf" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+                          <Upload className="w-5 h-5 mx-auto mb-1 text-gray-300" />
+                          {file ? <p className="text-xs font-bold text-primary-600 truncate">{file.name}</p>
+                            : <p className="text-xs font-bold text-gray-400">Klik atau seret file PDF</p>}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Side Guide Panel */}
+                  <div className="space-y-6 lg:col-span-1">
+                    <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5">
+                      <div className="flex items-center gap-2 mb-4 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
+                        <div className="p-1.5 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
+                          <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Panduan Poin Buku</h4>
+                      </div>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          { label: 'Buku Referensi', pts: '40 PTS', desc: 'Buku kajian mendalam bidang ilmu' },
+                          { label: 'Buku Ajar', pts: '20 PTS', desc: 'Buku pegangan proses belajar mengajar' },
+                          { label: 'Buku Monograf', pts: '20 PTS', desc: 'Buku hasil penelitian tunggal / spesifik' },
+                        ].map((bc) => (
+                          <div key={bc.label} className="p-3 bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 rounded-2xl flex items-center justify-between gap-3 shadow-sm hover:scale-[1.02] transition-transform duration-300">
+                            <div>
+                              <span className="block text-[10px] font-black text-gray-800 dark:text-zinc-200 uppercase tracking-wide">{bc.label}</span>
+                              <span className="block text-[9px] font-bold text-gray-400 mt-0.5">{bc.desc}</span>
+                            </div>
+                            <span className="text-[10px] font-black text-primary-600 dark:text-primary-400 bg-white dark:bg-zinc-900 px-2.5 py-1.5 rounded-xl border border-primary-100 dark:border-primary-800/50 shrink-0 shadow-sm">
+                              +{bc.pts}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-primary-50 dark:bg-primary-950/10 border border-primary-100 dark:border-primary-900/30 rounded-xl">
+                      <h4 className="text-[10px] font-black uppercase text-primary-800 dark:text-primary-300 tracking-wider mb-1">Informasi Verifikasi</h4>
+                      <p className="text-[9px] font-bold text-primary-700/80 dark:text-primary-400/80 leading-relaxed">
+                        Buku yang diunggah akan melalui proses verifikasi oleh LPPM sebelum secara resmi tercatat dalam performa kinerja KPI dosen.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Footer Buttons inside modal */}
+                  <div className="lg:col-span-3 flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-zinc-800 mt-4">
+                    <button
+                      type="button"
+                      onClick={() => setIsUploadModalOpen(false)}
+                      className="px-5 py-2.5 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading || !!duplicateFound}
+                      className="inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-md text-xs font-black rounded-xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none transition-all uppercase tracking-widest disabled:opacity-50 active:scale-95"
+                    >
+                      {loading ? 'Processing...' : 'Kirim Buku'}
+                      {!loading && <Zap className="w-3.5 h-3.5 ml-2 fill-white" />}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Toast Notification */}
+      <div className="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
+        <AnimatePresence>
+          {message && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.9 }}
+              className={`pointer-events-auto flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl border ${
+                messageType === 'success' 
+                  ? 'bg-emerald-50 dark:bg-emerald-950/90 backdrop-blur border-emerald-100 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-400' 
+                  : 'bg-red-50 dark:bg-red-950/90 backdrop-blur border-red-100 dark:border-red-900/50 text-red-800 dark:text-red-400'
+              }`}
+            >
+              {messageType === 'success' ? (
+                <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              ) : (
+                <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
+              )}
+              <span className="text-xs font-bold">{message}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      {/* PDF Preview Modal */}
+      <PdfPreviewModal
+        isOpen={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        fileUrl={previewDoc?.fileUrl ?? null}
+        title={previewDoc?.title}
+        category={previewDoc?.category}
+      />
     </div>
   );
 }
