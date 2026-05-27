@@ -47,18 +47,18 @@ function DashboardRedirect({ user }: { user: any }) {
     return <Navigate to="/profile" />;
   }
   
-  return <Navigate to="/publication" />;
+  return <Navigate to="/lecturer-dashboard" />;
 }
 
 export default function App() {
   const [user, setUser] = useState<any>(() => {
-    const storedUser = localStorage.getItem('pentadosen_user');
+    const storedUser = sessionStorage.getItem('pentadosen_user');
     if (storedUser) {
       try {
         return JSON.parse(storedUser);
       } catch (e) {
         console.error('Failed to parse stored user:', e);
-        localStorage.removeItem('pentadosen_user');
+        sessionStorage.removeItem('pentadosen_user');
         return null;
       }
     }
@@ -118,9 +118,9 @@ export default function App() {
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem('pentadosen_user', JSON.stringify(user));
+      sessionStorage.setItem('pentadosen_user', JSON.stringify(user));
     } else {
-      localStorage.removeItem('pentadosen_user');
+      sessionStorage.removeItem('pentadosen_user');
     }
   }, [user]);
 

@@ -14,6 +14,7 @@ interface TopbarProps {
   setIsDark: (value: boolean) => void;
   user: any;
   handleLogout: () => void;
+  hideLiveBadge?: boolean;
 }
 
 export default function Topbar({
@@ -23,7 +24,8 @@ export default function Topbar({
   isDark,
   setIsDark,
   user,
-  handleLogout
+  handleLogout,
+  hideLiveBadge
 }: TopbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -105,7 +107,6 @@ export default function Topbar({
            <div>
               <h2 className="text-base lg:text-lg font-black text-gray-900 dark:text-zinc-100 tracking-tight flex items-center gap-2">
                 {currentPageName || 'PentaV2'}
-                <span className="hidden sm:inline text-[10px] font-bold text-primary-500 bg-primary-50 dark:bg-primary-950/50 px-2 py-0.5 rounded-full uppercase tracking-tighter">Live</span>
               </h2>
            </div>
       </div>

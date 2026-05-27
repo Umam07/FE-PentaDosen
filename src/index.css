@@ -19,6 +19,7 @@
   --color-primary-700: #1d4ed8;
   --color-primary-800: #1e40af;
   --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
 }
 
 /* Base Dark Mode Support cascading */
@@ -124,5 +125,17 @@
   }
 }
 
+/* Custom View Transition untuk Circular Reveal Tema */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
 
+::view-transition-old(root) {
+  z-index: 1;
+}
 
+::view-transition-new(root) {
+  z-index: 9999;
+}

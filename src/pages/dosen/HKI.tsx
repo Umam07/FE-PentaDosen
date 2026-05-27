@@ -20,7 +20,14 @@ const HKI_CATEGORIES = [
 
 export default function HKI({ user }: { user: any }) {
   const [documents, setDocuments] = useState<any[]>([]);
-  const [weights, setWeights] = useState<any[]>([]);
+  const [weights, setWeights] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem('penta_weights');
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('HKI Paten');
   const [tahun, setTahun] = useState(new Date().getFullYear().toString());
@@ -30,7 +37,13 @@ export default function HKI({ user }: { user: any }) {
   
   // State loading
   const [isTableLoading, setIsTableLoading] = useState(true);
-  const [isWeightsLoading, setIsWeightsLoading] = useState(true);
+  const [isWeightsLoading, setIsWeightsLoading] = useState(() => {
+    try {
+      return !localStorage.getItem('penta_weights');
+    } catch (e) {
+      return true;
+    }
+  });
   
   // State untuk form upload
   const [loading, setLoading] = useState(false);
@@ -78,11 +91,16 @@ export default function HKI({ user }: { user: any }) {
   };
 
   const fetchWeights = async () => {
-    setIsWeightsLoading(true);
+    if (!localStorage.getItem('penta_weights')) {
+      setIsWeightsLoading(true);
+    }
     try {
       const res = await fetch('/api/weights');
       const data = await res.json();
-      setWeights(data.weights || []);
+      if (data.weights) {
+        setWeights(data.weights || []);
+        localStorage.setItem('penta_weights', JSON.stringify(data.weights));
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -599,13 +617,13 @@ export default function HKI({ user }: { user: any }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-4xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-6xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
                 <div>
                   <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-primary-500" />
+                    <Upload className="w-5 h-5 text-primary-500" />
                     Unggah Dokumen HKI Baru
                   </h3>
                   <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Daftarkan Paten, Merek, atau Hak Cipta</p>
@@ -619,121 +637,121 @@ export default function HKI({ user }: { user: any }) {
               </div>
 
               {/* Modal Body */}
-              <div className="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 scrollbar-hide">
-                <form onSubmit={handleUpload} className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                  {/* Left Form part */}
-                  <div className="lg:col-span-2 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setDocType('kpi')}
-                        className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
-                          docType === 'kpi'
-                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/10 ring-4 ring-emerald-500/10'
-                            : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
-                        }`}
-                      >
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-                          docType === 'kpi' ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-emerald-50'
-                        }`}>
-                          <Award className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
-                        </div>
-                        <div className="text-left min-w-0">
-                          <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-emerald-900 dark:text-emerald-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
-                            KPI Dosen
-                          </p>
-                          <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Automated Scoring</p>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setDocType('arsip')}
-                        className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
-                          docType === 'arsip'
-                            ? 'border-gray-500 bg-gray-50 dark:bg-zinc-800 ring-4 ring-gray-500/10'
-                            : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
-                        }`}
-                      >
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-                          docType === 'arsip' ? 'bg-gray-200 dark:bg-zinc-700' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-gray-200/60'
-                        }`}>
-                          <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-gray-600 dark:text-zinc-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
-                        </div>
-                        <div className="text-left min-w-0">
-                          <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-gray-900 dark:text-zinc-100' : 'text-gray-500 group-hover:text-gray-900'}`}>
-                            Arsip Umum
-                          </p>
-                          <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Storage Only (0 Pts)</p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="title" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                        Judul HKI
-                      </label>
-                      <input
-                        type="text"
-                        id="title"
-                        required
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
-                        placeholder="Masukkan judul paten / merek / hak cipta..."
-                      />
-                      {docType === 'kpi' && title.length > 3 && !duplicateFound && (
-                        <p className="text-[9px] font-bold text-primary-500 flex items-center bg-primary-50 px-2 py-1 rounded-lg w-fit">
-                          <Zap className="w-3.5 h-3.5 mr-1.5 fill-current" />
-                          Auto-Verification Enabled
-                        </p>
-                      )}
-                      {duplicateFound && (
-                        <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3">
-                          <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-[9px] font-black text-amber-900 dark:text-amber-200 uppercase tracking-tight">Dokumen Sudah Terdata (Akses Dibatasi)</p>
-                            <p className="text-[9px] font-bold text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
-                              Dokumen HKI dengan judul ini sudah terhitung dalam poin KPI. Pengunggahan dibatasi untuk menghindari duplikasi data.
-                            </p>
+              <div className="flex-1 overflow-y-auto p-6 lg:p-8 scrollbar-hide">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+                  {/* Left Side: Upload Form */}
+                  <div className="lg:col-span-2">
+                    <form onSubmit={handleUpload} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setDocType('kpi')}
+                          className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+                            docType === 'kpi'
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/10 ring-4 ring-emerald-500/10'
+                              : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                          }`}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+                            docType === 'kpi' ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-emerald-50'
+                          }`}>
+                            <Award className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
                           </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Jenis HKI Card Selection */}
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
-                        <Shield className="w-3.5 h-3.5 mr-1.5 text-primary-500" />
-                        Jenis Hak Kekayaan Intelektual (HKI)
-                      </label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {HKI_CATEGORIES.map((opt) => (
-                          <button
-                            key={opt.id}
-                            type="button"
-                            onClick={() => setCategory(opt.id)}
-                            className={`group relative flex flex-col items-center p-3 rounded-xl border-2 transition-all duration-300 ${
-                              category === opt.id
-                                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10 shadow-sm'
-                                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
-                            }`}
-                          >
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all duration-300 ${
-                              category === opt.id ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800'
-                            }`}>
-                              <opt.icon className={`w-4 h-4 ${category === opt.id ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
-                            </div>
-                            <p className="text-[9px] font-black uppercase text-center tracking-tight text-gray-800 dark:text-zinc-200">
-                              {opt.label}
+                          <div className="text-left min-w-0">
+                            <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-emerald-900 dark:text-emerald-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                              KPI Dosen
                             </p>
-                            <p className="text-[8px] font-bold mt-1 text-primary-500">+{opt.pts} Pts</p>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                            <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Automated Scoring</p>
+                          </div>
+                        </button>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setDocType('arsip')}
+                          className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+                            docType === 'arsip'
+                              ? 'border-gray-500 bg-gray-50 dark:bg-zinc-800 ring-4 ring-gray-500/10'
+                              : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                          }`}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+                            docType === 'arsip' ? 'bg-gray-200 dark:bg-zinc-700' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-gray-200/60'
+                          }`}>
+                            <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-gray-600 dark:text-zinc-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
+                          </div>
+                          <div className="text-left min-w-0">
+                            <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-gray-900 dark:text-zinc-100' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                              Arsip Umum
+                            </p>
+                            <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Storage Only (0 Pts)</p>
+                          </div>
+                        </button>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label htmlFor="title" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                          Judul HKI
+                        </label>
+                        <input
+                          type="text"
+                          id="title"
+                          required
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+                          placeholder="Masukkan judul paten / merek / hak cipta..."
+                        />
+                        {docType === 'kpi' && title.length > 3 && !duplicateFound && (
+                          <p className="text-[9px] font-bold text-primary-500 flex items-center bg-primary-50 px-2 py-1 rounded-lg w-fit">
+                            <Zap className="w-3.5 h-3.5 mr-1.5 fill-current" />
+                            Auto-Verification Enabled
+                          </p>
+                        )}
+                        {duplicateFound && (
+                          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3">
+                            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-[9px] font-black text-amber-900 dark:text-amber-200 uppercase tracking-tight">Dokumen Sudah Terdata (Akses Dibatasi)</p>
+                              <p className="text-[9px] font-bold text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
+                                Dokumen HKI dengan judul ini sudah terhitung dalam poin KPI. Pengunggahan dibatasi untuk menghindari duplikasi data.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Jenis HKI Card Selection */}
+                      <div className="space-y-3">
+                        <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+                          <Shield className="w-3.5 h-3.5 mr-1.5 text-primary-500" />
+                          Jenis Hak Kekayaan Intelektual (HKI)
+                        </label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {HKI_CATEGORIES.map((opt) => (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => setCategory(opt.id)}
+                              className={`group relative flex flex-col items-center p-3 rounded-xl border-2 transition-all duration-300 ${
+                                category === opt.id
+                                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10 shadow-sm'
+                                  : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                              }`}
+                            >
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all duration-300 ${
+                                category === opt.id ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800'
+                              }`}>
+                                <opt.icon className={`w-4 h-4 ${category === opt.id ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
+                              </div>
+                              <p className="text-[9px] font-black uppercase text-center tracking-tight text-gray-800 dark:text-zinc-200">
+                                {opt.label}
+                              </p>
+                              <p className="text-[8px] font-bold mt-1 text-primary-500">+{opt.pts} Pts</p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="space-y-2 relative">
                         <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
                           <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
@@ -786,70 +804,84 @@ export default function HKI({ user }: { user: any }) {
                         </AnimatePresence>
                       </div>
 
-                      <div className="flex items-end">
-                        {scoringPreview ? (
-                          <div className={`w-full px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400`}>
-                            <Award className="h-5 w-5 shrink-0 text-emerald-600" />
-                            <div className="min-w-0">
-                               <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
-                               <p className="text-xs font-black truncate">{scoringPreview.message}</p>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                          File Sertifikat / Dokumen HKI (PDF)
+                        </label>
+                        <div 
+                          onDragOver={handleDragOver}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop}
+                          onClick={() => document.getElementById('hki-file-upload-modal')?.click()}
+                          className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
+                            isDragging 
+                              ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-8 ring-primary-500/10 scale-[1.01]' 
+                              : file 
+                                ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20' 
+                                : 'border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400'
+                          }`}
+                        >
+                          <input
+                            id="hki-file-upload-modal"
+                            type="file"
+                            accept=".pdf"
+                            className="sr-only"
+                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                          />
+                          <div className="space-y-3 text-center">
+                            <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                              isDragging ? 'scale-110 bg-primary-600' : 
+                              file ? 'bg-emerald-100 dark:bg-emerald-900/40 shadow-sm' : 'bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5'
+                            }`}>
+                              {file ? (
+                                <CheckCircle className="h-6 w-6 text-emerald-600 animate-bounce" />
+                              ) : (
+                                <Upload className={`h-6 w-6 text-gray-400 group-hover:text-primary-600`} />
+                              )}
                             </div>
-                          </div>
-                        ) : (
-                          <div className="w-full px-4 py-2.5 rounded-xl border-2 border-dashed border-gray-100 bg-gray-50/30 flex items-center gap-3">
-                             <Clock className="w-5 h-5 text-gray-300" />
-                             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest italic">Menunggu parameter...</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                        File Sertifikat / Dokumen HKI (PDF)
-                      </label>
-                      <div 
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        onClick={() => document.getElementById('hki-file-upload-modal')?.click()}
-                        className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
-                          isDragging 
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-8 ring-primary-500/10 scale-[1.01]' 
-                            : file 
-                              ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20' 
-                              : 'border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-800 hover:border-primary-400'
-                        }`}
-                      >
-                        <input
-                          id="hki-file-upload-modal"
-                          type="file"
-                          accept=".pdf"
-                          className="sr-only"
-                          onChange={(e) => setFile(e.target.files?.[0] || null)}
-                        />
-                        <div className="space-y-3 text-center">
-                          <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                            isDragging ? 'scale-110 bg-primary-600' : 
-                            file ? 'bg-emerald-100 dark:bg-emerald-900/40 shadow-sm' : 'bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5'
-                          }`}>
-                            {file ? (
-                              <CheckCircle className="h-6 w-6 text-emerald-600 animate-bounce" />
-                            ) : (
-                              <Upload className={`h-6 w-6 text-gray-400 group-hover:text-primary-600`} />
-                            )}
-                          </div>
-                          <div className="flex flex-col gap-1 px-4">
-                            <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
-                              {file ? 'Sertifikat Terpilih!' : 'Drag & Drop PDF'}
-                            </p>
-                            <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate max-w-[250px]">
-                              {file ? file.name : 'Klik atau seret file sertifikat ke sini'}
-                            </p>
+                            <div className="flex flex-col gap-1 px-4">
+                              <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
+                                {file ? 'Sertifikat Terpilih!' : 'Drag & Drop PDF'}
+                              </p>
+                              <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate max-w-[250px]">
+                                {file ? file.name : 'Klik atau seret file sertifikat ke sini'}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+
+                      <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+                        {scoringPreview ? (
+                          <div className="px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400">
+                            <Award className="h-5 w-5 shrink-0 text-emerald-600" />
+                            <div className="min-w-0">
+                              <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
+                              <p className="text-xs font-black truncate">{scoringPreview.message}</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div />
+                        )}
+
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setIsUploadModalOpen(false)}
+                            className="px-5 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                          >
+                            Batal
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={loading || !!duplicateFound}
+                            className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50"
+                          >
+                            {loading ? 'Mengunggah...' : 'Kirim HKI'}
+                          </button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
 
                   {/* Right Side Guide Panel */}
@@ -863,7 +895,7 @@ export default function HKI({ user }: { user: any }) {
                           ))}
                         </div>
                       </div>
-                    ) : weights.length > 0 && (
+                    ) : (
                       <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2">
                           <Award className="w-4 h-4 text-amber-500" />
@@ -887,30 +919,11 @@ export default function HKI({ user }: { user: any }) {
                     <div className="p-4 bg-primary-50 dark:bg-primary-950/10 border border-primary-100 dark:border-primary-900/30 rounded-xl">
                       <h4 className="text-[10px] font-black uppercase text-primary-800 dark:text-primary-300 tracking-wider mb-1">Informasi Verifikasi</h4>
                       <p className="text-[9px] font-bold text-primary-700/80 dark:text-primary-400/80 leading-relaxed">
-                        Dokumen HKI yang diunggah akan melalui proses verifikasi oleh Admin LPPM / Program Studi sebelum secara resmi tercatat dalam performa kinerja dosen.
+                        Dokumen HKI yang diunggah akan melalui proses verifikasi oleh LPPM sebelum secara resmi tercatat dalam performa kinerja dosen.
                       </p>
                     </div>
                   </div>
-
-                  {/* Footer Buttons inside modal */}
-                  <div className="lg:col-span-3 flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-zinc-800 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setIsUploadModalOpen(false)}
-                      className="px-5 py-2.5 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading || !!duplicateFound}
-                      className="inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-md text-xs font-black rounded-xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none transition-all uppercase tracking-widest disabled:opacity-50 active:scale-95"
-                    >
-                      {loading ? 'Processing...' : 'Kirim HKI'}
-                      {!loading && <Zap className="w-3.5 h-3.5 ml-2 fill-white" />}
-                    </button>
-                  </div>
-                </form>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -930,6 +943,7 @@ export default function HKI({ user }: { user: any }) {
                     <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi HKI</th>
                     <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori HKI</th>
                     <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tahun</th>
+                    <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Dokumen</th>
                     <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
                     <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Klasifikasi</th>
                     <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin</th>
@@ -952,8 +966,10 @@ export default function HKI({ user }: { user: any }) {
                         <td className="hidden lg:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
                         <td className="hidden md:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-20 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
                         <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
+                        <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
                         <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-16 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
                         <td className="px-4 lg:px-8 py-4"><div className="h-6 w-12 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
+                        <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
                       </tr>
                     ))
                   ) : currentDocuments.length > 0 ? (
@@ -971,29 +987,6 @@ export default function HKI({ user }: { user: any }) {
                                 {doc.category}
                               </p>
                               
-                              {/* Link PDF view inside HKI information block */}
-                              <div className="mt-2 flex items-center gap-2">
-                                {doc.file_url && doc.file_url !== '-' ? (
-                                  <button
-                                    onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
-                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[8px] font-black uppercase tracking-widest transition-colors"
-                                  >
-                                    <FileText className="w-2.5 h-2.5" /> Lihat Dokumen
-                                  </button>
-                                ) : (
-                                  <label className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[8px] font-black uppercase tracking-widest transition-colors cursor-pointer">
-                                    {uploadingPdfId === doc.id ? (
-                                      <span className="animate-pulse">Uploading...</span>
-                                    ) : (
-                                      <>
-                                        <Upload className="w-2.5 h-2.5" /> Upload File
-                                        <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
-                                      </>
-                                    )}
-                                  </label>
-                                )}
-                              </div>
-
                               {doc.status === 'Rejected' && doc.catatan && (
                                 <div className="mt-2 text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded-lg border border-red-100 dark:border-red-900/30 w-fit uppercase tracking-tight">
                                   Catatan Umpan Balik: {doc.catatan}
@@ -1011,6 +1004,28 @@ export default function HKI({ user }: { user: any }) {
                           {doc.published_at ? new Date(doc.published_at).getFullYear() : '-'}
                         </td>
                         
+                        <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                          {doc.file_url && doc.file_url !== '-' ? (
+                            <button
+                              onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[10px] font-black uppercase tracking-widest transition-colors"
+                            >
+                              <FileText className="w-3.5 h-3.5 mr-1" /> Lihat Dokumen
+                            </button>
+                          ) : (
+                            <label className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer">
+                              {uploadingPdfId === doc.id ? (
+                                <span className="animate-pulse">Uploading...</span>
+                              ) : (
+                                <>
+                                  <Upload className="w-3.5 h-3.5 mr-1" /> Upload File
+                                  <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
+                                </>
+                              )}
+                            </label>
+                          )}
+                        </td>
+
                         <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
                           <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest ${
                             doc.status === 'Approved' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 shadow-sm border border-emerald-100 dark:border-emerald-900/30' :
@@ -1075,7 +1090,7 @@ export default function HKI({ user }: { user: any }) {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className="px-8 py-16 text-center">
+                      <td colSpan={8} className="px-8 py-16 text-center">
                         <div className="flex flex-col items-center">
                           <Shield className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
                           <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest italic">

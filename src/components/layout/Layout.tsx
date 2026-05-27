@@ -132,6 +132,14 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     return null;
   })();
 
+  const isLecturerPage = [
+    '/lecturer-dashboard',
+    '/publication',
+    '/hki',
+    '/research',
+    '/buku'
+  ].some(path => location.pathname === path || location.pathname.startsWith(path + '/'));
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-zinc-950 flex font-sans selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden text-gray-900 dark:text-zinc-100">
       {/* Mobile Overlay */}
@@ -174,6 +182,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
           setIsDark={setIsDark}
           user={user}
           handleLogout={handleLogout}
+          hideLiveBadge={isLecturerPage}
         />
 
         <div className="p-4 sm:p-6 lg:p-10 flex-1">

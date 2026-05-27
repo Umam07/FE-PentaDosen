@@ -14,7 +14,14 @@ export default function Publication({ user }: { user: any }) {
   const urlKategori = new URLSearchParams(location.search).get('kategori') || '';
 
   const [documents, setDocuments] = useState([]);
-  const [weights, setWeights] = useState([]);
+  const [weights, setWeights] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem('penta_weights');
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [tahun, setTahun] = useState(new Date().getFullYear().toString());
@@ -24,7 +31,13 @@ export default function Publication({ user }: { user: any }) {
   
   // State loading
   const [isTableLoading, setIsTableLoading] = useState(true);
-  const [isWeightsLoading, setIsWeightsLoading] = useState(true);
+  const [isWeightsLoading, setIsWeightsLoading] = useState(() => {
+    try {
+      return !localStorage.getItem('penta_weights');
+    } catch (e) {
+      return true;
+    }
+  });
   
   // State untuk form upload
   const [loading, setLoading] = useState(false);
@@ -79,15 +92,20 @@ export default function Publication({ user }: { user: any }) {
   };
 
   const fetchWeights = async () => {
-    setIsWeightsLoading(true);
+    if (!localStorage.getItem('penta_weights')) {
+      setIsWeightsLoading(true);
+    }
     try {
       const res = await fetch('/api/weights');
       const data = await res.json();
-      setWeights(data.weights);
+      if (data.weights) {
+        setWeights(data.weights);
+        localStorage.setItem('penta_weights', JSON.stringify(data.weights));
+      }
       // Kategori di-set dari urlKategori (pilihan sidebar), bukan dari dropdown
       if (urlKategori) {
         setCategory(urlKategori);
-      } else if (data.weights.length > 0) {
+      } else if (data.weights && data.weights.length > 0) {
         setCategory(data.weights[0].category);
       }
     } catch (err) {
@@ -535,7 +553,7 @@ export default function Publication({ user }: { user: any }) {
       >
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shadow-sm">
-            <Award className="w-6 h-6" />
+            <Upload className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Kelola Publikasi Ilmiah Anda</h3>
@@ -582,9 +600,11 @@ export default function Publication({ user }: { user: any }) {
                 <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Publikasi</th>
                 <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori</th>
                 <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tahun</th>
+                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Dokumen</th>
                 <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
                 <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Klasifikasi</th>
                 <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin</th>
+                <th className="px-4 lg:px-8 py-4 text-right text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Penelitian Asal</th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
@@ -604,8 +624,10 @@ export default function Publication({ user }: { user: any }) {
                     <td className="hidden lg:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div></td>
                     <td className="hidden md:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div></td>
                     <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
                     <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-16 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
                     <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
                   </tr>
                 ))
               ) : currentDocuments.length > 0 ? (
@@ -623,55 +645,6 @@ export default function Publication({ user }: { user: any }) {
                             <span className="lg:hidden">{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
                             {doc.category}
                           </p>
-                          
-                          {/* Link Research Button */}
-                          <div className="mt-2 flex items-center gap-2">
-                            {doc.penelitian ? (
-                              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 rounded-md border border-indigo-100 dark:border-indigo-800/50">
-                                <Link className="w-2.5 h-2.5" />
-                                <span className="text-[8px] font-black uppercase tracking-tight truncate max-w-[100px]" title={doc.penelitian.judul_penelitian}>
-                                  {doc.penelitian.judul_penelitian}
-                                </span>
-                                <button 
-                                  onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
-                                  className="ml-1 text-[8px] font-black text-indigo-400 hover:text-indigo-600 uppercase"
-                                >
-                                  Ubah
-                                </button>
-                              </div>
-                            ) : (
-                              <button 
-                                onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
-                                className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 dark:bg-zinc-800 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-md border border-gray-100 dark:border-zinc-700 text-[8px] font-black uppercase tracking-tight"
-                              >
-                                <Link className="w-2.5 h-2.5" />
-                                Pilih Asal Penelitian
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Link PDF view inside information block */}
-                          <div className="mt-2 flex items-center gap-2">
-                            {doc.file_url && doc.file_url !== '-' ? (
-                              <button
-                                onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[8px] font-black uppercase tracking-widest transition-colors"
-                              >
-                                <FileText className="w-2.5 h-2.5" /> Lihat Dokumen
-                              </button>
-                            ) : (
-                              <label className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[8px] font-black uppercase tracking-widest transition-colors cursor-pointer">
-                                {uploadingPdfId === doc.id ? (
-                                  <span className="animate-pulse">Uploading...</span>
-                                ) : (
-                                  <>
-                                    <Upload className="w-2.5 h-2.5" /> Upload File
-                                    <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
-                                  </>
-                                )}
-                              </label>
-                            )}
-                          </div>
 
                           {doc.status === 'Rejected' && doc.catatan && (
                             <div className="mt-2 text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded-lg border border-red-100 dark:border-red-900/30 w-fit uppercase tracking-tight">
@@ -688,6 +661,28 @@ export default function Publication({ user }: { user: any }) {
                     
                     <td className="hidden md:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle text-xs font-black text-gray-500 dark:text-zinc-400 font-mono tracking-tighter italic">
                       {doc.published_at ? new Date(doc.published_at).getFullYear() : '-'}
+                    </td>
+
+                    <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                      {doc.file_url && doc.file_url !== '-' ? (
+                        <button
+                          onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[10px] font-black uppercase tracking-widest transition-colors"
+                        >
+                          <FileText className="w-3.5 h-3.5 mr-1" /> Lihat Dokumen
+                        </button>
+                      ) : (
+                        <label className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer">
+                          {uploadingPdfId === doc.id ? (
+                            <span className="animate-pulse">Uploading...</span>
+                          ) : (
+                            <>
+                              <Upload className="w-3.5 h-3.5 mr-1" /> Upload File
+                              <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
+                            </>
+                          )}
+                        </label>
+                      )}
                     </td>
                     
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
@@ -713,8 +708,8 @@ export default function Publication({ user }: { user: any }) {
                         </div>
                       ) : (
                         <div className="inline-flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800 px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl border border-gray-100 dark:border-zinc-700">
-                          <Archive className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-                          Arsip
+                           <Archive className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
+                           Arsip
                         </div>
                       )}
                     </td>
@@ -727,11 +722,36 @@ export default function Publication({ user }: { user: any }) {
                         <span className="hidden sm:block text-[8px] lg:text-[9px] font-bold text-primary-300 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Performance</span>
                       </div>
                     </td>
+
+                    {/* Connect to Research column */}
+                    <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle text-right sm:text-left">
+                      {doc.penelitian ? (
+                        <div className="flex items-center gap-1.5 px-2 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 rounded-md border border-indigo-100 max-w-[150px] truncate animate-fade-in">
+                          <Link className="w-2.5 h-2.5 shrink-0" />
+                          <span className="text-[9px] font-black uppercase tracking-tight truncate" title={doc.penelitian.judul_penelitian}>
+                            {doc.penelitian.judul_penelitian}
+                          </span>
+                          <button 
+                            onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
+                            className="ml-auto text-[9px] font-black text-indigo-400 hover:text-indigo-600 uppercase"
+                          >
+                            Ubah
+                          </button>
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 text-[9px] font-black uppercase tracking-widest rounded-md border transition-all"
+                        >
+                          <Link className="w-3 h-3" /> Pilih Penelitian Asal
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-4 lg:px-8 py-16 text-center">
+                  <td colSpan={8} className="px-4 lg:px-8 py-16 text-center">
                     <div className="flex flex-col items-center">
                        <FileText className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
                        <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest italic">Inventory Empty</p>
@@ -905,13 +925,13 @@ export default function Publication({ user }: { user: any }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-4xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-6xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
                 <div>
                   <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-                    <Award className="w-5 h-5 text-primary-500" />
+                    <Upload className="w-5 h-5 text-primary-500" />
                     Unggah Publikasi Baru
                   </h3>
                   <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Daftarkan Jurnal Ilmiah, Prosiding, atau Book Chapter</p>
@@ -925,101 +945,101 @@ export default function Publication({ user }: { user: any }) {
               </div>
 
               {/* Modal Body */}
-              <div className="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 scrollbar-hide">
-                <form onSubmit={handleUpload} className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                  {/* Left Column: Form inputs */}
-                  <div className="lg:col-span-2 space-y-6">
-                    {duplicateFound && (
-                      <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3">
-                        <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-[10px] font-black text-amber-900 dark:text-amber-200 uppercase tracking-tight">Dokumen Sudah Terdata</p>
-                          <p className="text-[10px] font-bold text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
-                            Dokumen dengan judul ini sudah terhitung dalam poin KPI.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setDocType('kpi')}
-                        className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
-                          docType === 'kpi'
-                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/10 ring-4 ring-emerald-500/10'
-                            : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
-                        }`}
-                      >
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-                          docType === 'kpi' ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-emerald-50'
-                        }`}>
-                          <Award className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
-                        </div>
-                        <div className="text-left min-w-0">
-                          <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-emerald-900 dark:text-emerald-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
-                            KPI Dosen
-                          </p>
-                          <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Automated Scoring</p>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setDocType('arsip')}
-                        className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
-                          docType === 'arsip'
-                            ? 'border-gray-500 bg-gray-50 dark:bg-zinc-800 ring-4 ring-gray-500/10'
-                            : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
-                        }`}
-                      >
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-                          docType === 'arsip' ? 'bg-gray-200 dark:bg-zinc-700' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-gray-200/60'
-                        }`}>
-                          <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-gray-600 dark:text-zinc-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
-                        </div>
-                        <div className="text-left min-w-0">
-                          <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-gray-900 dark:text-zinc-100' : 'text-gray-500 group-hover:text-gray-900'}`}>
-                            Arsip Umum
-                          </p>
-                          <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Storage Only (0 Pts)</p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Judul Publikasi</label>
-                      <input 
-                        type="text"
-                        required
-                        value={title} 
-                        onChange={(e) => setTitle(e.target.value)} 
-                        placeholder="Masukkan judul publikasi..."
-                        className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100" 
-                      />
-                    </div>
-
-                    {category && (() => {
-                      const activeWeight = weights.find((w: any) => w.category === category);
-                      return (
-                        <div className="space-y-2">
-                          <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori Publikasi</label>
-                          <div className="w-full px-4 py-3 bg-primary-50 dark:bg-primary-950/20 border-2 border-primary-200 dark:border-primary-800/40 rounded-xl flex items-center gap-3">
-                            <Shield className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                            <span className="text-sm font-black text-primary-800 dark:text-primary-200 uppercase tracking-tight flex-1">
-                              {category}
-                            </span>
-                            {activeWeight && (
-                              <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-1 rounded-lg border border-emerald-100 dark:border-emerald-900/30 flex-shrink-0">
-                                +{activeWeight.weight_value} PTS
-                              </span>
-                            )}
+              <div className="flex-1 overflow-y-auto p-6 lg:p-8 scrollbar-hide">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+                  {/* Left Side: Upload Form */}
+                  <div className="lg:col-span-2">
+                    <form onSubmit={handleUpload} className="space-y-6">
+                      {duplicateFound && (
+                        <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3">
+                          <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-[10px] font-black text-amber-900 dark:text-amber-200 uppercase tracking-tight">Dokumen Sudah Terdata</p>
+                            <p className="text-[10px] font-bold text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
+                              Dokumen dengan judul ini sudah terhitung dalam poin KPI.
+                            </p>
                           </div>
                         </div>
-                      );
-                    })()}
+                      )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setDocType('kpi')}
+                          className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+                            docType === 'kpi'
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/10 ring-4 ring-emerald-500/10'
+                              : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                          }`}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+                            docType === 'kpi' ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-emerald-50'
+                          }`}>
+                            <Award className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
+                          </div>
+                          <div className="text-left min-w-0">
+                            <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-emerald-900 dark:text-emerald-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                              KPI Dosen
+                            </p>
+                            <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Automated Scoring</p>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setDocType('arsip')}
+                          className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+                            docType === 'arsip'
+                              ? 'border-gray-500 bg-gray-50 dark:bg-zinc-800 ring-4 ring-gray-500/10'
+                              : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                          }`}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+                            docType === 'arsip' ? 'bg-gray-200 dark:bg-zinc-700' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-gray-200/60'
+                          }`}>
+                            <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-gray-600 dark:text-zinc-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
+                          </div>
+                          <div className="text-left min-w-0">
+                            <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-gray-900 dark:text-zinc-100' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                              Arsip Umum
+                            </p>
+                            <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Storage Only (0 Pts)</p>
+                          </div>
+                        </button>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Judul Publikasi</label>
+                        <input 
+                          type="text"
+                          required
+                          value={title} 
+                          onChange={(e) => setTitle(e.target.value)} 
+                          placeholder="Masukkan judul publikasi..."
+                          className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100" 
+                        />
+                      </div>
+
+                      {category && (() => {
+                        const activeWeight = weights.find((w: any) => w.category === category);
+                        return (
+                          <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori Publikasi</label>
+                            <div className="w-full px-4 py-3 bg-primary-50 dark:bg-primary-950/20 border-2 border-primary-200 dark:border-primary-800/40 rounded-xl flex items-center gap-3">
+                              <Shield className="w-4 h-4 text-primary-500 flex-shrink-0" />
+                              <span className="text-sm font-black text-primary-800 dark:text-primary-200 uppercase tracking-tight flex-1">
+                                {category}
+                              </span>
+                              {activeWeight && (
+                                <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-1 rounded-lg border border-emerald-100 dark:border-emerald-900/30 flex-shrink-0">
+                                  +{activeWeight.weight_value} PTS
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
                       <div className="space-y-2 relative">
                         <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
                           <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
@@ -1073,38 +1093,82 @@ export default function Publication({ user }: { user: any }) {
                         <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">File Dokumen (PDF)</label>
                         <div 
                           onDragOver={handleDragOver}
-                          onDragLeave={handleDragLeave} 
+                          onDragLeave={handleDragLeave}
                           onDrop={handleDrop}
-                          className={`border-2 border-dashed rounded-xl p-4 text-center transition-all cursor-pointer ${
-                            isDragging ? 'border-primary-500 bg-primary-50' : 'border-gray-200 dark:border-zinc-700 hover:border-primary-300'
-                          }`}
                           onClick={() => document.getElementById('pub-file-input-modal')?.click()}
+                          className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
+                            isDragging 
+                              ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-8 ring-primary-500/10 scale-[1.01]' 
+                              : file 
+                                ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20' 
+                                : 'border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400'
+                          }`}
                         >
-                          <input id="pub-file-input-modal" type="file" accept=".pdf" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
-                          <Upload className="w-5 h-5 mx-auto mb-1 text-gray-300" />
-                          {file ? <p className="text-xs font-bold text-primary-600 truncate">{file.name}</p>
-                            : <p className="text-xs font-bold text-gray-400">Klik atau seret file PDF</p>}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-end justify-between gap-4">
-                      {scoringPreview ? (
-                        <div className={`px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400`}>
-                          <Award className="h-5 w-5 shrink-0 text-emerald-600" />
-                          <div className="min-w-0">
-                            <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
-                            <p className="text-xs font-black truncate">{scoringPreview.message}</p>
+                          <input
+                            id="pub-file-input-modal"
+                            type="file"
+                            accept=".pdf"
+                            className="sr-only"
+                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                          />
+                          <div className="space-y-3 text-center">
+                            <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                              isDragging ? 'scale-110 bg-primary-600' : 
+                              file ? 'bg-emerald-100 dark:bg-emerald-900/40 shadow-sm' : 'bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5'
+                            }`}>
+                              {file ? (
+                                <CheckCircle className="h-6 w-6 text-emerald-600 animate-bounce" />
+                              ) : (
+                                <Upload className={`h-6 w-6 text-gray-400 group-hover:text-primary-600`} />
+                              )}
+                            </div>
+                            <div className="flex flex-col gap-1 px-4">
+                              <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
+                                {file ? 'Dokumen Terpilih!' : 'Drag & Drop PDF'}
+                              </p>
+                              <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate max-w-[250px]">
+                                {file ? file.name : 'Klik atau seret file dokumen ke sini'}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      ) : (
-                        <div />
-                      )}
-                    </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+                        {scoringPreview ? (
+                          <div className="px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400">
+                            <Award className="h-5 w-5 shrink-0 text-emerald-600" />
+                            <div className="min-w-0">
+                              <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
+                              <p className="text-xs font-black truncate">{scoringPreview.message}</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div />
+                        )}
+
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setIsUploadModalOpen(false)}
+                            className="px-5 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                          >
+                            Batal
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={loading || !!duplicateFound}
+                            className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50"
+                          >
+                            {loading ? 'Mengunggah...' : 'Unggah Publikasi'}
+                          </button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
 
-                  {/* Right Column: Guidelines & Composition */}
-                  <div className="space-y-6 lg:col-span-1">
+                  {/* Right Side: Guidelines & Stats */}
+                  <div className="lg:col-span-1 space-y-6">
                     {/* 1. Panduan Poin */}
                     {isWeightsLoading ? (
                       <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 animate-pulse">
@@ -1121,7 +1185,7 @@ export default function Publication({ user }: { user: any }) {
                           ))}
                         </div>
                       </div>
-                    ) : weights.length > 0 && (
+                    ) : (
                       <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5">
                         <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
                           <div className="p-1.5 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
@@ -1129,7 +1193,7 @@ export default function Publication({ user }: { user: any }) {
                           </div>
                           <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Panduan Poin Kategori</h4>
                         </div>
-                        <div className="max-h-[160px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                        <div className="max-h-[220px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                           {weights
                             .filter((w: any) => {
                               const catLower = (w.category || '').toLowerCase();
@@ -1147,66 +1211,7 @@ export default function Publication({ user }: { user: any }) {
                       </div>
                     )}
 
-                    {/* 2. Komposisi Dokumen */}
-                    {documents.length > 0 && categoryStats.length > 0 && (
-                      <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 flex flex-col items-center">
-                        <div className="w-full flex items-center gap-2 mb-2 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
-                          <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg">
-                            <FileText className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                          </div>
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Komposisi Dokumen</h4>
-                        </div>
-                        
-                        <div className="h-32 w-full relative">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                              <Pie
-                                data={categoryStats.slice(0, 5)}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={35}
-                                outerRadius={50}
-                                paddingAngle={4}
-                                dataKey="value"
-                              >
-                                {categoryStats.slice(0, 5).map((entry, index) => (
-                                  <Cell 
-                                    key={`cell-${index}`} 
-                                    fill={['#0d9488', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'][index % 5]} 
-                                    className="stroke-white dark:stroke-zinc-900 stroke-2 outline-none"
-                                  />
-                                ))}
-                              </Pie>
-                              <RechartsTooltip 
-                                content={({ active, payload }: any) => {
-                                  if (active && payload && payload.length) {
-                                    return (
-                                      <div className="bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 p-2 rounded-xl shadow-lg ring-1 ring-black/5">
-                                        <p className="text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400">{payload[0].name}</p>
-                                        <p className="text-sm font-black text-gray-900 dark:text-white">{payload[0].value} <span className="text-xs font-bold text-gray-400 font-sans">Berkas</span></p>
-                                      </div>
-                                    );
-                                  }
-                                  return null;
-                                }}
-                              />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                        
-                        {/* Custom Legend */}
-                        <div className="grid grid-cols-2 gap-x-2 gap-y-1 w-full mt-1 border-t border-gray-100/80 dark:border-zinc-800/80 pt-2">
-                          {categoryStats.slice(0, 4).map((item, index) => (
-                            <div key={item.name} className="flex items-center gap-1">
-                              <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: ['#0d9488', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'][index % 5] }}></div>
-                              <span className="text-[8px] font-black text-gray-500 dark:text-zinc-400 truncate uppercase tracking-dense leading-none" title={item.name}>{item.name}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 3. Informasi Verifikasi */}
+                    {/* 2. Informasi Verifikasi */}
                     <div className="p-4 bg-primary-50 dark:bg-primary-950/10 border border-primary-100 dark:border-primary-900/30 rounded-xl">
                       <h4 className="text-[10px] font-black uppercase text-primary-800 dark:text-primary-300 tracking-wider mb-1">Informasi Verifikasi</h4>
                       <p className="text-[9px] font-bold text-primary-700/80 dark:text-primary-400/80 leading-relaxed">
@@ -1214,26 +1219,7 @@ export default function Publication({ user }: { user: any }) {
                       </p>
                     </div>
                   </div>
-
-                  {/* Footer Buttons inside modal */}
-                  <div className="lg:col-span-3 flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-zinc-800 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setIsUploadModalOpen(false)}
-                      className="px-5 py-2.5 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading || !!duplicateFound}
-                      className="inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-md text-xs font-black rounded-xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none transition-all uppercase tracking-widest disabled:opacity-50 active:scale-95"
-                    >
-                      {loading ? 'Processing...' : 'Unggah Publikasi'}
-                      {!loading && <Zap className="w-3.5 h-3.5 ml-2 fill-white" />}
-                    </button>
-                  </div>
-                </form>
+                </div>
               </div>
             </motion.div>
           </div>

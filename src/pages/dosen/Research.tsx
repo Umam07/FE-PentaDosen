@@ -480,7 +480,7 @@ export default function Research({ user }: { user: any }) {
       >
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shadow-sm">
-            <Beaker className="w-6 h-6" />
+            <Upload className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Kelola Hasil Penelitian</h3>
@@ -525,8 +525,8 @@ export default function Research({ user }: { user: any }) {
             <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
               <tr>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Informasi Penelitian</th>
-                <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Tahun</th>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Program & Skema</th>
+                <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Tahun</th>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Dana</th>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Dokumen</th>
                 <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
@@ -559,17 +559,17 @@ export default function Research({ user }: { user: any }) {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-xs font-black text-gray-600 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-800 px-3 py-1 rounded-lg">
-                        {res.tahun}
-                      </span>
-                    </td>
                     <td className="px-6 py-4">
                       <p className="text-xs font-black text-gray-700 dark:text-zinc-300 uppercase tracking-wide">{res.program}</p>
                       <div className="flex gap-2 mt-1">
                         <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest bg-gray-50 dark:bg-zinc-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-zinc-700">{res.skema}</span>
                         <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest bg-gray-50 dark:bg-zinc-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-zinc-700">{res.fokus}</span>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="text-xs font-black text-gray-600 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-800 px-3 py-1 rounded-lg">
+                        {res.tahun}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-xs font-black text-emerald-600 tabular-nums">
                       {formatCurrency(res.dana_disetujui)}
@@ -719,7 +719,7 @@ export default function Research({ user }: { user: any }) {
           <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 shrink-0">
             <div>
               <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-                <Beaker className="w-5 h-5 text-primary-500" />
+                <Upload className="w-5 h-5 text-primary-500" />
                 Unggah Penelitian Baru
               </h3>
               <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Registrasikan hasil penelitian hibah eksternal, internal, atau luar negeri</p>
@@ -788,10 +788,10 @@ export default function Research({ user }: { user: any }) {
                         required
                         className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
                       >
-                        <option value="">Pilih Skema...</option>
-                        <option value="kompetisi">Kompetisi</option>
-                        <option value="pembinaan">Pembinaan</option>
-                        <option value="lainnya">Lainnya</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="">Pilih Skema...</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="kompetisi">Kompetisi</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="pembinaan">Pembinaan</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="lainnya">Lainnya</option>
                       </select>
                     </div>
 
@@ -804,12 +804,12 @@ export default function Research({ user }: { user: any }) {
                         required
                         className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
                       >
-                        <option value="">Pilih Fokus...</option>
-                        <option value="kesehatan">Kesehatan</option>
-                        <option value="ekonomi">Ekonomi</option>
-                        <option value="teknologi">Teknologi</option>
-                        <option value="sosial">Sosial</option>
-                        <option value="lainnya">Lainnya</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="">Pilih Fokus...</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="kesehatan">Kesehatan</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="ekonomi">Ekonomi</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="teknologi">Teknologi</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="sosial">Sosial</option>
+                        <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" value="lainnya">Lainnya</option>
                       </select>
                     </div>
                   </div>
@@ -891,29 +891,53 @@ export default function Research({ user }: { user: any }) {
                   {/* Drag and Drop PDF */}
                   <div className="space-y-2">
                     <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Laporan Kemajuan / Akhir (PDF)</label>
-                    <div
+                    <div 
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
-                      className={`border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer ${
-                        isDragging ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20' : 'border-gray-200 dark:border-zinc-700 hover:border-primary-300'
-                      }`}
                       onClick={() => document.getElementById('res-file-input-modal')?.click()}
+                      className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
+                        isDragging 
+                          ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-8 ring-primary-500/10 scale-[1.01]' 
+                          : file 
+                            ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20' 
+                            : 'border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400'
+                      }`}
                     >
-                      <input id="res-file-input-modal" type="file" accept=".pdf" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
-                      <Upload className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                      {file ? (
-                        <p className="text-xs font-bold text-primary-600 truncate">{file.name}</p>
-                      ) : (
-                        <p className="text-xs font-bold text-gray-400">Klik atau seret file PDF di sini (Maksimal 10MB)</p>
-                      )}
+                      <input
+                        id="res-file-input-modal"
+                        type="file"
+                        accept=".pdf"
+                        className="sr-only"
+                        onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      />
+                      <div className="space-y-3 text-center">
+                        <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                          isDragging ? 'scale-110 bg-primary-600' : 
+                          file ? 'bg-emerald-100 dark:bg-emerald-900/40 shadow-sm' : 'bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5'
+                        }`}>
+                          {file ? (
+                            <CheckCircle className="h-6 w-6 text-emerald-600 animate-bounce" />
+                          ) : (
+                            <Upload className={`h-6 w-6 text-gray-400 group-hover:text-primary-600`} />
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-1 px-4">
+                          <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
+                            {file ? 'Laporan Terpilih!' : 'Drag & Drop PDF'}
+                          </p>
+                          <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate max-w-[250px]">
+                            {file ? file.name : 'Klik atau seret file laporan ke sini'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
                     {scoringPreview ? (
                       <div className="px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400">
-                        <Award className="h-5 w-5 shrink-0 text-emerald-600" />
+                        <Upload className="h-5 w-5 shrink-0 text-emerald-600" />
                         <div className="min-w-0">
                           <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
                           <p className="text-xs font-black truncate">{scoringPreview.message}</p>
@@ -923,13 +947,22 @@ export default function Research({ user }: { user: any }) {
                       <div />
                     )}
 
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50"
-                    >
-                      {loading ? 'Mengunggah...' : 'Unggah Penelitian'}
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setIsUploadModalOpen(false)}
+                        className="px-5 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                      >
+                        Batal
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50"
+                      >
+                        {loading ? 'Mengunggah...' : 'Unggah Penelitian'}
+                      </button>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -964,73 +997,13 @@ export default function Research({ user }: { user: any }) {
                   </div>
                 </div>
 
-                {/* 2. Card Visual Chart Distribusi Program */}
-                {researchList.length > 0 && programStats.length > 0 && (
-                  <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5 flex flex-col items-center">
-                    <div className="w-full flex items-center gap-2 mb-2 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
-                      <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg">
-                        <PieChartIcon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                      </div>
-                      <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Distribusi Program</h4>
-                    </div>
-
-                    <div className="h-40 w-full relative">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <ReChartsPie>
-                          <Pie
-                            data={programStats}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={45}
-                            outerRadius={65}
-                            paddingAngle={4}
-                            dataKey="value"
-                          >
-                            {programStats.map((entry, index) => {
-                              const color = entry.name.includes('luar negeri') ? '#3b82f6' : entry.name.includes('dikti') || entry.name.includes('eksternal') ? '#0d9488' : '#8b5cf6';
-                              return (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={color}
-                                  className="stroke-white dark:stroke-zinc-900 stroke-2 outline-none"
-                                />
-                              );
-                            })}
-                          </Pie>
-                          <RechartsTooltip
-                            content={({ active, payload }: any) => {
-                              if (active && payload && payload.length) {
-                                return (
-                                  <div className="bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 p-2 rounded-xl shadow-lg ring-1 ring-black/5">
-                                    <p className="text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400">{payload[0].name}</p>
-                                    <p className="text-sm font-black text-gray-900 dark:text-white">{payload[0].value} <span className="text-xs font-bold text-gray-400 font-sans">Berkas</span></p>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            }}
-                          />
-                        </ReChartsPie>
-                      </ResponsiveContainer>
-                    </div>
-
-                    {/* Custom Legend */}
-                    <div className="grid grid-cols-1 gap-y-1.5 w-full mt-2 border-t border-gray-100/80 dark:border-zinc-800/80 pt-3">
-                      {programStats.map((item, index) => {
-                        const color = item.name.includes('luar negeri') ? '#3b82f6' : item.name.includes('dikti') || item.name.includes('eksternal') ? '#0d9488' : '#8b5cf6';
-                        return (
-                          <div key={item.name} className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }}></div>
-                              <span className="text-[9px] font-black text-gray-500 dark:text-zinc-400 truncate uppercase tracking-wide" title={item.name}>{item.name}</span>
-                            </div>
-                            <span className="text-[9px] font-black text-gray-700 dark:text-zinc-300 ml-2">{item.value} Berkas</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                {/* 2. Informasi Verifikasi */}
+                <div className="p-4 bg-primary-50 dark:bg-primary-950/10 border border-primary-100 dark:border-primary-900/30 rounded-xl">
+                  <h4 className="text-[10px] font-black uppercase text-primary-800 dark:text-primary-300 tracking-wider mb-1">Informasi Verifikasi</h4>
+                  <p className="text-[9px] font-bold text-primary-700/80 dark:text-primary-400/80 leading-relaxed">
+                    Dokumen laporan penelitian yang diunggah akan diverifikasi terlebih dahulu sebelum masuk ke penghitungan performa kinerja KPI dosen.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

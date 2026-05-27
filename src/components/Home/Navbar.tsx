@@ -28,7 +28,7 @@ export default function Navbar() {
     };
     window.addEventListener('scroll', handleScroll);
 
-    const storedUser = localStorage.getItem('pentadosen_user');
+    const storedUser = sessionStorage.getItem('pentadosen_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
