@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
 import { ActionSearchBar, Action } from '../ui/action-search-bar';
+import NotificationBell from '../ui/NotificationBell';
 
 interface TopbarProps {
   isMobile: boolean;
@@ -123,6 +124,9 @@ export default function Topbar({
 
         {/* Theme Toggle Component */}
         <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
+
+        {/* Notification Bell */}
+        <NotificationBell userId={user?.id} />
         
         {/* Divider khusus Mobile */}
         <div className="h-4 w-px bg-gray-200 dark:bg-zinc-800 sm:hidden" />
