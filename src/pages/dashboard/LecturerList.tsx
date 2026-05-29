@@ -4,15 +4,18 @@ import {
   BookOpen, ChevronRight, ArrowLeft, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../../components/Home/Navbar';
 import Footer from '../../components/Home/Footer';
 
 export default function LecturerList() {
+  const [searchParams] = useSearchParams();
+  const initialFakultas = searchParams.get('fakultas') || 'Semua';
+
   const [lecturers, setLecturers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProdi, setSelectedProdi] = useState('Semua');
+  const [selectedFakultas, setSelectedFakultas] = useState(initialFakultas);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -31,13 +34,14 @@ export default function LecturerList() {
     fetchLecturers();
   }, []);
 
-  const prodis = ['Semua', ...new Set(lecturers.map(l => l.program_studi).filter(Boolean))];
+  const fakultasOptions = ['Semua', ...new Set(lecturers.map(l => l.fakultas).filter(Boolean))];
 
   const filteredLecturers = lecturers.filter(l => {
     const matchesSearch = l.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         (l.fakultas && l.fakultas.toLowerCase().includes(searchTerm.toLowerCase())) ||
                          (l.program_studi && l.program_studi.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesProdi = selectedProdi === 'Semua' || l.program_studi === selectedProdi;
-    return matchesSearch && matchesProdi;
+    const matchesFakultas = selectedFakultas === 'Semua' || l.fakultas === selectedFakultas;
+    return matchesSearch && matchesFakultas;
   });
 
   return (
@@ -83,7 +87,7 @@ export default function LecturerList() {
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
                 <input 
                   type="text"
-                  placeholder="Cari nama atau prodi..."
+                  placeholder="Cari nama atau fakultas..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-14 pr-6 py-5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-[2rem] text-sm font-bold outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-primary-500 shadow-inner transition-all"
@@ -110,24 +114,24 @@ export default function LecturerList() {
         <div className="space-y-6">
           <div className="flex items-center gap-3 px-2">
             <Filter className="w-4 h-4 text-primary-500" />
-            <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Filter Program Studi</h4>
+            <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Filter Fakultas</h4>
           </div>
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-wrap gap-2.5"
           >
-            {prodis.map((prodi) => (
+            {fakultasOptions.map((fak) => (
               <button
-                key={prodi}
-                onClick={() => setSelectedProdi(prodi)}
+                key={fak}
+                onClick={() => setSelectedFakultas(fak)}
                 className={`px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border ${
-                  selectedProdi === prodi 
+                  selectedFakultas === fak 
                   ? 'bg-primary-600 text-white border-primary-600 shadow-xl shadow-primary-600/20 scale-105' 
                   : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-800 hover:border-primary-500/50 hover:text-primary-600'
                 }`}
               >
-                {prodi}
+                {fak}
               </button>
             ))}
           </motion.div>
@@ -172,7 +176,7 @@ export default function LecturerList() {
                         {lecturer.name}
                       </h3>
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest line-clamp-1 border-l-2 border-primary-500 pl-2">
-                        {lecturer.program_studi || 'N/A'}
+                        {lecturer.fakultas || 'N/A'} • {lecturer.program_studi || 'N/A'}
                       </p>
                     </div>
 

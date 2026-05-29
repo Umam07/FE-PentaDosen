@@ -103,7 +103,7 @@ export default function Research({ user }: { user: any }) {
     return {
       total: researchList.length,
       approved: researchList.filter((d: any) => d.status === 'Approved').length,
-      pending: researchList.filter((d: any) => d.status === 'Pending' || d.status === 'Verified by Prodi').length,
+      pending: researchList.filter((d: any) => d.status === 'Pending' || d.status === 'Verified by Fakultas').length,
       points: researchList.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0).toFixed(2)
     };
   }, [researchList]);
@@ -601,10 +601,10 @@ export default function Research({ user }: { user: any }) {
                       <div className={`inline-flex items-center px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest ${
                         res.status === 'Approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
                         res.status === 'Rejected' ? 'bg-red-50 text-red-700 border border-red-100' :
-                        res.status === 'Verified by Prodi' ? 'bg-blue-50 text-blue-700 border border-blue-100' :
+                        res.status === 'Verified by Fakultas' ? 'bg-blue-50 text-blue-700 border border-blue-100' :
                         'bg-amber-50 text-amber-700 border border-amber-100'
                       }`}>
-                        {res.status === 'Verified by Prodi' ? 'Verified (Prodi)' : res.status}
+                        {res.status === 'Verified by Fakultas' ? 'Verified (Fakultas)' : res.status}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">

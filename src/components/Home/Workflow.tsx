@@ -43,9 +43,9 @@ export default function Workflow() {
       id: 3,
       title: 'Verifikasi Berjenjang',
       subtitle: 'Initial Audit',
-      description: 'Review komprehensif oleh Admin Program Studi untuk menjamin validitas berkas sebelum diproses lebih lanjut.',
+      description: 'Review komprehensif oleh Admin Fakultas untuk menjamin validitas berkas sebelum diproses lebih lanjut.',
       icon: ShieldCheck,
-      role: 'Admin Prodi',
+      role: 'Admin Fakultas',
       color: 'blue'
     },
     {

@@ -212,7 +212,7 @@ export default function AdminLecturers() {
               <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800 whitespace-nowrap">
                 <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
                   <tr>
-                    {['Informasi Dosen', 'Unit / Prodi', 'Identity Scholar', 'Identity Scopus', 'Kinerja KPI'].map((h, i) => (
+                    {['Informasi Dosen', 'Fakultas / Prodi', 'Identity Scholar', 'Identity Scopus', 'Kinerja KPI'].map((h, i) => (
                       <th key={i} className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">
                         {h}
                       </th>
@@ -256,7 +256,7 @@ export default function AdminLecturers() {
                       </td>
                       <td className="px-6 py-6">
                         <span className="text-[10px] font-black text-gray-600 dark:text-zinc-300 bg-gray-50 dark:bg-zinc-800 px-3 py-1.5 rounded-xl uppercase tracking-widest border border-gray-100 dark:border-zinc-700 shadow-sm">
-                          {lecturer.program_studi || 'N/A'}
+                          {lecturer.fakultas ? `${lecturer.fakultas} • ` : ''}{lecturer.program_studi || 'N/A'}
                         </span>
                       </td>
                       <td className="px-6 py-6">

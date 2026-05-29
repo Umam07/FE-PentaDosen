@@ -82,7 +82,7 @@ export default function AdminAllDocuments() {
             <XCircle className="w-3.5 h-3.5" /> Rejected
           </span>
         );
-      case 'Verified by Prodi':
+      case 'Verified by Fakultas':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-100 dark:border-blue-900/30">
             <ShieldCheck className="w-3.5 h-3.5" /> Verified
@@ -177,7 +177,7 @@ export default function AdminAllDocuments() {
   // Dynamic counts for top cards based on tab
   const totalCount = filteredDocsByTab.length;
   const approvedCount = filteredDocsByTab.filter(d => d.status === 'Approved').length;
-  const pendingCount = filteredDocsByTab.filter(d => d.status === 'Pending' || d.status === 'Verified by Prodi').length;
+  const pendingCount = filteredDocsByTab.filter(d => d.status === 'Pending' || d.status === 'Verified by Fakultas').length;
 
   return (
     <div className="space-y-8 pb-12">
@@ -262,7 +262,7 @@ export default function AdminAllDocuments() {
                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
                    Daftar {activeTab === 'publikasi' ? 'Publikasi' : activeTab === 'hki' ? 'HKI' : activeTab === 'buku' ? 'Buku' : 'Penelitian'}
                  </h3>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Prodi'} • Arsip & Validasi</p>
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Fakultas'} • Arsip & Validasi</p>
               </div>
             </div>
 

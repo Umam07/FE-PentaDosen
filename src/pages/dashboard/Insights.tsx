@@ -367,8 +367,8 @@ export default function Insights() {
                   <Building2 className="w-8 h-8" />
                 </div>
                 <div>
-                  <h5 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter text-glow">{stats?.total_prodi || 8}</h5>
-                  <p className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Prog. Studi</p>
+                  <h5 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter text-glow">6</h5>
+                  <p className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Fakultas</p>
                 </div>
               </button>
               

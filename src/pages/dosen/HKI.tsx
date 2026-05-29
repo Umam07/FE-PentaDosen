@@ -220,7 +220,7 @@ export default function HKI({ user }: { user: any }) {
     return {
       total: src.length,
       approved: src.filter((d: any) => d.status === 'Approved').length,
-      pending: src.filter((d: any) => d.status === 'Pending' || d.status === 'Verified by Prodi').length,
+      pending: src.filter((d: any) => d.status === 'Pending' || d.status === 'Verified by Fakultas').length,
       points: src.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
     };
   }, [filteredDocuments]);
@@ -1030,13 +1030,13 @@ export default function HKI({ user }: { user: any }) {
                           <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest ${
                             doc.status === 'Approved' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 shadow-sm border border-emerald-100 dark:border-emerald-900/30' :
                             doc.status === 'Rejected' ? 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 shadow-sm border border-red-100' :
-                            doc.status === 'Verified by Prodi' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-100' :
+                            doc.status === 'Verified by Fakultas' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-100' :
                             'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100'
                           }`}>
                             {doc.status === 'Approved' && <CheckCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1" />}
                             {doc.status === 'Rejected' && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1" />}
-                            {(doc.status === 'Pending' || doc.status === 'Verified by Prodi') && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1" />}
-                            <span>{doc.status === 'Verified by Prodi' ? 'Verified (Prodi)' : doc.status}</span>
+                            {(doc.status === 'Pending' || doc.status === 'Verified by Fakultas') && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1" />}
+                            <span>{doc.status === 'Verified by Fakultas' ? 'Verified (Fakultas)' : doc.status}</span>
                           </div>
                         </td>
                         

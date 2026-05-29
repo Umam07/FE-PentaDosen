@@ -32,7 +32,7 @@ import { OnboardingDialog } from './components/ui/onboarding-dialog';
 
 function DashboardRedirect({ user }: { user: any }) {
   if (!user) return <Navigate to="/login" />;
-  if (user.role === 'admin lppm' || user.role === 'admin prodi') {
+  if (user.role === 'admin lppm' || user.role === 'admin fakultas') {
     return <Navigate to="/admin/verify" />;
   }
   
@@ -179,13 +179,13 @@ export default function App() {
           <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/hki" element={user?.role === 'dosen' ? <HKI user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/documents/all" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/verify" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminVerification /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/lecturers" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/lecturers/:id" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/sync" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminSync /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/input-document" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminInputDocument /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/activity-logs" element={(user?.role === 'admin lppm' || user?.role === 'admin prodi') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/documents/all" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/verify" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/lecturers" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/lecturers/:id" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/sync" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminSync /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/input-document" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/activity-logs" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />} />
           <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
         </Route>
       </Routes>

@@ -189,7 +189,7 @@ export default function AdminVerification() {
                   <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
                     Queue Verifikasi {activeTab === 'publikasi' ? 'Publikasi' : activeTab === 'hki' ? 'HKI' : activeTab === 'buku' ? 'Buku' : 'Penelitian'}
                   </h3>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Prodi'} • Pending Approval</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Fakultas'} • Pending Approval</p>
                </div>
              </div>
 
@@ -247,8 +247,8 @@ export default function AdminVerification() {
                         <div className="flex items-center gap-2 mt-1">
                           <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Dosen Pengaju</p>
                           {user?.role === 'admin lppm' && (
-                            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Prodi' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
-                              {item.status === 'Verified by Prodi' ? 'PRODI VERIFIED' : 'BYPASSING PRODI'}
+                            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Fakultas' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
+                              {item.status === 'Verified by Fakultas' ? 'FAKULTAS VERIFIED' : 'BYPASSING FAKULTAS'}
                             </span>
                           )}
                         </div>
@@ -368,8 +368,8 @@ export default function AdminVerification() {
                             <div className="flex items-center gap-2 mt-1">
                               <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{(activeTab === 'penelitian' ? item.user?.fakultas : item.fakultas) || 'Program Studi'}</p>
                               {user?.role === 'admin lppm' && (
-                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Prodi' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
-                                  {item.status === 'Verified by Prodi' ? 'PRODI VERIFIED' : 'BYPASSING PRODI'}
+                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Fakultas' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
+                                  {item.status === 'Verified by Fakultas' ? 'FAKULTAS VERIFIED' : 'BYPASSING FAKULTAS'}
                                 </span>
                               )}
                             </div>

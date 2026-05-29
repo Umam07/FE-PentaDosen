@@ -96,22 +96,22 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       roles: ['dosen'] 
     },
     // === ADMIN / PRODI ===
-    { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin lppm', 'admin prodi'] },
+    { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin lppm', 'admin fakultas'] },
     { 
       name: 'Verifikasi', 
       path: '/admin/verify', 
-      icon: ShieldCheck, 
-      roles: ['admin lppm', 'admin prodi'] 
+      icon: CheckSquare, 
+      roles: ['admin lppm', 'admin fakultas'] 
     },
     { 
-      name: 'Input Dokumen', 
+      name: 'Dosen Mandiri', 
       path: '/admin/input-document', 
       icon: PlusCircle, 
-      roles: ['admin lppm', 'admin prodi'] 
+      roles: ['admin lppm', 'admin fakultas'] 
     },
-    { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin prodi'] },
-    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin prodi'] },
-    { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm', 'admin prodi'] },
+    { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin fakultas'] },
+    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin fakultas'] },
+    { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm', 'admin fakultas'] },
   ];
 
   // Cari nama halaman aktif (termasuk children)

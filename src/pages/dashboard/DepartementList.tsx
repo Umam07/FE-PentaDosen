@@ -17,50 +17,40 @@ interface DepartmentStats {
   total_points: number;
 }
 
-const DEPARTMENT_METADATA: Record<string, any> = {
-  'Kedokteran': { 
+const FAKULTAS_METADATA: Record<string, any> = {
+  'Fakultas Kedokteran': { 
     icon: Stethoscope, 
     color: 'bg-emerald-500',
-    description: 'Fokus pada pendidikan medis dan penelitian kesehatan masyarakat.'
+    description: 'Fokus pada pendidikan medis, penelitian klinis, dan pelayanan kesehatan masyarakat.'
   },
-  'Kedokteran Gigi': { 
+  'Fakultas Kedokteran Gigi': { 
     icon: Stethoscope, 
     color: 'bg-teal-500',
-    description: 'Keunggulan dalam perawatan gigi dan ilmu kedokteran mulut.'
+    description: 'Keunggulan dalam pendidikan dokter gigi dan spesialis kedokteran gigi.'
   },
-  'Teknik Informatika': { 
+  'Fakultas Teknologi Informasi': { 
     icon: Cpu, 
     color: 'bg-blue-600',
-    description: 'Pusat inovasi teknologi, kecerdasan buatan, dan pengembangan perangkat lunak.'
+    description: 'Pusat inovasi teknologi, kecerdasan buatan, keamanan siber, dan sains data.'
   },
-  'Perpustakaan dan Sains Informasi': { 
-    icon: Library, 
-    color: 'bg-indigo-600',
-    description: 'Manajemen informasi strategis di era digital.'
-  },
-  'Manajemen': { 
+  'Fakultas Ekonomi Bisnis': { 
     icon: Briefcase, 
     color: 'bg-amber-500',
-    description: 'Mencetak pemimpin bisnis masa depan dengan visi global.'
+    description: 'Mencetak pemimpin bisnis masa depan dengan kapabilitas global.'
   },
-  'Akuntansi': { 
-    icon: Briefcase, 
-    color: 'bg-orange-500',
-    description: 'Transparansi dan akuntabilitas dalam pelaporan keuangan modern.'
-  },
-  'Hukum': { 
+  'Fakultas Hukum': { 
     icon: Scale, 
     color: 'bg-red-600',
-    description: 'Studi hukum komprehensif untuk keadilan dan integritas bangsa.'
+    description: 'Studi hukum komprehensif berlandaskan keadilan, integritas, dan etika.'
   },
-  'Psikologi': { 
+  'Fakultas Psikologi': { 
     icon: Brain, 
     color: 'bg-pink-500',
-    description: 'Memahami perilaku manusia dan kesehatan mental secara saintifik.'
+    description: 'Memahami perilaku manusia, riset psikologi, dan layanan kesehatan mental.'
   }
 };
 
-const DEFAULT_NAMES = Object.keys(DEPARTMENT_METADATA);
+const DEFAULT_NAMES = Object.keys(FAKULTAS_METADATA);
 
 export default function DepartementList() {
   const navigate = useNavigate();
@@ -71,19 +61,19 @@ export default function DepartementList() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/charts/prodi');
+        const response = await fetch('/api/charts/fakultas');
         const result = await response.json();
         const apiData = result.data || [];
 
         // Create a map for easy lookup
-        const statsMap = new Map<string, DepartmentStats>(
-          apiData.map((d: any) => [d.program_studi, d])
+        const statsMap = new Map<string, any>(
+          apiData.map((d: any) => [d.fakultas, d])
         );
 
-        // Merge API data with default set to ensure all 8 prodi are shown
+        // Merge API data with default set to ensure all 6 fakultas are shown
         const merged = DEFAULT_NAMES.map(name => {
           const stats = statsMap.get(name) || { dosen_count: 0, research_count: 0, total_points: 0 };
-          const meta = DEPARTMENT_METADATA[name];
+          const meta = FAKULTAS_METADATA[name];
           
           return {
             id: name.toLowerCase().replace(/\s+/g, '-'),
@@ -127,10 +117,10 @@ export default function DepartementList() {
             </button>
             <div className="space-y-2">
               <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-white">
-                Program <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-emerald-500">Studi</span>
+                Daftar <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-emerald-500">Fakultas</span>
               </h1>
               <p className="text-slate-500 dark:text-slate-400 text-lg font-medium max-w-2xl leading-relaxed">
-                Eksplorasi ekosistem akademik di seluruh jurusan Universitas. 
+                Eksplorasi ekosistem akademik di seluruh Fakultas Universitas. 
                 Data disinkronkan langsung dengan basis data kepegawaian.
               </p>
             </div>
@@ -141,7 +131,7 @@ export default function DepartementList() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/search:text-primary-500 transition-colors" />
               <input 
                 type="text" 
-                placeholder="Cari program studi..." 
+                placeholder="Cari fakultas..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-11 pr-6 py-4 bg-white dark:bg-slate-900 rounded-[2rem] text-sm font-bold border border-slate-200 dark:border-slate-800 focus:border-primary-500 outline-none w-full md:w-80 transition-all shadow-sm" 
@@ -167,7 +157,7 @@ export default function DepartementList() {
                   transition={{ delay: i * 0.05 }}
                   whileHover={{ y: -8 }}
                   className="group bg-white dark:bg-slate-900 p-8 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] transition-all duration-500 cursor-pointer overflow-hidden relative"
-                  onClick={() => navigate(`/lecturers?dept=${dept.name}`)}
+                  onClick={() => navigate(`/lecturers?fakultas=${dept.name}`)}
                 >
                   <div className={`absolute -right-12 -top-12 w-32 h-32 ${dept.color} opacity-[0.03] group-hover:opacity-10 rounded-full blur-2xl transition-all duration-700`}></div>
                   
@@ -199,7 +189,7 @@ export default function DepartementList() {
                     <div className="mt-8 flex items-center justify-between">
                       <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-full border border-slate-100 dark:border-slate-700">
                         <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="text-[10px] font-black text-slate-500 uppercase">Fakultas Utama</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase">Fakultas</span>
                       </div>
                       <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
                     </div>

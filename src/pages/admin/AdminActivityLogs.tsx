@@ -62,12 +62,12 @@ export default function AdminActivityLogs() {
     return { badge: 'bg-gray-50 text-gray-700 border-gray-100 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700', dot: 'bg-gray-400', icon: <Activity className="w-3.5 h-3.5" />, ring: 'ring-gray-100 dark:ring-zinc-800', iconBg: 'bg-gray-50 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400' };
   };
 
-  if (user?.role !== 'admin lppm' && user?.role !== 'admin prodi') {
+  if (user?.role !== 'admin lppm' && user?.role !== 'admin fakultas') {
     return (
       <div className="p-10 flex flex-col items-center justify-center text-center">
         <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
         <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Akses Ditolak</h1>
-        <p className="text-gray-500 mt-2">Halaman ini hanya dapat diakses oleh Admin LPPM atau Admin Prodi.</p>
+        <p className="text-gray-500 mt-2">Halaman ini hanya dapat diakses oleh Admin LPPM atau Admin Fakultas.</p>
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function AdminActivityLogs() {
                   Riwayat Log Sistem
                 </h3>
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-                  {user?.role === 'admin lppm' ? 'LPPM' : 'Prodi'} • Audit Trail
+                  {user?.role === 'admin lppm' ? 'LPPM' : 'Fakultas'} • Audit Trail
                 </p>
               </div>
             </div>
