@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Login from './pages/auth/Login';
+import AdminLogin from './pages/auth/AdminLogin';
 import { LogOut, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Insights from './pages/dashboard/Insights';
@@ -19,11 +20,13 @@ import AdminInputDocument from './pages/admin/AdminInputDocument';
 import AdminSync from './pages/admin/AdminSync';
 import AdminAllDocuments from './pages/admin/AdminAllDocuments';
 import AdminActivityLogs from './pages/admin/AdminActivityLogs';
+import CmsDashboard from './pages/admin/CmsDashboard';
 import Research from './pages/dosen/Research';
 import Home from './pages/Home';
 import Buku from './pages/dosen/Buku';
 import HKI from './pages/dosen/HKI';
 import LecturerDashboard from './pages/dosen/LecturerDashboard';
+import FaqHelp from './pages/dosen/FaqHelp';
 import LecturerList from './pages/dashboard/LecturerList';
 import LecturerProfileInsights from './pages/dashboard/LecturerProfileInsights';
 import DepartementList from './pages/dashboard/DepartementList';
@@ -34,6 +37,9 @@ function DashboardRedirect({ user }: { user: any }) {
   if (!user) return <Navigate to="/login" />;
   if (user.role === 'admin lppm' || user.role === 'admin fakultas') {
     return <Navigate to="/admin/verify" />;
+  }
+  if (user.role === 'super admin') {
+    return <Navigate to="/admin/cms" />;
   }
   
   // Check if ID is missing for Dosen
@@ -48,6 +54,21 @@ function DashboardRedirect({ user }: { user: any }) {
   }
   
   return <Navigate to="/lecturer-dashboard" />;
+}
+
+function AdminRedirect({ user, setUser }: { user: any; setUser: any }) {
+  if (!user) {
+    return <AdminLogin setUser={setUser} />;
+  }
+
+  if (user.role === 'super admin') {
+    return <Navigate to="/admin/cms" />;
+  }
+  if (user.role === 'admin lppm' || user.role === 'admin fakultas') {
+    return <Navigate to="/admin/verify" />;
+  }
+
+  return <Navigate to="/dashboard" />;
 }
 
 export default function App() {
@@ -74,7 +95,12 @@ export default function App() {
     window.fetch = async (...args) => {
       try {
         const response = await originalFetch(...args);
-        if (response.status === 401 || response.status === 419) {
+        
+        // Get request URL to bypass login endpoint
+        const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
+        const isLoginRequest = url.includes('/api/login');
+
+        if ((response.status === 401 && !isLoginRequest) || response.status === 419) {
           setIsSessionExpired(true);
         } else if (response.status === 429) {
           setIsRateLimited(true);
@@ -170,7 +196,7 @@ export default function App() {
         <Route path="/lecturers" element={<LecturerList />} />
         <Route path="/lecturer/:id" element={<LecturerProfileInsights />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
-
+        <Route path="/admin" element={<AdminRedirect user={user} setUser={setUser} />} />
 
         <Route element={<Layout user={user} setUser={setUser} />}>
           <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
@@ -179,13 +205,15 @@ export default function App() {
           <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
           <Route path="/hki" element={user?.role === 'dosen' ? <HKI user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/documents/all" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/verify" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/lecturers" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/lecturers/:id" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/sync" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminSync /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/input-document" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/activity-logs" element={(user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />} />
+          <Route path="/admin/documents/all" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/admin/verify" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/admin/lecturers" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/admin/lecturers/:id" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/admin/sync" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/admin/input-document" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/admin/activity-logs" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/admin/cms" element={user ? (user.role === 'super admin' ? <CmsDashboard user={user} /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+          <Route path="/help" element={<FaqHelp user={user} />} />
           <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
         </Route>
       </Routes>

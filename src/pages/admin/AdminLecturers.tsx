@@ -182,7 +182,7 @@ export default function AdminLecturers() {
                     <option value="Fakultas Kedokteran">Kedokteran</option>
                     <option value="Fakultas Kedokteran Gigi">Kedokteran Gigi</option>
                     <option value="Fakultas Teknologi Informasi">Teknologi Informasi</option>
-                    <option value="Fakultas Ekonomi Bisnis">Ekonomi Bisnis</option>
+                    <option value="Fakultas Ekonomi dan Bisnis">Ekonomi dan Bisnis</option>
                     <option value="Fakultas Hukum">Hukum</option>
                     <option value="Fakultas Psikologi">Psikologi</option>
                   </select>

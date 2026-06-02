@@ -19,6 +19,7 @@ const FAKULTAS_COLORS: Record<string, string> = {
   'kedokterangigi': '#8b5cf6', // Violet
   'teknologiinformasi': '#0ea5e9', // Sky
   'ekonomibisnis': '#f59e0b', // Amber
+  'ekonomidanbisnis': '#f59e0b', // Amber
   'hukum': '#ef4444', // Red
   'psikologi': '#ec4899', // Pink
 };
@@ -28,6 +29,7 @@ const FAKULTAS_SHORT: Record<string, string> = {
   'kedokterangigi': 'Ked. Gigi',
   'teknologiinformasi': 'Tek. Informasi',
   'ekonomibisnis': 'Eko. Bisnis',
+  'ekonomidanbisnis': 'Eko. Bisnis',
   'hukum': 'Hukum',
   'psikologi': 'Psikologi',
 };

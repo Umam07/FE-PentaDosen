@@ -21,32 +21,38 @@ const FAKULTAS_METADATA: Record<string, any> = {
   'Fakultas Kedokteran': { 
     icon: Stethoscope, 
     color: 'bg-emerald-500',
-    description: 'Fokus pada pendidikan medis, penelitian klinis, dan pelayanan kesehatan masyarakat.'
+    description: 'Fokus pada pendidikan medis, penelitian klinis, dan pelayanan kesehatan masyarakat.',
+    prodi: ['Kedokteran']
   },
   'Fakultas Kedokteran Gigi': { 
     icon: Stethoscope, 
     color: 'bg-teal-500',
-    description: 'Keunggulan dalam pendidikan dokter gigi dan spesialis kedokteran gigi.'
+    description: 'Keunggulan dalam pendidikan dokter gigi dan spesialis kedokteran gigi.',
+    prodi: ['Kedokteran Gigi']
   },
   'Fakultas Teknologi Informasi': { 
     icon: Cpu, 
     color: 'bg-blue-600',
-    description: 'Pusat inovasi teknologi, kecerdasan buatan, keamanan siber, dan sains data.'
+    description: 'Pusat inovasi teknologi, kecerdasan buatan, keamanan siber, dan sains data.',
+    prodi: ['Teknik Informatika', 'Perpustakaan dan Sains Informasi']
   },
-  'Fakultas Ekonomi Bisnis': { 
+  'Fakultas Ekonomi dan Bisnis': { 
     icon: Briefcase, 
     color: 'bg-amber-500',
-    description: 'Mencetak pemimpin bisnis masa depan dengan kapabilitas global.'
+    description: 'Mencetak pemimpin bisnis masa depan dengan kapabilitas global.',
+    prodi: ['Manajemen', 'Akuntansi']
   },
   'Fakultas Hukum': { 
     icon: Scale, 
     color: 'bg-red-600',
-    description: 'Studi hukum komprehensif berlandaskan keadilan, integritas, dan etika.'
+    description: 'Studi hukum komprehensif berlandaskan keadilan, integritas, dan etika.',
+    prodi: ['Ilmu Hukum']
   },
   'Fakultas Psikologi': { 
     icon: Brain, 
     color: 'bg-pink-500',
-    description: 'Memahami perilaku manusia, riset psikologi, dan layanan kesehatan mental.'
+    description: 'Memahami perilaku manusia, riset psikologi, dan layanan kesehatan mental.',
+    prodi: ['Psikologi']
   }
 };
 
@@ -109,7 +115,7 @@ export default function DepartementList() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div className="space-y-4">
             <button 
-              onClick={() => navigate('/dashboard-all')}
+              onClick={() => navigate('/insights')}
               className="group flex items-center gap-2 text-slate-500 hover:text-primary-600 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -175,7 +181,7 @@ export default function DepartementList() {
                       </p>
                     </div>
 
-                    <div className="mt-8 pt-8 border-t border-slate-50 dark:border-slate-800/50 grid grid-cols-2 gap-4">
+                    <div className="mt-8 pt-8 border-t border-slate-50 dark:border-slate-800/50 grid grid-cols-3 gap-2">
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Dosen</p>
                         <p className="text-lg font-black text-slate-900 dark:text-white leading-none">{dept.lecturerCount}</p>
@@ -184,9 +190,24 @@ export default function DepartementList() {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Riset</p>
                         <p className="text-lg font-black text-slate-900 dark:text-white leading-none">{dept.researchCount}</p>
                       </div>
+                      <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Prodi</p>
+                        <p className="text-lg font-black text-slate-900 dark:text-white leading-none">{dept.prodi?.length || 0}</p>
+                      </div>
                     </div>
 
-                    <div className="mt-8 flex items-center justify-between">
+                    <div className="mt-4 space-y-1.5 min-h-[4.5rem]">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Program Studi:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {dept.prodi?.map((p: string) => (
+                          <span key={p} className="text-[8px] font-bold px-2 py-0.5 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded border border-slate-100 dark:border-slate-800">
+                            {p}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-between">
                       <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-full border border-slate-100 dark:border-slate-700">
                         <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
                         <span className="text-[10px] font-black text-slate-500 uppercase">Fakultas</span>

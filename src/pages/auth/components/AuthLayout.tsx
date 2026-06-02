@@ -48,7 +48,7 @@ export default function AuthLayout({
           >
             {brandTitle === "PentaDosen" ? (
               <>
-                Penta<span className="text-primary-600 dark:text-primary-400">Dosen</span> <span className="text-[10px] bg-primary-50 dark:bg-primary-500/10 text-primary-500 dark:text-primary-400 px-2 py-1 rounded-full align-top ml-1">V2</span>
+                Penta<span className="text-primary-600 dark:text-primary-400">Dosen</span>
               </>
             ) : (
               <>{brandTitle}</>

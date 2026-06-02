@@ -11,8 +11,15 @@ export default function Login({ setUser }: { setUser: any }) {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  const handleSelectShortcut = (email: string) => {
+    setUsername(email);
+    setPassword('password');
+    setError('');
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
@@ -21,8 +28,21 @@ export default function Login({ setUser }: { setUser: any }) {
       });
       if (res.ok) {
         const data = await res.json();
-        setUser(data.user);
-        navigate('/dashboard');
+        const role = data.user.role;
+        const isAdmin = ['super admin', 'admin lppm', 'admin fakultas', 'reviewer'].includes(role);
+
+        if (isAdmin) {
+          // Force logout for admin logging in via lecturer portal
+          await fetch('/api/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: data.user.id }),
+          });
+          setError('Akses Ditolak: Akun Administrator tidak diizinkan masuk melalui halaman ini. Silakan gunakan Portal khusus Admin (/admin).');
+        } else {
+          setUser(data.user);
+          navigate('/dashboard');
+        }
       } else {
         setError('Username atau password salah');
       }
@@ -103,17 +123,32 @@ export default function Login({ setUser }: { setUser: any }) {
         </button>
 
         <div className="mt-4 flex flex-col items-center gap-2">
-          <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Lupa Password atau Username?</p>
-          <p className="text-[11px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-[0.1em] text-center px-4 py-2 bg-primary-50 dark:bg-primary-950/30 rounded-xl border border-primary-100 dark:border-primary-900/40">
-            Silakan hubungi pihak Optima untuk bantuan pemulihan akun Anda.
-          </p>
+          <a 
+            href="https://www.yarsi.ac.id/ganti-password-akun-yarsi" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-[10px] font-black text-gray-400 hover:text-primary-600 dark:text-gray-500 dark:hover:text-primary-400 uppercase tracking-widest transition-colors underline decoration-dashed"
+          >
+            Lupa Password atau Username?
+          </a>
         </div>
       </form>
 
-      <div className="mt-10 text-center">
-        <p className="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
-          Silakan masuk menggunakan kredensial LDAP Universitas Anda.
-        </p>
+      <div className="mt-10 text-center space-y-4 flex flex-col items-center">
+        <div className="bg-primary-50/50 dark:bg-primary-950/20 border border-primary-100 dark:border-primary-900/30 p-4 rounded-2xl max-w-xs w-full transition-all">
+          <p className="text-primary-700 dark:text-primary-400 text-[9px] font-black uppercase tracking-[0.15em] leading-relaxed">
+            Silakan masuk menggunakan kredensial LDAP Universitas Anda.
+          </p>
+        </div>
+        <div className="pt-2 w-full max-w-xs">
+          <Link 
+            to="/admin" 
+            className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/40 dark:hover:bg-gray-800/80 border border-gray-100 dark:border-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all shadow-sm cursor-pointer"
+          >
+            <ShieldCheck className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+            <span>Portal Login Administrator</span>
+          </Link>
+        </div>
       </div>
 
       <div className="mt-8 pt-8 border-t border-gray-50 dark:border-gray-800">
@@ -123,15 +158,18 @@ export default function Login({ setUser }: { setUser: any }) {
         </div>
         <div className="grid grid-cols-1 gap-2">
           {[
-            { username: 'dosen1@univ.edu', role: 'Dosen Access' },
-            { username: 'admin@univ.edu', role: 'Admin Access' }
+            { username: 'dosen1@univ.edu', role: 'Dosen Access' }
           ].map((acc, i) => (
-            <div key={i} className="bg-gray-50/50 dark:bg-gray-800/30 p-3 rounded-xl border border-gray-100 dark:border-gray-800 flex justify-between items-center group/acc cursor-pointer hover:border-primary-200 dark:hover:border-primary-800 transition-all">
+            <div 
+              key={i} 
+              onClick={() => handleSelectShortcut(acc.username)}
+              className="bg-gray-50/50 dark:bg-gray-800/30 p-3 rounded-xl border border-gray-100 dark:border-gray-800 flex justify-between items-center group/acc cursor-pointer hover:border-primary-200 dark:hover:border-primary-800 transition-all"
+            >
                <div className="text-left font-mono">
                   <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold group-hover/acc:text-primary-600 dark:group-hover/acc:text-primary-400 transition-colors">{acc.role}</p>
                   <p className="text-[11px] text-gray-700 dark:text-gray-300 font-black">{acc.username}</p>
                </div>
-               <div className="text-[10px] bg-white dark:bg-gray-800 px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 font-black dark:text-gray-300 group-hover/acc:bg-primary-600 group-hover/acc:text-white dark:group-hover/acc:bg-primary-600 group-hover/acc:border-primary-600 transition-all">PASS</div>
+               <div className="text-[10px] bg-white dark:bg-gray-800 px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 font-black dark:text-gray-300 group-hover/acc:bg-primary-600 group-hover/acc:text-white dark:group-hover/acc:bg-primary-600 group-hover/acc:border-primary-600 transition-all">SELECT</div>
             </div>
           ))}
         </div>

@@ -215,6 +215,20 @@ export default function Research({ user }: { user: any }) {
   };
 
   const handleDownloadTemplate = async () => {
+    try {
+      const res = await fetch('/api/cms/templates');
+      if (res.ok) {
+        const data = await res.json();
+        const template = data.templates?.find((t: any) => t.type === 'research');
+        if (template && template.file_url) {
+          window.open(template.file_url, '_blank');
+          return;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to fetch custom template, falling back to generated template', e);
+    }
+
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('Template');
 

@@ -415,6 +415,15 @@ export default function LecturerProfileInsights() {
                     </div>
                   </div>
 
+                  {/* Faculty Field */}
+                  <div className="flex items-center gap-2.5 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-blue-500/30 group">
+                    <BookOpen className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                    <div className="flex flex-col items-start leading-none">
+                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Faculty</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">{user.fakultas || 'N/A'}</span>
+                    </div>
+                  </div>
+
                   {/* Department Field */}
                   <div className="flex items-center gap-2.5 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-orange-500/30 group">
                     <GraduationCap className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
