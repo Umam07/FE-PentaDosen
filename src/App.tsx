@@ -2,36 +2,37 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import Login from './pages/auth/Login';
-import AdminLogin from './pages/auth/AdminLogin';
 import { LogOut, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import Insights from './pages/dashboard/Insights';
-import Profile from './pages/profilediri/Profile';
-import Publication from './pages/dosen/Publication';
-import AdminVerification from './pages/admin/AdminVerification';
-import AdminLecturers from './pages/admin/AdminLecturers';
-import AdminLecturerProfile from './pages/admin/AdminLecturerProfile';
-import AdminInputDocument from './pages/admin/AdminInputDocument';
-import AdminSync from './pages/admin/AdminSync';
-import AdminAllDocuments from './pages/admin/AdminAllDocuments';
-import AdminActivityLogs from './pages/admin/AdminActivityLogs';
-import CmsDashboard from './pages/admin/CmsDashboard';
-import Research from './pages/dosen/Research';
-import Home from './pages/Home';
-import Buku from './pages/dosen/Buku';
-import HKI from './pages/dosen/HKI';
-import LecturerDashboard from './pages/dosen/LecturerDashboard';
-import FaqHelp from './pages/dosen/FaqHelp';
-import LecturerList from './pages/dashboard/LecturerList';
-import LecturerProfileInsights from './pages/dashboard/LecturerProfileInsights';
-import DepartementList from './pages/dashboard/DepartementList';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { OnboardingDialog } from './components/ui/onboarding-dialog';
+
+// Lazy load page components
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/auth/Login'));
+const AdminLogin = lazy(() => import('./pages/auth/AdminLogin'));
+const Insights = lazy(() => import('./pages/dashboard/Insights'));
+const Profile = lazy(() => import('./pages/profilediri/Profile'));
+const Publication = lazy(() => import('./pages/dosen/Publication'));
+const AdminVerification = lazy(() => import('./pages/admin/AdminVerification'));
+const AdminLecturers = lazy(() => import('./pages/admin/AdminLecturers'));
+const AdminLecturerProfile = lazy(() => import('./pages/admin/AdminLecturerProfile'));
+const AdminInputDocument = lazy(() => import('./pages/admin/AdminInputDocument'));
+const AdminSync = lazy(() => import('./pages/admin/AdminSync'));
+const AdminAllDocuments = lazy(() => import('./pages/admin/AdminAllDocuments'));
+const AdminActivityLogs = lazy(() => import('./pages/admin/AdminActivityLogs'));
+const CmsDashboard = lazy(() => import('./pages/admin/CmsDashboard'));
+const Research = lazy(() => import('./pages/dosen/Research'));
+const Buku = lazy(() => import('./pages/dosen/Buku'));
+const HKI = lazy(() => import('./pages/dosen/HKI'));
+const LecturerDashboard = lazy(() => import('./pages/dosen/LecturerDashboard'));
+const FaqHelp = lazy(() => import('./pages/dosen/FaqHelp'));
+const LecturerList = lazy(() => import('./pages/dashboard/LecturerList'));
+const LecturerProfileInsights = lazy(() => import('./pages/dashboard/LecturerProfileInsights'));
+const DepartementList = lazy(() => import('./pages/dashboard/DepartementList'));
 
 function DashboardRedirect({ user }: { user: any }) {
   if (!user) return <Navigate to="/login" />;
@@ -69,6 +70,14 @@ function AdminRedirect({ user, setUser }: { user: any; setUser: any }) {
   }
 
   return <Navigate to="/dashboard" />;
+}
+
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 }
 
 export default function App() {
@@ -185,41 +194,41 @@ export default function App() {
       });
     };
   }, [user, setUser]);
-
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/insights" element={user ? <Navigate to="/dashboard" /> : <Insights />} />
-        <Route path="/departments" element={<DepartementList />} />
-        <Route path="/lecturers" element={<LecturerList />} />
-        <Route path="/lecturer/:id" element={<LecturerProfileInsights />} />
-        <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
-        <Route path="/admin" element={<AdminRedirect user={user} setUser={setUser} />} />
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/insights" element={user ? <Navigate to="/dashboard" /> : <Insights />} />
+          <Route path="/departments" element={<DepartementList />} />
+          <Route path="/lecturers" element={<LecturerList />} />
+          <Route path="/lecturer/:id" element={<LecturerProfileInsights />} />
+          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
+          <Route path="/admin" element={<AdminRedirect user={user} setUser={setUser} />} />
 
-        <Route element={<Layout user={user} setUser={setUser} />}>
-          <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
-          <Route path="/lecturer-dashboard" element={user?.role === 'dosen' ? <LecturerDashboard user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/publication" element={user?.role === 'dosen' ? <Publication user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/hki" element={user?.role === 'dosen' ? <HKI user={user} /> : <Navigate to="/dashboard" />} />
-          <Route path="/admin/documents/all" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/admin/verify" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/admin/lecturers" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/admin/lecturers/:id" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/admin/sync" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/admin/input-document" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/admin/activity-logs" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/admin/cms" element={user ? (user.role === 'super admin' ? <CmsDashboard user={user} /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-          <Route path="/help" element={<FaqHelp user={user} />} />
-          <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
-        </Route>
-      </Routes>
+          <Route element={<Layout user={user} setUser={setUser} />}>
+            <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
+            <Route path="/lecturer-dashboard" element={user?.role === 'dosen' ? <LecturerDashboard user={user} /> : <Navigate to="/dashboard" />} />
+            <Route path="/publication" element={user?.role === 'dosen' ? <Publication user={user} /> : <Navigate to="/dashboard" />} />
+            <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
+            <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
+            <Route path="/hki" element={user?.role === 'dosen' ? <HKI user={user} /> : <Navigate to="/dashboard" />} />
+            <Route path="/admin/documents/all" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/verify" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/lecturers" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/lecturers/:id" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/sync" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/input-document" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/activity-logs" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/cms" element={user ? (user.role === 'super admin' ? <CmsDashboard user={user} /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/help" element={<FaqHelp user={user} />} />
+            <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
+          </Route>
+        </Routes>
+      </Suspense>
 
       {user?.role === 'dosen' && <OnboardingDialog />}
-
       {/* Session Expired Modal */}
       <AnimatePresence>
         {isSessionExpired && (

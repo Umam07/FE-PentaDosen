@@ -8,7 +8,7 @@ export default function AboutUs() {
       name: 'Kiki Aimar Wicaksana',
       npm: '1402022030',
       role: 'API Integrator',
-      image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Kiki_l5i0u9.jpg',
+      image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_400,h_480,c_fill,q_auto,f_auto/Kiki_l5i0u9.jpg',
       bgColor: 'primary',
       instagram: 'https://www.instagram.com/kim.aimarr?igsh=ZXRnNzM2cnJvbWV5',
       bio: "Fokus pada integrasi data dan performa sistem untuk memastikan pengalaman pengguna yang mulus."
@@ -17,7 +17,7 @@ export default function AboutUs() {
       name: "Muhammad Syafi'ul Umam",
       npm: '1402022048',
       role: 'Frontend Engineer',
-      image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Mamz_oz4gxx.jpg',
+      image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_400,h_480,c_fill,q_auto,f_auto/Mamz_oz4gxx.jpg',
       bgColor: 'blue',
       instagram: 'https://www.instagram.com/umammskyy?igsh=MWY4Z212M3U5OGloag==',
       bio: "Menciptakan antarmuka yang modern, responsif, dan intuitif menggunakan teknologi web terkini."
@@ -26,7 +26,7 @@ export default function AboutUs() {
       name: 'Rafi Daniswara',
       npm: '1402022050',
       role: 'Backend Engineer',
-      image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_500,h_600,c_fill,q_auto,f_auto/Denis_ohil78.jpg',
+      image: 'https://res.cloudinary.com/dr57ribr5/image/upload/w_400,h_480,c_fill,q_auto,f_auto/Denis_ohil78.jpg',
       bgColor: 'violet',
       instagram: 'https://www.instagram.com/ravidnss?igsh=MWkyaWZmNWI4N3hxOQ==',
       bio: "Membangun arsitektur server yang kokoh dan scalable untuk mendukung seluruh ekosistem aplikasi."

@@ -78,16 +78,17 @@ export const CircularTestimonials = ({
     [activeIndex, testimonials]
   );
 
-  // Responsive gap calculation
+  // Responsive gap calculation via ResizeObserver to avoid forced reflows
   useEffect(() => {
-    function handleResize() {
-      if (imageContainerRef.current) {
-        setContainerWidth(imageContainerRef.current.offsetWidth);
+    if (!imageContainerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        // contentRect doesn't trigger forced reflow as it is computed in the observer callback asynchronously
+        setContainerWidth(entry.contentRect.width || entry.target.getBoundingClientRect().width);
       }
-    }
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    });
+    observer.observe(imageContainerRef.current);
+    return () => observer.disconnect();
   }, []);
 
   // Autoplay
