@@ -73,8 +73,8 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       icon: FileText, 
       roles: ['dosen'],
       children: [
-        { name: 'Jurnal Internasional', path: '/publication?kategori=Jurnal Internasional', icon: BookOpen, categoryFilter: 'Jurnal Internasional', points: 40 },
-        { name: 'Jurnal Nasional', path: '/publication?kategori=Jurnal Nasional', icon: BookOpen, categoryFilter: 'Jurnal Nasional', points: 20 },
+        { name: 'Jurnal Internasional', path: '/publication?kategori=Jurnal Internasional', icon: FileText, categoryFilter: 'Jurnal Internasional' },
+        { name: 'Jurnal Nasional', path: '/publication?kategori=Jurnal Nasional', icon: FileText, categoryFilter: 'Jurnal Nasional' },
       ]
     },
     { 
@@ -115,18 +115,36 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
   ];
 
   // Cari nama halaman aktif (termasuk children)
+  // Cari nama halaman aktif (termasuk children)
   const currentPage = (() => {
+    // 1. Cari yang paling spesifik (cocok pathname + query search)
     for (const item of navItems) {
       if (item.children) {
         for (const child of item.children) {
-          // Match by exact path atau child path tanpa query
+          const childPathBase = child.path.split('?')[0];
+          const childSearch = child.path.includes('?') ? '?' + child.path.split('?')[1] : '';
+          if (location.pathname === childPathBase && decodeURIComponent(location.search) === decodeURIComponent(childSearch)) {
+            return child;
+          }
+        }
+      } else {
+        const itemPathBase = item.path.split('?')[0];
+        const itemSearch = item.path.includes('?') ? '?' + item.path.split('?')[1] : '';
+        if (location.pathname === itemPathBase && decodeURIComponent(location.search) === decodeURIComponent(itemSearch)) {
+          return item;
+        }
+      }
+    }
+    // 2. Fallback matching base pathname jika tidak ketemu query yang persis
+    for (const item of navItems) {
+      if (item.children) {
+        for (const child of item.children) {
           const childPathBase = child.path.split('?')[0];
           if (location.pathname === childPathBase) return child;
         }
-        // Fallback ke parent (misal /documents tanpa query)
         if (item.path.split('?')[0] === location.pathname) return item;
       } else {
-        if (item.path === location.pathname) return item;
+        if (item.path.split('?')[0] === location.pathname) return item;
       }
     }
     return null;
@@ -172,7 +190,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       <motion.main 
         animate={{ marginLeft: isMobile ? 0 : (isCollapsed ? 88 : 288) }}
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-        className="flex-1 flex flex-col min-h-screen w-full relative"
+        className="flex-1 flex flex-col min-h-screen min-w-0 relative"
       >
         <Topbar 
           isMobile={isMobile}

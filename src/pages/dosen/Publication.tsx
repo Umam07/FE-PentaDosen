@@ -1,19 +1,27 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter, ChevronDown, Download, FileSpreadsheet, Link, Eye } from 'lucide-react';
+import { Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, Shield, Archive, Award, Zap, ChevronLeft, ChevronRight, AlertCircle, Filter, ChevronDown, Download, FileSpreadsheet, Link, Eye, Info, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
+import { DocumentDetailDrawer } from '../../components/ui/document-detail-drawer';
 
 export default function Publication({ user }: { user: any }) {
   const location = useLocation();
   // Baca filter kategori dari URL query param (?kategori=HKI dsb)
   const urlKategori = new URLSearchParams(location.search).get('kategori') || '';
 
+  const [selectedDocForDetail, setSelectedDocForDetail] = useState<any>(null);
+
   const [documents, setDocuments] = useState([]);
+
+  const activeDetailDoc = useMemo(() => {
+    if (!selectedDocForDetail) return null;
+    return documents.find((d: any) => d.id === selectedDocForDetail.id) || selectedDocForDetail;
+  }, [documents, selectedDocForDetail]);
   const [weights, setWeights] = useState<any[]>(() => {
     try {
       const cached = localStorage.getItem('penta_weights');
@@ -512,34 +520,36 @@ export default function Publication({ user }: { user: any }) {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-3 px-5 py-3 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800/30 rounded-2xl"
+          className="flex items-center gap-3 px-5 py-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800/30 rounded-2xl"
         >
-          <Filter className="w-4 h-4 text-primary-600 dark:text-primary-400 flex-shrink-0" />
-          <span className="text-xs font-black text-primary-800 dark:text-primary-200 uppercase tracking-widest">
-            Menampilkan kategori: <span className="text-primary-600 dark:text-primary-400">{urlKategori}</span>
-          </span>
-          <span className="ml-auto text-[10px] font-bold text-primary-400 dark:text-primary-500 uppercase tracking-widest">
-            {filteredDocuments.length} dokumen
-          </span>
+          <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0" />
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Pengelolaan Publikasi Ilmiah</p>
+            <p className="text-sm font-black uppercase tracking-tight">Kategori: {urlKategori}</p>
+          </div>
+          <div className="ml-auto text-[10px] font-bold opacity-75 uppercase tracking-widest hidden md:flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5" />
+            Kelola dan Pantau Publikasi Ilmiah Anda
+          </div>
         </motion.div>
       )}
 
       {/* Dashboard Summary Section */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {[
           { label: 'Total Dokumen', value: stats.total, icon: FileText, color: 'blue' },
           { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
           { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
-          { label: 'Total Poin KPI', value: stats.points, icon: Award, color: 'indigo' },
+          { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'indigo' },
         ].map((item, index) => (
           <motion.div
             key={item.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl border border-gray-100 dark:border-zinc-800 p-5 flex items-center gap-4 hover:shadow-md transition-shadow"
+            className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl border border-gray-100 dark:border-zinc-800 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow"
           >
-            <div className={`p-3 rounded-xl ${
+            <div className={`p-3 rounded-xl shrink-0 ${
               item.color === 'blue' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400' :
               item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
               item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
@@ -563,7 +573,7 @@ export default function Publication({ user }: { user: any }) {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6"
+        className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
       >
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shadow-sm">
@@ -575,10 +585,10 @@ export default function Publication({ user }: { user: any }) {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto justify-end">
           <button
             onClick={() => setIsUploadModalOpen(true)}
-            className="w-full md:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95"
           >
             Unggah Publikasi Baru
             <Zap className="w-4 h-4 ml-2 fill-white" />
@@ -586,12 +596,12 @@ export default function Publication({ user }: { user: any }) {
           <button 
             type="button"
             onClick={handleDownloadTemplate}
-            className="inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm uppercase tracking-wider"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm uppercase tracking-wider"
           >
             <Download className="w-4 h-4 mr-2" />
             Template
           </button>
-          <label className={`inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer uppercase tracking-wider ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+          <label className={`w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer uppercase tracking-wider ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
             <FileSpreadsheet className="w-4 h-4 mr-2" />
             {isImporting ? 'Importing...' : 'Import Excel'}
             <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={handleImportExcel} disabled={isImporting} />
@@ -611,14 +621,11 @@ export default function Publication({ user }: { user: any }) {
           <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
             <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
               <tr>
-                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi Publikasi</th>
-                <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori</th>
-                <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tahun</th>
-                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Dokumen</th>
-                <th className="px-4 lg:px-8 py-4 text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
-                <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Klasifikasi</th>
-                <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin</th>
-                <th className="px-4 lg:px-8 py-4 text-right text-[9px] lg:text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Penelitian Asal</th>
+                <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Judul Publikasi</th>
+                <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Dokumen</th>
+                <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
+                <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin KPI</th>
+                <th className="px-4 py-4 w-12 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Detail</th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
@@ -635,58 +642,43 @@ export default function Publication({ user }: { user: any }) {
                         </div>
                       </div>
                     </td>
-                    <td className="hidden lg:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div></td>
-                    <td className="hidden md:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div></td>
                     <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
                     <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
-                    <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-16 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
                     <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
-                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
+                    <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
                   </tr>
                 ))
               ) : currentDocuments.length > 0 ? (
-                // 🔹 DOKUMEN ASLI (Menggunakan currentDocuments untuk pagination) 🔹
+                // 🔹 DOKUMEN ASLI 🔹
                 currentDocuments.map((doc: any) => (
-                  <tr key={doc.id} className="hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-colors group">
-                    <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                  <tr key={doc.id} className="hover:bg-primary-50/10 dark:hover:bg-primary-900/5 transition-colors group border-b border-gray-50 dark:border-zinc-800 last:border-0">
+                    {/* Informasi Publikasi */}
+                    <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                       <div className="flex items-center gap-3 lg:gap-4">
                         <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors shrink-0">
                           <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400 dark:text-zinc-500 group-hover:text-primary-600 dark:group-hover:text-primary-400" />
                         </div>
-                        <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-sm">
+                        <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-md">
                           <p className="text-[11px] sm:text-xs lg:text-sm font-extrabold text-gray-900 dark:text-zinc-100 truncate tracking-tight uppercase" title={doc.title}>{doc.title}</p>
                           <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate mt-0.5" title={doc.category}>
-                            <span className="lg:hidden">{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
+                            <span>{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
                             {doc.category}
                           </p>
-
-                          {doc.status === 'Rejected' && doc.catatan && (
-                            <div className="mt-2 text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded-lg border border-red-100 dark:border-red-900/30 w-fit uppercase tracking-tight">
-                              Catatan Umpan Balik: {doc.catatan}
-                            </div>
-                          )}
                         </div>
                       </div>
                     </td>
-                    
-                    <td className="hidden lg:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle">
-                      <span className="text-xs font-bold text-gray-600 dark:text-zinc-300 uppercase tracking-wide truncate max-w-[150px] block" title={doc.category}>{doc.category}</span>
-                    </td>
-                    
-                    <td className="hidden md:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle text-xs font-black text-gray-500 dark:text-zinc-400 font-mono tracking-tighter italic">
-                      {doc.published_at ? new Date(doc.published_at).getFullYear() : '-'}
-                    </td>
 
+                    {/* Dokumen */}
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
                       {doc.file_url && doc.file_url !== '-' ? (
                         <button
                           onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[10px] font-black uppercase tracking-widest transition-colors"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[10px] font-black uppercase tracking-widest transition-colors whitespace-nowrap"
                         >
                           <FileText className="w-3.5 h-3.5 mr-1" /> Lihat Dokumen
                         </button>
                       ) : (
-                        <label className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer">
+                        <label className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer whitespace-nowrap">
                           {uploadingPdfId === doc.id ? (
                             <span className="animate-pulse">Uploading...</span>
                           ) : (
@@ -698,9 +690,10 @@ export default function Publication({ user }: { user: any }) {
                         </label>
                       )}
                     </td>
-                    
+
+                    {/* Status */}
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
-                      <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest ${
+                      <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest whitespace-nowrap ${
                         doc.status === 'Approved' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 shadow-sm border border-emerald-100 dark:border-emerald-900/30' :
                         doc.status === 'Rejected' ? 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 shadow-sm border border-red-100 dark:border-red-900/30' :
                         doc.status === 'Verified by Fakultas' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 shadow-sm border border-blue-100 dark:border-blue-900/30' :
@@ -713,59 +706,30 @@ export default function Publication({ user }: { user: any }) {
                         <span className="sm:hidden">{doc.status === 'Approved' ? 'OK' : doc.status === 'Rejected' ? 'NO' : doc.status === 'Verified by Fakultas' ? 'V-FAK' : 'Wait'}</span>
                       </div>
                     </td>
-                    
-                    <td className="hidden sm:table-cell px-4 lg:px-8 py-4 lg:py-5 align-middle">
-                      {doc.is_kpi_counted ? (
-                        <div className="inline-flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-[10px] font-black uppercase text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl border border-primary-100 dark:border-primary-900/30 shadow-sm">
-                           <Award className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-                           KPI <span className="hidden lg:inline">Tercatat</span>
-                        </div>
-                      ) : (
-                        <div className="inline-flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-[10px] font-black uppercase text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800 px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl border border-gray-100 dark:border-zinc-700">
-                           <Archive className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-                           Arsip
-                        </div>
-                      )}
-                    </td>
-                    
+
+                    {/* Poin */}
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
-                      <div className="flex flex-col items-end sm:items-start">
-                        <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter">
-                          +{doc.awarded_points} <span className="hidden sm:inline">PTS</span>
-                        </span>
-                        <span className="hidden sm:block text-[8px] lg:text-[9px] font-bold text-primary-300 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Performance</span>
-                      </div>
+                      <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter whitespace-nowrap">
+                        +{doc.awarded_points} PTS
+                      </span>
                     </td>
 
-                    {/* Connect to Research column */}
-                    <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle text-right sm:text-left">
-                      {doc.penelitian ? (
-                        <div className="flex items-center gap-1.5 px-2 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 rounded-md border border-indigo-100 max-w-[150px] truncate animate-fade-in">
-                          <Link className="w-2.5 h-2.5 shrink-0" />
-                          <span className="text-[9px] font-black uppercase tracking-tight truncate" title={doc.penelitian.judul_penelitian}>
-                            {doc.penelitian.judul_penelitian}
-                          </span>
-                          <button 
-                            onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
-                            className="ml-auto text-[9px] font-black text-indigo-400 hover:text-indigo-600 uppercase"
-                          >
-                            Ubah
-                          </button>
-                        </div>
-                      ) : (
-                        <button 
-                          onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 text-[9px] font-black uppercase tracking-widest rounded-md border transition-all"
-                        >
-                          <Link className="w-3 h-3" /> Pilih Penelitian Asal
-                        </button>
-                      )}
+                    {/* View Detail Button */}
+                    <td className="px-4 py-4 text-center align-middle">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDocForDetail(doc)}
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-primary-600 dark:hover:text-primary-400 transition-all flex items-center justify-center mx-auto"
+                        title="Lihat Detail"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} className="px-4 lg:px-8 py-16 text-center">
+                  <td colSpan={5} className="px-4 lg:px-8 py-16 text-center">
                     <div className="flex flex-col items-center">
                        <FileText className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
                        <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest italic">Inventory Empty</p>
@@ -778,7 +742,7 @@ export default function Publication({ user }: { user: any }) {
         </div>
 
         {/* === Pagination Controls === */}
-        {!isTableLoading && documents.length > 0 && (
+        {!isTableLoading && filteredDocuments.length > 0 && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -786,7 +750,7 @@ export default function Publication({ user }: { user: any }) {
           >
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, documents.length)} of {documents.length} entries
+                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredDocuments.length)} of {filteredDocuments.length} entries
               </span>
               <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 mx-2 hidden sm:block" />
               <div className="hidden sm:flex items-center gap-1.5">
@@ -850,11 +814,11 @@ export default function Publication({ user }: { user: any }) {
       {/* Linking Modal */}
       <AnimatePresence>
         {isLinkingModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setIsLinkingModalOpen(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/70"
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -989,7 +953,7 @@ export default function Publication({ user }: { user: any }) {
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
                             docType === 'kpi' ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-emerald-50'
                           }`}>
-                            <Award className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
+                            <Sparkles className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
                           </div>
                           <div className="text-left min-w-0">
                             <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-emerald-900 dark:text-emerald-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
@@ -1151,7 +1115,7 @@ export default function Publication({ user }: { user: any }) {
                       <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
                         {scoringPreview ? (
                           <div className="px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400">
-                            <Award className="h-5 w-5 shrink-0 text-emerald-600" />
+                            <Sparkles className="h-5 w-5 shrink-0 text-emerald-600" />
                             <div className="min-w-0">
                               <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
                               <p className="text-xs font-black truncate">{scoringPreview.message}</p>
@@ -1203,7 +1167,7 @@ export default function Publication({ user }: { user: any }) {
                       <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/60 rounded-2xl p-5">
                         <div className="flex items-center gap-2 mb-3 border-b border-gray-100/80 dark:border-zinc-800 pb-2.5">
                           <div className="p-1.5 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
-                            <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                            <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                           </div>
                           <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Panduan Poin Kategori</h4>
                         </div>
@@ -1264,6 +1228,31 @@ export default function Publication({ user }: { user: any }) {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Detail Slide-over Drawer */}
+      <DocumentDetailDrawer
+        isOpen={!!activeDetailDoc}
+        onClose={() => setSelectedDocForDetail(null)}
+        drawerTitle="Detail Publikasi"
+        drawerSubtitle="Informasi & Output Akademik"
+        category={activeDetailDoc?.category ?? ''}
+        title={activeDetailDoc?.title ?? ''}
+        status={activeDetailDoc?.status ?? ''}
+        catatan={activeDetailDoc?.catatan}
+        year={activeDetailDoc?.published_at ? new Date(activeDetailDoc.published_at).getFullYear() : '-'}
+        points={activeDetailDoc?.awarded_points || 0}
+        isKpiCounted={activeDetailDoc?.is_kpi_counted}
+        hideKpiClassification={false}
+        showResearchLink={true}
+        linkedResearch={activeDetailDoc?.penelitian}
+        onChangeResearchClick={() => { setDocToLink(activeDetailDoc); setIsLinkingModalOpen(true); }}
+        onLinkResearchClick={() => { setDocToLink(activeDetailDoc); setIsLinkingModalOpen(true); }}
+        fileUrl={activeDetailDoc?.file_url}
+        docId={activeDetailDoc?.id ?? 0}
+        uploadingPdfId={uploadingPdfId}
+        onPreviewClick={() => setPreviewDoc({ fileUrl: activeDetailDoc?.file_url, title: activeDetailDoc?.title, category: activeDetailDoc?.category })}
+        onUploadPdf={handleUploadPdf}
+      />
       {/* PDF Preview Modal */}
       <PdfPreviewModal
         isOpen={!!previewDoc}

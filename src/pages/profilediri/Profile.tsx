@@ -13,7 +13,7 @@ import Konfigurasi from './Konfigurasi';
 
 export default function Profile({ user, setUser }: { user: any; setUser: any }) {
   const location = useLocation();
-  const [scholarId, setScholarId] = useState('');useState(user?.scholar_id || '');
+  const [scholarId, setScholarId] = useState(user?.scholar_id || '');
   const [scopusId, setScopusId] = useState(user?.scopus_id || '');
   const [scholarData, setScholarData] = useState<any>(null);
   const [scopusData, setScopusData] = useState<any>(null);
@@ -28,6 +28,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   // useRef tidak trigger re-render dan akan reset saat komponen di-unmount
   // (yaitu saat user navigasi keluar dari halaman Profile).
   const warningDismissedRef = useRef(false);
+  const userLoadedRef = useRef(false);
 
   useEffect(() => {
     if (message.text) {
@@ -38,17 +39,44 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     }
   }, [message.text]);
 
+  const [activeTab, setActiveTab] = useState<'info' | 'integrasi'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    if (tabParam === 'integrasi' || params.get('warning') === 'true') {
+      return 'integrasi';
+    }
+    if (tabParam === 'info') {
+      return 'info';
+    }
+    if (user && user.role === 'dosen' && (!user.scholar_id || !user.scopus_id)) {
+      return 'integrasi';
+    }
+    return 'info';
+  });
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (user && (!user.scholar_id || !user.scopus_id) && !warningDismissedRef.current) {
-      setShowWarningModal(true);
-      if (params.get('warning') === 'true') {
+    const tabParam = params.get('tab');
+    
+    // 1. Handle tab switching from URL params
+    if (tabParam === 'integrasi' || params.get('warning') === 'true') {
+      setActiveTab('integrasi');
+    } else if (tabParam === 'info') {
+      setActiveTab('info');
+    } 
+    // 2. Handle initial load of user details
+    else if (user && !userLoadedRef.current) {
+      userLoadedRef.current = true;
+      if (user.role === 'dosen' && (!user.scholar_id || !user.scopus_id)) {
         setActiveTab('integrasi');
       }
     }
-  }, [user, location.search]);
 
-  const [activeTab, setActiveTab] = useState<'info' | 'integrasi'>('info');
+    // 3. Handle Warning Modal trigger
+    if (user && user.role === 'dosen' && (!user.scholar_id || !user.scopus_id) && !warningDismissedRef.current) {
+      setShowWarningModal(true);
+    }
+  }, [user, location.search]);
   const [publications, setPublications] = useState<any[]>([]);
   const [scopusPublications, setScopusPublications] = useState<any[]>([]);
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);

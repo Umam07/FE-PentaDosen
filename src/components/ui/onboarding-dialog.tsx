@@ -1,6 +1,7 @@
 import * as React from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Shield, BookOpen, Rocket, CheckCircle2, X, ArrowRight, ArrowLeft, RefreshCw } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ")
@@ -57,13 +58,15 @@ const slides = [
 export function OnboardingDialog() {
   const [open, setOpen] = React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState(0)
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem("penta_onboarding_seen")
     if (!hasSeenOnboarding) {
       setOpen(true)
+      navigate("/profile?tab=integrasi")
     }
-  }, [])
+  }, [navigate])
 
   const isFirstSlide = activeIndex === 0
   const isLastSlide = activeIndex === slides.length - 1
@@ -85,6 +88,7 @@ export function OnboardingDialog() {
   const handleComplete = () => {
     localStorage.setItem("penta_onboarding_seen", "true")
     setOpen(false)
+    navigate("/profile?tab=integrasi")
   }
 
   return (

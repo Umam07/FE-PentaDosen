@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Award, TrendingUp, Zap, FileText, Beaker, ShieldCheck, Book, 
   Calendar, Search, ChevronLeft, ChevronRight, Info, Globe, ArrowUpRight,
-  BookMarked, RefreshCw
+  BookMarked, RefreshCw, Sparkles
 } from 'lucide-react';
 
 import PentaInsight from '../profilediri/PentaInsight';
@@ -321,7 +321,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
         <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800 rounded-[2rem] border border-slate-200/60 dark:border-slate-700 shadow-inner overflow-x-auto no-scrollbar max-w-full">
           {[
-            { id: 'all', label: 'Ringkasan Performa', icon: Award },
+            { id: 'all', label: 'Ringkasan Performa', icon: Sparkles },
             { id: 'internal', label: 'Dokumen Internal', icon: FileText },
             { id: 'external', label: 'Dokumen Eksternal (API)', icon: Globe },
           ].map((view) => (
@@ -419,7 +419,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
               
               <div className="relative z-10">
                 <div className="w-16 h-16 bg-white/10 dark:bg-slate-900/5 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/10 dark:border-slate-900/10">
-                  <Award className="w-8 h-8 text-primary-400 dark:text-primary-600" />
+                  <Sparkles className="w-8 h-8 text-primary-400 dark:text-primary-600" />
                 </div>
                 <p className="text-[10px] font-black text-white/40 dark:text-slate-400 uppercase tracking-[0.3em] mb-2">
               {isKPIFilter ? 'KPI Performance Score (3Thn)' : 'Total Performance Score'}

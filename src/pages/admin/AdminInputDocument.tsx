@@ -4,7 +4,7 @@ import {
   Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, 
   Shield, Archive, Award, Zap, ChevronDown, Download, 
   FileSpreadsheet, User, Filter, Search, Globe, BookMarked, Beaker,
-  AlertCircle, ArrowRight, Home, Landmark, DollarSign, Book
+  AlertCircle, ArrowRight, Home, Landmark, DollarSign, Book, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -213,7 +213,7 @@ export default function AdminInputDocument() {
         <div>
           <h1 className="text-3xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Input Data Dosen</h1>
           <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
-            Bantu Dosen Menginput Dokumen (Auto-Approved)
+            Bantu Dosen Menginput Dokumen
           </p>
         </div>
       </div>
@@ -416,7 +416,7 @@ export default function AdminInputDocument() {
                           onClick={() => setDocType('kpi')}
                           className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${docType === 'kpi' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-100 bg-white text-gray-400'}`}
                         >
-                          <Award className="w-4 h-4" />
+                          <Sparkles className="w-4 h-4" />
                           <span className="text-[10px] font-black uppercase tracking-widest">Poin KPI</span>
                         </button>
                         <button

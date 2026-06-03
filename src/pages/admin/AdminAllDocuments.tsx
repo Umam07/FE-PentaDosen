@@ -184,7 +184,7 @@ export default function AdminAllDocuments() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Vault Dokumen</h1>
+          <h1 className="text-3xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Semua Dokumen</h1>
           <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
             Manajemen & Monitoring Seluruh Output Akademik
           </p>
