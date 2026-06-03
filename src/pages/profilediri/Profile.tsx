@@ -547,7 +547,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
           <nav className="bg-white dark:bg-slate-900 p-3 rounded-[2rem] border border-slate-200/60 dark:border-slate-800 shadow-sm space-y-1">
             {[
               { id: 'info', label: 'Detail Informasi', icon: User, color: 'text-blue-500' },
-              { id: 'integrasi', label: 'Konfigurasi ID', icon: Settings, color: 'text-indigo-500' },
+              ...(user?.role === 'dosen' ? [{ id: 'integrasi', label: 'Konfigurasi ID', icon: Settings, color: 'text-indigo-500' }] : []),
             ].map((tab) => (
               <button 
                 key={tab.id}

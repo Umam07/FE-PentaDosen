@@ -247,8 +247,8 @@ export default function AdminVerification() {
                         <div className="flex items-center gap-2 mt-1">
                           <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Dosen Pengaju</p>
                           {user?.role === 'admin lppm' && (
-                            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Fakultas' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
-                              {item.status === 'Verified by Fakultas' ? 'FAKULTAS VERIFIED' : 'BYPASSING FAKULTAS'}
+                            <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50">
+                              FAKULTAS VERIFIED
                             </span>
                           )}
                         </div>
@@ -368,8 +368,8 @@ export default function AdminVerification() {
                             <div className="flex items-center gap-2 mt-1">
                               <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{(activeTab === 'penelitian' ? item.user?.fakultas : item.fakultas) || 'Program Studi'}</p>
                               {user?.role === 'admin lppm' && (
-                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${item.status === 'Verified by Fakultas' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-100/50'}`}>
-                                  {item.status === 'Verified by Fakultas' ? 'FAKULTAS VERIFIED' : 'BYPASSING FAKULTAS'}
+                                <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50">
+                                  FAKULTAS VERIFIED
                                 </span>
                               )}
                             </div>
