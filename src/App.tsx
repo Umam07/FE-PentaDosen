@@ -218,7 +218,7 @@ export default function App() {
             <Route path="/admin/verify" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/lecturers" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/lecturers/:id" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-            <Route path="/admin/sync" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/sync" element={user ? (user.role === 'admin lppm' ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/input-document" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/activity-logs" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/cms" element={user ? (user.role === 'super admin' ? <CmsDashboard user={user} /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />

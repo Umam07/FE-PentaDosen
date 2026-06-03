@@ -110,7 +110,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       roles: ['admin lppm', 'admin fakultas'] 
     },
     { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin fakultas'] },
-    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm', 'admin fakultas'] },
+    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm'] },
     { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm', 'admin fakultas'] },
   ];
 
