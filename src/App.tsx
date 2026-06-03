@@ -109,7 +109,7 @@ export default function App() {
         const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
         const isLoginRequest = url.includes('/api/login');
 
-        if ((response.status === 401 && !isLoginRequest) || response.status === 419) {
+        if ((response.status === 401 || response.status === 419) && !isLoginRequest) {
           setIsSessionExpired(true);
         } else if (response.status === 429) {
           setIsRateLimited(true);

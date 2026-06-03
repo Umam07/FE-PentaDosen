@@ -84,7 +84,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       roles: ['dosen'] 
     },
     { 
-      name: 'Hasil Penelitian', 
+      name: 'Penelitian', 
       path: '/research', 
       icon: Beaker, 
       roles: ['dosen'] 
