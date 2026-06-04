@@ -18,7 +18,23 @@ export default function Hero() {
   const springX = useSpring(mouseX, { damping: 25, stiffness: 200 });
   const springY = useSpring(mouseY, { damping: 25, stiffness: 200 });
 
+  const buttonRectRef = useRef<DOMRect | null>(null);
+  const heroRectRef = useRef<DOMRect | null>(null);
+
   useEffect(() => {
+    const updateRects = () => {
+      if (buttonRef.current) {
+        buttonRectRef.current = buttonRef.current.getBoundingClientRect();
+      }
+      const heroSection = document.getElementById('hero');
+      if (heroSection) {
+        heroRectRef.current = heroSection.getBoundingClientRect();
+      }
+    };
+
+    // Initialize rects
+    updateRects();
+
     const handleMouseMove = (e: MouseEvent) => {
       // Hanya aktifkan di desktop atau layar lebar
       if (window.innerWidth < 1024) return;
@@ -26,35 +42,46 @@ export default function Hero() {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
       
-      if (buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
+      if (!buttonRectRef.current || !heroRectRef.current) {
+        updateRects();
+      }
+
+      const rect = buttonRectRef.current;
+      const heroRect = heroRectRef.current;
+      
+      if (rect) {
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         
         // Kalkulasi sudut antara mouse dan tengah button
         const angle = Math.atan2(centerY - e.clientY, centerX - e.clientX) * (180 / Math.PI);
         setRotation(angle);
-        
+      }
+      
+      if (heroRect) {
         // Tampilkan panah jika mouse berada di area hero
-        const heroSection = document.getElementById('hero');
-        if (heroSection) {
-          const heroRect = heroSection.getBoundingClientRect();
-          if (
-            e.clientX >= heroRect.left && 
-            e.clientX <= heroRect.right && 
-            e.clientY >= heroRect.top && 
-            e.clientY <= heroRect.bottom
-          ) {
-            setIsVisible(true);
-          } else {
-            setIsVisible(false);
-          }
+        if (
+          e.clientX >= heroRect.left && 
+          e.clientX <= heroRect.right && 
+          e.clientY >= heroRect.top && 
+          e.clientY <= heroRect.bottom
+        ) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
         }
       }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('resize', updateRects);
+    window.addEventListener('scroll', updateRects);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', updateRects);
+      window.removeEventListener('scroll', updateRects);
+    };
   }, [mouseX, mouseY]);
 
   return (
@@ -66,7 +93,7 @@ export default function Hero() {
         <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-50 dark:bg-blue-900/20 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-20 dark:opacity-30 transition-colors duration-300" />
         
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] dark:opacity-[0.05] dark:invert"></div>
+        <div className="absolute inset-0 bg-[url('/cubes.png')] opacity-[0.03] dark:opacity-[0.05] dark:invert"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

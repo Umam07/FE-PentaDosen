@@ -84,11 +84,11 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                 </div>
                 <div className="flex-1 text-left min-w-0">
                   <p className="text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-tight">{user.name}</p>
-                  <p className="text-[10px] font-bold text-slate-400 truncate">{user.program_studi}</p>
+                  <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400 truncate">{user.program_studi}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-sm font-black text-slate-900 dark:text-white">{user.total_kpi_points.toLocaleString()}</p>
-                  <p className="text-[8px] font-black text-slate-400 uppercase">Poin KPI</p>
+                  <p className="text-[8px] font-black text-slate-600 dark:text-slate-400 uppercase">Poin KPI</p>
                 </div>
               </button>
             ))}
@@ -126,8 +126,8 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                   <item.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
-                  <h5 className="text-lg font-black text-white">{item.val.toLocaleString()}</h5>
+                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{item.label}</p>
+                  <div className="text-lg font-black text-white">{item.val.toLocaleString()}</div>
                 </div>
               </div>
             ))}
@@ -137,13 +137,13 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
         <div className="mt-8 pt-6 border-t border-white/10 relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
             <h4 className="text-sm font-black mb-1">Rerata Nilai KPI Dosen</h4>
-            <p className="text-xs text-slate-400">Total Poin KPI / Jumlah Dosen Terdaftar</p>
+            <p className="text-xs text-slate-300">Total Poin KPI / Jumlah Dosen Terdaftar</p>
           </div>
           <div className="bg-white/10 px-5 py-3 rounded-2xl border border-white/10 text-center sm:text-right min-w-[120px]">
             <p className="text-xl font-black text-primary-400">
               {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
             </p>
-            <p className="text-[8px] font-black uppercase text-slate-500 tracking-wider">Poin Rerata</p>
+            <p className="text-[8px] font-black uppercase text-slate-300 tracking-wider">Poin Rerata</p>
           </div>
         </div>
       </motion.div>

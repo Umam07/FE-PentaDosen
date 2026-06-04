@@ -25,6 +25,7 @@ export default function Footer() {
 
   return (
     <footer id="contact" className="bg-[#0B0F19] text-gray-400 pt-20 pb-10 relative overflow-hidden">
+      <h2 className="sr-only">Kontak dan Navigasi</h2>
       {/* Glow Effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary-500/10 rounded-full filter blur-3xl" />
 
@@ -37,9 +38,9 @@ export default function Footer() {
               <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-lg shadow-primary-500/20">
                 <Hexagon className="w-6 h-6 text-white fill-white/10" />
               </div>
-              <h1 className="text-xl font-black text-white tracking-tighter uppercase">
+              <span className="text-xl font-black text-white tracking-tighter uppercase">
                 Penta<span className="text-primary-400">Dosen</span>
-              </h1>
+              </span>
             </Link>
             <p className="text-sm font-bold text-gray-400 leading-relaxed max-w-sm">
               Sistem terintegrasi untuk pendataan publikasi, sitasi, serta administrasi dokumen dosen secara aman dan dinamis.
@@ -49,7 +50,7 @@ export default function Footer() {
 
           {/* Navigation Links */}
           <div className="md:col-span-3 space-y-4">
-            <h4 className="text-sm font-black text-white uppercase tracking-widest">Navigasi</h4>
+            <h3 className="text-sm font-black text-white uppercase tracking-widest">Navigasi</h3>
             <ul className="space-y-3">
               {[
                 { name: 'Beranda', href: '#hero' },
@@ -61,7 +62,7 @@ export default function Footer() {
                   <a
                     href={link.href}
                     onClick={(e) => handleScrollTo(e, link.href)}
-                    className="text-sm font-bold text-gray-500 hover:text-primary-400 flex items-center gap-1 group transition-colors"
+                    className="text-sm font-bold text-gray-400 hover:text-primary-400 flex items-center gap-1 group transition-colors"
                   >
                     <ArrowRight className="w-3 h-3 -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all" />
                     {link.name}
@@ -73,7 +74,7 @@ export default function Footer() {
 
           {/* Contact Support */}
           <div className="md:col-span-5 space-y-4">
-            <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">Kontak Kami</h4>
+            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-4">Kontak Kami</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-4">
                 <div className="p-2 border border-gray-800 rounded-xl text-primary-400 bg-gray-900 flex-shrink-0">
@@ -81,7 +82,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-xs font-black text-white uppercase tracking-wider">Alamat Kantor</p>
-                  <p className="text-sm font-bold text-gray-500 mt-1 leading-relaxed">
+                  <p className="text-sm font-bold text-gray-400 mt-1 leading-relaxed">
                     Jl. Letjen Suprapto No.26, Cempaka Putih, Kec. Cemp. Putih, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10510.
                   </p>
                 </div>
@@ -93,7 +94,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-xs font-black text-white uppercase tracking-wider">Email</p>
-                  <p className="text-sm font-bold text-gray-500 mt-1">teamduk.ta@gmail.com</p>
+                  <p className="text-sm font-bold text-gray-400 mt-1">teamduk.ta@gmail.com</p>
                 </div>
               </div>
 
@@ -103,7 +104,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-xs font-black text-white uppercase tracking-wider">Telepon</p>
-                  <p className="text-sm font-bold text-gray-500 mt-1">+62 (21) 1234-5678</p>
+                  <p className="text-sm font-bold text-gray-400 mt-1">+62 (21) 1234-5678</p>
                 </div>
               </div>
             </div>
@@ -111,7 +112,7 @@ export default function Footer() {
 
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-xs font-bold text-gray-600">
+        <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-xs font-bold text-gray-400">
           <p>© {new Date().getFullYear()} PentaDosen Team. All rights reserved.</p>
           <div className="flex items-center gap-4 mt-4 sm:mt-0">
             {/* Privacy Policy Modal */}

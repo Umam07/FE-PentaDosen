@@ -77,7 +77,10 @@ export default function Workflow() {
       {/* Premium Background Backgrounds */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(37,99,235,0.03),transparent_70%)]" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay pointer-events-none" />
+        <div 
+          className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none" 
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+        />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -181,9 +184,9 @@ export default function Workflow() {
                       whileHover={{ y: -10 }}
                       className="w-full bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-[40px] p-8 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] group-hover:bg-white dark:group-hover:bg-white/[0.05]"
                     >
-                      <h4 className="text-[10px] font-black text-blue-600/60 uppercase tracking-[.2em] mb-3">
+                      <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[.2em] mb-3">
                         {step.subtitle}
-                      </h4>
+                      </p>
                       <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-4 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
                         {step.title}
                       </h3>
@@ -192,7 +195,7 @@ export default function Workflow() {
                       </p>
 
                       <div className="mt-8 pt-6 border-t border-gray-50 dark:border-white/5 flex items-center justify-between">
-                         <span className="text-[10px] font-bold text-gray-300 dark:text-gray-700">0{step.id} / 05</span>
+                         <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400">0{step.id} / 05</span>
                          <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <ArrowRight size={14} className="text-blue-600" />
                          </div>
