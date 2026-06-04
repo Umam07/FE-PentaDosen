@@ -78,7 +78,7 @@ export default function AdminLogin({ setUser }: { setUser: any }) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full pl-14 pr-4 py-4 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 rounded-2xl font-bold focus:bg-white dark:focus:bg-gray-800 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/20 focus:border-indigo-500 transition-all outline-none text-sm placeholder:text-gray-300 dark:placeholder:text-gray-600 dark:text-white"
-              placeholder="admin@univ.edu atau superadmin"
+              placeholder="penelitian@univ.edu atau superadmin"
             />
           </div>
         </div>
@@ -143,8 +143,8 @@ export default function AdminLogin({ setUser }: { setUser: any }) {
         <div className="grid grid-cols-1 gap-2">
           {[
             { username: 'superadmin@univ.edu', role: 'Super Admin Access' },
-            { username: 'admin@univ.edu', role: 'Admin LPPM Access' },
-            { username: 'prodi@univ.edu', role: 'Admin Fakultas Access' }
+            { username: 'penelitian@univ.edu', role: 'Admin Penelitian Access' },
+            { username: 'fakultas@univ.edu', role: 'Admin Fakultas Access' }
           ].map((acc, i) => (
             <div 
               key={i} 

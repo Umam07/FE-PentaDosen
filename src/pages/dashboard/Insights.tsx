@@ -34,6 +34,15 @@ const FAKULTAS_SHORT: Record<string, string> = {
   'psikologi': 'Psikologi',
 };
 
+const ALL_FAKULTAS_NAMES = [
+  'Fakultas Kedokteran',
+  'Fakultas Kedokteran Gigi',
+  'Fakultas Teknologi Informasi',
+  'Fakultas Ekonomi dan Bisnis',
+  'Fakultas Hukum',
+  'Fakultas Psikologi'
+];
+
 const renderActiveShape = (props: any) => {
   const RADIAN = Math.PI / 180;
   const {
@@ -100,6 +109,9 @@ export default function Insights() {
   const [loading, setLoading] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'points_desc' | 'points_asc' | 'alphabetical'>('points_desc');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   const onPieEnter = (_: any, index: number) => {
     setActiveIndex(index);
@@ -149,7 +161,12 @@ export default function Insights() {
     );
   }
 
-  const formattedFakultasData = fakultasData.map((f: any, index: number) => {
+  const mergedFakultasData = ALL_FAKULTAS_NAMES.map(name => {
+    const apiItem = fakultasData.find(f => f.fakultas === name);
+    return apiItem || { fakultas: name, total_points: 0, dosen_count: 0 };
+  });
+
+  const formattedFakultasData = mergedFakultasData.map((f: any, index: number) => {
     const rawName = f.fakultas || '';
     const normalizedKey = rawName.toLowerCase().replace(/fakultas/g, '').replace(/[^a-z0-9]/g, '');
     const color = FAKULTAS_COLORS[normalizedKey] || PRODI_COLORS[index % PRODI_COLORS.length];
@@ -166,6 +183,23 @@ export default function Insights() {
   });
 
   const totalFakultasPoints = formattedFakultasData.reduce((sum: number, f: any) => sum + f.value, 0);
+
+  const filteredFakultasData = formattedFakultasData.filter((f) => 
+    f.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    f.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const sortedAndFilteredData = [...filteredFakultasData].sort((a, b) => {
+    if (sortBy === 'points_desc') {
+      return b.value - a.value;
+    } else if (sortBy === 'points_asc') {
+      return a.value - b.value;
+    } else {
+      return a.name.localeCompare(b.name);
+    }
+  });
+
+  const activeDataIndex = activeIndex >= sortedAndFilteredData.length ? 0 : activeIndex;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-all duration-500 font-mono">
@@ -206,18 +240,7 @@ export default function Insights() {
                   </span>.
                 </p>
               </div>
-              
-              <div className="flex flex-wrap gap-6 pt-4">
-                <button className="group relative px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[2rem] font-black text-sm tracking-tighter transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-slate-900/20 dark:shadow-white/10">
-                  <span className="relative z-10 flex items-center gap-3">
-                    Eksplorasi Data
-                    <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                  </span>
-                </button>
-                <button className="px-10 py-5 bg-white dark:bg-slate-800/50 backdrop-blur-xl text-slate-900 dark:text-white rounded-[2rem] font-bold text-sm border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-xl">
-                  Dokumentasi
-                </button>
-              </div>
+
             </div>
 
             <div className="lg:col-span-5 hidden lg:block">
@@ -233,7 +256,7 @@ export default function Insights() {
                     <div className="w-12 h-12 rounded-2xl bg-primary-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                       <Zap className="w-6 h-6 text-primary-500" />
                     </div>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Total Luaran</p>
+                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Total Dokumen</p>
                     <h3 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
                       {((stats?.total_research || 0) + (stats?.total_docs || 0)).toLocaleString()}
                     </h3>
@@ -242,7 +265,7 @@ export default function Insights() {
                     <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-6">
                       <Sparkles className="w-6 h-6" />
                     </div>
-                    <p className="text-[10px] font-black text-primary-100/60 uppercase tracking-widest mb-2">Sitasi Global</p>
+                    <p className="text-[10px] font-black text-primary-100/60 uppercase tracking-widest mb-2">Total Sitasi</p>
                     <h3 className="text-4xl font-black tracking-tighter">
                       {(stats?.total_citations || 0).toLocaleString()}
                     </h3>
@@ -426,11 +449,14 @@ export default function Insights() {
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 relative z-10">
               <div className="space-y-2">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className="p-2.5 bg-primary-500 rounded-xl shadow-lg shadow-primary-500/20">
                     <Building2 className="w-5 h-5 text-white" />
                   </div>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Intelijen Fakultas</h3>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Poin KPI per Fakultas</h3>
+                  <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black rounded-full border border-slate-200 dark:border-slate-700 shadow-inner">
+                    {totalFakultasPoints.toLocaleString()} Poin
+                  </span>
                 </div>
                 <p className="text-slate-500 dark:text-slate-400 font-medium text-xs max-w-sm">
                   Distribusi metrik KPI di seluruh fakultas secara real-time.
@@ -443,84 +469,126 @@ export default function Insights() {
                   <input 
                     type="text" 
                     placeholder="Cari..." 
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setActiveIndex(0);
+                    }}
                     className="pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 focus:border-primary-500 outline-none w-40 transition-all" 
                   />
                 </div>
-                <button className="p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 transition-all">
-                  <Filter className="w-4 h-4 text-slate-500" />
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                    className="p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                  >
+                    <Filter className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  </button>
+                  {showFilterDropdown && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl z-50 p-2 space-y-1">
+                      <button 
+                        onClick={() => { setSortBy('points_desc'); setShowFilterDropdown(false); }}
+                        className={`w-full text-left px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${sortBy === 'points_desc' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                      >
+                        Poin Tertinggi
+                      </button>
+                      <button 
+                        onClick={() => { setSortBy('points_asc'); setShowFilterDropdown(false); }}
+                        className={`w-full text-left px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${sortBy === 'points_asc' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                      >
+                        Poin Terendah
+                      </button>
+                      <button 
+                        onClick={() => { setSortBy('alphabetical'); setShowFilterDropdown(false); }}
+                        className={`w-full text-left px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${sortBy === 'alphabetical' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                      >
+                        Nama (A-Z)
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-center flex-1">
               <div className="xl:col-span-7 h-[380px] relative">
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
-                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Poin</p>
-                   <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{totalFakultasPoints.toLocaleString()}</p>
-                </div>
-                
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      activeIndex={activeIndex}
-                      activeShape={renderActiveShape}
-                      data={formattedFakultasData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={90}
-                      outerRadius={125}
-                      dataKey="value"
-                      onMouseEnter={onPieEnter}
-                      animationDuration={1500}
-                      paddingAngle={5}
-                      stroke="none"
-                      cornerRadius={8}
-                    >
-                      {formattedFakultasData.map((entry: any, index: number) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="xl:col-span-5 flex flex-col gap-2">
-                {formattedFakultasData.map((f: any, i: number) => {
-                  const percentage = totalFakultasPoints > 0 ? ((f.value / totalFakultasPoints) * 100).toFixed(1) : '0';
-                  const isActive = activeIndex === i;
-                  
-                  return (
-                    <motion.div 
-                      key={f.fullName}
-                      onMouseEnter={() => setActiveIndex(i)}
-                      className={`flex items-center gap-4 p-3 rounded-2xl transition-all border ${isActive ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 shadow-sm' : 'border-transparent'}`}
-                    >
-                      <div 
-                        className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-sm" 
-                        style={{ backgroundColor: f.color }}
+                {sortedAndFilteredData.length > 0 && (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        activeIndex={activeDataIndex}
+                        activeShape={renderActiveShape}
+                        data={sortedAndFilteredData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={90}
+                        outerRadius={125}
+                        dataKey="value"
+                        onMouseEnter={onPieEnter}
+                        animationDuration={1500}
+                        paddingAngle={5}
+                        stroke="none"
+                        cornerRadius={8}
                       >
-                        {f.name[0]}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-end mb-1">
-                          <p className="text-xs font-black text-slate-800 dark:text-slate-200 truncate">
-                            {f.name}
-                          </p>
-                          <span className="text-[10px] font-black text-slate-900 dark:text-white">{percentage}%</span>
+                        {sortedAndFilteredData.map((entry: any, index: number) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+                {sortedAndFilteredData.length === 0 && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                    <Building2 className="w-16 h-16 mb-2 opacity-30" />
+                    <p className="text-sm font-bold">Tidak ada data visualisasi</p>
+                  </div>
+                )}
+              </div>
+ 
+              <div className="xl:col-span-5 flex flex-col gap-2">
+                {sortedAndFilteredData.length > 0 ? (
+                  sortedAndFilteredData.map((f: any, i: number) => {
+                    const percentage = totalFakultasPoints > 0 ? ((f.value / totalFakultasPoints) * 100).toFixed(1) : '0';
+                    const isActive = activeDataIndex === i;
+                    
+                    return (
+                      <motion.div 
+                        key={f.fullName}
+                        onMouseEnter={() => setActiveIndex(i)}
+                        className={`flex items-center gap-4 p-3 rounded-2xl transition-all border cursor-pointer ${isActive ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 shadow-sm' : 'border-transparent'}`}
+                      >
+                        <div 
+                          className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-sm" 
+                          style={{ backgroundColor: f.color }}
+                        >
+                          {f.name[0]}
                         </div>
-                        <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                          <motion.div 
-                            initial={{ width: 0 }}
-                            animate={{ width: `${percentage}%` }}
-                            className="h-full rounded-full"
-                            style={{ backgroundColor: f.color }}
-                          />
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-end mb-1">
+                            <p className="text-xs font-black text-slate-800 dark:text-slate-200 truncate">
+                              {f.name}
+                            </p>
+                            <span className="text-[10px] font-black text-slate-900 dark:text-white">{percentage}%</span>
+                          </div>
+                          <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: `${percentage}%` }}
+                              className="h-full rounded-full"
+                              style={{ backgroundColor: f.color }}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                      </motion.div>
+                    );
+                  })
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-slate-400 dark:text-slate-500">
+                    <Building2 className="w-10 h-10 mb-2 opacity-30 animate-pulse" />
+                    <p className="text-xs font-black">Fakultas tidak ditemukan</p>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -530,123 +598,62 @@ export default function Insights() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-[3rem] shadow-sm border border-slate-200/60 dark:border-slate-800 flex flex-col"
+            className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-[3rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-8 lg:p-10 flex flex-col justify-between"
           >
-            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                 <Trophy className="w-5 h-5 text-amber-500" />
-                 <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Top 3 Dosen</h4>
-              </div>
-              <button 
-                onClick={() => navigate('/lecturers')}
-                className="text-[10px] font-black text-primary-600 dark:text-primary-400 hover:underline"
-              >
-                LIHAT SEMUA
-              </button>
-            </div>
-            
-            <div className="p-4 space-y-2 flex-1">
-              {leaderboard.slice(0, 3).map((user: any, index: number) => (
-                <button 
-                  key={user.id}
-                  onClick={() => navigate(`/lecturer/${user.id}`)}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm ${
-                    index === 0 ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' : 
-                    index === 1 ? 'bg-slate-300 text-slate-700' : 
-                    'bg-orange-300 text-orange-800'
-                  }`}>
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 text-left min-w-0">
-                    <p className="text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-primary-600 transition-colors uppercase tracking-tight">{user.name}</p>
-                    <p className="text-[9px] font-bold text-slate-400 truncate">{user.program_studi}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-black text-slate-900 dark:text-white">{user.total_kpi_points.toLocaleString()}</p>
-                    <p className="text-[8px] font-black text-slate-400 uppercase">Poin</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-            
-            <div className="p-6 mt-auto">
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 text-center">
-                <p className="text-[10px] font-bold text-slate-400 uppercase mb-3">Produktivitas Dosen</p>
-                <div className="flex items-center justify-center gap-4">
-                  <div className="text-center">
-                    <p className="text-lg font-black text-slate-900 dark:text-white">{(stats?.total_research || 0).toLocaleString()}</p>
-                    <p className="text-[8px] font-black text-slate-400">RISET</p>
-                  </div>
-                  <div className="w-px h-8 bg-slate-200 dark:bg-slate-700"></div>
-                  <div className="text-center">
-                    <p className="text-lg font-black text-slate-900 dark:text-white">{(stats?.total_docs || 0).toLocaleString()}</p>
-                    <p className="text-[8px] font-black text-slate-400">PUBLIKASI</p>
-                  </div>
+            <div>
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-3">
+                  <Trophy className="w-6 h-6 text-amber-500" />
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat</h3>
                 </div>
+                <button 
+                  onClick={() => navigate('/lecturers')}
+                  className="text-xs font-black text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1 group cursor-pointer"
+                >
+                  LIHAT SEMUA
+                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {leaderboard.slice(0, 5).map((user: any, index: number) => (
+                  <button 
+                    key={user.id}
+                    onClick={() => navigate(`/lecturer/${user.id}`)}
+                    className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                  >
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-sm relative shrink-0 ${
+                      index === 0 ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' : 
+                      index === 1 ? 'bg-slate-300 text-slate-700 dark:bg-slate-800 dark:text-slate-300' : 
+                      index === 2 ? 'bg-orange-300 text-orange-800 dark:bg-amber-900/30 dark:text-amber-400' :
+                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                    }`}>
+                      {index + 1}
+                      {index === 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-4 w-4 bg-amber-500 items-center justify-center text-[8px] text-white">🏆</span>
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-tight">{user.name}</p>
+                      <p className="text-[10px] font-bold text-slate-400 truncate">{user.program_studi}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-black text-slate-900 dark:text-white">{user.total_kpi_points.toLocaleString()}</p>
+                      <p className="text-[8px] font-black text-slate-400 uppercase">Poin KPI</p>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
+            
+
           </motion.div>
         </div>
 
-        {/* Bottom Feature Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 bg-primary-600 rounded-[3rem] p-8 text-white relative overflow-hidden group">
-            <div className="relative z-10 h-full flex flex-col">
-              <div className="bg-white/20 backdrop-blur-md rounded-2xl p-3 w-fit mb-8">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <h4 className="text-2xl font-black mb-4 leading-tight">Sinkronisasi Otomatis</h4>
-              <p className="text-primary-100/80 text-xs font-medium leading-relaxed mb-8 flex-1">
-                Sistem menarik data dari repository publik secara berkala untuk menjaga keakuratan metrik.
-              </p>
-              <div className="space-y-3">
-                <div className="flex justify-between items-end text-[10px] font-black uppercase tracking-widest text-primary-100">
-                  <span>Akurasi Data</span>
-                  <span>99.4%</span>
-                </div>
-                <div className="h-1.5 bg-black/20 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} whileInView={{ width: '99.4%' }} className="h-full bg-white"></motion.div>
-                </div>
-              </div>
-            </div>
-            <Sparkles className="absolute -right-8 -bottom-8 w-40 h-40 text-white/10" />
-          </div>
 
-          <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 p-8 lg:p-10 relative overflow-hidden">
-            <div className="flex flex-col md:flex-row gap-10 items-center">
-              <div className="grid grid-cols-2 gap-4 w-full md:w-1/2">
-                {[
-                  { label: 'Scholar', val: stats?.total_scholar || 0, icon: BookOpen, color: 'text-blue-500' },
-                  { label: 'Scopus', val: stats?.total_scopus || 0, icon: Sparkles, color: 'text-indigo-500' },
-                  { label: 'Riset', val: stats?.total_research || 0, icon: Zap, color: 'text-amber-500' },
-                  { label: 'Sinta', val: stats?.total_sinta || 0, icon: TrendingUp, color: 'text-emerald-500' }
-                ].map((item, i) => (
-                  <div key={i} className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
-                    <item.icon className={`w-5 h-5 ${item.color} mb-3`} />
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
-                    <h5 className="text-xl font-black text-slate-900 dark:text-white">{item.val.toLocaleString()}</h5>
-                  </div>
-                ))}
-              </div>
-              <div className="w-full md:w-1/2 space-y-6">
-                <div>
-                  <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Metrik Terpadu</h4>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">
-                    Visualisasi luaran akademik yang terintegrasi dari berbagai platform indeksasi global.
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2">
-                    {[1,2,3].map(i => <div key={i} className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 border-2 border-white dark:border-slate-900" />)}
-                  </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Update 24 Jam Terakhir</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
       </main>
 

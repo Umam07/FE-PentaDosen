@@ -53,9 +53,9 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { name: 'Beranda', href: '#hero' },
+                { name: 'Leaderboard', href: '#leaderboard' },
                 { name: 'Fitur', href: '#features' },
                 { name: 'Sistem Kerja', href: '#workflow' },
-                { name: 'Tentang Kami', href: '#about' },
               ].map((link) => (
                 <li key={link.name}>
                   <a

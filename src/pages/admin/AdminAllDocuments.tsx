@@ -262,7 +262,7 @@ export default function AdminAllDocuments() {
                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
                    Daftar {activeTab === 'publikasi' ? 'Publikasi' : activeTab === 'hki' ? 'HKI' : activeTab === 'buku' ? 'Buku' : 'Penelitian'}
                  </h3>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Fakultas'} • Arsip & Validasi</p>
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'Penelitian' : 'Fakultas'} • Arsip & Validasi</p>
               </div>
             </div>
 

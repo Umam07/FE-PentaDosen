@@ -4,7 +4,7 @@ import {
   FileText, CheckSquare, Users, 
   RefreshCw, FolderOpen, Beaker, Award, BookOpen, Book,
   ClipboardList, FileSignature, Activity,
-  ShieldCheck, PlusCircle
+  ShieldCheck, PlusCircle, ShieldAlert, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Sidebar from './Sidebar';
@@ -112,6 +112,19 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin fakultas'] },
     { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm'] },
     { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm', 'admin fakultas'] },
+    // === SYSTEM / CMS & HELP ===
+    { 
+      name: 'Panel CMS', 
+      path: '/admin/cms', 
+      icon: ShieldAlert, 
+      roles: ['super admin'] 
+    },
+    { 
+      name: 'Bantuan & FAQ', 
+      path: '/help', 
+      icon: HelpCircle, 
+      roles: ['dosen', 'admin lppm', 'admin fakultas', 'super admin', 'staf', 'reviewer'] 
+    },
   ];
 
   // Cari nama halaman aktif (termasuk children)

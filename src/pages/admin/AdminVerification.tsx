@@ -189,7 +189,7 @@ export default function AdminVerification() {
                   <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
                     Queue Verifikasi {activeTab === 'publikasi' ? 'Publikasi' : activeTab === 'hki' ? 'HKI' : activeTab === 'buku' ? 'Buku' : 'Penelitian'}
                   </h3>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'LPPM' : 'Fakultas'} • Pending Approval</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'Penelitian' : 'Fakultas'} • Pending Approval</p>
                </div>
              </div>
 

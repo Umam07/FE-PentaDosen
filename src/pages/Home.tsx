@@ -2,7 +2,6 @@ import Navbar from '../components/Home/Navbar';
 import Hero from '../components/Home/Hero';
 import Features from '../components/Home/Features';
 import Workflow from '../components/Home/Workflow';
-import AboutUs from '../components/Home/AboutUs';
 import Footer from '../components/Home/Footer';
 
 export default function Home() {
@@ -12,7 +11,6 @@ export default function Home() {
       <Hero />
       <Features />
       <Workflow />
-      <AboutUs />
       <Footer />
     </div>
   );

@@ -97,6 +97,30 @@ export default function CmsDashboard({ user }: { user: any }) {
 // ============================================================================
 // TAB 1: USER ACCESS MANAGEMENT
 // ============================================================================
+const FAKULTAS_PRODI_MAP: Record<string, string[]> = {
+  'Fakultas Kedokteran': ['Kedokteran'],
+  'Fakultas Kedokteran Gigi': ['Kedokteran Gigi'],
+  'Fakultas Teknologi Informasi': ['Teknik Informatika', 'Perpustakaan dan Sains Informasi'],
+  'Fakultas Ekonomi dan Bisnis': ['Manajemen', 'Akuntansi'],
+  'Fakultas Hukum': ['Ilmu Hukum'],
+  'Fakultas Psikologi': ['Psikologi']
+};
+
+const findNormalizedFakultas = (val: string) => {
+  if (!val) return '';
+  const key = Object.keys(FAKULTAS_PRODI_MAP).find(
+    k => k.toLowerCase() === val.toLowerCase()
+  );
+  return key || '';
+};
+
+const findNormalizedProdi = (fakultasKey: string, val: string) => {
+  if (!fakultasKey || !val) return '';
+  const list = FAKULTAS_PRODI_MAP[fakultasKey] || [];
+  const found = list.find(p => p.toLowerCase() === val.toLowerCase());
+  return found || '';
+};
+
 function UsersTab({ triggerMessage }: { triggerMessage: any }) {
   const [users, setUsers] = useState<any[]>([]);
   const [search, setSearch] = useState('');
@@ -142,8 +166,19 @@ function UsersTab({ triggerMessage }: { triggerMessage: any }) {
   const handleOpenEdit = (u: any) => {
     setEditingUser(u);
     setEditRole(u.role || 'dosen');
-    setEditFakultas(u.fakultas || '');
-    setEditProdi(u.program_studi || '');
+    const normFak = findNormalizedFakultas(u.fakultas || '');
+    setEditFakultas(normFak);
+    setEditProdi(findNormalizedProdi(normFak, u.program_studi || ''));
+  };
+
+  const handleFakultasChange = (fakKey: string) => {
+    setEditFakultas(fakKey);
+    const prodis = FAKULTAS_PRODI_MAP[fakKey] || [];
+    if (prodis.length > 0) {
+      setEditProdi(prodis[0]);
+    } else {
+      setEditProdi('');
+    }
   };
 
   const handleSaveUser = async () => {
@@ -203,7 +238,7 @@ function UsersTab({ triggerMessage }: { triggerMessage: any }) {
             <option value="">Semua Role</option>
             <option value="dosen">Dosen</option>
             <option value="staf">Staf</option>
-            <option value="admin lppm">Admin LPPM</option>
+            <option value="admin lppm">Admin Penelitian</option>
             <option value="admin fakultas">Admin Fakultas</option>
             <option value="reviewer">Reviewer</option>
             <option value="super admin">Super Admin</option>
@@ -255,7 +290,7 @@ function UsersTab({ triggerMessage }: { triggerMessage: any }) {
                       u.role === 'reviewer' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                       'bg-gray-50 text-gray-600 border-gray-100'
                     }`}>
-                      {u.role}
+                      {u.role === 'admin lppm' ? 'admin penelitian' : u.role}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -343,7 +378,7 @@ function UsersTab({ triggerMessage }: { triggerMessage: any }) {
                   >
                     <option value="dosen">Dosen</option>
                     <option value="staf">Staf</option>
-                    <option value="admin lppm">Admin LPPM</option>
+                    <option value="admin lppm">Admin Penelitian</option>
                     <option value="admin fakultas">Admin Fakultas</option>
                     <option value="reviewer">Reviewer</option>
                     <option value="super admin">Super Admin</option>
@@ -354,23 +389,30 @@ function UsersTab({ triggerMessage }: { triggerMessage: any }) {
                   <>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Fakultas</label>
-                      <input
-                        type="text"
+                      <select
                         value={editFakultas}
-                        onChange={(e) => setEditFakultas(e.target.value)}
-                        placeholder="Nama Fakultas (misal: Fakultas Teknologi Informasi)"
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
-                      />
+                        onChange={(e) => handleFakultasChange(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
+                      >
+                        <option value="">Pilih Fakultas</option>
+                        {Object.keys(FAKULTAS_PRODI_MAP).map(f => (
+                          <option key={f} value={f}>{f}</option>
+                        ))}
+                      </select>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Program Studi</label>
-                      <input
-                        type="text"
+                      <select
                         value={editProdi}
                         onChange={(e) => setEditProdi(e.target.value)}
-                        placeholder="Program Studi (misal: Teknik Informatika)"
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
-                      />
+                        disabled={!editFakultas}
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 disabled:opacity-50 cursor-pointer"
+                      >
+                        <option value="">Pilih Program Studi</option>
+                        {(FAKULTAS_PRODI_MAP[editFakultas] || []).map(p => (
+                          <option key={p} value={p}>{p}</option>
+                        ))}
+                      </select>
                     </div>
                   </>
                 )}

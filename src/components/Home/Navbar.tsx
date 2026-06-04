@@ -38,9 +38,9 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Beranda', href: '#hero' },
+    { name: 'Leaderboard', href: '#leaderboard' },
     { name: 'Fitur', href: '#features' },
     { name: 'Sistem Kerja', href: '#workflow' },
-    { name: 'Tentang Kami', href: '#about' },
   ];
 
   const handleScrollTo = (e: MouseEvent<HTMLAnchorElement>, href: string) => {

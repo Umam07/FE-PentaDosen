@@ -50,7 +50,7 @@ function FeatureCard({ className = "", lightColor, children, delay = 0 }: Featur
 
 export default function Features() {
   return (
-    <section id="features" className="py-24 md:py-36 bg-[#F8FAFC] dark:bg-slate-950 relative overflow-hidden">
+    <section id="features" className="py-24 md:py-36 bg-white dark:bg-slate-950 relative overflow-hidden">
       {/* Dynamic Background Blobs */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.div

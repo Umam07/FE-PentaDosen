@@ -161,7 +161,7 @@ export default function Topbar({
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
               <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
-                {user?.role === 'super admin' ? 'Super Admin' : user?.role === 'admin lppm' ? 'Admin LPPM' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
+                {user?.role === 'super admin' ? 'Super Admin' : user?.role === 'admin lppm' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
               </p>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -179,33 +179,7 @@ export default function Topbar({
                 >
 
 
-                  {user?.role === 'super admin' && (
-                    <button 
-                      onClick={() => {
-                        navigate('/admin/cms');
-                        setIsDropdownOpen(false);
-                      }} 
-                      className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-gray-700 dark:text-zinc-300 hover:bg-primary-50 dark:hover:bg-zinc-800 hover:text-primary-600 w-full text-left transition-colors uppercase tracking-widest"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
-                        <ShieldAlert className="w-4 h-4 text-primary-500" />
-                      </div>
-                      Panel CMS
-                    </button>
-                  )}
 
-                  <button 
-                    onClick={() => {
-                      navigate('/help');
-                      setIsDropdownOpen(false);
-                    }} 
-                    className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-gray-700 dark:text-zinc-300 hover:bg-primary-50 dark:hover:bg-zinc-800 hover:text-primary-600 w-full text-left transition-colors uppercase tracking-widest"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
-                      <HelpCircle className="w-4 h-4 text-primary-500" />
-                    </div>
-                    Bantuan & FAQ
-                  </button>
 
                   <button 
                     onClick={() => {
