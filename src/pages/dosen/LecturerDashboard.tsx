@@ -24,16 +24,35 @@ export default function LecturerDashboard({ user }: { user: any }) {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const [docsRes, profileRes, annRes] = await Promise.all([
+      const [docsRes, profileRes, annRes, penRes] = await Promise.all([
         fetch(`/api/users/${user.id}/documents`),
         fetch(`/api/users/${user.id}`),
-        fetch('/api/dosen/announcements')
+        fetch('/api/dosen/announcements'),
+        fetch(`/api/penelitian?user_id=${user.id}`)
       ]);
+
+      let combinedDocs: any[] = [];
 
       if (docsRes.ok) {
         const data = await docsRes.json();
-        setInternalDocuments(data.documents || []);
+        combinedDocs = [...(data.documents || [])];
       }
+
+      if (penRes.ok) {
+        const data = await penRes.json();
+        const penDocs = (data.penelitian || []).map((p: any) => ({
+          ...p,
+          id_dokumen: 'RESEARCH-' + p.id,
+          category: 'Penelitian',
+          title: p.judul_penelitian,
+          published_at: null,
+          tahun_pelaksanaan: p.tahun,
+          is_penelitian: true,
+        }));
+        combinedDocs = [...combinedDocs, ...penDocs];
+      }
+
+      setInternalDocuments(combinedDocs);
 
       if (profileRes.ok) {
         const data = await profileRes.json();
@@ -111,7 +130,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
   const grandTotal = parseFloat((apiPoints.total + internalPoints).toFixed(1));
 
   const filteredDocs = useMemo(() => {
-    let base = approvedDocs;
+    let base = internalDocumentsOnly;
     if (isKPIFilter) {
       base = base.filter(d => {
         const year = d.published_at ? new Date(d.published_at).getFullYear() : (Number(d.tahun_pelaksanaan) || 0);
@@ -120,7 +139,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
     }
     if (categoryFilter === 'all') return base;
     return base.filter(doc => doc.category?.toLowerCase().includes(categoryFilter.toLowerCase()));
-  }, [approvedDocs, categoryFilter, isKPIFilter]);
+  }, [internalDocumentsOnly, categoryFilter, isKPIFilter]);
 
   const stats = useMemo(() => {
     const internal3Y = approvedDocs
@@ -234,6 +253,52 @@ export default function LecturerDashboard({ user }: { user: any }) {
     hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
     exit: { opacity: 0, y: -15, transition: { duration: 0.2, ease: "easeIn" } }
+  };
+
+  const getCategoryTheme = (category: string) => {
+    const cat = (category || '').toLowerCase();
+    if (cat.includes('hki')) return {
+      bg: 'bg-indigo-50/50 dark:bg-indigo-900/10',
+      border: 'border-indigo-100/50 dark:border-indigo-800/30 hover:border-indigo-500/50',
+      badgeBg: 'bg-indigo-500/10',
+      badgeText: 'text-indigo-600 dark:text-indigo-400',
+      iconBg: 'group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/20'
+    };
+    if (cat.includes('buku')) return {
+      bg: 'bg-amber-50/50 dark:bg-amber-900/10',
+      border: 'border-amber-100/50 dark:border-amber-800/30 hover:border-amber-500/50',
+      badgeBg: 'bg-amber-500/10',
+      badgeText: 'text-amber-600 dark:text-amber-400',
+      iconBg: 'group-hover:bg-amber-50 dark:group-hover:bg-amber-900/20'
+    };
+    if (cat.includes('jurnal internasional')) return {
+      bg: 'bg-blue-50/50 dark:bg-blue-900/10',
+      border: 'border-blue-100/50 dark:border-blue-800/30 hover:border-blue-500/50',
+      badgeBg: 'bg-blue-500/10',
+      badgeText: 'text-blue-600 dark:text-blue-400',
+      iconBg: 'group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20'
+    };
+    if (cat.includes('jurnal nasional')) return {
+      bg: 'bg-cyan-50/50 dark:bg-cyan-900/10',
+      border: 'border-cyan-100/50 dark:border-cyan-800/30 hover:border-cyan-500/50',
+      badgeBg: 'bg-cyan-500/10',
+      badgeText: 'text-cyan-600 dark:text-cyan-400',
+      iconBg: 'group-hover:bg-cyan-50 dark:group-hover:bg-cyan-900/20'
+    };
+    if (cat.includes('penelitian')) return {
+      bg: 'bg-emerald-50/50 dark:bg-emerald-900/10',
+      border: 'border-emerald-100/50 dark:border-emerald-800/30 hover:border-emerald-500/50',
+      badgeBg: 'bg-emerald-500/10',
+      badgeText: 'text-emerald-600 dark:text-emerald-400',
+      iconBg: 'group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20'
+    };
+    return {
+      bg: 'bg-slate-50 dark:bg-slate-800/30',
+      border: 'border-slate-100 dark:border-slate-800 hover:border-primary-500/30',
+      badgeBg: 'bg-primary-500/10',
+      badgeText: 'text-primary-600 dark:text-primary-400',
+      iconBg: 'group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20'
+    };
   };
 
   const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: any) => {
@@ -532,21 +597,23 @@ export default function LecturerDashboard({ user }: { user: any }) {
             ) : filteredDocs.length > 0 ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-4">
-                  {filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc, idx) => (
+                  {filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc, idx) => {
+                    const theme = getCategoryTheme(doc.category);
+                    return (
                     <motion.div
                       key={idx}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="group flex items-center gap-6 p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-transparent hover:border-primary-500/30 transition-all"
+                      className={`group flex items-center gap-6 p-6 rounded-3xl border transition-all ${theme.bg} ${theme.border}`}
                     >
-                      <div className="w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm group-hover:bg-primary-50 transition-colors">
+                      <div className={`w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm transition-colors ${theme.iconBg}`}>
                         <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{Number(doc.awarded_points) || 0}</span>
                         <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">PTS</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="px-2 py-0.5 bg-primary-500/10 text-primary-600 rounded-md text-[7px] font-black uppercase tracking-widest">{doc.category}</span>
+                          <span className={`px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-widest ${theme.badgeBg} ${theme.badgeText}`}>{doc.category}</span>
                           <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" /> {doc.published_at ? new Date(doc.published_at).getFullYear() : (doc.tahun_pelaksanaan || '-')}
                           </span>
@@ -558,7 +625,8 @@ export default function LecturerDashboard({ user }: { user: any }) {
                          <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{doc.id_dokumen || 'INTERNAL-' + doc.id}</span>
                       </div>
                     </motion.div>
-                  ))}
+                    );
+                  })}
                 </div>
                 <Pagination 
                   totalItems={filteredDocs.length} 

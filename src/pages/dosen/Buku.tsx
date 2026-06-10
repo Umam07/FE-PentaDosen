@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Upload, BookOpen, CheckCircle, XCircle, Clock, CalendarDays, ChevronLeft, ChevronRight, Filter, ChevronDown, AlertCircle, Download, FileSpreadsheet, FileText, Link, Zap, Shield, Award, Archive, Info, Eye, PieChart as PieChartIcon, Sparkles } from 'lucide-react';
+import { Upload, BookOpen, CheckCircle, XCircle, Clock, CalendarDays, ChevronLeft, ChevronRight, Filter, ChevronDown, AlertCircle, Download, FileSpreadsheet, FileText, Link, Zap, Shield, Award, Archive, Info, Eye, PieChart as PieChartIcon, Sparkles, Pencil, Trash2, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ResponsiveContainer, PieChart as ReChartsPie, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import * as XLSX from 'xlsx';
@@ -49,6 +49,20 @@ export default function Buku({ user }: { user: any }) {
   const [isLinkingModalOpen, setIsLinkingModalOpen] = useState(false);
   const [docToLink, setDocToLink] = useState<any>(null);
   const [isLinkingLoading, setIsLinkingLoading] = useState(false);
+
+  // === Edit & Delete States ===
+  const [editDoc, setEditDoc] = useState<any>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editCategory, setEditCategory] = useState('Buku Referensi');
+  const [editTahun, setEditTahun] = useState('');
+  const [editDocType, setEditDocType] = useState<'kpi' | 'arsip'>('kpi');
+  const [isEditYearDropdownOpen, setIsEditYearDropdownOpen] = useState(false);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+
+  const [deleteDoc, setDeleteDoc] = useState<any>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const currentYear = new Date().getFullYear();
 
@@ -158,6 +172,57 @@ export default function Buku({ user }: { user: any }) {
       doc.title.toLowerCase().trim() === title.toLowerCase().trim() && doc.is_kpi_counted
     );
   }, [title, documents]);
+
+  const isDocLocked = (doc: any) =>
+    doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
+
+  const openEditModal = (doc: any) => {
+    setEditDoc(doc);
+    setEditTitle(doc.title || '');
+    setEditCategory(doc.category || 'Buku Referensi');
+    setEditTahun(doc.published_at ? String(new Date(doc.published_at).getFullYear()) : new Date().getFullYear().toString());
+    setEditDocType(doc.is_kpi_counted ? 'kpi' : 'arsip');
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editDoc) return;
+    try {
+      setIsEditLoading(true);
+      const res = await fetch(`/api/documents/${editDoc.id}`, {
+        method: 'PUT',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: editTitle, category: editCategory, published_at: `${editTahun}-01-01`, doc_type: editDocType }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(data.message || 'Buku berhasil diperbarui!'); setMessageType('success');
+        setIsEditModalOpen(false);
+        setIsTableLoading(true); await fetchDocuments(); setIsTableLoading(false);
+      } else { setMessage(data.message || 'Gagal memperbarui.'); setMessageType('error'); }
+      setTimeout(() => setMessage(''), 4500);
+    } catch { setMessage('Terjadi kesalahan.'); setMessageType('error'); setTimeout(() => setMessage(''), 4500); }
+    finally { setIsEditLoading(false); }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteDoc) return;
+    try {
+      setIsDeleteLoading(true);
+      const res = await fetch(`/api/documents/${deleteDoc.id}`, {
+        method: 'DELETE', headers: { 'Accept': 'application/json' },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(data.message || 'Buku berhasil dihapus!'); setMessageType('success');
+        setIsDeleteModalOpen(false); setDeleteDoc(null);
+        setIsTableLoading(true); await fetchDocuments(); setCurrentPage(1); setIsTableLoading(false);
+      } else { setMessage(data.message || 'Gagal menghapus.'); setMessageType('error'); }
+      setTimeout(() => setMessage(''), 4500);
+    } catch { setMessage('Terjadi kesalahan.'); setMessageType('error'); setTimeout(() => setMessage(''), 4500); }
+    finally { setIsDeleteLoading(false); }
+  };
 
   const handleDownloadTemplate = async () => {
     try {
@@ -544,6 +609,7 @@ export default function Buku({ user }: { user: any }) {
                     <th className="px-4 lg:px-8 py-4 text-right text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin</th>
                     <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-right sm:text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Penelitian Asal</th>
                     <th className="px-4 py-4 w-12 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Detail</th>
+                    <th className="px-4 py-4 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
@@ -689,6 +755,26 @@ export default function Buku({ user }: { user: any }) {
                             >
                               <Info className="w-4 h-4" />
                             </button>
+                          </td>
+
+                          {/* Aksi */}
+                          <td className="px-4 py-4 text-center align-middle">
+                            {isDocLocked(doc) ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 text-[9px] font-black uppercase tracking-widest cursor-not-allowed" title="Dokumen sudah diverifikasi — tidak dapat diubah">
+                                <Lock className="w-3 h-3" /> Terkunci
+                              </span>
+                            ) : (
+                              <div className="flex items-center justify-center gap-1">
+                                <button type="button" onClick={() => openEditModal(doc)}
+                                  className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/30 text-gray-400 hover:text-blue-600 transition-all" title="Edit Buku">
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button type="button" onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
+                                  className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-gray-400 hover:text-red-600 transition-all" title="Hapus Buku">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       );
@@ -1202,6 +1288,109 @@ export default function Buku({ user }: { user: any }) {
         title={previewDoc?.title}
         category={previewDoc?.category}
       />
+
+      {/* ===== EDIT MODAL ===== */}
+      <AnimatePresence>
+        {isEditModalOpen && editDoc && (
+          <div className="fixed inset-0 z-[8500] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-gray-950/60 backdrop-blur-md" onClick={() => setIsEditModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]">
+              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 shrink-0">
+                <div>
+                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
+                    <Pencil className="w-5 h-5 text-blue-500" /> Edit Buku
+                  </h3>
+                  <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Perbarui data buku #{editDoc.id}</p>
+                </div>
+                <button onClick={() => setIsEditModalOpen(false)} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 transition-colors"><XCircle className="w-6 h-6" /></button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
+                <form id="edit-buku-form" onSubmit={handleUpdate} className="space-y-5">
+                  <div className="grid grid-cols-2 gap-3">
+                    {(['kpi', 'arsip'] as const).map(t => (
+                      <button key={t} type="button" onClick={() => setEditDocType(t)}
+                        className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${editDocType === t ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20' : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200'}`}>
+                        {t === 'kpi' ? <Sparkles className="w-4 h-4 text-emerald-500" /> : <Archive className="w-4 h-4 text-gray-400" />}
+                        <div className="text-left"><p className="text-[11px] font-black uppercase tracking-tight">{t === 'kpi' ? 'KPI' : 'Arsip'}</p><p className="text-[9px] text-gray-400">{t === 'kpi' ? 'Masuk Poin KPI' : '0 Pts'}</p></div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Judul Buku</label>
+                    <input type="text" required value={editTitle} onChange={e => setEditTitle(e.target.value)}
+                      className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori Buku</label>
+                    <select value={editCategory} onChange={e => setEditCategory(e.target.value)} required
+                      className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer">
+                      {BUKU_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-2 relative">
+                    <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center"><CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />Tahun Terbit</label>
+                    <button type="button" onClick={() => setIsEditYearDropdownOpen(!isEditYearDropdownOpen)}
+                      className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-left flex justify-between items-center text-gray-900 dark:text-zinc-100">
+                      <span>{editTahun}</span><ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isEditYearDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                      {isEditYearDropdownOpen && (
+                        <><div className="fixed inset-0 z-20" onClick={() => setIsEditYearDropdownOpen(false)} />
+                          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                            className="absolute z-30 w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
+                            <div className="max-h-48 overflow-y-auto p-2.5 grid grid-cols-3 gap-1.5">
+                              {Array.from({ length: 24 }, (_, i) => (
+                                (() => {
+                                  const y = (new Date().getFullYear() - 10 + i).toString();
+                                  return (
+                                    <button key={y} type="button" onClick={() => { setEditTahun(y); setIsEditYearDropdownOpen(false); }}
+                                      className={`py-1.5 rounded-lg text-xs font-bold transition-all border ${editTahun === y ? 'bg-primary-600 border-primary-600 text-white' : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 hover:border-primary-200'}`}>{y}</button>
+                                  );
+                                })()
+                              ))}
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </form>
+              </div>
+              <div className="px-6 py-4 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-800/30 flex items-center justify-end gap-3 shrink-0">
+                <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-5 py-2.5 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all">Batal</button>
+                <button type="submit" form="edit-buku-form" disabled={isEditLoading} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-200 dark:shadow-blue-900/20 transition-all active:scale-95 disabled:opacity-50">{isEditLoading ? 'Menyimpan...' : 'Simpan Perubahan'}</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ===== DELETE MODAL ===== */}
+      <AnimatePresence>
+        {isDeleteModalOpen && deleteDoc && (
+          <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-gray-950/70 backdrop-blur-md" onClick={() => setIsDeleteModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 p-8">
+              <div className="flex flex-col items-center text-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center"><Trash2 className="w-8 h-8 text-red-500" /></div>
+                <div><h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Hapus Buku?</h3><p className="text-xs font-bold text-gray-400 dark:text-zinc-500 mt-1">Tindakan ini tidak dapat dibatalkan.</p></div>
+                <div className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-100 dark:border-zinc-700">
+                  <p className="text-xs font-black text-gray-700 dark:text-zinc-300 uppercase tracking-tight">{deleteDoc.title}</p>
+                  <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 mt-1 uppercase tracking-widest">{deleteDoc.category}</p>
+                </div>
+                <div className="flex gap-3 w-full mt-2">
+                  <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 px-4 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all">Batal</button>
+                  <button onClick={handleDelete} disabled={isDeleteLoading} className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-red-900/30 transition-all active:scale-95 disabled:opacity-60">{isDeleteLoading ? 'Menghapus...' : 'Ya, Hapus'}</button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
