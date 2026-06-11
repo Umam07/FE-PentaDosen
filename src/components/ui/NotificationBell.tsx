@@ -152,11 +152,20 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
 
   // ── Dropdown position (relative to bell button) ───────────────────────────
   const [dropPos, setDropPos] = useState({ top: 0, right: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
-    if (isOpen && bellRef.current) {
-      const rect = bellRef.current.getBoundingClientRect();
-      setDropPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
-    }
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+      if (bellRef.current) {
+        const rect = bellRef.current.getBoundingClientRect();
+        setDropPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isOpen]);
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -203,8 +212,14 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.97 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              style={{ position: 'fixed', top: dropPos.top, right: dropPos.right, zIndex: 9998 }}
-              className="w-[360px] sm:w-[400px] bg-white dark:bg-zinc-900 rounded-[1.75rem] shadow-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden flex flex-col"
+              style={{
+                position: 'fixed',
+                top: dropPos.top,
+                left: isMobile ? '16px' : 'auto',
+                right: isMobile ? '16px' : dropPos.right,
+                zIndex: 9998
+              }}
+              className="w-auto sm:w-[400px] bg-white dark:bg-zinc-900 rounded-[1.75rem] shadow-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-zinc-800">
@@ -262,7 +277,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               </div>
 
               {/* List */}
-              <div className="overflow-y-auto max-h-[420px] custom-scrollbar">
+              <div className="overflow-y-auto max-h-[min(420px,calc(100vh-150px))] custom-scrollbar">
                 {notifications.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
                     <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-zinc-800 flex items-center justify-center mb-4">
@@ -322,7 +337,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                           {/* Delete button (visible on hover) */}
                           <button
                             onClick={(e) => deleteNotif(notif.id, e)}
-                            className="absolute top-3 right-3 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+                            className="absolute top-3 right-3 p-1 rounded-lg opacity-100 sm:opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
                           >
                             <X className="w-3 h-3" />
                           </button>

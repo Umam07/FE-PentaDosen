@@ -108,7 +108,7 @@ export default function Topbar({
                 <Menu className="w-6 h-6" />
              </button>
            )}
-           <div>
+           <div className="hidden sm:block">
               <h2 className="text-base lg:text-lg font-black text-gray-900 dark:text-zinc-100 tracking-tight flex items-center gap-2">
                 {currentPageName || 'PentaV2'}
               </h2>
@@ -164,7 +164,7 @@ export default function Topbar({
                 {user?.role === 'super admin' ? 'Super Admin' : user?.role === 'admin lppm' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
               </p>
             </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block`} />
           </button>
 
           {/* Dropdown Menu */}

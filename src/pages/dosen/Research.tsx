@@ -14,6 +14,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 import { DocumentDetailDrawer } from '../../components/ui/document-detail-drawer';
+import { BaseFormModal } from '../../components/ui/BaseFormModal';
 
 export default function Research({ user }: { user: any }) {
   const location = useLocation();
@@ -924,38 +925,17 @@ export default function Research({ user }: { user: any }) {
       />
 
   {/* ===== EDIT MODAL ===== */}
-  <AnimatePresence>
-    {isEditModalOpen && editDoc && (
-      <div className="fixed inset-0 z-[8500] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-gray-950/60 backdrop-blur-md"
-          onClick={() => setIsEditModalOpen(false)}
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-2xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 shrink-0">
-            <div>
-              <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-                <Pencil className="w-5 h-5 text-blue-500" />
-                Edit Penelitian
-              </h3>
-              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Perbarui data penelitian #RES-{editDoc.id.toString().padStart(4, '0')}</p>
-            </div>
-            <button onClick={() => setIsEditModalOpen(false)} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 transition-colors">
-              <XCircle className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* Body */}
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
-            <form id="edit-research-form" onSubmit={handleUpdate} className="space-y-5">
+  <BaseFormModal
+    isOpen={isEditModalOpen && !!editDoc}
+    onClose={() => setIsEditModalOpen(false)}
+    title="Edit Penelitian"
+    subtitle={editDoc ? `Perbarui data penelitian #RES-${editDoc.id.toString().padStart(4, '0')}` : undefined}
+    icon={Pencil}
+    iconColorClass="text-blue-500"
+    maxWidthClass="max-w-2xl"
+  >
+    {editDoc && (
+      <form id="edit-research-form" onSubmit={handleUpdate} className="space-y-5">
               {/* Program */}
               <div className="space-y-2">
                 <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori Program</label>
@@ -1066,24 +1046,19 @@ export default function Research({ user }: { user: any }) {
                   </AnimatePresence>
                 </div>
               </div>
-            </form>
-          </div>
-
-          {/* Footer */}
-          <div className="px-6 py-4 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-800/30 flex items-center justify-end gap-3 shrink-0">
-            <button type="button" onClick={() => setIsEditModalOpen(false)}
-              className="px-5 py-2.5 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all">
-              Batal
-            </button>
-            <button type="submit" form="edit-research-form" disabled={isEditLoading}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-200 dark:shadow-blue-900/20 transition-all active:scale-95 disabled:opacity-50">
-              {isEditLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
-            </button>
-          </div>
-        </motion.div>
-      </div>
+            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-end gap-3">
+              <button type="button" onClick={() => setIsEditModalOpen(false)}
+                className="px-5 py-2.5 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all">
+                Batal
+              </button>
+              <button type="submit" disabled={isEditLoading}
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-200 dark:shadow-blue-900/20 transition-all active:scale-95 disabled:opacity-50">
+                {isEditLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </button>
+            </div>
+          </form>
     )}
-  </AnimatePresence>
+  </BaseFormModal>
 
   {/* ===== DELETE CONFIRMATION MODAL ===== */}
   <AnimatePresence>
@@ -1130,45 +1105,15 @@ export default function Research({ user }: { user: any }) {
   </AnimatePresence>
 
   {/* Upload Penelitian Modal Pop-up */}
-  <AnimatePresence>
-    {isUploadModalOpen && (
-      <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-gray-950/60 backdrop-blur-md"
-          onClick={() => setIsUploadModalOpen(false)}
-        />
-
-        {/* Modal Container */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-6xl bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh]"
-        >
-          {/* Modal Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 shrink-0">
-            <div>
-              <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-                <Upload className="w-5 h-5 text-primary-500" />
-                Unggah Penelitian Baru
-              </h3>
-              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Registrasikan hasil penelitian hibah eksternal, internal, atau luar negeri</p>
-            </div>
-            <button
-              onClick={() => setIsUploadModalOpen(false)}
-              className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors"
-            >
-              <XCircle className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* Modal Body */}
-          <div className="flex-1 overflow-y-auto p-6 lg:p-8 scrollbar-hide">
+  <BaseFormModal
+    isOpen={isUploadModalOpen}
+    onClose={() => setIsUploadModalOpen(false)}
+    title="Unggah Penelitian Baru"
+    subtitle="Registrasikan hasil penelitian hibah eksternal, internal, atau luar negeri"
+    icon={Upload}
+    iconColorClass="text-primary-500"
+    maxWidthClass="max-w-6xl"
+  >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
               {/* Left Side: Upload Form */}
               <div className="lg:col-span-2">
@@ -1369,9 +1314,9 @@ export default function Research({ user }: { user: any }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
                     {scoringPreview ? (
-                      <div className="px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400">
+                      <div className="px-4 py-2.5 rounded-xl border-2 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-full sm:w-auto">
                         <Upload className="h-5 w-5 shrink-0 text-emerald-600" />
                         <div className="min-w-0">
                           <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Estimasi Poin</p>
@@ -1382,18 +1327,18 @@ export default function Research({ user }: { user: any }) {
                       <div />
                     )}
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-end gap-3 w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => setIsUploadModalOpen(false)}
-                        className="px-5 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                        className="px-5 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex-1 sm:flex-none"
                       >
                         Batal
                       </button>
                       <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50"
+                        className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50 flex-1 sm:flex-none"
                       >
                         {loading ? 'Mengunggah...' : 'Unggah Penelitian'}
                       </button>
@@ -1441,11 +1386,7 @@ export default function Research({ user }: { user: any }) {
                 </div>
               </div>
             </div>
-          </div>
-        </motion.div>
-      </div>
-    )}
-  </AnimatePresence>
+          </BaseFormModal>
 
   {/* Floating Toast Notification */}
   <div className="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
