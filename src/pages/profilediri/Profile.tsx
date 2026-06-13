@@ -2,14 +2,15 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { 
-  User, GraduationCap, Settings, TrendingUp, Building2,
-  Fingerprint, ShieldCheck, Zap, Award, BookMarked, Globe, FileText,
+  User, GraduationCap, Settings,
+  Fingerprint, ShieldCheck, Award, Globe, FileText,
   AlertCircle, ArrowRight, CheckCircle, XCircle
 } from 'lucide-react';
 
 // Import sub-components
 import DetailInformasi from './DetailInformasi';
 import Konfigurasi from './Konfigurasi';
+import { calculateScholarPoints } from '../dosen/dashboard/pointsCalculator';
 
 export default function Profile({ user, setUser }: { user: any; setUser: any }) {
   const location = useLocation();
@@ -112,9 +113,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     fetchProfileData();
   }, [user?.id]);
 
-  const currentYear = new Date().getFullYear();
-  const threeYearsAgo = currentYear - 2;
-
   const stats = useMemo(() => {
     if (!user) return null;
 
@@ -124,10 +122,56 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       (publications || []).filter(sd => (scopusPublications || []).some(s => normalizeT(s.title) === normalizeT(sd.title)))
         .map(d => normalizeT(d.title))
     );
-    const extCross    = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
-    const extScopus   = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+
+    const calculateScopusSintaPoints = (pub: any) => {
+      if (pub.awarded_points !== undefined && pub.awarded_points !== null) {
+        return Number(pub.awarded_points);
+      }
+
+      const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' ? 'Member Author' : (pub.author_role || 'Member Author');
+      const totalAuthors = Number(pub.total_authors) || 1;
+      const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
+      const q = pub.quartile || 'Q4';
+      
+      const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
+      
+      let basePoints = 0;
+      if (isArticle) {
+        if (role === 'Single Author') {
+          basePoints = 40;
+        } else if (isHyper) {
+          basePoints = role === 'First Author' ? 24 : 1;
+        } else {
+          const quartile = ['Q1', 'Q2', 'Q3', 'Q4'].includes(q) ? q : 'Q4';
+          if (role === 'First Author') {
+            if (quartile === 'Q1') basePoints = 24;
+            else if (quartile === 'Q2') basePoints = 22;
+            else if (quartile === 'Q3') basePoints = 20;
+            else basePoints = 18;
+          } else {
+            if (quartile === 'Q1') basePoints = 16;
+            else if (quartile === 'Q2') basePoints = 14;
+            else if (quartile === 'Q3') basePoints = 12;
+            else basePoints = 10;
+          }
+        }
+      } else {
+        if (role === 'Single Author') basePoints = 30;
+        else if (role === 'First Author') basePoints = 18;
+        else basePoints = 12;
+      }
+      
+      const citations = Number(pub.citations) || 0;
+      const citationPoints = totalAuthors > 0 ? (citations / totalAuthors) : 0;
+      const citationBonus = citations > 0 ? 5 : 0;
+      
+      return basePoints + citationPoints + citationBonus;
+    };
+
+    const extCross    = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const extScopus   = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
     const extScholar  = parseFloat(
-      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
+      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1)
     );
     const extTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
 
@@ -186,7 +230,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)), 
       rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0)) 
     };
-  }, [scholarData]);
+  }, [publications]);
 
   const scopusChartData = useMemo(() => {
     if (!scopusPublications || scopusPublications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
@@ -214,7 +258,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)), 
       rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0)) 
     };
-  }, [scopusData]);
+  }, [scopusPublications]);
 
   const handleCheckId = async () => {
     if (!scholarId) {
@@ -462,7 +506,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   };
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 py-8 sm:px-6 lg:px-10 min-h-screen">
+    <div className="mx-auto min-h-screen max-w-[1600px] px-4 py-6 sm:px-6 lg:px-10">
       <AnimatePresence>
         {showWarningModal && (
           <motion.div
@@ -475,21 +519,18 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-8 md:p-12 shadow-2xl max-w-lg w-full text-center relative overflow-hidden"
+              className="w-full max-w-lg rounded-lg border border-slate-200 bg-white p-6 text-center shadow-2xl dark:border-slate-800 dark:bg-slate-900 md:p-8"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full -ml-16 -mb-16 blur-3xl"></div>
-
-              <div className="relative z-10">
-                <div className="w-20 h-20 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
-                  <AlertCircle className="w-10 h-10 text-amber-500" />
+              <div>
+                <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-300">
+                  <AlertCircle className="h-7 w-7" />
                 </div>
                 
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-4">
+                <h3 className="mb-3 text-2xl font-black tracking-tight text-slate-950 dark:text-white">
                   ID Publikasi Diperlukan
                 </h3>
                 
-                <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed mb-10">
+                <p className="mb-8 text-sm font-medium leading-6 text-slate-500 dark:text-slate-400">
                   Untuk sinkronisasi poin performa Anda secara otomatis, Anda <span className="text-primary-600 dark:text-primary-400">diwajibkan</span> mengisi ID Google Scholar dan Scopus pada tab <span className="text-slate-900 dark:text-white">Konfigurasi ID</span>.
                 </p>
 
@@ -499,7 +540,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                       setShowWarningModal(false);
                       setActiveTab('integrasi');
                     }}
-                    className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 text-sm font-black text-white shadow-lg shadow-primary-600/20 transition-colors hover:bg-primary-700"
                   >
                     Lengkapi ID Sekarang
                     <ArrowRight className="w-4 h-4" />
@@ -509,7 +550,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                       warningDismissedRef.current = true;
                       setShowWarningModal(false);
                     }}
-                    className="w-full py-4 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all"
+                    className="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm font-black text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                   >
                     Nanti Saja
                   </button>
@@ -520,50 +561,46 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         )}
       </AnimatePresence>
 
-      {/* New Professional Dashboard Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         
         {/* LEFT COLUMN: Sidebar (Profile Summary & Navigation) */}
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          className="lg:col-span-3 space-y-6 lg:sticky lg:top-8"
+          className="space-y-4 lg:sticky lg:top-8 lg:col-span-3"
         >
-          {/* Compact Profile Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm overflow-hidden group">
-            <div className="h-24 bg-gradient-to-r from-primary-600 to-emerald-600 relative overflow-hidden">
-               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '12px 12px' }}></div>
-            </div>
-            <div className="px-6 pb-8 -mt-12 relative z-10 text-center">
-              <div className="inline-block relative">
-                <div className="w-24 h-24 rounded-3xl bg-white dark:bg-slate-800 p-1 shadow-xl">
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div className="h-20 bg-slate-950 dark:bg-slate-800" />
+            <div className="relative z-10 px-5 pb-6 text-center -mt-10">
+              <div className="relative inline-block">
+                <div className="h-20 w-20 rounded-lg bg-white p-1 shadow-lg dark:bg-slate-900">
                   {user?.avatar ? (
                     <img 
                       src={user.avatar} 
                       alt={user.name} 
-                      className="w-full h-full object-cover rounded-2xl border-2 border-white dark:border-slate-900"
+                      className="h-full w-full rounded-md object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center text-white text-3xl font-black border-2 border-white dark:border-slate-900">
+                    <div className="flex h-full w-full items-center justify-center rounded-md bg-primary-600 text-2xl font-black text-white">
                       {user?.name?.charAt(0) || 'U'}
                     </div>
                   )}
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-white dark:bg-slate-900 rounded-lg shadow-lg flex items-center justify-center border border-slate-100 dark:border-slate-800">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                <div className="absolute -right-1 -bottom-1 flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                  <ShieldCheck className="h-4 w-4 text-emerald-500" />
                 </div>
               </div>
               
               <div className="mt-4 space-y-1">
-                <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase leading-tight">
+                <h2 className="text-lg font-black leading-tight tracking-tight text-slate-950 dark:text-white">
                   {user?.name || 'User'}
                 </h2>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user?.program_studi || 'Lecturer'}</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{user?.program_studi || 'Lecturer'}</p>
                 
                 {user?.penta_id && (
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20 mt-3 mx-auto">
-                    <Fingerprint className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-black tracking-[0.1em]">{user.penta_id}</span>
+                  <div className="mx-auto mt-3 inline-flex items-center gap-1.5 rounded-md border border-primary-200 bg-primary-50 px-3 py-1.5 text-primary-700 dark:border-primary-900/40 dark:bg-primary-950/20 dark:text-primary-300">
+                    <Fingerprint className="h-3.5 w-3.5" />
+                    <span className="text-xs font-black">{user.penta_id}</span>
                   </div>
                 )}
               </div>
@@ -571,8 +608,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             </div>
           </div>
 
-          {/* Vertical Menu */}
-          <nav className="bg-white dark:bg-slate-900 p-3 rounded-[2rem] border border-slate-200/60 dark:border-slate-800 shadow-sm space-y-1">
+          <nav className="space-y-1 rounded-lg border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             {[
               { id: 'info', label: 'Detail Informasi', icon: User, color: 'text-blue-500' },
               ...(user?.role === 'dosen' ? [{ id: 'integrasi', label: 'Konfigurasi ID', icon: Settings, color: 'text-indigo-500' }] : []),
@@ -580,13 +616,13 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
               <button 
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${
+                className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-4 text-sm font-black transition-all ${
                   activeTab === tab.id 
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg shadow-slate-200 dark:shadow-none translate-x-1' 
-                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:translate-x-1'
+                    ? 'bg-slate-950 text-white shadow-sm dark:bg-white dark:text-slate-950' 
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
                 }`}
               >
-                <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? '' : tab.color}`} />
+                <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? '' : tab.color}`} />
                 {tab.label}
               </button>
             ))}
@@ -594,42 +630,42 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
 
         </motion.div>
 
-        {/* RIGHT COLUMN: Content Area */}
-        <div className="lg:col-span-9 space-y-8">
+        <div className="space-y-6 lg:col-span-9">
           
-          {/* Refined Header Area */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col md:flex-row md:items-center justify-between gap-6"
+            className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6"
           >
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase tracking-[0.2em] mb-3">
-                <ShieldCheck className="w-3 h-3" />
-                Verified Lecturer Profile
+            <div className="flex flex-col justify-between gap-6 xl:flex-row xl:items-end">
+              <div>
+                <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-300">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Verified Lecturer Profile
+                </div>
+                <h1 className="text-3xl font-black tracking-tight text-slate-950 dark:text-white">
+                  {activeTab === 'info' ? 'Profil Akademik' : activeTab === 'integrasi' ? 'Integrasi & Konfigurasi' : 'Penta Insights'}
+                </h1>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+                  {activeTab === 'info' ? 'Kelola data pribadi dan informasi akademik Anda.' : 
+                   activeTab === 'integrasi' ? 'Sinkronisasi ID publikasi Scopus dan Google Scholar.' : 
+                   'Analisis performa publikasi dan metrik penelitian.'}
+                </p>
               </div>
-              <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
-                {activeTab === 'info' ? 'Profil Akademik' : activeTab === 'integrasi' ? 'Integrasi & Konfigurasi' : 'Penta Insights'}
-              </h1>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                {activeTab === 'info' ? 'Kelola data pribadi dan informasi akademik Anda' : 
-                 activeTab === 'integrasi' ? 'Sinkronisasi ID publikasi Scopus dan Google Scholar' : 
-                 'Analisis performa publikasi dan metrik penelitian'}
-              </p>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full md:w-auto">
-               {stats?.map((stat, i) => (
-                 <div key={i} className="flex items-center gap-4 px-6 py-4 bg-white dark:bg-slate-900 rounded-[1.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
-                    <div className={`w-12 h-12 rounded-2xl ${stat.color} flex items-center justify-center shadow-inner`}>
-                       <stat.icon className="w-6 h-6" />
+              <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 xl:w-auto">
+                {stats?.map((stat, i) => (
+                  <div key={i} className="flex min-h-[92px] items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/40 xl:min-w-[190px]">
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${stat.color}`}>
+                      <stat.icon className="h-5 w-5" />
                     </div>
-                    <div className="flex flex-col">
-                       <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">{stat.label}</span>
-                       <span className="text-xl font-black text-slate-900 dark:text-white leading-none tracking-tight">{stat.val}</span>
+                    <div className="min-w-0">
+                      <span className="block truncate text-xs font-semibold text-slate-500 dark:text-slate-400">{stat.label}</span>
+                      <span className="mt-1 block text-xl font-black leading-none tracking-tight text-slate-950 dark:text-white">{stat.val}</span>
                     </div>
-                 </div>
-               ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
 
@@ -687,7 +723,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         </div>
       </div>
 
-      {/* Floating Toast Notification */}
       <div className="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
         <AnimatePresence>
           {message.text && (
@@ -695,7 +730,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
               initial={{ opacity: 0, y: -20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.9 }}
-              className={`pointer-events-auto flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl border ${
+              className={`pointer-events-auto flex items-center gap-3 rounded-lg border px-5 py-4 shadow-xl ${
                 message.type === 'success'
                   ? 'bg-emerald-50 dark:bg-emerald-950/90 backdrop-blur border-emerald-100 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-400'
                   : 'bg-red-50 dark:bg-red-950/90 backdrop-blur border-red-100 dark:border-red-900/50 text-red-800 dark:text-red-400'

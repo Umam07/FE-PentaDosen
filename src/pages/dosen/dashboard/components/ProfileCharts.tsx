@@ -251,5 +251,3 @@ export const ProfileTrendChart = ({
     </div>
   );
 };
-
-

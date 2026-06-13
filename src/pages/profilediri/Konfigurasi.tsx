@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Globe, Hash, TrendingUp, RefreshCw, CheckCircle, AlertCircle, User, Zap,
-  Award, BookOpen
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlertCircle,
+  Award,
+  BarChart3,
+  BookOpen,
+  CheckCircle,
+  Globe,
+  Hash,
+  RefreshCw,
+  Save,
+  Search,
+  Trash2,
+  TrendingUp,
+  User,
+  Zap,
 } from 'lucide-react';
-import { ProfileTrendChart } from './ProfileCharts';
+import { ProfileTrendChart } from '../dosen/dashboard/components/ProfileCharts';
 
 interface KonfigurasiProps {
   user: any;
@@ -43,29 +55,272 @@ interface KonfigurasiProps {
   tabVariants: any;
 }
 
+type IntegrationTone = 'scholar' | 'scopus';
+
+const toneClasses = {
+  scholar: {
+    icon: 'bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-300',
+    iconBorder: 'border-blue-100 dark:border-blue-900/40',
+    button: 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
+    ring: 'focus:border-blue-500 focus:ring-blue-500/15',
+    chartBar: '#2563eb',
+    chartBarGradient: '#60a5fa',
+    chartLine: '#7c3aed',
+  },
+  scopus: {
+    icon: 'bg-rose-50 text-rose-600 dark:bg-rose-950/20 dark:text-rose-300',
+    iconBorder: 'border-rose-100 dark:border-rose-900/40',
+    button: 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20',
+    ring: 'focus:border-rose-500 focus:ring-rose-500/15',
+    chartBar: '#e11d48',
+    chartBarGradient: '#fb7185',
+    chartLine: '#0891b2',
+  },
+};
+
+const MetricTile: React.FC<{ label: string; value: any; icon: any }> = ({ label, value, icon: Icon }) => {
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+          {label}
+        </p>
+        <Icon className="h-4 w-4 text-slate-400 dark:text-slate-600" />
+      </div>
+      <p className="text-2xl font-black tracking-tight text-slate-950 dark:text-white">{value ?? 0}</p>
+    </div>
+  );
+};
+
+function AuthorPreview({ author, tone }: { author: any; tone: IntegrationTone }) {
+  if (!author) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/20"
+    >
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white text-slate-300 dark:bg-slate-900">
+        {author.thumbnail ? (
+          <img src={author.thumbnail} alt={author.name || 'Author'} className="h-full w-full object-cover" />
+        ) : (
+          <User className={`h-6 w-6 ${tone === 'scholar' ? 'text-blue-300' : 'text-rose-300'}`} />
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-black text-slate-950 dark:text-white">{author.name}</p>
+        <p className="mt-0.5 truncate text-xs font-medium text-slate-500 dark:text-slate-400">
+          {author.affiliations}
+        </p>
+      </div>
+      <CheckCircle className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-300" />
+    </motion.div>
+  );
+}
+
+function IntegrationCard({
+  title,
+  description,
+  type,
+  icon: Icon,
+  value,
+  savedValue,
+  placeholder,
+  data,
+  checkedAuthor,
+  chartData,
+  checking,
+  loading,
+  onChange,
+  onCheck,
+  onSave,
+  onDelete,
+  onSync,
+}: {
+  title: string;
+  description: string;
+  type: IntegrationTone;
+  icon: any;
+  value: string;
+  savedValue?: string;
+  placeholder: string;
+  data: any;
+  checkedAuthor: any;
+  chartData: any;
+  checking: boolean;
+  loading: boolean;
+  onChange: (value: string) => void;
+  onCheck: () => Promise<void>;
+  onSave: () => Promise<void>;
+  onDelete: () => void;
+  onSync: () => Promise<void>;
+}) {
+  const tone = toneClasses[type];
+  const isSaved = Boolean(savedValue);
+  const hasChart = Array.isArray(chartData?.chartData) && chartData.chartData.length > 0;
+  const saveDisabled = loading || !value || (value !== savedValue && !checkedAuthor);
+  const metrics =
+    type === 'scholar'
+      ? [
+          { label: 'Citations', value: data?.total_citations, icon: TrendingUp },
+          { label: 'h-index', value: data?.h_index, icon: Award },
+          { label: 'i10-index', value: data?.i10_index, icon: Zap },
+        ]
+      : [
+          { label: 'Documents', value: data?.document_count, icon: BookOpen },
+          { label: 'Citations', value: data?.total_citations, icon: TrendingUp },
+          { label: 'h-index', value: data?.h_index, icon: Award },
+        ];
+
+  return (
+    <section className="rounded-[2rem] border border-slate-200/60 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      {/* Card header */}
+      <div className="flex flex-col gap-4 border-b border-slate-100 p-5 dark:border-slate-800 sm:flex-row sm:items-start sm:justify-between sm:p-6">
+        <div className="flex items-start gap-4">
+          <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${tone.icon} ${tone.iconBorder}`}>
+            <Icon className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-black uppercase tracking-widest text-slate-950 dark:text-white">
+              {title}
+            </h3>
+            <p className="mt-1 text-xs font-medium leading-relaxed text-slate-500 dark:text-slate-400">
+              {description}
+            </p>
+          </div>
+        </div>
+        <span
+          className={`inline-flex w-fit shrink-0 items-center gap-2 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest ${
+            data
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-300'
+              : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-400'
+          }`}
+        >
+          <span className={`h-2 w-2 rounded-full ${data ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`} />
+          {data ? 'Tersinkron' : 'Belum sinkron'}
+        </span>
+      </div>
+
+      <div className="p-5 sm:p-6 space-y-5">
+        {/* Input area */}
+        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            {title} Author ID
+          </label>
+          <div className="mt-3 flex flex-col gap-3">
+            <input
+              type="text"
+              placeholder={placeholder}
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              className={`min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-900 outline-none transition-all focus:ring-4 dark:border-slate-700 dark:bg-slate-900 dark:text-white ${tone.ring}`}
+            />
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={onCheck}
+                disabled={checking || !value}
+                className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-black text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 sm:flex-none"
+              >
+                {checking ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                Verifikasi
+              </button>
+              <button
+                onClick={onSave}
+                disabled={saveDisabled}
+                className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-xs font-black text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${tone.button} sm:flex-none`}
+              >
+                <Save className="h-4 w-4" />
+                Simpan
+              </button>
+              <button
+                onClick={onSync}
+                disabled={loading || !isSaved}
+                className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-black text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 sm:flex-none"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                Sync
+              </button>
+              {isSaved && (
+                <button
+                  onClick={onDelete}
+                  className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-xs font-black text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/20 dark:text-red-300 sm:flex-none"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Hapus
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Author Preview */}
+        <AuthorPreview author={checkedAuthor} tone={type} />
+
+        {/* Metrics */}
+        <div className="grid grid-cols-3 gap-3">
+          {metrics.map((metric) => (
+            <MetricTile key={metric.label} label={metric.label} value={metric.value} icon={metric.icon} />
+          ))}
+        </div>
+
+        {/* Chart */}
+        <div className="rounded-2xl border border-slate-100 bg-white p-4 dark:border-slate-800 dark:bg-slate-950/20">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                Tren Publikasi
+              </p>
+              <p className="mt-0.5 text-xs font-medium text-slate-400 dark:text-slate-500">
+                Publikasi dan sitasi per tahun
+              </p>
+            </div>
+            <BarChart3 className="h-5 w-5 text-slate-300 dark:text-slate-700" />
+          </div>
+          <div className="h-52">
+            {hasChart ? (
+              <ProfileTrendChart
+                chartData={chartData.chartData}
+                leftDomainMax={chartData.leftMax}
+                rightDomainMax={chartData.rightMax}
+                barColor={tone.chartBar}
+                barGradientColor={tone.chartBarGradient}
+                lineColor={tone.chartLine}
+                areaGradientColor={tone.chartLine}
+                gradientId={type}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-xl bg-slate-50 text-center dark:bg-slate-900/60">
+                <div>
+                  <BarChart3 className="mx-auto h-8 w-8 text-slate-200 dark:text-slate-800" />
+                  <p className="mt-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">
+                    Data tren belum tersedia
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Konfigurasi({
   user,
-  setUser,
   scholarId,
   setScholarId,
   scopusId,
   setScopusId,
   scholarData,
-  setScholarData,
   scopusData,
-  setScopusData,
   loading,
-  setLoading,
   checkingInfo,
-  setCheckingInfo,
   checkingScopus,
-  setCheckingScopus,
   checkedAuthor,
   setCheckedAuthor,
   checkedScopusAuthor,
   setCheckedScopusAuthor,
-  message,
-  setMessage,
   scholarChartData,
   scopusChartData,
   handleCheckId,
@@ -77,7 +332,7 @@ export default function Konfigurasi({
   handleSyncAll,
   handleDeleteScholarId,
   handleDeleteScopusId,
-  tabVariants
+  tabVariants,
 }: KonfigurasiProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ type: 'scholar' | 'scopus' | null }>({ type: null });
 
@@ -91,13 +346,13 @@ export default function Konfigurasi({
   };
 
   return (
-    <motion.div 
+    <motion.div
       key="integrasi"
       variants={tabVariants}
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="space-y-8"
+      className="space-y-6"
     >
       {/* Delete Confirmation Modal */}
       <AnimatePresence>
@@ -106,33 +361,35 @@ export default function Konfigurasi({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-slate-200 dark:border-slate-800"
+              initial={{ scale: 0.96, opacity: 0, y: 12 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.96, opacity: 0, y: 12 }}
+              className="w-full max-w-md rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl dark:border-slate-800 dark:bg-slate-900"
             >
-              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500">
-                <AlertCircle className="w-8 h-8" />
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-300">
+                <AlertCircle className="h-7 w-7" />
               </div>
-              <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2">Konfirmasi Hapus</h3>
-              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed mb-8">
-                Apakah Anda yakin ingin menghapus ID {showDeleteConfirm.type === 'scholar' ? 'Google Scholar' : 'Scopus'}? Data yang tersinkronisasi akan dihapus dari profil Anda.
+              <h3 className="mt-5 text-xl font-black tracking-tight text-slate-950 dark:text-white">
+                Konfirmasi Hapus
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                ID {showDeleteConfirm.type === 'scholar' ? 'Google Scholar' : 'Scopus'} akan dilepas dari profil dan data sinkronisasinya tidak lagi ditampilkan.
               </p>
-              <div className="flex gap-3">
+              <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setShowDeleteConfirm({ type: null })}
-                  className="flex-1 py-3 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all"
+                  className="min-h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   Batal
                 </button>
                 <button
                   onClick={confirmDelete}
-                  className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black uppercase tracking-widest text-[10px] transition-all shadow-lg shadow-red-500/20"
+                  className="min-h-11 rounded-xl bg-red-600 px-4 text-sm font-black text-white shadow-lg shadow-red-600/20 transition-colors hover:bg-red-700"
                 >
-                  Ya, Hapus
+                  Hapus ID
                 </button>
               </div>
             </motion.div>
@@ -140,224 +397,80 @@ export default function Konfigurasi({
         )}
       </AnimatePresence>
 
-      {/* Global Sync Action */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 dark:bg-white p-5 rounded-[2rem] shadow-xl relative overflow-hidden group"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-600/10 to-emerald-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-white/10 dark:bg-slate-900/10 flex items-center justify-center text-white dark:text-slate-900 backdrop-blur-md border border-white/10 dark:border-slate-900/10">
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+      {/* Sync All Banner */}
+      <section className="rounded-[2rem] border border-slate-200/60 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
+              <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+            </div>
+            <div>
+              <h2 className="text-base font-black uppercase tracking-widest text-slate-950 dark:text-white">
+                Sinkronisasi Data Publikasi
+              </h2>
+              <p className="mt-1 max-w-2xl text-xs font-medium leading-relaxed text-slate-500 dark:text-slate-400">
+                Hubungkan Google Scholar dan Scopus agar metrik publikasi, sitasi, dan poin performa dapat diperbarui dari sumber eksternal.
+              </p>
+            </div>
           </div>
-          <div className="text-center sm:text-left">
-            <h4 className="text-sm font-black text-white dark:text-slate-900 uppercase tracking-widest leading-tight">Sinkronisasi Data</h4>
-            <p className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-0.5">Perbarui metrik Scopus & Scholar</p>
-          </div>
+          <button
+            onClick={handleSyncAll}
+            disabled={loading || (!scholarId && !scopusId)}
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary-600/20 transition-colors hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50 lg:w-auto"
+          >
+            {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+            Sinkronkan Semua
+          </button>
         </div>
+      </section>
 
-        <button
-          onClick={handleSyncAll}
-          disabled={loading || (!scholarId && !scopusId)}
-          className="relative z-10 w-full sm:w-auto px-6 py-3.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-lg shadow-primary-500/25 flex items-center justify-center gap-2.5"
-        >
-          {loading ? (
-            <RefreshCw className="w-4 h-4 animate-spin" />
-          ) : (
-            <Zap className="w-4 h-4" />
-          )}
-          Sinkronkan Semua
-        </button>
-      </motion.div>
+      {/* Integration Cards */}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <IntegrationCard
+          title="Google Scholar"
+          description="Dipakai untuk mengambil sitasi, h-index, i10-index, dan daftar publikasi Scholar."
+          type="scholar"
+          icon={Globe}
+          value={scholarId}
+          savedValue={user?.scholar_id}
+          placeholder="Contoh: xxxxxxxAAAAJ"
+          data={scholarData}
+          checkedAuthor={checkedAuthor}
+          chartData={scholarChartData}
+          checking={checkingInfo}
+          loading={loading}
+          onChange={(nextValue) => {
+            setScholarId(nextValue);
+            setCheckedAuthor(null);
+          }}
+          onCheck={handleCheckId}
+          onSave={handleSaveScholarId}
+          onDelete={() => setShowDeleteConfirm({ type: 'scholar' })}
+          onSync={handleSync}
+        />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Google Scholar Configuration */}
-        <section className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200/60 dark:border-slate-800 p-6 shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-          
-          <div className="relative z-10 space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <Globe className="w-5 h-5" />
-                </div>
-                Google Scholar
-              </h3>
-              {scholarData && (
-                <div className="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20 flex items-center gap-1.5">
-                  <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
-                  Synced
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-6">
-              <div className="space-y-6">
-                <div className="p-5 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <label className="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-3">Scholar Author ID</label>
-                  <div className="flex flex-col gap-3">
-                    <input
-                      type="text"
-                      placeholder="e.g., xxxxxxxAAAAJ"
-                      value={scholarId}
-                      onChange={(e) => {
-                        setScholarId(e.target.value);
-                        setCheckedAuthor(null);
-                      }}
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleCheckId}
-                        disabled={checkingInfo || !scholarId}
-                        className="flex-1 py-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
-                      >
-                        {checkingInfo ? <RefreshCw className="w-3.5 h-3.5 animate-spin mx-auto" /> : 'Verifikasi'}
-                      </button>
-                      <button
-                        onClick={handleSaveScholarId}
-                        disabled={loading || !scholarId || (scholarId !== user.scholar_id && !checkedAuthor)}
-                        className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20"
-                      >
-                        Simpan ID
-                      </button>
-                      {user.scholar_id && (
-                        <button
-                          onClick={() => setShowDeleteConfirm({ type: 'scholar' })}
-                          className="px-4 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-all"
-                        >
-                          Hapus
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {checkedAuthor && (
-                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="p-3.5 bg-blue-500/5 rounded-xl border border-blue-500/10 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-white">
-                      {checkedAuthor.thumbnail ? <img src={checkedAuthor.thumbnail} className="w-full h-full object-cover" /> : <User className="w-full h-full p-2 text-slate-300" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-black text-slate-900 dark:text-white truncate">{checkedAuthor.name}</p>
-                      <p className="text-[8px] font-bold text-slate-400 truncate mt-0.5">{checkedAuthor.affiliations}</p>
-                    </div>
-                    <CheckCircle className="w-4 h-4 text-emerald-500" />
-                  </motion.div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: 'Citations', value: scholarData?.total_citations, icon: TrendingUp, color: 'text-blue-500' },
-                  { label: 'h-index', value: scholarData?.h_index, icon: Award, color: 'text-purple-500' },
-                  { label: 'i10-index', value: scholarData?.i10_index, icon: Zap, color: 'text-orange-500' },
-                ].map((s, i) => (
-                  <div key={i} className="p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
-                    <s.icon className={`w-3.5 h-3.5 ${s.color} mx-auto mb-1.5`} />
-                    <p className="text-[9px] font-black text-slate-900 dark:text-white leading-none">{s.value || 0}</p>
-                    <p className="text-[6.5px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Scopus Configuration */}
-        <section className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200/60 dark:border-slate-800 p-6 shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-          
-          <div className="relative z-10 space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-600 dark:text-pink-400">
-                  <Hash className="w-5 h-5" />
-                </div>
-                Scopus Database
-              </h3>
-              {scopusData && (
-                <div className="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20 flex items-center gap-1.5">
-                  <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></div>
-                  Synced
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-6">
-              <div className="space-y-6">
-                <div className="p-5 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <label className="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-3">Author Scopus ID</label>
-                  <div className="flex flex-col gap-3">
-                    <input
-                      type="text"
-                      placeholder="e.g., 57211234567"
-                      value={scopusId}
-                      onChange={(e) => {
-                        setScopusId(e.target.value);
-                        setCheckedScopusAuthor(null);
-                      }}
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleCheckScopusId}
-                        disabled={checkingScopus || !scopusId}
-                        className="flex-1 py-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
-                      >
-                        {checkingScopus ? <RefreshCw className="w-3.5 h-3.5 animate-spin mx-auto" /> : 'Verifikasi'}
-                      </button>
-                      <button
-                        onClick={handleSaveScopusId}
-                        disabled={loading || !scopusId || (scopusId !== user.scopus_id && !checkedScopusAuthor)}
-                        className="flex-1 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50 shadow-lg shadow-pink-500/20"
-                      >
-                        Simpan ID
-                      </button>
-                      {user.scopus_id && (
-                        <button
-                          onClick={() => setShowDeleteConfirm({ type: 'scopus' })}
-                          className="px-4 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-100 transition-all"
-                        >
-                          Hapus
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {checkedScopusAuthor && (
-                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="p-3.5 bg-pink-500/5 rounded-xl border border-pink-500/10 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center">
-                      <User className="w-5 h-5 text-pink-300" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-black text-slate-900 dark:text-white truncate">{checkedScopusAuthor.name}</p>
-                      <p className="text-[8px] font-bold text-slate-400 truncate mt-0.5">{checkedScopusAuthor.affiliations}</p>
-                    </div>
-                    <CheckCircle className="w-4 h-4 text-emerald-500" />
-                  </motion.div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: 'Documents', value: scopusData?.document_count, icon: BookOpen, color: 'text-blue-500' },
-                  { label: 'Citations', value: scopusData?.total_citations, icon: TrendingUp, color: 'text-pink-500' },
-                  { label: 'h-index', value: scopusData?.h_index, icon: Award, color: 'text-purple-500' },
-                ].map((s, i) => (
-                  <div key={i} className="p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
-                    <s.icon className={`w-3.5 h-3.5 ${s.color} mx-auto mb-1.5`} />
-                    <p className="text-[9px] font-black text-slate-900 dark:text-white leading-none">{s.value || 0}</p>
-                    <p className="text-[6.5px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <IntegrationCard
+          title="Scopus"
+          description="Dipakai untuk mengambil dokumen terindeks, sitasi, h-index, dan basis penilaian Scopus."
+          type="scopus"
+          icon={Hash}
+          value={scopusId}
+          savedValue={user?.scopus_id}
+          placeholder="Contoh: 57211234567"
+          data={scopusData}
+          checkedAuthor={checkedScopusAuthor}
+          chartData={scopusChartData}
+          checking={checkingScopus}
+          loading={loading}
+          onChange={(nextValue) => {
+            setScopusId(nextValue);
+            setCheckedScopusAuthor(null);
+          }}
+          onCheck={handleCheckScopusId}
+          onSave={handleSaveScopusId}
+          onDelete={() => setShowDeleteConfirm({ type: 'scopus' })}
+          onSync={handleSyncScopus}
+        />
       </div>
     </motion.div>
   );

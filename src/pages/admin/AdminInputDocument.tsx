@@ -85,16 +85,16 @@ export default function AdminInputDocument() {
     if (mainCategory === 'HKI') {
       return [
         { id: 'HKI Paten', label: 'Paten', pts: 40, icon: Award },
-        { id: 'HKI Paten Sederhana', label: 'Paten Sederhana', pts: 20, icon: Zap },
-        { id: 'HKI Merk', label: 'Merk', pts: 5, icon: Shield },
+        { id: 'HKI Paten Sederhana', label: 'Paten Sederhana', pts: 28, icon: Zap },
+        { id: 'HKI Merk', label: 'Merk', pts: 12, icon: Shield },
         { id: 'HKI Hak Cipta', label: 'Hak Cipta', pts: 5, icon: FileText },
       ];
     }
     if (mainCategory === 'Penelitian') {
       return [
-        { id: 'hibah internal', label: 'Internal Institusi', pts: 40, icon: Home },
-        { id: 'hibah dikti', label: 'Eksternal (Dikti)', pts: 50, icon: Landmark },
-        { id: 'hibah luar negeri', label: 'Luar Negeri', pts: 60, icon: Globe },
+        { id: 'hibah internal', label: 'Internal Institusi', pts: 3, icon: Home },
+        { id: 'hibah dikti', label: 'Eksternal (Dikti)', pts: 6, icon: Landmark },
+        { id: 'hibah luar negeri', label: 'Luar Negeri', pts: 10, icon: Globe },
       ];
     }
     if (mainCategory === 'Buku') {
@@ -125,20 +125,13 @@ export default function AdminInputDocument() {
 
   const scoringPreview = useMemo(() => {
     if (mainCategory === 'Penelitian') {
-      const rawValue = danaDisetujui.replace(/\D/g, '');
-      if (!rawValue || isNaN(Number(rawValue))) return null;
-
       const selectedOption = subCategoryOptions.find(opt => opt.id === subCategory);
       const basePoints = selectedOption ? selectedOption.pts : 0;
-      const danaPoints = (Number(rawValue) / 1000000) * 0.05;
-      const totalPoints = basePoints + danaPoints;
-
       return {
-        message: `Estimasi: ${basePoints} (Prog) + ${danaPoints.toFixed(2)} (Dana) = ${totalPoints.toFixed(2)} Poin`,
-        points: totalPoints.toFixed(2)
+        message: `Estimasi: +${basePoints} Poin KPI (Hibah)`,
+        points: basePoints
       };
     }
-
     if (docType === 'arsip') return { message: 'Arsip (0 Poin)', points: 0 };
 
     const selectedOption = subCategoryOptions.find(opt => opt.id === subCategory);
@@ -147,7 +140,7 @@ export default function AdminInputDocument() {
       message: `Estimasi: +${pts} Poin KPI`,
       points: pts
     };
-  }, [mainCategory, subCategory, subCategoryOptions, danaDisetujui, docType]);
+  }, [mainCategory, subCategory, subCategoryOptions, docType]);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();

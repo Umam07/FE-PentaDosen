@@ -11,6 +11,7 @@ import {
 import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, Customized } from 'recharts';
 import Navbar from '../../components/Home/Navbar';
 import Footer from '../../components/Home/Footer';
+import { calculateScholarPoints } from '../dosen/dashboard/pointsCalculator';
 
 // 1. Komponen Kustom Crosshair ala TradingView
 const CustomCrosshair = (props: any) => {
@@ -219,10 +220,56 @@ export default function LecturerProfileInsights() {
       (publications || []).filter((sd: any) => (scopusPublications || []).some((s: any) => normalizeT(s.title) === normalizeT(sd.title)))
         .map((d: any) => normalizeT(d.title))
     );
-    const extCross    = (scopusPublications || []).filter((s: any) => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
-    const extScopus   = (scopusPublications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 40 + (d.citations || 0), 0);
+
+    const calculateScopusSintaPoints = (pub: any) => {
+      if (pub.awarded_points !== undefined && pub.awarded_points !== null) {
+        return Number(pub.awarded_points);
+      }
+
+      const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' ? 'Member Author' : (pub.author_role || 'Member Author');
+      const totalAuthors = Number(pub.total_authors) || 1;
+      const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
+      const q = pub.quartile || 'Q4';
+      
+      const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
+      
+      let basePoints = 0;
+      if (isArticle) {
+        if (role === 'Single Author') {
+          basePoints = 40;
+        } else if (isHyper) {
+          basePoints = role === 'First Author' ? 24 : 1;
+        } else {
+          const quartile = ['Q1', 'Q2', 'Q3', 'Q4'].includes(q) ? q : 'Q4';
+          if (role === 'First Author') {
+            if (quartile === 'Q1') basePoints = 24;
+            else if (quartile === 'Q2') basePoints = 22;
+            else if (quartile === 'Q3') basePoints = 20;
+            else basePoints = 18;
+          } else {
+            if (quartile === 'Q1') basePoints = 16;
+            else if (quartile === 'Q2') basePoints = 14;
+            else if (quartile === 'Q3') basePoints = 12;
+            else basePoints = 10;
+          }
+        }
+      } else {
+        if (role === 'Single Author') basePoints = 30;
+        else if (role === 'First Author') basePoints = 18;
+        else basePoints = 12;
+      }
+      
+      const citations = Number(pub.citations) || 0;
+      const citationPoints = totalAuthors > 0 ? (citations / totalAuthors) : 0;
+      const citationBonus = citations > 0 ? 5 : 0;
+      
+      return basePoints + citationPoints + citationBonus;
+    };
+
+    const extCross    = (scopusPublications || []).filter((s: any) => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const extScopus   = (scopusPublications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
     const extScholar  = parseFloat(
-      (publications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + 0.5 + (d.citations || 0) * 0.1, 0).toFixed(1)
+      (publications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1)
     );
     const apiTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
 

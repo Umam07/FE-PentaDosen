@@ -88,6 +88,25 @@ export default function PublicationTable({
                           <span>{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
                           {doc.category}
                         </p>
+                        {(doc.quartile || doc.author_role) && (
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            {doc.quartile && (
+                              <span className="px-1.5 py-0.5 bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 text-[8px] font-black uppercase rounded border border-orange-100/50 dark:border-orange-900/20">
+                                {doc.quartile}
+                              </span>
+                            )}
+                            {doc.author_role && (
+                              <span className="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100/50 dark:border-indigo-900/20">
+                                {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
+                              </span>
+                            )}
+                            {doc.is_hyperauthor && (
+                              <span className="px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-[8px] font-black uppercase rounded border border-red-100/50 dark:border-red-900/20">
+                                Hyper
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </td>

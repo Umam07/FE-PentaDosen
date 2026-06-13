@@ -28,7 +28,7 @@ const CmsDashboard = lazy(() => import('./pages/admin/CmsDashboard'));
 const Research = lazy(() => import('./pages/dosen/research'));
 const Buku = lazy(() => import('./pages/dosen/buku'));
 const HKI = lazy(() => import('./pages/dosen/hki'));
-const LecturerDashboard = lazy(() => import('./pages/dosen/LecturerDashboard'));
+const LecturerDashboard = lazy(() => import('./pages/dosen/dashboard/LecturerDashboard'));
 const FaqHelp = lazy(() => import('./pages/dosen/FaqHelp'));
 const LecturerList = lazy(() => import('./pages/dashboard/LecturerList'));
 const LecturerProfileInsights = lazy(() => import('./pages/dashboard/LecturerProfileInsights'));
