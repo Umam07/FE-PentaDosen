@@ -175,69 +175,63 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, idx }: {
   );
 }
 
-// === Sub-component: Scopus row — 40 pts per doc + 1 pt per citation ===
-// === Helper: Detailed Scopus breakdown calculation ===
+// === Helper: Detailed Scopus breakdown calculation (60/40 schema) ===
 const calculateScopusBreakdown = (pub: any) => {
   const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' ? 'Member Author' : (pub.author_role || 'Member Author');
   const totalAuthors = Number(pub.total_authors) || 1;
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
   const q = pub.quartile || 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
-  
-  let basePoints = 0;
+
+  // Max base points: Article = 40, Non-Article = 30
+  const maxPoints = isArticle ? 40 : 30;
+  const docType = isArticle ? 'Article' : 'Non-Article';
+
+  let awardedPoints = 0;
   let detailStr = '';
-  
-  if (isArticle) {
+  let pctStr = '';
+
+  if (isHyper) {
     if (role === 'Single Author') {
-      basePoints = 40;
-      detailStr = 'Scopus Article (Single Author)';
-    } else if (isHyper) {
-      basePoints = role === 'First Author' ? 24 : 1;
-      detailStr = `Scopus Article Hyperauthor (>16 Authors, ${role === 'First Author' ? 'First Author' : 'Member Author'})`;
-    } else {
-      const quartile = ['Q1', 'Q2', 'Q3', 'Q4'].includes(q) ? q : 'Q4';
-      if (role === 'First Author') {
-        if (quartile === 'Q1') basePoints = 24;
-        else if (quartile === 'Q2') basePoints = 22;
-        else if (quartile === 'Q3') basePoints = 20;
-        else basePoints = 18;
-        detailStr = `Scopus Article ${quartile} (First Author)`;
-      } else {
-        if (quartile === 'Q1') basePoints = 16;
-        else if (quartile === 'Q2') basePoints = 14;
-        else if (quartile === 'Q3') basePoints = 12;
-        else basePoints = 10;
-        detailStr = `Scopus Article ${quartile} (Member Author)`;
-      }
-    }
-  } else {
-    // Non-article
-    if (role === 'Single Author') {
-      basePoints = 30;
-      detailStr = 'Scopus Non-Article (Single Author)';
+      awardedPoints = maxPoints;
+      detailStr = `Scopus ${docType} Hyperauthor (Single Author)`;
+      pctStr = '100%';
     } else if (role === 'First Author') {
-      basePoints = 18;
-      detailStr = 'Scopus Non-Article (First Author)';
+      awardedPoints = 2;
+      detailStr = `Scopus ${docType} Hyperauthor (First Author, >16 penulis)`;
+      pctStr = 'Flat 2 pts';
     } else {
-      basePoints = 12;
-      detailStr = 'Scopus Non-Article (Member Author)';
+      awardedPoints = 0.5;
+      detailStr = `Scopus ${docType} Hyperauthor (Member Author, >16 penulis)`;
+      pctStr = 'Flat 0.5 pts';
     }
+  } else if (role === 'Single Author') {
+    awardedPoints = maxPoints;
+    detailStr = `Scopus ${docType} (Single Author)`;
+    pctStr = '100%';
+  } else if (role === 'First Author') {
+    awardedPoints = maxPoints * 0.60;
+    detailStr = `Scopus ${docType} (First Author)`;
+    pctStr = '60% dari ' + maxPoints + ' pts';
+  } else {
+    const memberCount = Math.max(1, totalAuthors - 1);
+    awardedPoints = (maxPoints * 0.40) / memberCount;
+    detailStr = `Scopus ${docType} (Member Author)`;
+    pctStr = `40% dari ${maxPoints} pts ÷ ${memberCount} member`;
   }
-  
-  const citations = Number(pub.citations) || 0;
-  const citationPoints = totalAuthors > 0 ? (citations / totalAuthors) : 0;
-  const citationBonus = citations > 0 ? 5 : 0;
-  const totalPoints = basePoints + citationPoints + citationBonus;
+
+  const totalPoints = Math.round(awardedPoints * 100) / 100;
 
   return {
-    basePoints,
+    basePoints: totalPoints,
+    maxPoints,
     detailStr,
+    pctStr,
     totalAuthors,
-    citations,
-    citationPoints,
-    citationBonus,
+    citations: Number(pub.citations) || 0,
     totalPoints,
     isArticle,
+    isHyper,
     role,
     q
   };
@@ -404,33 +398,33 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
               className="mt-3 rounded-2xl border border-orange-100 dark:border-orange-900/30 overflow-hidden"
             >
               <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900/30">
-                <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Rincian Kalkulasi Poin SINTA</p>
+                <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Rincian Kalkulasi Poin SINTA (Skema 60/40)</p>
               </div>
               <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                {/* Max Points row */}
+                <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                  <div>
+                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maksimum ({bd.isArticle ? 'Article' : 'Non-Article'})</p>
+                    <p className="text-[9px] font-medium text-slate-400">Nilai tertinggi untuk jenis publikasi ini</p>
+                  </div>
+                  <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
+                </div>
+                {/* Role Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
-                    <p className="text-[9px] font-medium text-slate-400">Poin dasar berdasarkan tipe & peran</p>
+                    <p className="text-[9px] font-medium text-orange-500 font-bold">{bd.pctStr}</p>
                   </div>
-                  <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.basePoints}</span>
+                  <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.basePoints.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
-                  <div>
-                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Sitasi</p>
-                    <p className="text-[9px] font-medium text-slate-400">{bd.citations} sitasi ÷ {bd.totalAuthors} penulis</p>
-                  </div>
-                  <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.citationPoints.toFixed(2)}</span>
-                </div>
-                {bd.citations > 0 && (
-                  <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
-                    <div>
-                      <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Bonus Tersitasi</p>
-                      <p className="text-[9px] font-medium text-slate-400">Flat bonus bila sitasi &gt; 0</p>
-                    </div>
-                    <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+5.00</span>
+                {/* Total authors info */}
+                {bd.totalAuthors > 1 && (
+                  <div className="flex justify-between items-center py-1 gap-2">
+                    <p className="text-[9px] font-medium text-slate-400">Total penulis terdeteksi</p>
+                    <span className="text-[9px] font-black text-slate-500">{bd.totalAuthors} penulis</span>
                   </div>
                 )}
-                <div className="flex justify-between items-center pt-2">
+                <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
                   <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Total Poin</span>
                   <span className="text-base font-black text-orange-600">{bd.totalPoints.toFixed(2)} pts</span>
                 </div>
@@ -566,33 +560,33 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
               className="mt-3 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 overflow-hidden"
             >
               <div className="px-4 py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900/30">
-                <p className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Rincian Poin Scopus (Lebih Besar)</p>
+                <p className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Rincian Poin Scopus — Skema 60/40 (Cross-Indexed)</p>
               </div>
               <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                {/* Max Points row */}
+                <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                  <div>
+                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maksimum ({bd.isArticle ? 'Article' : 'Non-Article'})</p>
+                    <p className="text-[9px] font-medium text-slate-400">Nilai tertinggi untuk jenis publikasi ini</p>
+                  </div>
+                  <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
+                </div>
+                {/* Role Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
-                    <p className="text-[9px] font-medium text-slate-400">Poin dasar berdasarkan tipe &amp; peran</p>
+                    <p className="text-[9px] font-medium text-emerald-600 font-bold">{bd.pctStr}</p>
                   </div>
-                  <span className="text-[11px] font-black text-emerald-600 flex-shrink-0">+{bd.basePoints}</span>
+                  <span className="text-[11px] font-black text-emerald-600 flex-shrink-0">+{bd.basePoints.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
-                  <div>
-                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Sitasi</p>
-                    <p className="text-[9px] font-medium text-slate-400">{bd.citations} sitasi ÷ {bd.totalAuthors} penulis</p>
-                  </div>
-                  <span className="text-[11px] font-black text-emerald-600 flex-shrink-0">+{bd.citationPoints.toFixed(2)}</span>
-                </div>
-                {bd.citations > 0 && (
-                  <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
-                    <div>
-                      <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Bonus Tersitasi</p>
-                      <p className="text-[9px] font-medium text-slate-400">Flat bonus bila sitasi &gt; 0</p>
-                    </div>
-                    <span className="text-[11px] font-black text-emerald-600 flex-shrink-0">+5.00</span>
+                {/* Total authors info */}
+                {bd.totalAuthors > 1 && (
+                  <div className="flex justify-between items-center py-1 gap-2">
+                    <p className="text-[9px] font-medium text-slate-400">Total penulis terdeteksi</p>
+                    <span className="text-[9px] font-black text-slate-500">{bd.totalAuthors} penulis</span>
                   </div>
                 )}
-                <div className="flex justify-between items-center pt-2">
+                <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
                   <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Total Poin</span>
                   <span className="text-base font-black text-emerald-600">{bd.totalPoints.toFixed(2)} pts</span>
                 </div>
@@ -884,9 +878,9 @@ export default function ExternalDocumentsView({
                              <span className="text-orange-600 text-[13px] font-black">∑</span>
                            </div>
                            <div>
-                             <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · SINTA</p>
+                             <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema 60/40</p>
                              <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
-                               Dihitung berdasarkan quartil jurnal, peran penulis, jumlah co-author, &amp; dampak sitasi.
+                               Article maks 40 pts · Non-Article maks 30 pts · First Author = 60% · Member Authors berbagi 40% secara merata
                              </p>
                            </div>
                          </div>
