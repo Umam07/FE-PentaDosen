@@ -175,17 +175,21 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, idx }: {
   );
 }
 
-// === Helper: Detailed Scopus breakdown calculation (60/40 schema) ===
+// === Helper: Detailed Scopus breakdown calculation (60/40 schema + quartile) ===
+// Quartile determines max base points:
+//   Q1 = 40 pts, Q2 = 30 pts, Q3 = 20 pts, Q4 = 10 pts, None = 10 pts
+// Then: Single = 100%, First = 60%, Member = 40% / (totalAuthors - 1)
 const calculateScopusBreakdown = (pub: any) => {
   const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' ? 'Member Author' : (pub.author_role || 'Member Author');
   const totalAuthors = Number(pub.total_authors) || 1;
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
-  const q = pub.quartile || 'None';
+  const q = pub.quartile && ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
 
-  // Max base points: Article = 40, Non-Article = 30
-  const maxPoints = isArticle ? 40 : 30;
-  const docType = isArticle ? 'Article' : 'Non-Article';
+  // Max base points per quartile (Article only — Non-Article uses flat 30)
+  const quartileMax: Record<string, number> = { Q1: 40, Q2: 30, Q3: 20, Q4: 10, None: 10 };
+  const maxPoints = isArticle ? (quartileMax[q] ?? 10) : 30;
+  const docType = isArticle ? `Article ${q !== 'None' ? q : '(Tanpa Quartile)'}` : 'Non-Article';
 
   let awardedPoints = 0;
   let detailStr = '';
@@ -195,29 +199,29 @@ const calculateScopusBreakdown = (pub: any) => {
     if (role === 'Single Author') {
       awardedPoints = maxPoints;
       detailStr = `Scopus ${docType} Hyperauthor (Single Author)`;
-      pctStr = '100%';
+      pctStr = '100% · >16 penulis';
     } else if (role === 'First Author') {
       awardedPoints = 2;
-      detailStr = `Scopus ${docType} Hyperauthor (First Author, >16 penulis)`;
-      pctStr = 'Flat 2 pts';
+      detailStr = `Scopus ${docType} Hyperauthor (First Author)`;
+      pctStr = 'Flat 2 pts · >16 penulis';
     } else {
       awardedPoints = 0.5;
-      detailStr = `Scopus ${docType} Hyperauthor (Member Author, >16 penulis)`;
-      pctStr = 'Flat 0.5 pts';
+      detailStr = `Scopus ${docType} Hyperauthor (Member Author)`;
+      pctStr = 'Flat 0.5 pts · >16 penulis';
     }
   } else if (role === 'Single Author') {
     awardedPoints = maxPoints;
     detailStr = `Scopus ${docType} (Single Author)`;
-    pctStr = '100%';
+    pctStr = `100% dari ${maxPoints} pts`;
   } else if (role === 'First Author') {
     awardedPoints = maxPoints * 0.60;
     detailStr = `Scopus ${docType} (First Author)`;
-    pctStr = '60% dari ' + maxPoints + ' pts';
+    pctStr = `60% dari ${maxPoints} pts = ${(maxPoints * 0.60).toFixed(0)} pts`;
   } else {
     const memberCount = Math.max(1, totalAuthors - 1);
     awardedPoints = (maxPoints * 0.40) / memberCount;
     detailStr = `Scopus ${docType} (Member Author)`;
-    pctStr = `40% dari ${maxPoints} pts ÷ ${memberCount} member`;
+    pctStr = `40% dari ${maxPoints} pts ÷ ${memberCount} member = ${((maxPoints * 0.40) / memberCount).toFixed(2)} pts`;
   }
 
   const totalPoints = Math.round(awardedPoints * 100) / 100;
@@ -398,14 +402,28 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
               className="mt-3 rounded-2xl border border-orange-100 dark:border-orange-900/30 overflow-hidden"
             >
               <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900/30">
-                <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Rincian Kalkulasi Poin SINTA (Skema 60/40)</p>
+                <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Rincian Kalkulasi Poin SINTA (Skema 60/40 + Quartile)</p>
               </div>
               <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                {/* Quartile badge */}
+                <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Quartile Jurnal:</span>
+                  {bd.q !== 'None' ? (
+                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
+                      bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                      bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                      bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                    }`}>{bd.q}</span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
+                  )}
+                </div>
                 {/* Max Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
-                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maksimum ({bd.isArticle ? 'Article' : 'Non-Article'})</p>
-                    <p className="text-[9px] font-medium text-slate-400">Nilai tertinggi untuk jenis publikasi ini</p>
+                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
+                    <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=30, Q3=20, Q4/None=10 pts</p>
                   </div>
                   <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
                 </div>
@@ -413,11 +431,10 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
-                    <p className="text-[9px] font-medium text-orange-500 font-bold">{bd.pctStr}</p>
+                    <p className="text-[9px] font-bold text-orange-500">{bd.pctStr}</p>
                   </div>
                   <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.basePoints.toFixed(2)}</span>
                 </div>
-                {/* Total authors info */}
                 {bd.totalAuthors > 1 && (
                   <div className="flex justify-between items-center py-1 gap-2">
                     <p className="text-[9px] font-medium text-slate-400">Total penulis terdeteksi</p>
@@ -560,14 +577,28 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
               className="mt-3 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 overflow-hidden"
             >
               <div className="px-4 py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900/30">
-                <p className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Rincian Poin Scopus — Skema 60/40 (Cross-Indexed)</p>
+                <p className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Rincian Poin Scopus — Skema 60/40 + Quartile (Cross-Indexed)</p>
               </div>
               <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                {/* Quartile badge */}
+                <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Quartile Jurnal:</span>
+                  {bd.q !== 'None' ? (
+                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
+                      bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                      bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                      bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                    }`}>{bd.q}</span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
+                  )}
+                </div>
                 {/* Max Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
-                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maksimum ({bd.isArticle ? 'Article' : 'Non-Article'})</p>
-                    <p className="text-[9px] font-medium text-slate-400">Nilai tertinggi untuk jenis publikasi ini</p>
+                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
+                    <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=30, Q3=20, Q4/None=10 pts</p>
                   </div>
                   <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
                 </div>
@@ -575,11 +606,10 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
-                    <p className="text-[9px] font-medium text-emerald-600 font-bold">{bd.pctStr}</p>
+                    <p className="text-[9px] font-bold text-emerald-600">{bd.pctStr}</p>
                   </div>
                   <span className="text-[11px] font-black text-emerald-600 flex-shrink-0">+{bd.basePoints.toFixed(2)}</span>
                 </div>
-                {/* Total authors info */}
                 {bd.totalAuthors > 1 && (
                   <div className="flex justify-between items-center py-1 gap-2">
                     <p className="text-[9px] font-medium text-slate-400">Total penulis terdeteksi</p>
@@ -878,9 +908,9 @@ export default function ExternalDocumentsView({
                              <span className="text-orange-600 text-[13px] font-black">∑</span>
                            </div>
                            <div>
-                             <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema 60/40</p>
+                             <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema 60/40 + Quartile</p>
                              <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
-                               Article maks 40 pts · Non-Article maks 30 pts · First Author = 60% · Member Authors berbagi 40% secara merata
+                               Quartile menentukan poin maks (Q1=40, Q2=30, Q3=20, Q4=10) · First Author 60% · Member berbagi 40% merata
                              </p>
                            </div>
                          </div>
@@ -1114,63 +1144,74 @@ export default function ExternalDocumentsView({
                       <table className="w-full text-left border-collapse">
                         <thead>
                           <tr className="border-b border-slate-100 dark:border-slate-800">
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Kategori Peran</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Quartile / Ketentuan</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin KPI</th>
+                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Peran Penulis</th>
+                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Quartile</th>
+                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Maks Poin</th>
+                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin (60%/40%)</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-xs font-bold text-slate-700 dark:text-slate-300">
-                          <tr>
-                            <td className="py-2.5">Single Author</td>
-                            <td className="py-2.5 text-center text-slate-400">Semua Quartile</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">40</td>
+                          {/* Single Author */}
+                          <tr className="bg-violet-50/50 dark:bg-violet-950/10">
+                            <td className="py-2.5 font-black text-violet-700 dark:text-violet-400">Single Author</td>
+                            <td className="py-2.5 text-center text-slate-400">Semua</td>
+                            <td className="py-2.5 text-center text-slate-500">—</td>
+                            <td className="py-2.5 text-right text-violet-700 dark:text-violet-400 font-black">40 / 30 / 20 / 10</td>
                           </tr>
-                          <tr>
-                            <td className="py-2.5" rowSpan={4}>First Author (Penulis Utama)</td>
-                            <td className="py-2.5 text-center text-emerald-600">Q1</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">24</td>
+                          {/* First Author */}
+                          {[{q:'Q1',max:40,pts:24},{q:'Q2',max:30,pts:18},{q:'Q3',max:20,pts:12},{q:'Q4',max:10,pts:6}].map(row => (
+                            <tr key={`fa-${row.q}`}>
+                              <td className="py-2.5 text-orange-700 dark:text-orange-400">First Author <span className="text-[9px] text-slate-400 font-normal">(60%)</span></td>
+                              <td className="py-2.5 text-center">
+                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
+                                  row.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                  row.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                                  row.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                                  'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                }`}>{row.q}</span>
+                              </td>
+                              <td className="py-2.5 text-center text-slate-400">{row.max} pts</td>
+                              <td className="py-2.5 text-right text-orange-600 font-black">{row.pts}</td>
+                            </tr>
+                          ))}
+                          {/* Member Author */}
+                          {[{q:'Q1',max:40,pool:16},{q:'Q2',max:30,pool:12},{q:'Q3',max:20,pool:8},{q:'Q4',max:10,pool:4}].map(row => (
+                            <tr key={`ma-${row.q}`}>
+                              <td className="py-2.5 text-slate-600 dark:text-slate-400">Member Author <span className="text-[9px] text-slate-400 font-normal">(40% ÷ n)</span></td>
+                              <td className="py-2.5 text-center">
+                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
+                                  row.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                  row.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                                  row.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                                  'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                }`}>{row.q}</span>
+                              </td>
+                              <td className="py-2.5 text-center text-slate-400">{row.max} pts</td>
+                              <td className="py-2.5 text-right text-orange-600 font-black">{row.pool} ÷ n</td>
+                            </tr>
+                          ))}
+                          {/* Hyperauthor */}
+                          <tr className="bg-red-50/40 dark:bg-red-950/10">
+                            <td className="py-2.5 text-red-600 dark:text-red-400">Hyperauthor First</td>
+                            <td className="py-2.5 text-center text-red-500 font-black">&gt;16</td>
+                            <td className="py-2.5 text-center text-slate-400">—</td>
+                            <td className="py-2.5 text-right text-orange-600 font-black">2</td>
                           </tr>
-                          <tr>
-                            <td className="py-2.5 text-center text-teal-600">Q2</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">22</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5 text-center text-blue-600">Q3</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">20</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5 text-center text-slate-500">Q4 / None</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">18</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5" rowSpan={4}>Member Author (Anggota)</td>
-                            <td className="py-2.5 text-center text-emerald-600">Q1</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">16</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5 text-center text-teal-600">Q2</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">14</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5 text-center text-blue-600">Q3</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">12</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5 text-center text-slate-500">Q4 / None</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">10</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5">Hyperauthor First Author</td>
-                            <td className="py-2.5 text-center text-red-500">&gt; 16 Penulis</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">24</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5">Hyperauthor Member Author</td>
-                            <td className="py-2.5 text-center text-red-500">&gt; 16 Penulis</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">1</td>
+                          <tr className="bg-red-50/40 dark:bg-red-950/10">
+                            <td className="py-2.5 text-red-600 dark:text-red-400">Hyperauthor Member</td>
+                            <td className="py-2.5 text-center text-red-500 font-black">&gt;16</td>
+                            <td className="py-2.5 text-center text-slate-400">—</td>
+                            <td className="py-2.5 text-right text-orange-600 font-black">0.5</td>
                           </tr>
                         </tbody>
                       </table>
+                      {/* Formula note */}
+                      <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-xl border border-orange-100 dark:border-orange-900/30">
+                        <p className="text-[9px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest mb-1">Formula Skema 60/40</p>
+                        <p className="text-[9px] font-bold text-slate-500 dark:text-slate-400">
+                          First Author = Maks × 60% &nbsp;|&nbsp; Member = (Maks × 40%) ÷ Jumlah Member
+                        </p>
+                      </div>
                     </div>
                   </div>
 

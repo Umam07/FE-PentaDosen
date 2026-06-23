@@ -2,10 +2,12 @@
  * Calculate Scopus/SINTA points using the 60/40 author-role schema.
  *
  * Schema:
- *   Max base points: Article = 40 pts, Non-Article = 30 pts
- *   - Single Author  : 100% of max base points
- *   - First Author   : 60% of max base points
- *   - Member Author  : 40% of max base points ÷ number of member authors (totalAuthors - 1)
+ *   Max base points per Quartile (Article only):
+ *     Q1 = 40 pts, Q2 = 30 pts, Q3 = 20 pts, Q4/None = 10 pts
+ *   Non-Article max = 30 pts (flat)
+ *   - Single Author  : 100% of max
+ *   - First Author   : 60% of max
+ *   - Member Author  : 40% of max ÷ number of member authors (totalAuthors - 1)
  *   - Hyperauthor (>16 authors):
  *       First Author  = 2 pts flat
  *       Member Author = 0.5 pts flat
@@ -20,9 +22,12 @@ export const calculateScopusSintaPoints = (pub: any): number => {
     : (pub.author_role || 'Member Author');
   const totalAuthors = Number(pub.total_authors) || 1;
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
+  const q = ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
 
-  const maxPoints = isArticle ? 40 : 30;
+  // Quartile determines max points for Articles
+  const quartileMax: Record<string, number> = { Q1: 40, Q2: 30, Q3: 20, Q4: 10, None: 10 };
+  const maxPoints = isArticle ? (quartileMax[q] ?? 10) : 30;
 
   let awardedPoints = 0;
   if (isHyper) {
