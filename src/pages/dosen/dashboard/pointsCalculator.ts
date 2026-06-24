@@ -12,6 +12,7 @@
  *       First Author  = 2 pts flat
  *       Member Author = 0.5 pts flat
  */
+
 export const calculateScopusSintaPoints = (pub: any): number => {
   if (pub.awarded_points !== undefined && pub.awarded_points !== null) {
     return Number(pub.awarded_points);
@@ -25,23 +26,39 @@ export const calculateScopusSintaPoints = (pub: any): number => {
   const q = ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
 
-  // Quartile determines max points for Articles
-  const quartileMax: Record<string, number> = { Q1: 40, Q2: 30, Q3: 20, Q4: 10, None: 10 };
-  const maxPoints = isArticle ? (quartileMax[q] ?? 10) : 30;
-
   let awardedPoints = 0;
-  if (isHyper) {
-    if (role === 'Single Author') awardedPoints = maxPoints;
-    else if (role === 'First Author') awardedPoints = 2;
-    else awardedPoints = 0.5;
-  } else if (role === 'Single Author') {
-    awardedPoints = maxPoints;        // 100%
-  } else if (role === 'First Author') {
-    awardedPoints = maxPoints * 0.60; // 60%
+
+  if (isArticle) {
+    if (isHyper) {
+      if (role === 'Single Author') {
+        awardedPoints = 40;
+      } else if (role === 'First Author') {
+        awardedPoints = 24;
+      } else {
+        awardedPoints = 1; // Hyperauthor Member = 1 pt flat
+      }
+    } else if (role === 'Single Author') {
+      awardedPoints = 40;
+    } else if (role === 'First Author') {
+      const qFirstPoints: Record<string, number> = { Q1: 24, Q2: 22, Q3: 20, Q4: 18, None: 18 };
+      awardedPoints = qFirstPoints[q] ?? 18;
+    } else {
+      // Member Author
+      const qMemberPool: Record<string, number> = { Q1: 16, Q2: 14, Q3: 12, Q4: 10, None: 10 };
+      const pool = qMemberPool[q] ?? 10;
+      const memberCount = Math.max(1, totalAuthors - 1);
+      awardedPoints = pool / memberCount;
+    }
   } else {
-    // Member Authors share 40% equally
-    const memberCount = Math.max(1, totalAuthors - 1);
-    awardedPoints = (maxPoints * 0.40) / memberCount;
+    // Non-Article
+    if (role === 'Single Author') {
+      awardedPoints = 30;
+    } else if (role === 'First Author') {
+      awardedPoints = 18;
+    } else {
+      const memberCount = Math.max(1, totalAuthors - 1);
+      awardedPoints = 12 / memberCount;
+    }
   }
 
   return Math.round(awardedPoints * 100) / 100;

@@ -185,55 +185,73 @@ const calculateScopusBreakdown = (pub: any) => {
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
   const q = pub.quartile && ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
-
-  // Max base points per quartile (Article only — Non-Article uses flat 30)
-  const quartileMax: Record<string, number> = { Q1: 40, Q2: 30, Q3: 20, Q4: 10, None: 10 };
-  const maxPoints = isArticle ? (quartileMax[q] ?? 10) : 30;
   const docType = isArticle ? `Article ${q !== 'None' ? q : '(Tanpa Quartile)'}` : 'Non-Article';
 
   let awardedPoints = 0;
   let detailStr = '';
   let pctStr = '';
 
-  if (isHyper) {
-    if (role === 'Single Author') {
-      awardedPoints = maxPoints;
-      detailStr = `Scopus ${docType} Hyperauthor (Single Author)`;
-      pctStr = '100% · >16 penulis';
+  if (isArticle) {
+    if (isHyper) {
+      if (role === 'Single Author') {
+        awardedPoints = 40;
+        detailStr = `Scopus ${docType} Hyperauthor (Single Author)`;
+        pctStr = '100% · >16 penulis = 40 pts';
+      } else if (role === 'First Author') {
+        awardedPoints = 24;
+        detailStr = `Scopus ${docType} Hyperauthor (First Author)`;
+        pctStr = 'Flat 24 pts · >16 penulis';
+      } else {
+        awardedPoints = 1;
+        detailStr = `Scopus ${docType} Hyperauthor (Member Author)`;
+        pctStr = 'Flat 1 pt · >16 penulis';
+      }
+    } else if (role === 'Single Author') {
+      awardedPoints = 40;
+      detailStr = `Scopus ${docType} (Single Author)`;
+      pctStr = '100% dari 40 pts';
     } else if (role === 'First Author') {
-      awardedPoints = 2;
-      detailStr = `Scopus ${docType} Hyperauthor (First Author)`;
-      pctStr = 'Flat 2 pts · >16 penulis';
+      const qFirstPoints: Record<string, number> = { Q1: 24, Q2: 22, Q3: 20, Q4: 18, None: 18 };
+      awardedPoints = qFirstPoints[q] ?? 18;
+      detailStr = `Scopus ${docType} (First Author)`;
+      pctStr = `Flat ${awardedPoints} pts (SINTA)`;
     } else {
-      awardedPoints = 0.5;
-      detailStr = `Scopus ${docType} Hyperauthor (Member Author)`;
-      pctStr = 'Flat 0.5 pts · >16 penulis';
+      const qMemberPool: Record<string, number> = { Q1: 16, Q2: 14, Q3: 12, Q4: 10, None: 10 };
+      const pool = qMemberPool[q] ?? 10;
+      const memberCount = Math.max(1, totalAuthors - 1);
+      awardedPoints = pool / memberCount;
+      detailStr = `Scopus ${docType} (Member Author)`;
+      pctStr = `Pool ${pool} pts ÷ ${memberCount} member = ${(pool / memberCount).toFixed(2)} pts`;
     }
-  } else if (role === 'Single Author') {
-    awardedPoints = maxPoints;
-    detailStr = `Scopus ${docType} (Single Author)`;
-    pctStr = `100% dari ${maxPoints} pts`;
-  } else if (role === 'First Author') {
-    awardedPoints = maxPoints * 0.60;
-    detailStr = `Scopus ${docType} (First Author)`;
-    pctStr = `60% dari ${maxPoints} pts = ${(maxPoints * 0.60).toFixed(0)} pts`;
   } else {
-    const memberCount = Math.max(1, totalAuthors - 1);
-    awardedPoints = (maxPoints * 0.40) / memberCount;
-    detailStr = `Scopus ${docType} (Member Author)`;
-    pctStr = `40% dari ${maxPoints} pts ÷ ${memberCount} member = ${((maxPoints * 0.40) / memberCount).toFixed(2)} pts`;
+    // Non-Article
+    if (role === 'Single Author') {
+      awardedPoints = 30;
+      detailStr = `Scopus ${docType} (Single Author)`;
+      pctStr = '100% dari 30 pts';
+    } else if (role === 'First Author') {
+      awardedPoints = 18;
+      detailStr = `Scopus ${docType} (First Author)`;
+      pctStr = 'Flat 18 pts';
+    } else {
+      const memberCount = Math.max(1, totalAuthors - 1);
+      awardedPoints = 12 / memberCount;
+      detailStr = `Scopus ${docType} (Member Author)`;
+      pctStr = `Pool 12 pts ÷ ${memberCount} member = ${(12 / memberCount).toFixed(2)} pts`;
+    }
   }
 
   const totalPoints = Math.round(awardedPoints * 100) / 100;
 
   return {
     basePoints: totalPoints,
-    maxPoints,
+    totalPoints,
+    maxPoints: isArticle ? (q === 'Q1' ? 40 : q === 'Q2' ? 30 : q === 'Q3' ? 20 : 10) : 30,
     detailStr,
     pctStr,
     totalAuthors,
+    authorOrder: pub.author_order || null,
     citations: Number(pub.citations) || 0,
-    totalPoints,
     isArticle,
     isHyper,
     role,
@@ -355,8 +373,19 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
               </span>
             )}
             {bd.totalAuthors > 0 && (
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-wide">
-                {bd.totalAuthors} Penulis
+              <span className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1 rounded-lg border border-slate-100 dark:border-slate-800/40 flex items-center gap-1">
+                <span>Penulis:</span>
+                <span className="text-orange-600 dark:text-orange-400 font-bold">
+                  {bd.role === 'Single Author' ? (
+                    '1 of 1 (Single)'
+                  ) : bd.authorOrder ? (
+                    `${bd.authorOrder} of ${bd.totalAuthors}`
+                  ) : bd.role === 'First Author' ? (
+                    `1 of ${bd.totalAuthors}`
+                  ) : (
+                    `Member of ${bd.totalAuthors}`
+                  )}
+                </span>
               </span>
             )}
           </div>
@@ -511,6 +540,17 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
             <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-orange-500/20">
               Poin Scopus Digunakan
             </span>
+            {/* Quartile badge */}
+            {bd.q && bd.q !== 'None' && (
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${bd.q === 'Q1' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25' : bd.q === 'Q2' ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400 border-teal-500/25' : bd.q === 'Q3' ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/25' : 'bg-slate-400/10 text-slate-500 dark:text-slate-400 border-slate-300/30'} rounded-full text-[7px] font-black uppercase tracking-widest border`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${bd.q === 'Q1' ? 'bg-emerald-500' : bd.q === 'Q2' ? 'bg-teal-500' : bd.q === 'Q3' ? 'bg-blue-500' : 'bg-slate-400'} inline-block`} />
+                {bd.q}
+              </span>
+            )}
+            {/* Author role badge */}
+            <span className={`px-2 py-0.5 ${bd.role === 'Single Author' ? 'bg-violet-500/10 text-violet-700 dark:text-violet-400' : bd.role === 'First Author' ? 'bg-orange-500/10 text-orange-700 dark:text-orange-400' : 'bg-slate-400/10 text-slate-600 dark:text-slate-400'} rounded-full text-[7px] font-black uppercase tracking-widest`}>
+              {bd.role}
+            </span>
             {/* Year — pushed to the right */}
             <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">
               <Calendar className="w-3.5 h-3.5" /> {doc.year || '—'}
@@ -528,13 +568,29 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
           </a>
 
           {/* Metadata row */}
-          {(doc.journal || doc.source_name) && (
-            <div className="flex flex-wrap items-center gap-3 mb-3">
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            {(doc.journal || doc.source_name) && (
               <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 italic truncate max-w-[220px]">
                 {doc.journal || doc.source_name}
               </span>
-            </div>
-          )}
+            )}
+            {bd.totalAuthors > 0 && (
+              <span className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1 rounded-lg border border-slate-100 dark:border-slate-800/40 flex items-center gap-1">
+                <span>Penulis:</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  {bd.role === 'Single Author' ? (
+                    '1 of 1 (Single)'
+                  ) : bd.authorOrder ? (
+                    `${bd.authorOrder} of ${bd.totalAuthors}`
+                  ) : bd.role === 'First Author' ? (
+                    `1 of ${bd.totalAuthors}`
+                  ) : (
+                    `Member of ${bd.totalAuthors}`
+                  )}
+                </span>
+              </span>
+            )}
+          </div>
 
           {/* Citation Progress Bar */}
           {citations > 0 && (
@@ -1146,8 +1202,7 @@ export default function ExternalDocumentsView({
                           <tr className="border-b border-slate-100 dark:border-slate-800">
                             <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Peran Penulis</th>
                             <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Quartile</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Maks Poin</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin (60%/40%)</th>
+                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin KPI (SINTA)</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-xs font-bold text-slate-700 dark:text-slate-300">
@@ -1155,13 +1210,12 @@ export default function ExternalDocumentsView({
                           <tr className="bg-violet-50/50 dark:bg-violet-950/10">
                             <td className="py-2.5 font-black text-violet-700 dark:text-violet-400">Single Author</td>
                             <td className="py-2.5 text-center text-slate-400">Semua</td>
-                            <td className="py-2.5 text-center text-slate-500">—</td>
-                            <td className="py-2.5 text-right text-violet-700 dark:text-violet-400 font-black">40 / 30 / 20 / 10</td>
+                            <td className="py-2.5 text-right text-violet-700 dark:text-violet-400 font-black">40</td>
                           </tr>
                           {/* First Author */}
-                          {[{q:'Q1',max:40,pts:24},{q:'Q2',max:30,pts:18},{q:'Q3',max:20,pts:12},{q:'Q4',max:10,pts:6}].map(row => (
+                          {[{q:'Q1',pts:24},{q:'Q2',pts:22},{q:'Q3',pts:20},{q:'Q4',pts:18}].map(row => (
                             <tr key={`fa-${row.q}`}>
-                              <td className="py-2.5 text-orange-700 dark:text-orange-400">First Author <span className="text-[9px] text-slate-400 font-normal">(60%)</span></td>
+                              <td className="py-2.5 text-orange-700 dark:text-orange-400">First Author <span className="text-[9px] text-slate-400 font-normal">(Utama)</span></td>
                               <td className="py-2.5 text-center">
                                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
                                   row.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
@@ -1170,14 +1224,13 @@ export default function ExternalDocumentsView({
                                   'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                                 }`}>{row.q}</span>
                               </td>
-                              <td className="py-2.5 text-center text-slate-400">{row.max} pts</td>
                               <td className="py-2.5 text-right text-orange-600 font-black">{row.pts}</td>
                             </tr>
                           ))}
                           {/* Member Author */}
-                          {[{q:'Q1',max:40,pool:16},{q:'Q2',max:30,pool:12},{q:'Q3',max:20,pool:8},{q:'Q4',max:10,pool:4}].map(row => (
+                          {[{q:'Q1',pool:16},{q:'Q2',pool:14},{q:'Q3',pool:12},{q:'Q4',pool:10}].map(row => (
                             <tr key={`ma-${row.q}`}>
-                              <td className="py-2.5 text-slate-600 dark:text-slate-400">Member Author <span className="text-[9px] text-slate-400 font-normal">(40% ÷ n)</span></td>
+                              <td className="py-2.5 text-slate-600 dark:text-slate-400">Member Author <span className="text-[9px] text-slate-400 font-normal">(Anggota)</span></td>
                               <td className="py-2.5 text-center">
                                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
                                   row.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
@@ -1186,7 +1239,6 @@ export default function ExternalDocumentsView({
                                   'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                                 }`}>{row.q}</span>
                               </td>
-                              <td className="py-2.5 text-center text-slate-400">{row.max} pts</td>
                               <td className="py-2.5 text-right text-orange-600 font-black">{row.pool} ÷ n</td>
                             </tr>
                           ))}
@@ -1194,24 +1246,16 @@ export default function ExternalDocumentsView({
                           <tr className="bg-red-50/40 dark:bg-red-950/10">
                             <td className="py-2.5 text-red-600 dark:text-red-400">Hyperauthor First</td>
                             <td className="py-2.5 text-center text-red-500 font-black">&gt;16</td>
-                            <td className="py-2.5 text-center text-slate-400">—</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">2</td>
+                            <td className="py-2.5 text-right text-orange-600 font-black">24</td>
                           </tr>
                           <tr className="bg-red-50/40 dark:bg-red-950/10">
                             <td className="py-2.5 text-red-600 dark:text-red-400">Hyperauthor Member</td>
                             <td className="py-2.5 text-center text-red-500 font-black">&gt;16</td>
-                            <td className="py-2.5 text-center text-slate-400">—</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">0.5</td>
+                            <td className="py-2.5 text-right text-orange-600 font-black">1</td>
                           </tr>
                         </tbody>
                       </table>
-                      {/* Formula note */}
-                      <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-xl border border-orange-100 dark:border-orange-900/30">
-                        <p className="text-[9px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest mb-1">Formula Skema 60/40</p>
-                        <p className="text-[9px] font-bold text-slate-500 dark:text-slate-400">
-                          First Author = Maks × 60% &nbsp;|&nbsp; Member = (Maks × 40%) ÷ Jumlah Member
-                        </p>
-                      </div>
+
                     </div>
                   </div>
 
@@ -1248,11 +1292,12 @@ export default function ExternalDocumentsView({
                             </tr>
                             <tr>
                               <td className="py-3">Member Author (Anggota)</td>
-                              <td className="py-3 text-right text-blue-600 font-black">12</td>
+                              <td className="py-3 text-right text-blue-600 font-black">12 ÷ n</td>
                             </tr>
                           </tbody>
                         </table>
                       </div>
+
                     </div>
 
                     {/* Citations Card */}
@@ -1292,172 +1337,39 @@ export default function ExternalDocumentsView({
                   </div>
                 </div>
 
-                {/* Grid 2: Google Scholar & HKI */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Google Scholar Card */}
-                  <div className="bg-white dark:bg-slate-950 p-8 rounded-[2.5rem] border border-slate-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20 shadow-inner">
-                        <Globe className="w-5 h-5 text-blue-500" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Google Scholar (GS)</h4>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Matriks Penyelarasan Publikasi Google Scholar</p>
-                      </div>
+                {/* Google Scholar Card */}
+                <div className="bg-white dark:bg-slate-950 p-8 rounded-[2.5rem] border border-slate-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20 shadow-inner">
+                      <Globe className="w-5 h-5 text-blue-500" />
                     </div>
-
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2.5 text-xs font-bold">
-                        <span className="text-slate-600 dark:text-slate-400">Poin Per Dokumen Scholar (GS Document)</span>
-                        <span className="text-blue-600 font-black">0.5 Pts</span>
-                      </div>
-                      <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2.5 text-xs font-bold">
-                        <span className="text-slate-600 dark:text-slate-400">Bonus Dokumen Tersitasi (Citations &gt; 0)</span>
-                        <span className="text-blue-600 font-black">0.5 Pts</span>
-                      </div>
-                      <div className="flex justify-between items-center pb-2 text-xs font-bold">
-                        <span className="text-slate-600 dark:text-slate-400">Poin Per Sitasi (GS Citation)</span>
-                        <span className="text-blue-600 font-black">0.25 Pts</span>
-                      </div>
-                      <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl">
-                        <p className="text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">Ketentuan Batas Maksimal (Cut Off)</p>
-                        <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                          Penghitungan poin dari jumlah sitasi dibatasi maksimal (cut-off) pada **500 sitasi** per dokumen publikasi.
-                        </p>
-                        <div className="mt-2.5 inline-block px-3 py-1.5 bg-blue-600/10 rounded-xl text-[9px] font-black text-blue-700 dark:text-blue-400">
-                          Poin = 0.5 + (Citations &gt; 0 ? 0.5 : 0) + (Min(Citations, 500) * 0.25)
-                        </div>
-                      </div>
+                    <div>
+                      <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Google Scholar (GS)</h4>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Matriks Penyelarasan Publikasi Google Scholar</p>
                     </div>
                   </div>
 
-                  {/* HKI Card */}
-                  <div className="bg-white dark:bg-slate-950 p-8 rounded-[2.5rem] border border-slate-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center border border-purple-500/20 shadow-inner">
-                        <ShieldCheck className="w-5 h-5 text-purple-500" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Hak Kekayaan Intelektual (HKI)</h4>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Poin HKI berdasarkan keputusan universitas</p>
-                      </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2.5 text-xs font-bold">
+                      <span className="text-slate-600 dark:text-slate-400">Poin Per Dokumen Scholar (GS Document)</span>
+                      <span className="text-blue-600 font-black">0.5 Pts</span>
                     </div>
-
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 dark:border-slate-800">
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Jenis HKI</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Batasan Maksimal</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin KPI</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-xs font-bold text-slate-700 dark:text-slate-300">
-                          <tr>
-                            <td className="py-2.5">HKI Paten</td>
-                            <td className="py-2.5 text-center text-slate-400">-</td>
-                            <td className="py-2.5 text-right text-purple-600 font-black">40</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5">HKI Paten Sederhana</td>
-                            <td className="py-2.5 text-center text-slate-400">-</td>
-                            <td className="py-2.5 text-right text-purple-600 font-black">28</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5">HKI Merek</td>
-                            <td className="py-2.5 text-center text-slate-400">-</td>
-                            <td className="py-2.5 text-right text-purple-600 font-black">12</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5">HKI Hak Cipta</td>
-                            <td className="py-2.5 text-center text-red-500 font-black">Maks 2 / Tahun</td>
-                            <td className="py-2.5 text-right text-purple-600 font-black">5</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2.5 text-xs font-bold">
+                      <span className="text-slate-600 dark:text-slate-400">Bonus Dokumen Tersitasi (Citations &gt; 0)</span>
+                      <span className="text-blue-600 font-black">0.5 Pts</span>
                     </div>
-                  </div>
-                </div>
-
-                {/* Grid 3: Buku & Penelitian */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Buku Card */}
-                  <div className="bg-white dark:bg-slate-950 p-8 rounded-[2.5rem] border border-slate-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center border border-amber-500/20 shadow-inner">
-                        <Book className="w-5 h-5 text-amber-500" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Buku Akademik</h4>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Poin penerbitan buku dosen</p>
-                      </div>
+                    <div className="flex justify-between items-center pb-2 text-xs font-bold">
+                      <span className="text-slate-600 dark:text-slate-400">Poin Per Sitasi (GS Citation)</span>
+                      <span className="text-blue-600 font-black">0.25 Pts</span>
                     </div>
-
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 dark:border-slate-800">
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Jenis Buku</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin KPI</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-xs font-bold text-slate-700 dark:text-slate-300">
-                          <tr>
-                            <td className="py-3">Buku Referensi</td>
-                            <td className="py-3 text-right text-amber-600 font-black">40</td>
-                          </tr>
-                          <tr>
-                            <td className="py-3">Buku Ajar</td>
-                            <td className="py-3 text-right text-amber-600 font-black">20</td>
-                          </tr>
-                          <tr>
-                            <td className="py-3">Buku Monograf</td>
-                            <td className="py-3 text-right text-amber-600 font-black">20</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* Penelitian Card */}
-                  <div className="bg-white dark:bg-slate-950 p-8 rounded-[2.5rem] border border-slate-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20 shadow-inner">
-                        <Beaker className="w-5 h-5 text-emerald-500" />
+                    <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl">
+                      <p className="text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">Ketentuan Batas Maksimal (Cut Off)</p>
+                      <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                        Penghitungan poin dari jumlah sitasi dibatasi maksimal (cut-off) pada **500 sitasi** per dokumen publikasi.
+                      </p>
+                      <div className="mt-2.5 inline-block px-3 py-1.5 bg-blue-600/10 rounded-xl text-[9px] font-black text-blue-700 dark:text-blue-400">
+                        Poin = 0.5 + (Citations &gt; 0 ? 0.5 : 0) + (Min(Citations, 500) * 0.25)
                       </div>
-                      <div>
-                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Penelitian & Hibah</h4>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Poin pendanaan hibah penelitian</p>
-                      </div>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 dark:border-slate-800">
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Program Penelitian</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Rupiah Poin</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin KPI</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-xs font-bold text-slate-700 dark:text-slate-300">
-                          <tr>
-                            <td className="py-2.5">Penelitian Hibah Luar Negeri</td>
-                            <td className="py-2.5 text-center text-slate-400">0</td>
-                            <td className="py-2.5 text-right text-emerald-600 font-black">10</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5">Penelitian Hibah Eksternal (Dikti)</td>
-                            <td className="py-2.5 text-center text-slate-400">0</td>
-                            <td className="py-2.5 text-right text-emerald-600 font-black">6</td>
-                          </tr>
-                          <tr>
-                            <td className="py-2.5">Penelitian Internal Institusi</td>
-                            <td className="py-2.5 text-center text-slate-400">0</td>
-                            <td className="py-2.5 text-right text-emerald-600 font-black">3</td>
-                          </tr>
-                        </tbody>
-                      </table>
                     </div>
                   </div>
                 </div>
