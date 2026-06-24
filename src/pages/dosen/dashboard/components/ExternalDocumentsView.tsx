@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
   BookOpen, Zap, ShieldCheck, Book, TrendingUp, Calendar, ExternalLink, Search,
@@ -705,6 +705,7 @@ interface ExternalDocumentsViewProps {
   publications: any[];
   scopusPublications: any[];
   tabVariants: any;
+  onRefresh?: () => void;
 }
 
 export default function ExternalDocumentsView({
@@ -716,7 +717,8 @@ export default function ExternalDocumentsView({
   scholarData,
   publications,
   scopusPublications,
-  tabVariants
+  tabVariants,
+  onRefresh
 }: ExternalDocumentsViewProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -953,10 +955,7 @@ export default function ExternalDocumentsView({
                           />
                         </div>
                       </div>
-                    </div>
-
-                    {/* Document List */}
-                     <div className="space-y-5">
+                    </div>                     <div className="space-y-5">
                        {/* === Formula Info Banner === */}
                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50/60 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
                          <div className="flex items-start gap-3 flex-1">
@@ -966,33 +965,33 @@ export default function ExternalDocumentsView({
                            <div>
                              <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema 60/40 + Quartile</p>
                              <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
-                               Quartile menentukan poin maks (Q1=40, Q2=30, Q3=20, Q4=10) · First Author 60% · Member berbagi 40% merata
+                                Quartile menentukan poin maks (Q1=40, Q2=30, Q3=20, Q4=10) · First Author 60% · Member berbagi 40% merata
                              </p>
                            </div>
                          </div>
                        </div>
 
-                       <div className="grid grid-cols-1 gap-4">
-                         {scopusList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
-                           const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
-                           return (
-                             <ScopusDocRow
-                               key={idx}
-                               doc={doc}
-                               isAlsoScholar={isAlsoScholar}
-                               idx={idx}
-                             />
-                           );
-                         })}
-                       </div>
-                       <Pagination 
-                         totalItems={scopusList?.length || 0} 
-                         currentPage={currentPage} 
-                         onPageChange={setCurrentPage}
-                         itemsPerPage={itemsPerPage}
-                         setItemsPerPage={setItemsPerPage}
-                       />
-                     </div>
+                        <div className="grid grid-cols-1 gap-4">
+                          {scopusList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                            const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
+                            return (
+                              <ScopusDocRow
+                                key={idx}
+                                doc={doc}
+                                isAlsoScholar={isAlsoScholar}
+                                idx={idx}
+                              />
+                            );
+                          })}
+                        </div>
+                        <Pagination 
+                          totalItems={scopusList?.length || 0} 
+                          currentPage={currentPage} 
+                          onPageChange={setCurrentPage}
+                          itemsPerPage={itemsPerPage}
+                          setItemsPerPage={setItemsPerPage}
+                        />
+                      </div>
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">

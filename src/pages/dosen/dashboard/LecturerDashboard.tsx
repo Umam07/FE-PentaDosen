@@ -121,6 +121,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
             publications={profileData?.publications || []}
             scopusPublications={profileData?.scopusPublications || []}
             tabVariants={tabVariants}
+            onRefresh={fetchData}
           />
         </div>
       )}
