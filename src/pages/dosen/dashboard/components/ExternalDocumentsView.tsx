@@ -8,8 +8,8 @@ import { ProfileTrendChart } from './ProfileCharts';
 import { calculateScholarPoints } from '../pointsCalculator';
 
 // === Sub-component: Scholar row with per-doc points + breakdown ===
-function ScholarDocRow({ doc, docPoints, isAlsoScopus, idx }: {
-  doc: any; docPoints: number; isAlsoScopus: boolean; idx: number; normalizeTitle?: (t: string) => string; key?: React.Key;
+function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
+  doc: any; docPoints: number; isAlsoScopus: boolean; scopusQuartile?: string | null; idx: number; normalizeTitle?: (t: string) => string; key?: React.Key;
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
   const citations = doc.citations || 0;
@@ -52,7 +52,7 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, idx }: {
             {/* Also Scopus badge */}
             {isAlsoScopus && (
               <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">
-                ✓ Scopus
+                ✓ Scopus {scopusQuartile && scopusQuartile !== 'None' ? `(${scopusQuartile})` : ''}
               </span>
             )}
             {/* Year — pushed to the right */}
@@ -1065,13 +1065,16 @@ export default function ExternalDocumentsView({
                       <div className="grid grid-cols-1 gap-4">
                         {scholarList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
                           const docPoints = calculateScholarPoints(doc);
-                          const isAlsoScopus = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
+                          const scopusMatch = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
+                          const isAlsoScopus = !!scopusMatch;
+                          const scopusQuartile = scopusMatch ? scopusMatch.quartile : null;
                           return (
                             <ScholarDocRow
                               key={idx}
                               doc={doc}
                               docPoints={docPoints}
                               isAlsoScopus={isAlsoScopus}
+                              scopusQuartile={scopusQuartile}
                               idx={idx}
                               normalizeTitle={normalizeTitle}
                             />
