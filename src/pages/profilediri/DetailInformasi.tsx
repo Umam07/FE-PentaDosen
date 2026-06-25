@@ -155,7 +155,7 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
       </div>
 
       {/* Main info grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2 items-start">
         {/* Informasi Akademik */}
         <div className="rounded-[2rem] border border-slate-200/60 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
           <div className="mb-5 flex items-center gap-3">
@@ -172,7 +172,7 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3">
             <InfoTile label="Alamat Email" value={user?.email} icon={Mail} />
             <InfoTile label="Nomor Telepon" value={user?.phone} icon={Phone} />
             <InfoTile label="Fakultas" value={user?.fakultas} icon={BookOpen} />
