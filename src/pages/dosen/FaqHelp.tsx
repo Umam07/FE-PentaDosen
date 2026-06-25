@@ -76,26 +76,26 @@ export default function FaqHelp({ user }: { user: any }) {
   return (
     <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-8 pb-20">
       
-      {/* 1. PREMIUM HEADER BANNER */}
+      {/* 1. PREMIUM COMPACT HEADER BANNER */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] border border-slate-200/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-8 py-10 dark:border-slate-800 shadow-sm"
+        className="relative overflow-hidden rounded-[2rem] border border-slate-200/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-6 py-6 sm:px-8 sm:py-7 dark:border-slate-800 shadow-sm"
       >
         {/* Soft glowing decorations */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 left-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 left-1/4 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-5">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-inner text-white">
-              <HelpCircle className="w-8 h-8 text-primary-400" />
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/10 shadow-inner text-white">
+              <HelpCircle className="w-6 h-6 text-primary-400" />
             </div>
             <div>
-              <span className="text-[10px] font-black text-primary-400 uppercase tracking-[0.2em]">Pusat Dukungan</span>
-              <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mt-1">Bantuan & FAQ</h2>
-              <p className="text-xs font-bold text-slate-400 mt-1.5 max-w-xl leading-relaxed">
+              <span className="text-[9px] font-black text-primary-400 uppercase tracking-[0.2em] leading-none">Pusat Dukungan</span>
+              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white mt-0.5">Bantuan & FAQ</h2>
+              <p className="text-[11px] font-semibold text-slate-400 mt-1 max-w-2xl leading-relaxed">
                 Temukan jawaban atas pertanyaan umum seputar integrasi Scholar, Scopus, perhitungan poin, dan tata cara verifikasi dokumen kinerja.
               </p>
             </div>
@@ -119,21 +119,29 @@ export default function FaqHelp({ user }: { user: any }) {
           </div>
         </div>
 
-        {/* Elegant Pills Categories */}
-        <div className="flex flex-wrap justify-center gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-6 overflow-x-auto no-scrollbar">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => { setActiveCategory(cat); setExpandedFaqId(null); }}
-              className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
-                activeCategory === cat
-                  ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/10 dark:shadow-primary-900/20 scale-[1.02]'
-                  : 'bg-white dark:bg-slate-900 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-primary-600 border border-slate-200 dark:border-slate-800'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Elegant Pills Categories (LecturerDashboard style) */}
+        <div className="flex justify-center w-full">
+          <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800 rounded-[2rem] border border-slate-200/60 dark:border-slate-700 shadow-inner overflow-x-auto no-scrollbar max-w-full">
+            {categories.map((cat) => {
+              const theme = getCategoryTheme(cat);
+              const IconComponent = theme.icon;
+              const isActive = activeCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => { setActiveCategory(cat); setExpandedFaqId(null); }}
+                  className={`flex items-center gap-2.5 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 whitespace-nowrap ${
+                    isActive 
+                      ? 'bg-white dark:bg-slate-900 text-primary-600 shadow-xl shadow-primary-500/10' 
+                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                  }`}
+                >
+                  <IconComponent className={`w-3.5 h-3.5 ${isActive ? 'text-primary-600' : 'text-slate-400'}`} />
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
