@@ -232,24 +232,27 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
                 {[1, 2, 3].map(i => <div key={i} className="h-12 bg-gray-100 dark:bg-zinc-800 animate-pulse rounded-2xl" />)}
               </div>
             ) : filteredWeights.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-gray-100 dark:border-zinc-800 text-gray-400 font-bold uppercase tracking-widest">
-                      <th className="py-3 text-left">Kategori Dokumen / Publikasi</th>
-                      <th className="py-3 text-center w-24">Bobot Poin</th>
-                      <th className="py-3 text-right w-16">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50 dark:divide-zinc-800 font-bold text-gray-700 dark:text-zinc-300">
-                    <AnimatePresence mode="popLayout">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeGroup}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className="overflow-x-auto"
+                >
+                  <table className="min-w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-gray-100 dark:border-zinc-800 text-gray-400 font-bold uppercase tracking-widest">
+                        <th className="py-3 text-left">Kategori Dokumen / Publikasi</th>
+                        <th className="py-3 text-center w-24">Bobot Poin</th>
+                        <th className="py-3 text-right w-16">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 dark:divide-zinc-800 font-bold text-gray-700 dark:text-zinc-300">
                       {filteredWeights.map((w) => (
-                        <motion.tr
+                        <tr
                           key={w.category}
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -4 }}
-                          transition={{ duration: 0.15 }}
                           className="hover:bg-gray-50/20 dark:hover:bg-zinc-800/10 transition-colors"
                         >
                           <td className="py-3.5 text-left font-extrabold text-gray-950 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2.5">
@@ -277,12 +280,12 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </td>
-                        </motion.tr>
+                        </tr>
                       ))}
-                    </AnimatePresence>
-                  </tbody>
-                </table>
-              </div>
+                    </tbody>
+                  </table>
+                </motion.div>
+              </AnimatePresence>
             ) : (
               <div className="py-16 text-center text-gray-400 font-bold italic uppercase text-xs tracking-widest flex flex-col items-center justify-center gap-3">
                 <FileSpreadsheet className="w-8 h-8 text-gray-200" />
