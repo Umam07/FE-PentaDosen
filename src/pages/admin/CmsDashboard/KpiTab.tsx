@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Trash2, Save, Plus, Calendar, Award, ShieldCheck, 
-  Book, Beaker, BookOpen, Zap 
+  Book, Beaker, BookOpen, Zap, FileSpreadsheet 
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function KpiTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
   const [weights, setWeights] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [savingWeights, setSavingWeights] = useState(false);
+
+  // Group selection state
+  const [activeGroup, setActiveGroup] = useState<'scopus' | 'hki' | 'buku' | 'lain'>('scopus');
 
   // Period settings
   const [periodStart, setPeriodStart] = useState('');
@@ -43,9 +47,27 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
     fetchKpiData();
   }, []);
 
-  const handleWeightChange = (index: number, val: number) => {
-    const updated = [...weights];
-    updated[index].weight_value = val;
+  const getGroupForCategory = (category: string): 'scopus' | 'hki' | 'buku' | 'lain' => {
+    const catLower = category.toLowerCase();
+    if (catLower.includes('scopus') || catLower.includes('sinta') || catLower.includes('quartile')) {
+      return 'scopus';
+    }
+    if (catLower.includes('hki') || catLower.includes('paten') || catLower.includes('cipta') || catLower.includes('merk') || catLower.includes('merek')) {
+      return 'hki';
+    }
+    if (catLower.includes('buku') || catLower.includes('monograf') || catLower.includes('ajar') || catLower.includes('referensi')) {
+      return 'buku';
+    }
+    return 'lain';
+  };
+
+  const handleWeightChangeByCategory = (category: string, val: number) => {
+    const updated = weights.map(w => {
+      if (w.category === category) {
+        return { ...w, weight_value: val };
+      }
+      return w;
+    });
     setWeights(updated);
   };
 
@@ -140,27 +162,76 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
     }
   };
 
+  const filteredWeights = weights.filter(w => getGroupForCategory(w.category) === activeGroup);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
       {/* Left side: Interactive Configurations (Col-2) */}
       <div className="lg:col-span-2 space-y-6 lg:space-y-8">
         {/* Bobot Point Table */}
         <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 space-y-6 shadow-sm">
-          <div>
-            <h3 className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-              Bobot KPI Master Data
-            </h3>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-              Mengatur besaran poin dinamis untuk masing-masing kategori berkas / publikasi.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
+                Bobot KPI Master Data
+              </h3>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                Mengatur besaran poin dinamis untuk masing-masing kategori berkas / publikasi.
+              </p>
+            </div>
+            
+            <button
+              onClick={handleSaveWeights}
+              disabled={savingWeights || loading}
+              className="inline-flex items-center gap-2 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md disabled:opacity-40 active:scale-95 transition-all outline-none"
+            >
+              <Save className="w-4 h-4" />
+              {savingWeights ? 'Menyimpan...' : 'Simpan Semua Bobot'}
+            </button>
           </div>
 
-          <div className="space-y-4">
+          {/* Group Selector Tabs */}
+          <div className="flex flex-wrap gap-1.5 p-1.5 bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100/60 dark:border-zinc-850/50">
+            {[
+              { id: 'scopus', label: 'Scopus & SINTA', icon: Zap, color: 'text-orange-500' },
+              { id: 'hki', label: 'HKI', icon: ShieldCheck, color: 'text-purple-500' },
+              { id: 'buku', label: 'Buku', icon: Book, color: 'text-amber-500' },
+              { id: 'lain', label: 'Lainnya', icon: FileSpreadsheet, color: 'text-emerald-500' }
+            ].map(group => {
+              const isActive = activeGroup === group.id;
+              return (
+                <button
+                  key={group.id}
+                  onClick={() => setActiveGroup(group.id as any)}
+                  className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all outline-none select-none ${
+                    isActive
+                      ? 'text-white shadow-sm'
+                      : 'text-gray-500 hover:text-gray-800 dark:hover:text-zinc-200 hover:bg-gray-100/50 dark:hover:bg-zinc-800/50'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-kpi-group-tab"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      className="absolute inset-0 bg-primary-600 rounded-xl"
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    <group.icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-white' : group.color}`} />
+                    {group.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Table Container */}
+          <div className="space-y-4 min-h-[300px]">
             {loading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map(i => <div key={i} className="h-12 bg-gray-100 dark:bg-zinc-800 animate-pulse rounded-2xl" />)}
               </div>
-            ) : (
+            ) : filteredWeights.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="min-w-full text-xs">
                   <thead>
@@ -171,76 +242,53 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50 dark:divide-zinc-800 font-bold text-gray-700 dark:text-zinc-300">
-                    {weights.map((w, idx) => (
-                      <tr key={w.category}>
-                        <td className="py-3.5 text-left font-extrabold text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{w.category}</td>
-                        <td className="py-3.5 text-center">
-                          <input
-                             type="number"
-                             value={w.weight_value}
-                             onChange={(e) => handleWeightChange(idx, parseInt(e.target.value) || 0)}
-                             className="w-16 px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-lg text-center font-bold text-xs outline-none text-gray-900 dark:text-zinc-100"
-                          />
-                        </td>
-                        <td className="py-3.5 text-right">
-                          <button
-                            onClick={() => handleDeleteCategory(w.category)}
-                            className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    <AnimatePresence mode="popLayout">
+                      {filteredWeights.map((w) => (
+                        <motion.tr
+                          key={w.category}
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          transition={{ duration: 0.15 }}
+                          className="hover:bg-gray-50/20 dark:hover:bg-zinc-800/10 transition-colors"
+                        >
+                          <td className="py-3.5 text-left font-extrabold text-gray-950 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2.5">
+                            <div className="p-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700">
+                              {activeGroup === 'scopus' && <Zap className="w-3.5 h-3.5 text-orange-500" />}
+                              {activeGroup === 'hki' && <ShieldCheck className="w-3.5 h-3.5 text-purple-500" />}
+                              {activeGroup === 'buku' && <Book className="w-3.5 h-3.5 text-amber-500" />}
+                              {activeGroup === 'lain' && <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-500" />}
+                            </div>
+                            {w.category}
+                          </td>
+                          <td className="py-3.5 text-center">
+                            <input
+                               type="number"
+                               value={w.weight_value}
+                               onChange={(e) => handleWeightChangeByCategory(w.category, parseInt(e.target.value) || 0)}
+                               className="w-16 px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-lg text-center font-bold text-xs outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/30"
+                            />
+                          </td>
+                          <td className="py-3.5 text-right">
+                            <button
+                              onClick={() => handleDeleteCategory(w.category)}
+                              className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
                   </tbody>
                 </table>
               </div>
+            ) : (
+              <div className="py-16 text-center text-gray-400 font-bold italic uppercase text-xs tracking-widest flex flex-col items-center justify-center gap-3">
+                <FileSpreadsheet className="w-8 h-8 text-gray-200" />
+                <span>Tidak ada kategori dalam kelompok ini.</span>
+              </div>
             )}
-
-            <div className="flex justify-end pt-3">
-              <button
-                onClick={handleSaveWeights}
-                disabled={savingWeights || loading}
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 disabled:opacity-40"
-              >
-                <Save className="w-4 h-4" />
-                {savingWeights ? 'Menyimpan...' : 'Simpan Semua Bobot'}
-              </button>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-100 dark:border-zinc-800 pt-6 space-y-4">
-            <div>
-              <h4 className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-widest">Tambah Kategori Baru</h4>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Tambah jenis kategori penilaian KPI dosen baru ke sistem</p>
-            </div>
-
-            <form onSubmit={handleAddCategory} className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                required
-                placeholder="Nama kategori (e.g. Pengabdian)..."
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                className="flex-1 px-4 py-3.5 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100"
-              />
-              <input
-                type="number"
-                required
-                placeholder="Poin..."
-                value={newWeight}
-                onChange={(e) => setNewWeight(e.target.value)}
-                className="w-full sm:w-24 px-4 py-3.5 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold text-center outline-none text-gray-900 dark:text-zinc-100"
-              />
-              <button
-                type="submit"
-                disabled={addingCategory}
-                className="px-5 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md flex items-center justify-center gap-1.5 disabled:opacity-40"
-              >
-                <Plus className="w-4 h-4" />
-                {addingCategory ? 'Adding...' : 'Tambah'}
-              </button>
-            </form>
           </div>
         </div>
 
@@ -262,7 +310,7 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
                 placeholder="Contoh: 2025-2027"
                 value={periodLabel}
                 onChange={(e) => setPeriodLabel(e.target.value)}
-                className="w-full px-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100"
+                className="w-full px-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/30"
               />
             </div>
 
@@ -276,7 +324,7 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
                     required
                     value={periodStart}
                     onChange={(e) => setPeriodStart(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100"
+                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/30"
                   />
                 </div>
               </div>
@@ -290,7 +338,7 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
                     required
                     value={periodEnd}
                     onChange={(e) => setPeriodEnd(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100"
+                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/30"
                   />
                 </div>
               </div>
@@ -299,7 +347,7 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
             <button
               type="submit"
               disabled={savingPeriod || loading}
-              className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 disabled:opacity-40 flex items-center justify-center gap-2"
+              className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 disabled:opacity-40 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
             >
               <Save className="w-4 h-4" />
               {savingPeriod ? 'Menyimpan...' : 'Perbarui Periode'}
