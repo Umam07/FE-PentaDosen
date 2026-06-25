@@ -22,6 +22,8 @@ export const calculateScopusSintaPoints = (pub: any): number => {
     ? 'Member Author'
     : (pub.author_role || 'Member Author');
   const totalAuthors = Number(pub.total_authors) || 1;
+  const authorOrder = Number(pub.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
+  const isCorresponding = !!pub.is_corresponding;
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
   const q = ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
@@ -37,17 +39,33 @@ export const calculateScopusSintaPoints = (pub: any): number => {
       } else {
         awardedPoints = 1; // Hyperauthor Member = 1 pt flat
       }
-    } else if (role === 'Single Author') {
-      awardedPoints = 40;
-    } else if (role === 'First Author') {
-      const qFirstPoints: Record<string, number> = { Q1: 24, Q2: 22, Q3: 20, Q4: 18, None: 18 };
-      awardedPoints = qFirstPoints[q] ?? 18;
     } else {
-      // Member Author
-      const qMemberPool: Record<string, number> = { Q1: 16, Q2: 14, Q3: 12, Q4: 10, None: 10 };
-      const pool = qMemberPool[q] ?? 10;
-      const memberCount = Math.max(1, totalAuthors - 1);
-      awardedPoints = pool / memberCount;
+      // Base SKS points
+      const basePointsMap: Record<string, number> = { Q1: 40, Q2: 38, Q3: 35, Q4: 33, None: 33 };
+      const basePoints = basePointsMap[q] ?? 33;
+
+      if (totalAuthors === 1 || (authorOrder === 1 && totalAuthors === 1)) {
+        awardedPoints = basePoints;
+      } else if (totalAuthors === 2) {
+        if (authorOrder === 1) {
+          awardedPoints = isCorresponding ? (0.6 * basePoints) : (0.5 * basePoints);
+        } else {
+          awardedPoints = isCorresponding ? (0.5 * basePoints) : (0.4 * basePoints);
+        }
+      } else {
+        // > 2 Authors
+        if (authorOrder === 1) {
+          awardedPoints = isCorresponding ? (0.6 * basePoints) : (0.4 * basePoints);
+        } else {
+          // Member Author (2nd, 3rd, etc.)
+          if (isCorresponding) {
+            awardedPoints = 0.4 * basePoints;
+          } else {
+            // Default is Scenario 1: First Author is corresponding, so members get 40% / (n - 1)
+            awardedPoints = (0.4 * basePoints) / (totalAuthors - 1);
+          }
+        }
+      }
     }
   } else {
     // Non-Article

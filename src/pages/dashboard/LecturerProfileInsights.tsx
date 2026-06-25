@@ -226,44 +226,68 @@ export default function LecturerProfileInsights() {
         return Number(pub.awarded_points);
       }
 
-      const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' ? 'Member Author' : (pub.author_role || 'Member Author');
+      const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author'
+        ? 'Member Author'
+        : (pub.author_role || 'Member Author');
       const totalAuthors = Number(pub.total_authors) || 1;
+      const authorOrder = Number(pub.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
+      const isCorresponding = !!pub.is_corresponding;
       const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
-      const q = pub.quartile || 'Q4';
-      
+      const q = ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
       const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
-      
-      let basePoints = 0;
+
+      let awardedPoints = 0;
+
       if (isArticle) {
-        if (role === 'Single Author') {
-          basePoints = 40;
-        } else if (isHyper) {
-          basePoints = role === 'First Author' ? 24 : 1;
-        } else {
-          const quartile = ['Q1', 'Q2', 'Q3', 'Q4'].includes(q) ? q : 'Q4';
-          if (role === 'First Author') {
-            if (quartile === 'Q1') basePoints = 24;
-            else if (quartile === 'Q2') basePoints = 22;
-            else if (quartile === 'Q3') basePoints = 20;
-            else basePoints = 18;
+        if (isHyper) {
+          if (role === 'Single Author') {
+            awardedPoints = 40;
+          } else if (role === 'First Author') {
+            awardedPoints = 24;
           } else {
-            if (quartile === 'Q1') basePoints = 16;
-            else if (quartile === 'Q2') basePoints = 14;
-            else if (quartile === 'Q3') basePoints = 12;
-            else basePoints = 10;
+            awardedPoints = 1; // Hyperauthor Member = 1 pt flat
+          }
+        } else {
+          // Base SKS points
+          const basePointsMap: Record<string, number> = { Q1: 40, Q2: 38, Q3: 35, Q4: 33, None: 33 };
+          const basePoints = basePointsMap[q] ?? 33;
+
+          if (totalAuthors === 1 || (authorOrder === 1 && totalAuthors === 1)) {
+            awardedPoints = basePoints;
+          } else if (totalAuthors === 2) {
+            if (authorOrder === 1) {
+              awardedPoints = isCorresponding ? (0.6 * basePoints) : (0.5 * basePoints);
+            } else {
+              awardedPoints = isCorresponding ? (0.5 * basePoints) : (0.4 * basePoints);
+            }
+          } else {
+            // > 2 Authors
+            if (authorOrder === 1) {
+              awardedPoints = isCorresponding ? (0.6 * basePoints) : (0.4 * basePoints);
+            } else {
+              // Member Author (2nd, 3rd, etc.)
+              if (isCorresponding) {
+                awardedPoints = 0.4 * basePoints;
+              } else {
+                // Default is Scenario 1: First Author is corresponding, so members get 40% / (n - 1)
+                awardedPoints = (0.4 * basePoints) / (totalAuthors - 1);
+              }
+            }
           }
         }
       } else {
-        if (role === 'Single Author') basePoints = 30;
-        else if (role === 'First Author') basePoints = 18;
-        else basePoints = 12;
+        // Non-Article
+        if (role === 'Single Author') {
+          awardedPoints = 30;
+        } else if (role === 'First Author') {
+          awardedPoints = 18;
+        } else {
+          const memberCount = Math.max(1, totalAuthors - 1);
+          awardedPoints = 12 / memberCount;
+        }
       }
-      
-      const citations = Number(pub.citations) || 0;
-      const citationPoints = totalAuthors > 0 ? (citations / totalAuthors) : 0;
-      const citationBonus = citations > 0 ? 5 : 0;
-      
-      return basePoints + citationPoints + citationBonus;
+
+      return Math.round(awardedPoints * 100) / 100;
     };
 
     const extCross    = (scopusPublications || []).filter((s: any) => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);

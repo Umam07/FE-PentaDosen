@@ -177,11 +177,14 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
 
 // === Helper: Detailed Scopus breakdown calculation (60/40 schema + quartile) ===
 // Quartile determines max base points:
-//   Q1 = 40 pts, Q2 = 30 pts, Q3 = 20 pts, Q4 = 10 pts, None = 10 pts
+//   Q1 = 40 pts, Q2 = 38 pts, Q3 = 35 pts, Q4 = 33 pts, None = 33 pts
 // Then: Single = 100%, First = 60%, Member = 40% / (totalAuthors - 1)
 const calculateScopusBreakdown = (pub: any) => {
   const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' ? 'Member Author' : (pub.author_role || 'Member Author');
   const totalAuthors = Number(pub.total_authors) || 1;
+  const authorOrder = Number(pub.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
+  const isCorresponding = !!pub.is_corresponding;
+  const isCorrespondingConfirmed = !!pub.is_corresponding_confirmed;
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
   const q = pub.quartile && ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
@@ -190,6 +193,7 @@ const calculateScopusBreakdown = (pub: any) => {
   let awardedPoints = 0;
   let detailStr = '';
   let pctStr = '';
+  const maxPoints = isArticle ? (q === 'Q1' ? 40 : q === 'Q2' ? 38 : q === 'Q3' ? 35 : 33) : 30;
 
   if (isArticle) {
     if (isHyper) {
@@ -206,22 +210,63 @@ const calculateScopusBreakdown = (pub: any) => {
         detailStr = `Scopus ${docType} Hyperauthor (Member Author)`;
         pctStr = 'Flat 1 pt · >16 penulis';
       }
-    } else if (role === 'Single Author') {
-      awardedPoints = 40;
-      detailStr = `Scopus ${docType} (Single Author)`;
-      pctStr = '100% dari 40 pts';
-    } else if (role === 'First Author') {
-      const qFirstPoints: Record<string, number> = { Q1: 24, Q2: 22, Q3: 20, Q4: 18, None: 18 };
-      awardedPoints = qFirstPoints[q] ?? 18;
-      detailStr = `Scopus ${docType} (First Author)`;
-      pctStr = `Flat ${awardedPoints} pts (SINTA)`;
     } else {
-      const qMemberPool: Record<string, number> = { Q1: 16, Q2: 14, Q3: 12, Q4: 10, None: 10 };
-      const pool = qMemberPool[q] ?? 10;
-      const memberCount = Math.max(1, totalAuthors - 1);
-      awardedPoints = pool / memberCount;
-      detailStr = `Scopus ${docType} (Member Author)`;
-      pctStr = `Pool ${pool} pts ÷ ${memberCount} member = ${(pool / memberCount).toFixed(2)} pts`;
+      // Base SKS points
+      const basePointsMap: Record<string, number> = { Q1: 40, Q2: 38, Q3: 35, Q4: 33, None: 33 };
+      const basePoints = basePointsMap[q] ?? 33;
+
+      if (totalAuthors === 1 || (authorOrder === 1 && totalAuthors === 1)) {
+        awardedPoints = basePoints;
+        detailStr = `Scopus ${docType} (Single Author)`;
+        pctStr = `100% dari ${basePoints} pts`;
+      } else if (totalAuthors === 2) {
+        if (authorOrder === 1) {
+          if (isCorresponding) {
+            awardedPoints = 0.6 * basePoints;
+            detailStr = `Scopus ${docType} (First & Corresponding Author)`;
+            pctStr = `Skenario 1: 60% dari ${basePoints} pts`;
+          } else {
+            awardedPoints = 0.5 * basePoints;
+            detailStr = `Scopus ${docType} (First Author)`;
+            pctStr = `Skenario 2: 50% dari ${basePoints} pts`;
+          }
+        } else {
+          if (isCorresponding) {
+            awardedPoints = 0.5 * basePoints;
+            detailStr = `Scopus ${docType} (2nd Author + Corresponding)`;
+            pctStr = `Skenario 2: 50% dari ${basePoints} pts`;
+          } else {
+            awardedPoints = 0.4 * basePoints;
+            detailStr = `Scopus ${docType} (2nd Author)`;
+            pctStr = `Skenario 1: 40% dari ${basePoints} pts`;
+          }
+        }
+      } else {
+        // > 2 Authors
+        if (authorOrder === 1) {
+          if (isCorresponding) {
+            awardedPoints = 0.6 * basePoints;
+            detailStr = `Scopus ${docType} (First & Corresponding Author)`;
+            pctStr = `Skenario 1: 60% dari ${basePoints} pts`;
+          } else {
+            awardedPoints = 0.4 * basePoints;
+            detailStr = `Scopus ${docType} (First Author)`;
+            pctStr = `Skenario 2: 40% dari ${basePoints} pts`;
+          }
+        } else {
+          // Member Author (2nd, 3rd, etc.)
+          if (isCorresponding) {
+            awardedPoints = 0.4 * basePoints;
+            detailStr = `Scopus ${docType} (Member Author + Corresponding)`;
+            pctStr = `Skenario 2: 40% dari ${basePoints} pts`;
+          } else {
+            // Default Scenario 1
+            awardedPoints = (0.4 * basePoints) / (totalAuthors - 1);
+            detailStr = `Scopus ${docType} (Member Author)`;
+            pctStr = `Skenario 1 (Default): 40% dari ${basePoints} pts ÷ ${totalAuthors - 1} anggota`;
+          }
+        }
+      }
     }
   } else {
     // Non-Article
@@ -237,7 +282,7 @@ const calculateScopusBreakdown = (pub: any) => {
       const memberCount = Math.max(1, totalAuthors - 1);
       awardedPoints = 12 / memberCount;
       detailStr = `Scopus ${docType} (Member Author)`;
-      pctStr = `Pool 12 pts ÷ ${memberCount} member = ${(12 / memberCount).toFixed(2)} pts`;
+      pctStr = `Pool 12 pts ÷ ${memberCount} anggota = ${(12 / memberCount).toFixed(2)} pts`;
     }
   }
 
@@ -246,24 +291,27 @@ const calculateScopusBreakdown = (pub: any) => {
   return {
     basePoints: totalPoints,
     totalPoints,
-    maxPoints: isArticle ? (q === 'Q1' ? 40 : q === 'Q2' ? 30 : q === 'Q3' ? 20 : 10) : 30,
+    maxPoints,
     detailStr,
     pctStr,
     totalAuthors,
-    authorOrder: pub.author_order || null,
+    authorOrder,
     citations: Number(pub.citations) || 0,
     isArticle,
     isHyper,
     role,
-    q
+    q,
+    isCorresponding,
+    isCorrespondingConfirmed
   };
 };
 
 // === Sub-component: Scopus row — SINTA points calculation (UPGRADED) ===
-function ScopusDocRow({ doc, isAlsoScholar, idx }: {
-  doc: any; isAlsoScholar: boolean; idx: number; key?: React.Key;
+function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
+  doc: any; isAlsoScholar: boolean; idx: number; onRefresh?: () => void; key?: React.Key;
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
+  const [isUpdating, setIsUpdating] = React.useState(false);
   const bd = calculateScopusBreakdown(doc);
 
   // Quartile color mapping
@@ -286,10 +334,36 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
 
   const subtypeLabel = bd.isArticle ? 'Article' : (doc.subtype_description || doc.subtype || 'Non-Article');
   const isHyper = bd.totalAuthors > 16;
+  const showCorrespondingControls = bd.isArticle && bd.totalAuthors > 1;
 
   // Citation progress bar (reference max = 200)
   const citMax = 200;
   const citPct = Math.min(100, (bd.citations / citMax) * 100);
+
+  const handleToggleCorresponding = async (value: boolean) => {
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`/api/scopus-publications/${doc.id}/corresponding`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ is_corresponding: value }),
+      });
+
+      if (res.ok) {
+        if (onRefresh) {
+          onRefresh();
+        }
+      } else {
+        console.error('Failed to update corresponding status');
+      }
+    } catch (err) {
+      console.error('Error updating corresponding status:', err);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   return (
     <motion.div
@@ -390,6 +464,56 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
             )}
           </div>
 
+          {/* Corresponding Author Toggle Section */}
+          {showCorrespondingControls && (
+            <div className="mt-3 mb-4 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+              <div className="flex flex-wrap items-center gap-2">
+                {bd.isCorrespondingConfirmed ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-emerald-500/20 shadow-sm">
+                    ✓ Dikonfirmasi
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-amber-500/20 animate-pulse shadow-sm">
+                    ⚠️ Perlu Konfirmasi
+                  </span>
+                )}
+                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                  Apakah Anda penulis korespondensi?
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <button
+                  disabled={isUpdating}
+                  onClick={() => handleToggleCorresponding(true)}
+                  className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border ${
+                    bd.isCorresponding
+                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-orange-600 hover:border-orange-400'
+                  } disabled:opacity-50`}
+                >
+                  Ya
+                </button>
+                <button
+                  disabled={isUpdating}
+                  onClick={() => handleToggleCorresponding(false)}
+                  className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border ${
+                    !bd.isCorresponding && bd.isCorrespondingConfirmed
+                      ? 'bg-slate-700 border-slate-700 text-white shadow-md shadow-slate-500/20 dark:bg-slate-600 dark:border-slate-600'
+                      : !bd.isCorresponding && !bd.isCorrespondingConfirmed
+                      ? 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-600'
+                  } disabled:opacity-50`}
+                >
+                  Tidak
+                </button>
+                {isUpdating && (
+                  <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Citation Progress Bar */}
           {bd.citations > 0 && (
             <div className="mb-3.5">
@@ -431,7 +555,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
               className="mt-3 rounded-2xl border border-orange-100 dark:border-orange-900/30 overflow-hidden"
             >
               <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900/30">
-                <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Rincian Kalkulasi Poin SINTA (Skema 60/40 + Quartile)</p>
+                <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Rincian Kalkulasi Poin SINTA (Skema Persentase + Quartile)</p>
               </div>
               <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
                 {/* Quartile badge */}
@@ -452,7 +576,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx }: {
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
-                    <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=30, Q3=20, Q4/None=10 pts</p>
+                    <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=38, Q3=35, Q4/None=33 pts</p>
                   </div>
                   <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
                 </div>
@@ -654,7 +778,7 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
-                    <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=30, Q3=20, Q4/None=10 pts</p>
+                    <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=38, Q3=35, Q4/None=33 pts</p>
                   </div>
                   <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
                 </div>
@@ -956,35 +1080,74 @@ export default function ExternalDocumentsView({
                         </div>
                       </div>
                     </div>
-                     <div className="space-y-5">
+                       <div className="space-y-5">
+                       {/* === Unconfirmed Publications Banner === */}
+                       {(() => {
+                         const unconfirmedScopusCount = (scopusList || []).filter((doc: any) => {
+                           const totalAuthors = Number(doc.total_authors) || 1;
+                           const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                           return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
+                         }).length;
+
+                         if (unconfirmedScopusCount === 0) return null;
+
+                         return (
+                           <motion.div
+                             initial={{ opacity: 0, y: -15 }}
+                             animate={{ opacity: 1, y: 0 }}
+                             className="p-6 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent border border-amber-500/25 rounded-[2rem] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
+                           >
+                             <div className="flex items-start gap-4">
+                               <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner flex-shrink-0">
+                                 <Zap className="w-6 h-6 text-amber-500 animate-pulse" />
+                               </div>
+                               <div>
+                                 <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Konfirmasi Penulis Korespondensi Diperlukan</h4>
+                                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                   Terdapat <span className="font-black text-orange-600 dark:text-orange-400">{unconfirmedScopusCount} publikasi Scopus</span> yang belum dikonfirmasi status penulis korespondensinya. 
+                                   Silakan perbarui status di bawah untuk memastikan perhitungan poin KPI Anda akurat.
+                                 </p>
+                               </div>
+                             </div>
+                             <div className="flex-shrink-0 self-end md:self-center">
+                               <span className="px-4 py-2 bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest block text-center shadow-md shadow-amber-500/20 animate-bounce">
+                                 {unconfirmedScopusCount} Perlu Update
+                               </span>
+                             </div>
+                           </motion.div>
+                         );
+                       })()}
+
                        {/* === Formula Info Banner === */}
                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50/60 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
-                         <div className="flex items-start gap-3 flex-1">
-                           <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0 border border-orange-200/50 dark:border-orange-800/50">
-                             <span className="text-orange-600 text-[13px] font-black">∑</span>
-                           </div>
-                           <div>
-                             <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema 60/40 + Quartile</p>
-                             <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
-                                Quartile menentukan poin maks (Q1=40, Q2=30, Q3=20, Q4=10) · First Author 60% · Member berbagi 40% merata
-                             </p>
-                           </div>
-                         </div>
+                          <div className="flex items-start gap-3 flex-1">
+                            <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0 border border-orange-200/50 dark:border-orange-800/50">
+                              <span className="text-orange-600 text-[13px] font-black">∑</span>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema Persentase Baru</p>
+                              <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
+                                 Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Penghitungan persentase didasarkan pada peran penulis & status korespondensi
+                              </p>
+                            </div>
+                          </div>
                        </div>
+ 
+                         <div className="grid grid-cols-1 gap-4">
+                           {scopusList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                             const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
+                             return (
+                               <ScopusDocRow
+                                 key={idx}
+                                 doc={doc}
+                                 isAlsoScholar={isAlsoScholar}
+                                 idx={idx}
+                                 onRefresh={onRefresh}
+                               />
+                             );
+                           })}
+                         </div>
 
-                        <div className="grid grid-cols-1 gap-4">
-                          {scopusList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
-                            const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
-                            return (
-                              <ScopusDocRow
-                                key={idx}
-                                doc={doc}
-                                isAlsoScholar={isAlsoScholar}
-                                idx={idx}
-                              />
-                            );
-                          })}
-                        </div>
                         <Pagination 
                           totalItems={scopusList?.length || 0} 
                           currentPage={currentPage} 
