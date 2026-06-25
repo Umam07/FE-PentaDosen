@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  X, Award, FileText, Building2, BookOpen, Calendar, 
-  GraduationCap, Users, Sparkles, TrendingUp, Zap, 
+import {
+  X, Award, FileText, Building2, BookOpen, Calendar,
+  GraduationCap, Users, Sparkles, TrendingUp, Zap,
   ArrowLeft, Search, ShieldCheck, Mail, MapPin,
   ExternalLink, Lock, Book, FileCode, CheckCircle2, Trophy,
   RefreshCw, Globe, Fingerprint
@@ -16,7 +16,7 @@ import { calculateScholarPoints } from '../dosen/dashboard/pointsCalculator';
 // 1. Komponen Kustom Crosshair ala TradingView
 const CustomCrosshair = (props: any) => {
   const { offset, leftMax, rightMax, crosshairData } = props;
-  
+
   if (!offset || !crosshairData || crosshairData.y === undefined || crosshairData.x === undefined) return null;
 
   const { left, right, top, bottom, height } = offset;
@@ -28,9 +28,9 @@ const CustomCrosshair = (props: any) => {
   const leftValue = (ratio * leftMax).toFixed(1);
   const rightValue = (ratio * rightMax).toFixed(1);
 
-  const lineColor = "#71717a"; 
-  const badgeBg = "#18181b"; 
-  const textColor = "#ffffff"; 
+  const lineColor = "#71717a";
+  const badgeBg = "#18181b";
+  const textColor = "#ffffff";
 
   return (
     <g className="recharts-custom-crosshair pointer-events-none">
@@ -78,18 +78,18 @@ const ProfileTrendChart = ({ chartData, leftDomainMax, rightDomainMax }: any) =>
   const [crosshair, setCrosshair] = useState<{ x: number, y: number, year: string } | null>(null);
 
   return (
-    <div className="w-full overflow-x-auto pb-4"> 
-      <div className="h-80 min-w-[600px] w-full relative"> 
+    <div className="w-full overflow-x-auto pb-4">
+      <div className="h-80 min-w-[600px] w-full relative">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart 
-            data={chartData} 
-            margin={{ top: 40, right: 60, bottom: 35, left: 60 }} 
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 40, right: 60, bottom: 35, left: 60 }}
             onMouseMove={(state: any) => {
               if (state && state.isTooltipActive && state.activeCoordinate) {
-                setCrosshair({ 
+                setCrosshair({
                   x: state.activeCoordinate.x,
                   y: state.chartY,
-                  year: state.activeLabel 
+                  year: state.activeLabel
                 });
               } else {
                 setCrosshair(null);
@@ -98,56 +98,56 @@ const ProfileTrendChart = ({ chartData, leftDomainMax, rightDomainMax }: any) =>
             onMouseLeave={() => setCrosshair(null)}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#3f3f46" opacity={0.15} />
-            
+
             <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 500 }} tickLine={false} axisLine={false} dy={10} />
-            
-            <YAxis 
-              yAxisId="left" 
-              orientation="left" 
-              domain={[0, leftDomainMax]} 
-              tick={{ fill: '#0d9488', fontSize: 12, fontWeight: 500 }} 
-              tickLine={false} 
-              axisLine={false} 
-              dx={-10} 
-              label={{ 
-                value: 'Publikasi', 
-                position: 'top', 
-                offset: 20, 
-                fill: '#0d9488', 
+
+            <YAxis
+              yAxisId="left"
+              orientation="left"
+              domain={[0, leftDomainMax]}
+              tick={{ fill: '#0d9488', fontSize: 12, fontWeight: 500 }}
+              tickLine={false}
+              axisLine={false}
+              dx={-10}
+              label={{
+                value: 'Publikasi',
+                position: 'top',
+                offset: 20,
+                fill: '#0d9488',
                 fontWeight: 'bold',
                 style: { textAnchor: 'start', fontStyle: 'normal' }
-              }} 
+              }}
             />
-            <YAxis 
-              yAxisId="right" 
-              orientation="right" 
-              domain={[0, rightDomainMax]} 
-              tick={{ fill: '#a855f7', fontSize: 12, fontWeight: 500 }} 
-              tickLine={false} 
-              axisLine={false} 
-              dx={10} 
-              label={{ 
-                value: 'Sitasi', 
-                position: 'top', 
-                offset: 20, 
-                fill: '#a855f7', 
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              domain={[0, rightDomainMax]}
+              tick={{ fill: '#a855f7', fontSize: 12, fontWeight: 500 }}
+              tickLine={false}
+              axisLine={false}
+              dx={10}
+              label={{
+                value: 'Sitasi',
+                position: 'top',
+                offset: 20,
+                fill: '#a855f7',
                 fontWeight: 'bold',
                 style: { textAnchor: 'end', fontStyle: 'normal' }
-              }} 
+              }}
             />
-            
+
             <RechartsTooltip content={<CustomTooltip />} cursor={false} />
             <Legend wrapperStyle={{ paddingTop: '25px', fontSize: '12px', fontWeight: 500 }} />
-            
-            <Customized 
+
+            <Customized
               component={(props: any) => (
-                <CustomCrosshair 
-                  {...props} 
-                  crosshairData={crosshair} 
-                  leftMax={leftDomainMax} 
-                  rightMax={rightDomainMax} 
+                <CustomCrosshair
+                  {...props}
+                  crosshairData={crosshair}
+                  leftMax={leftDomainMax}
+                  rightMax={rightDomainMax}
                 />
-              )} 
+              )}
             />
 
             <Bar yAxisId="left" dataKey="publications" name="Jumlah Publikasi" fill="#0d9488" radius={[6, 6, 0, 0]} maxBarSize={45} />
@@ -175,16 +175,16 @@ export default function LecturerProfileInsights() {
         fetch(`/api/users/${id}`).then(res => res.json()),
         fetch(`/api/users/${id}/documents`).then(res => res.json())
       ])
-      .then(([profileRes, docsRes]) => {
-        setProfile(profileRes);
-        setDocuments(docsRes.documents || []);
-      })
-      .catch(err => {
-        console.error('Failed to fetch profile data', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        .then(([profileRes, docsRes]) => {
+          setProfile(profileRes);
+          setDocuments(docsRes.documents || []);
+        })
+        .catch(err => {
+          console.error('Failed to fetch profile data', err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, [id]);
 
@@ -194,8 +194,8 @@ export default function LecturerProfileInsights() {
     const sortedDocs = [...documents]
       .filter(d => d.status === 'Approved')
       .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
-    
-    const filterByCategory = (keywords: string[]) => 
+
+    const filterByCategory = (keywords: string[]) =>
       sortedDocs.filter(d => keywords.some(k => d.category?.toLowerCase().includes(k)));
 
     const research = filterByCategory(['penelitian', 'proposal', 'laporan']);
@@ -233,7 +233,7 @@ export default function LecturerProfileInsights() {
       const authorOrder = Number(pub.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
       const isCorresponding = !!pub.is_corresponding;
       const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
-      const q = ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
+      const q = ['Q1', 'Q2', 'Q3', 'Q4'].includes(pub.quartile) ? pub.quartile : 'None';
       const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
 
       let awardedPoints = 0;
@@ -290,9 +290,9 @@ export default function LecturerProfileInsights() {
       return Math.round(awardedPoints * 100) / 100;
     };
 
-    const extCross    = (scopusPublications || []).filter((s: any) => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const extScopus   = (scopusPublications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const extScholar  = parseFloat(
+    const extCross = (scopusPublications || []).filter((s: any) => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const extScopus = (scopusPublications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const extScholar = parseFloat(
       (publications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1)
     );
     const apiTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
@@ -303,23 +303,23 @@ export default function LecturerProfileInsights() {
       .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0);
 
     return [
-      { 
-        label: 'API Points (Scopus/GS)', 
-        val: apiTotal.toLocaleString(), 
-        icon: Globe, 
-        color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' 
+      {
+        label: 'API Points (Scopus/GS)',
+        val: apiTotal.toLocaleString(),
+        icon: Globe,
+        color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
       },
-      { 
-        label: 'Internal Points (Upload)', 
+      {
+        label: 'Internal Points (Upload)',
         val: internalTotal.toLocaleString(),
-        icon: FileText, 
-        color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
+        icon: FileText,
+        color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
       },
-      { 
-        label: 'Total Performance', 
-        val: (apiTotal + internalTotal).toLocaleString(), 
-        icon: Award, 
-        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
+      {
+        label: 'Total Performance',
+        val: (apiTotal + internalTotal).toLocaleString(),
+        icon: Award,
+        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
       }
     ];
   }, [profile, documents]);
@@ -329,31 +329,31 @@ export default function LecturerProfileInsights() {
     if (!profile) return { filteredPubs: [], chartData: [], leftMax: 10, rightMax: 10 };
 
     const { publications = [], scopusPublications = [] } = profile;
-    
+
     const scholarPubsTagged = publications.map((p: any) => ({ ...p, source: 'scholar' }));
     const scopusPubsTagged = scopusPublications.map((p: any) => ({ ...p, source: 'scopus' }));
-    
+
     const activeRawData = publicationSubTab === 'scholar' ? scholarPubsTagged : scopusPubsTagged;
-    
+
     // Process Chart Data (tetap gunakan semua data agar tren akurat)
     const chartDataMap = new Map();
     activeRawData.forEach((pub: any) => {
-       if (pub.year && pub.year !== 'Unknown') {
-         const yearKey = String(pub.year).trim();
-         if (!chartDataMap.has(yearKey)) {
-            chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
-         }
-         const current = chartDataMap.get(yearKey);
-         current.publications += 1;
-         current.citations += (Number(pub.citations) || 0);
-       }
+      if (pub.year && pub.year !== 'Unknown') {
+        const yearKey = String(pub.year).trim();
+        if (!chartDataMap.has(yearKey)) {
+          chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
+        }
+        const current = chartDataMap.get(yearKey);
+        current.publications += 1;
+        current.citations += (Number(pub.citations) || 0);
+      }
     });
-    
+
     const chartData = Array.from(chartDataMap.values()).sort((a: any, b: any) => parseInt(a.name) - parseInt(b.name));
 
     const getNiceMax = (max: number) => {
       if (!max || max <= 0) return 10;
-      const roughMax = max * 1.15; 
+      const roughMax = max * 1.15;
       const magnitude = Math.pow(10, Math.floor(Math.log10(roughMax)));
       return Math.ceil(roughMax / magnitude) * magnitude;
     };
@@ -370,13 +370,13 @@ export default function LecturerProfileInsights() {
       })
       .slice(0, 5);
 
-    return { 
-      filteredPubs: limitedPubs, 
-      chartData, 
-      leftMax, 
-      rightMax, 
+    return {
+      filteredPubs: limitedPubs,
+      chartData,
+      leftMax,
+      rightMax,
       hasMore: activeRawData.length > 5,
-      total: activeRawData.length 
+      total: activeRawData.length
     };
   }, [profile, publicationSubTab]);
 
@@ -387,9 +387,9 @@ export default function LecturerProfileInsights() {
         <div className="max-w-7xl mx-auto px-4 pt-40 pb-20 animate-pulse">
           <div className="h-64 bg-white dark:bg-slate-900 rounded-[3rem] mb-12"></div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-             <div className="h-32 bg-white dark:bg-slate-900 rounded-3xl"></div>
-             <div className="h-32 bg-white dark:bg-slate-900 rounded-3xl"></div>
-             <div className="h-32 bg-white dark:bg-slate-900 rounded-3xl"></div>
+            <div className="h-32 bg-white dark:bg-slate-900 rounded-3xl"></div>
+            <div className="h-32 bg-white dark:bg-slate-900 rounded-3xl"></div>
+            <div className="h-32 bg-white dark:bg-slate-900 rounded-3xl"></div>
           </div>
           <div className="h-96 bg-white dark:bg-slate-900 rounded-[3rem]"></div>
         </div>
@@ -412,11 +412,11 @@ export default function LecturerProfileInsights() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-colors duration-500 font-mono">
       <Navbar />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-8">
-        
+
         {/* Navigation Breadcrumb */}
-        <motion.button 
+        <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => navigate(-1)}
@@ -427,7 +427,7 @@ export default function LecturerProfileInsights() {
         </motion.button>
 
         {/* Profile Hero Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[3.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm mb-8"
@@ -438,14 +438,14 @@ export default function LecturerProfileInsights() {
             <div className="absolute -top-[30%] -left-[10%] w-[70%] h-[150%] bg-primary-500/10 dark:bg-primary-500/20 rounded-full blur-[120px] animate-pulse"></div>
             <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[120%] bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-[100px]" style={{ animationDelay: '1s' }}></div>
             <div className="absolute top-[20%] left-[20%] w-[40%] h-[80%] bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-[80px]"></div>
-            
+
             {/* Subtle Dot Pattern Overlay */}
             <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-            
+
             {/* Gradient Overlay for smoothness */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white dark:to-slate-900"></div>
           </div>
-          
+
           <div className="relative z-10 p-8 lg:p-16 flex flex-col md:flex-row items-center md:items-end gap-10">
             {/* Profile Avatar */}
             <div className="relative group">
@@ -468,21 +468,21 @@ export default function LecturerProfileInsights() {
             <div className="flex-1 text-center md:text-left space-y-6">
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-[0.2em] border border-emerald-500/20 backdrop-blur-md">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    Verified Lecturer
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  Verified Lecturer
                 </div>
 
                 <h1 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tighter leading-tight uppercase">
                   {user.name}
                 </h1>
-                
+
                 <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 lg:gap-6 pt-2">
                   {/* University Field */}
                   <div className="flex items-center gap-2.5 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-emerald-500/30 group">
                     <Building2 className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
                     <div className="flex flex-col items-start leading-none">
-                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Institution</span>
-                        <span className="text-xs font-bold text-slate-900 dark:text-white">Universitas Yarsi</span>
+                      <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Institution</span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">Universitas Yarsi</span>
                     </div>
                   </div>
 
@@ -490,8 +490,8 @@ export default function LecturerProfileInsights() {
                   <div className="flex items-center gap-2.5 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-blue-500/30 group">
                     <BookOpen className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
                     <div className="flex flex-col items-start leading-none">
-                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Faculty</span>
-                        <span className="text-xs font-bold text-slate-900 dark:text-white">{user.fakultas || 'N/A'}</span>
+                      <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Faculty</span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">{user.fakultas || 'N/A'}</span>
                     </div>
                   </div>
 
@@ -499,8 +499,8 @@ export default function LecturerProfileInsights() {
                   <div className="flex items-center gap-2.5 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-orange-500/30 group">
                     <GraduationCap className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
                     <div className="flex flex-col items-start leading-none">
-                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Department</span>
-                        <span className="text-xs font-bold text-slate-900 dark:text-white">{user.program_studi || 'Teknik Informatika'}</span>
+                      <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Department</span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">{user.program_studi || 'Teknik Informatika'}</span>
                     </div>
                   </div>
 
@@ -508,8 +508,8 @@ export default function LecturerProfileInsights() {
                   <div className="flex items-center gap-2.5 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-primary-500/30 group">
                     <Fingerprint className="w-4 h-4 text-primary-500 group-hover:scale-110 transition-transform" />
                     <div className="flex flex-col items-start leading-none">
-                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Penta ID</span>
-                        <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">{user.penta_id || '7124001'}</span>
+                      <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-1">Penta ID</span>
+                      <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">{user.penta_id || '7124001'}</span>
                     </div>
                   </div>
                 </div>
@@ -519,10 +519,10 @@ export default function LecturerProfileInsights() {
             <div className="hidden lg:block w-px h-32 bg-slate-100 dark:bg-slate-800 mx-4"></div>
 
             <div className="hidden lg:flex flex-col items-center gap-2 bg-slate-900 dark:bg-white p-10 rounded-[2.5rem] shadow-2xl">
-                <p className="text-[10px] font-black text-white/40 dark:text-slate-500 uppercase tracking-widest">Performance Score</p>
-                <div className="text-4xl font-black text-white dark:text-slate-900 tracking-tighter flex items-center gap-2">
-                   {stats ? stats[2].val : '0'}
-                </div>
+              <p className="text-[10px] font-black text-white/40 dark:text-slate-500 uppercase tracking-widest">Performance Score</p>
+              <div className="text-4xl font-black text-white dark:text-slate-900 tracking-tighter flex items-center gap-2">
+                {stats ? stats[2].val : '0'}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -568,11 +568,10 @@ export default function LecturerProfileInsights() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center justify-center gap-3 py-5 rounded-[1.8rem] text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-                  activeTab === tab.id 
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl' 
+                className={`flex items-center justify-center gap-3 py-5 rounded-[1.8rem] text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${activeTab === tab.id
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl'
                     : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
-                }`}
+                  }`}
               >
                 <tab.icon className="w-4 h-4" />
                 <span>{tab.label}</span>
@@ -598,17 +597,16 @@ export default function LecturerProfileInsights() {
                     <button
                       key={sub.id}
                       onClick={() => setPublicationSubTab(sub.id)}
-                      className={`relative pb-4 text-[10px] font-black uppercase tracking-widest transition-colors ${
-                        publicationSubTab === sub.id 
-                          ? 'text-primary-600' 
+                      className={`relative pb-4 text-[10px] font-black uppercase tracking-widest transition-colors ${publicationSubTab === sub.id
+                          ? 'text-primary-600'
                           : 'text-slate-400 hover:text-slate-600'
-                      }`}
+                        }`}
                     >
                       {sub.label}
                       {publicationSubTab === sub.id && (
-                        <motion.div 
+                        <motion.div
                           layoutId="subtab"
-                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600" 
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600"
                         />
                       )}
                     </button>
@@ -627,10 +625,10 @@ export default function LecturerProfileInsights() {
                         Tren {publicationSubTab === 'scopus' ? 'Scopus' : 'Scholar'} Per Tahun
                       </h4>
                     </div>
-                    <ProfileTrendChart 
-                      chartData={publicationData.chartData} 
-                      leftDomainMax={publicationData.leftMax} 
-                      rightDomainMax={publicationData.rightMax} 
+                    <ProfileTrendChart
+                      chartData={publicationData.chartData}
+                      leftDomainMax={publicationData.leftMax}
+                      rightDomainMax={publicationData.rightMax}
                     />
                   </div>
                 )}
@@ -639,17 +637,15 @@ export default function LecturerProfileInsights() {
                   {publicationData.filteredPubs.length > 0 ? (
                     publicationData.filteredPubs.map((doc: any, idx: number) => (
                       <div key={idx} className="group p-6 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200/60 dark:border-slate-800 hover:shadow-lg transition-all flex flex-col md:flex-row items-start md:items-center gap-6">
-                        <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${
-                          publicationSubTab === 'scopus' ? 'bg-orange-500/10 text-orange-600' : 'bg-blue-500/10 text-blue-600'
-                        }`}>
+                        <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${publicationSubTab === 'scopus' ? 'bg-orange-500/10 text-orange-600' : 'bg-blue-500/10 text-blue-600'
+                          }`}>
                           {publicationSubTab === 'scopus' ? <Globe className="w-6 h-6" /> : <BookOpen className="w-6 h-6" />}
                         </div>
-                        
+
                         <div className="flex-1 space-y-1">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${
-                              publicationSubTab === 'scopus' ? 'bg-orange-500/10 text-orange-600' : 'bg-blue-500/10 text-blue-600'
-                            }`}>
+                            <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${publicationSubTab === 'scopus' ? 'bg-orange-500/10 text-orange-600' : 'bg-blue-500/10 text-blue-600'
+                              }`}>
                               {publicationSubTab === 'scopus' ? 'Scopus Indexed' : 'Scholar'}
                             </span>
                             {doc.year && (
@@ -658,7 +654,7 @@ export default function LecturerProfileInsights() {
                               </span>
                             )}
                           </div>
-                          <a 
+                          <a
                             href={doc.link || (publicationSubTab === 'scholar' ? `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}` : `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`)}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -681,7 +677,7 @@ export default function LecturerProfileInsights() {
                             <span className="text-lg font-black text-slate-900 dark:text-white leading-none">{doc.citations || 0}</span>
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter mt-1">Sitasi</span>
                           </div>
-                          <a 
+                          <a
                             href={doc.link || (publicationSubTab === 'scholar' ? `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}` : `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`)}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -701,7 +697,7 @@ export default function LecturerProfileInsights() {
                 </div>
 
                 {publicationData.hasMore && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="flex flex-col items-center justify-center py-8 px-6 bg-slate-50/50 dark:bg-slate-900/50 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-800"
@@ -709,7 +705,7 @@ export default function LecturerProfileInsights() {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 text-center">
                       + {publicationData.total - 5} Dokumen {publicationSubTab === 'scopus' ? 'Scopus' : 'Scholar'} Lainnya Tersedia
                     </p>
-                    <button 
+                    <button
                       onClick={() => navigate('/login')}
                       className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-all shadow-sm"
                     >
@@ -752,11 +748,11 @@ export default function LecturerProfileInsights() {
                     </div>
                   )}
                 </div>
-                
+
                 {categorizedDocs.research.hasMore && (
                   <div className="flex flex-col items-center justify-center py-8 bg-slate-50/50 dark:bg-slate-900/50 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
-                       + {categorizedDocs.research.total - 5} Penelitian Lainnya Tersedia
+                      + {categorizedDocs.research.total - 5} Penelitian Lainnya Tersedia
                     </p>
                     <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm">
                       <Lock className="w-3 h-3" />
@@ -794,7 +790,7 @@ export default function LecturerProfileInsights() {
                 {categorizedDocs.hki.hasMore && (
                   <div className="flex flex-col items-center justify-center py-8 bg-slate-50/50 dark:bg-slate-900/50 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
-                       + {categorizedDocs.hki.total - 5} Kekayaan Intelektual Lainnya Tersedia
+                      + {categorizedDocs.hki.total - 5} Kekayaan Intelektual Lainnya Tersedia
                     </p>
                     <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm">
                       <Lock className="w-3 h-3" />
@@ -836,7 +832,7 @@ export default function LecturerProfileInsights() {
                 {categorizedDocs.books.hasMore && (
                   <div className="flex flex-col items-center justify-center py-8 bg-slate-50/50 dark:bg-slate-900/50 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
-                       + {categorizedDocs.books.total - 5} Buku & Modul Lainnya Tersedia
+                      + {categorizedDocs.books.total - 5} Buku & Modul Lainnya Tersedia
                     </p>
                     <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm">
                       <Lock className="w-3 h-3" />
@@ -849,7 +845,7 @@ export default function LecturerProfileInsights() {
           </motion.div>
 
           {/* Minimalist Login CTA */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -865,13 +861,13 @@ export default function LecturerProfileInsights() {
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Masuk ke Portal Penta untuk melihat detail lengkap & analisis mendalam</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => navigate('/login')}
                 className="group flex items-center gap-3 px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary-600 dark:hover:bg-primary-500 dark:hover:text-white transition-all shadow-2xl hover:scale-105 active:scale-95"
               >
                 <span>Login ke Portal</span>
                 <div className="w-6 h-6 rounded-full bg-white/20 dark:bg-slate-900/10 flex items-center justify-center group-hover:bg-white/40">
-                   <Zap className="w-3 h-3 rotate-12" />
+                  <Zap className="w-3 h-3 rotate-12" />
                 </div>
               </button>
             </div>
@@ -880,7 +876,7 @@ export default function LecturerProfileInsights() {
 
 
       </main>
-      
+
       <Footer />
     </div>
   );

@@ -25,7 +25,7 @@ export const calculateScopusSintaPoints = (pub: any): number => {
   const authorOrder = Number(pub.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
   const isCorresponding = !!pub.is_corresponding;
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
-  const q = ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
+  const q = ['Q1', 'Q2', 'Q3', 'Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
 
   let awardedPoints = 0;

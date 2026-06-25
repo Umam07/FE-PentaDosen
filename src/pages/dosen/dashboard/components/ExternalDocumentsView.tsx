@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   BookOpen, Zap, ShieldCheck, Book, TrendingUp, Calendar, ExternalLink, Search,
   ChevronLeft, ChevronRight, Globe, Beaker, Filter
 } from 'lucide-react';
@@ -13,7 +13,7 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
   const citations = doc.citations || 0;
-  
+
   // Citation progress bar (reference max = 200)
   const citMax = 200;
   const citPct = Math.min(100, (citations / citMax) * 100);
@@ -102,11 +102,10 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                showBreakdown
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${showBreakdown
                   ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 border-blue-200 dark:border-blue-900/50'
                   : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50/60 dark:hover:bg-blue-950/20'
-              }`}
+                }`}
             >
               {showBreakdown ? '▲ Sembunyikan' : '▼ Rincian Poin'}
             </button>
@@ -186,7 +185,7 @@ const calculateScopusBreakdown = (pub: any) => {
   const isCorresponding = !!pub.is_corresponding;
   const isCorrespondingConfirmed = !!pub.is_corresponding_confirmed;
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
-  const q = pub.quartile && ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
+  const q = pub.quartile && ['Q1', 'Q2', 'Q3', 'Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
   const docType = isArticle ? `Article ${q !== 'None' ? q : '(Tanpa Quartile)'}` : 'Non-Article';
 
@@ -312,23 +311,24 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
+  const [isEditingCorresponding, setIsEditingCorresponding] = React.useState(false);
   const bd = calculateScopusBreakdown(doc);
 
   // Quartile color mapping
   const quartileConfig: Record<string, { bg: string; text: string; border: string; barColor: string }> = {
     Q1: { bg: 'bg-emerald-500/10', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-500/25', barColor: 'bg-emerald-500' },
-    Q2: { bg: 'bg-teal-500/10',    text: 'text-teal-700 dark:text-teal-400',       border: 'border-teal-500/25',   barColor: 'bg-teal-500' },
-    Q3: { bg: 'bg-blue-500/10',    text: 'text-blue-700 dark:text-blue-400',       border: 'border-blue-500/25',   barColor: 'bg-blue-500' },
-    Q4: { bg: 'bg-slate-400/10',   text: 'text-slate-500 dark:text-slate-400',     border: 'border-slate-300/30',  barColor: 'bg-slate-400' },
+    Q2: { bg: 'bg-teal-500/10', text: 'text-teal-700 dark:text-teal-400', border: 'border-teal-500/25', barColor: 'bg-teal-500' },
+    Q3: { bg: 'bg-blue-500/10', text: 'text-blue-700 dark:text-blue-400', border: 'border-blue-500/25', barColor: 'bg-blue-500' },
+    Q4: { bg: 'bg-slate-400/10', text: 'text-slate-500 dark:text-slate-400', border: 'border-slate-300/30', barColor: 'bg-slate-400' },
   };
   const qConf = quartileConfig[bd.q] ?? quartileConfig['Q4'];
 
   // Author role color
   const roleConfig: Record<string, { bg: string; text: string }> = {
     'Single Author': { bg: 'bg-violet-500/10', text: 'text-violet-700 dark:text-violet-400' },
-    'First Author':  { bg: 'bg-orange-500/10', text: 'text-orange-700 dark:text-orange-400' },
-    'Member Author': { bg: 'bg-slate-400/10',  text: 'text-slate-600 dark:text-slate-400'  },
-    'Co-Author':     { bg: 'bg-slate-400/10',  text: 'text-slate-600 dark:text-slate-400'  },
+    'First Author': { bg: 'bg-orange-500/10', text: 'text-orange-700 dark:text-orange-400' },
+    'Member Author': { bg: 'bg-slate-400/10', text: 'text-slate-600 dark:text-slate-400' },
+    'Co-Author': { bg: 'bg-slate-400/10', text: 'text-slate-600 dark:text-slate-400' },
   };
   const rConf = roleConfig[bd.role] ?? roleConfig['Member Author'];
 
@@ -355,6 +355,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
         if (onRefresh) {
           onRefresh();
         }
+        setIsEditingCorresponding(false);
       } else {
         console.error('Failed to update corresponding status');
       }
@@ -466,51 +467,93 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
 
           {/* Corresponding Author Toggle Section */}
           {showCorrespondingControls && (
-            <div className="mt-3 mb-4 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
-              <div className="flex flex-wrap items-center gap-2">
-                {bd.isCorrespondingConfirmed ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-emerald-500/20 shadow-sm">
-                    ✓ Dikonfirmasi
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-amber-500/20 animate-pulse shadow-sm">
-                    ⚠️ Perlu Konfirmasi
-                  </span>
-                )}
-                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">
-                  Apakah Anda penulis korespondensi?
-                </span>
-              </div>
+            <div className={`mt-3 mb-4 p-3 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner transition-colors duration-200 ${
+              !bd.isCorrespondingConfirmed && !isEditingCorresponding
+                ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30'
+                : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800'
+            }`}>
 
-              <div className="flex items-center gap-2.5">
-                <button
-                  disabled={isUpdating}
-                  onClick={() => handleToggleCorresponding(true)}
-                  className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border ${
-                    bd.isCorresponding
-                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-orange-600 hover:border-orange-400'
-                  } disabled:opacity-50`}
-                >
-                  Ya
-                </button>
-                <button
-                  disabled={isUpdating}
-                  onClick={() => handleToggleCorresponding(false)}
-                  className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border ${
-                    !bd.isCorresponding && bd.isCorrespondingConfirmed
-                      ? 'bg-slate-700 border-slate-700 text-white shadow-md shadow-slate-500/20 dark:bg-slate-600 dark:border-slate-600'
-                      : !bd.isCorresponding && !bd.isCorrespondingConfirmed
-                      ? 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-600'
-                  } disabled:opacity-50`}
-                >
-                  Tidak
-                </button>
-                {isUpdating && (
-                  <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-                )}
-              </div>
+              {/* ── Mode Statis: sudah dikonfirmasi & tidak sedang diedit ── */}
+              {bd.isCorrespondingConfirmed && !isEditingCorresponding ? (
+                <>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-emerald-500/20 shadow-sm">
+                      ✓ Dikonfirmasi
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                      Penulis korespondensi:
+                    </span>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[8px] font-black uppercase tracking-wider border shadow-sm ${
+                      bd.isCorresponding
+                        ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
+                        : 'bg-slate-200/60 dark:bg-slate-700/40 text-slate-500 dark:text-slate-400 border-slate-300/40 dark:border-slate-600/40'
+                    }`}>
+                      {bd.isCorresponding ? '✓ Ya' : '✗ Tidak'}
+                    </span>
+                  </div>
+
+                  {/* Tombol Ubah */}
+                  <button
+                    onClick={() => setIsEditingCorresponding(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 hover:text-orange-600 hover:border-orange-400 dark:hover:border-orange-500/50 dark:hover:text-orange-400 transition-all whitespace-nowrap shadow-sm"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Ubah
+                  </button>
+                </>
+              ) : (
+                /* ── Mode Input: belum dikonfirmasi atau sedang diedit ── */
+                <>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {isEditingCorresponding ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-blue-500/20 shadow-sm">
+                        ✏️ Ubah Pilihan
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-amber-500/20 animate-pulse shadow-sm">
+                        ⚠️ Perlu Konfirmasi
+                      </span>
+                    )}
+                    <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                      Apakah Anda penulis korespondensi?
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      disabled={isUpdating}
+                      onClick={() => handleToggleCorresponding(true)}
+                      className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-orange-600 border-orange-600 text-white hover:bg-orange-700 active:scale-95 shadow-md shadow-orange-500/20 disabled:opacity-50"
+                    >
+                      Ya
+                    </button>
+                    <button
+                      disabled={isUpdating}
+                      onClick={() => handleToggleCorresponding(false)}
+                      className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 active:scale-95 disabled:opacity-50"
+                    >
+                      Tidak
+                    </button>
+                    {isUpdating ? (
+                      <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                    ) : isEditingCorresponding && (
+                      /* Tombol Batal — hanya muncul saat mode edit */
+                      <button
+                        onClick={() => setIsEditingCorresponding(false)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        title="Batal"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -536,11 +579,10 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                showBreakdown
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${showBreakdown
                   ? 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 border-orange-200 dark:border-orange-900/50'
                   : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-orange-600 hover:border-orange-200 hover:bg-orange-50/60 dark:hover:bg-orange-950/20'
-              }`}
+                }`}
             >
               {showBreakdown ? '▲ Sembunyikan' : '▼ Rincian Poin'}
             </button>
@@ -562,12 +604,11 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
                 <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Quartile Jurnal:</span>
                   {bd.q !== 'None' ? (
-                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
-                      bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                      bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
-                      bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
-                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                    }`}>{bd.q}</span>
+                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                        bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                          bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                            'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                      }`}>{bd.q}</span>
                   ) : (
                     <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
                   )}
@@ -738,11 +779,10 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                showBreakdown
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${showBreakdown
                   ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 border-emerald-200 dark:border-emerald-900/50'
                   : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20'
-              }`}
+                }`}
             >
               {showBreakdown ? '▲ Sembunyikan' : '▼ Rincian Poin'}
             </button>
@@ -764,12 +804,11 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
                 <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Quartile Jurnal:</span>
                   {bd.q !== 'None' ? (
-                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
-                      bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                      bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
-                      bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
-                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                    }`}>{bd.q}</span>
+                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                        bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                          bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                            'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                      }`}>{bd.q}</span>
                   ) : (
                     <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
                   )}
@@ -902,9 +941,9 @@ export default function ExternalDocumentsView({
   }, [scopusList, scopusFilter, articleFilter]);
 
   // Pagination Helper Component
-  const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: { 
-    totalItems: number, 
-    currentPage: number, 
+  const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: {
+    totalItems: number,
+    currentPage: number,
     onPageChange: (page: number) => void,
     itemsPerPage: number,
     setItemsPerPage: (limit: number) => void
@@ -924,8 +963,8 @@ export default function ExternalDocumentsView({
           <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
           <div className="hidden sm:flex items-center gap-2">
             <span className="text-[10px] font-black uppercase text-slate-300 tracking-widest">Limit:</span>
-            <select 
-              value={itemsPerPage} 
+            <select
+              value={itemsPerPage}
               onChange={(e) => { setItemsPerPage(Number(e.target.value)); onPageChange(1); }}
               className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[10px] font-black py-1 px-3 focus:ring-4 focus:ring-primary-100 outline-none cursor-pointer uppercase tracking-tighter"
             >
@@ -955,11 +994,10 @@ export default function ExternalDocumentsView({
                   )}
                   <button
                     onClick={() => onPageChange(p)}
-                    className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                      currentPage === p 
-                        ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30 ring-4 ring-primary-100 dark:ring-primary-900/20' 
+                    className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === p
+                        ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30 ring-4 ring-primary-100 dark:ring-primary-900/20'
                         : 'bg-white dark:bg-slate-900 text-slate-500 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 hover:text-primary-600 shadow-sm'
-                    }`}
+                      }`}
                   >
                     {p}
                   </button>
@@ -1004,18 +1042,17 @@ export default function ExternalDocumentsView({
                 <button
                   key={sub.id}
                   onClick={() => setPublicationSubTab(sub.id as any)}
-                  className={`group/tab relative pb-3 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
-                    publicationSubTab === sub.id 
-                      ? 'text-primary-600 dark:text-primary-400' 
+                  className={`group/tab relative pb-3 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${publicationSubTab === sub.id
+                      ? 'text-primary-600 dark:text-primary-400'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
+                    }`}
                 >
                   {sub.label}
                   {/* Active indicator */}
                   {publicationSubTab === sub.id && (
-                    <motion.div 
+                    <motion.div
                       layoutId="insights-subtab-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary-600 dark:bg-primary-500 rounded-full" 
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary-600 dark:bg-primary-500 rounded-full"
                     />
                   )}
                   {/* Hover underline — slides in from left when not active */}
@@ -1035,7 +1072,7 @@ export default function ExternalDocumentsView({
                 (scopusList).some(s => normalizeT(s.title) === normalizeT(sd.title))
               ).map(d => normalizeT(d.title))
             );
-            const crossPts   = scopusList.filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusBreakdown(d).totalPoints, 0);
+            const crossPts = scopusList.filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusBreakdown(d).totalPoints, 0);
             const scopusOnly = scopusList.filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusBreakdown(d).totalPoints, 0);
             const scholarOnly = parseFloat(scholarList.filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1));
             const grandTotal = parseFloat((crossPts + scopusOnly + scholarOnly).toFixed(1));
@@ -1082,7 +1119,7 @@ export default function ExternalDocumentsView({
                       {/* Decorative Blobs */}
                       <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/5 rounded-full blur-3xl group-hover/chart-container:bg-orange-500/10 transition-colors duration-700"></div>
                       <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl group-hover/chart-container:bg-amber-500/10 transition-colors duration-700"></div>
-                      
+
                       <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:shadow-orange-500/5 transition-all duration-500">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
                           <div className="flex items-center gap-4">
@@ -1099,11 +1136,11 @@ export default function ExternalDocumentsView({
                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">10 Tahun Terakhir</span>
                           </div>
                         </div>
-                        
+
                         <div className="h-[350px] w-full">
-                          <ProfileTrendChart 
-                            chartData={scopusChartData.chartData} 
-                            leftDomainMax={scopusChartData.leftMax} 
+                          <ProfileTrendChart
+                            chartData={scopusChartData.chartData}
+                            leftDomainMax={scopusChartData.leftMax}
                             rightDomainMax={scopusChartData.rightMax}
                             barColor="#10b981" // emerald-500
                             barGradientColor="#34d399" // emerald-400
@@ -1114,197 +1151,193 @@ export default function ExternalDocumentsView({
                         </div>
                       </div>
                     </div>
-                       <div className="space-y-5">
-                       {/* === Unconfirmed Publications Banner === */}
-                       {(() => {
-                         const unconfirmedScopusCount = (scopusList || []).filter((doc: any) => {
-                           const totalAuthors = Number(doc.total_authors) || 1;
-                           const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
-                           return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
-                         }).length;
+                    <div className="space-y-5">
+                      {/* === Unconfirmed Publications Banner === */}
+                      {(() => {
+                        const unconfirmedScopusCount = (scopusList || []).filter((doc: any) => {
+                          const totalAuthors = Number(doc.total_authors) || 1;
+                          const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                          return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
+                        }).length;
 
-                         if (unconfirmedScopusCount === 0) return null;
+                        if (unconfirmedScopusCount === 0) return null;
 
-                         return (
-                           <motion.div
-                             initial={{ opacity: 0, y: -15 }}
-                             animate={{ opacity: 1, y: 0 }}
-                             className="p-6 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent border border-amber-500/25 rounded-[2rem] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
-                           >
-                             <div className="flex items-start gap-4">
-                               <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner flex-shrink-0">
-                                 <Zap className="w-6 h-6 text-amber-500 animate-pulse" />
-                               </div>
-                               <div>
-                                 <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Konfirmasi Penulis Korespondensi Diperlukan</h4>
-                                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                                   Terdapat <span className="font-black text-orange-600 dark:text-orange-400">{unconfirmedScopusCount} publikasi Scopus</span> yang belum dikonfirmasi status penulis korespondensinya. 
-                                   Silakan perbarui status di bawah untuk memastikan perhitungan poin KPI Anda akurat.
-                                 </p>
-                               </div>
-                             </div>
-                             <div className="flex-shrink-0 self-end md:self-center">
-                               <span className="px-4 py-2 bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest block text-center shadow-md shadow-amber-500/20 animate-bounce">
-                                 {unconfirmedScopusCount} Perlu Update
-                               </span>
-                             </div>
-                           </motion.div>
-                         );
-                       })()}
-
-                       {/* === Formula Info Banner === */}
-                       <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50/60 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
-                          <div className="flex items-start gap-3 flex-1">
-                            <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0 border border-orange-200/50 dark:border-orange-800/50">
-                              <span className="text-orange-600 text-[13px] font-black">∑</span>
+                        return (
+                          <motion.div
+                            initial={{ opacity: 0, y: -15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-6 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent border border-amber-500/25 rounded-[2rem] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner flex-shrink-0">
+                                <Zap className="w-6 h-6 text-amber-500 animate-pulse" />
+                              </div>
+                              <div>
+                                <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Konfirmasi Penulis Korespondensi Diperlukan</h4>
+                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                  Terdapat <span className="font-black text-orange-600 dark:text-orange-400">{unconfirmedScopusCount} publikasi Scopus</span> yang belum dikonfirmasi status penulis korespondensinya.
+                                  Silakan perbarui status di bawah untuk memastikan perhitungan poin KPI Anda akurat.
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema Persentase Baru</p>
-                              <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
-                                 Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Penghitungan persentase didasarkan pada peran penulis & status korespondensi
-                              </p>
+                            <div className="flex-shrink-0 self-end md:self-center">
+                              <span className="px-4 py-2 bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest block text-center shadow-md shadow-amber-500/20 animate-bounce">
+                                {unconfirmedScopusCount} Perlu Update
+                              </span>
                             </div>
+                          </motion.div>
+                        );
+                      })()}
+
+                      {/* === Formula Info Banner === */}
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50/60 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
+                        <div className="flex items-start gap-3 flex-1">
+                          <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0 border border-orange-200/50 dark:border-orange-800/50">
+                            <span className="text-orange-600 text-[13px] font-black">∑</span>
                           </div>
-                       </div>
-
-                        {/* === Filter Bar === */}
-                        <div className="flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
-                          {/* Row 1: Filter Korespondensi */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div className="flex items-center gap-2">
-                              <Filter className="w-4 h-4 text-slate-400" />
-                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Korespondensi:</span>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              {[
-                                { id: 'all', label: 'Semua Dokumen', count: scopusList.length },
-                                { 
-                                  id: 'unconfirmed', 
-                                  label: 'Perlu Konfirmasi', 
-                                  count: scopusList.filter((doc: any) => {
-                                    const totalAuthors = Number(doc.total_authors) || 1;
-                                    const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
-                                    return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
-                                  }).length
-                                },
-                                { 
-                                  id: 'confirmed', 
-                                  label: 'Sudah Dikonfirmasi / Selesai', 
-                                  count: scopusList.filter((doc: any) => {
-                                    const totalAuthors = Number(doc.total_authors) || 1;
-                                    const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
-                                    return !isArticle || totalAuthors <= 1 || doc.is_corresponding_confirmed;
-                                  }).length
-                                }
-                              ].map((opt) => (
-                                <button
-                                  key={opt.id}
-                                  onClick={() => {
-                                    setScopusFilter(opt.id as any);
-                                    setCurrentPage(1);
-                                  }}
-                                  className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                                    scopusFilter === opt.id
-                                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
-                                  }`}
-                                >
-                                  <span className="flex items-center gap-1.5">
-                                    <span>{opt.label}</span>
-                                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${
-                                      scopusFilter === opt.id
-                                        ? 'bg-white/20 text-white'
-                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                    }`}>
-                                      {opt.count}
-                                    </span>
-                                  </span>
-                                </button>
-                              ))}
-                            </div>
+                          <div>
+                            <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema Persentase Baru</p>
+                            <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
+                              Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Penghitungan persentase didasarkan pada peran penulis & status korespondensi
+                            </p>
                           </div>
+                        </div>
+                      </div>
 
-                          {/* Row 2: Filter Tipe Dokumen */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
-                            <div className="flex items-center gap-2">
-                              <Filter className="w-4 h-4 text-slate-400" />
-                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Tipe Dokumen:</span>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              {[
-                                { id: 'all', label: 'Semua Tipe', count: scopusList.length },
-                                { 
-                                  id: 'article', 
-                                  label: 'Article / Journal', 
-                                  count: scopusList.filter((doc: any) => !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article').length 
-                                },
-                                { 
-                                  id: 'non-article', 
-                                  label: 'Non-Article', 
-                                  count: scopusList.filter((doc: any) => doc.subtype && doc.subtype.toLowerCase() !== 'ar' && doc.subtype.toLowerCase() !== 'article').length 
-                                }
-                              ].map((opt) => (
-                                <button
-                                  key={opt.id}
-                                  onClick={() => {
-                                    setArticleFilter(opt.id as any);
-                                    setCurrentPage(1);
-                                  }}
-                                  className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                                    articleFilter === opt.id
-                                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
+                      {/* === Filter Bar === */}
+                      <div className="flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
+                        {/* Row 1: Filter Korespondensi */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex items-center gap-2">
+                            <Filter className="w-4 h-4 text-slate-400" />
+                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Korespondensi:</span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            {[
+                              { id: 'all', label: 'Semua Dokumen', count: scopusList.length },
+                              {
+                                id: 'unconfirmed',
+                                label: 'Perlu Konfirmasi',
+                                count: scopusList.filter((doc: any) => {
+                                  const totalAuthors = Number(doc.total_authors) || 1;
+                                  const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                                  return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
+                                }).length
+                              },
+                              {
+                                id: 'confirmed',
+                                label: 'Sudah Dikonfirmasi / Selesai',
+                                count: scopusList.filter((doc: any) => {
+                                  const totalAuthors = Number(doc.total_authors) || 1;
+                                  const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                                  return !isArticle || totalAuthors <= 1 || doc.is_corresponding_confirmed;
+                                }).length
+                              }
+                            ].map((opt) => (
+                              <button
+                                key={opt.id}
+                                onClick={() => {
+                                  setScopusFilter(opt.id as any);
+                                  setCurrentPage(1);
+                                }}
+                                className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${scopusFilter === opt.id
+                                    ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
                                   }`}
-                                >
-                                  <span className="flex items-center gap-1.5">
-                                    <span>{opt.label}</span>
-                                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${
-                                      articleFilter === opt.id
-                                        ? 'bg-white/20 text-white'
-                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                              >
+                                <span className="flex items-center gap-1.5">
+                                  <span>{opt.label}</span>
+                                  <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${scopusFilter === opt.id
+                                      ? 'bg-white/20 text-white'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                     }`}>
-                                      {opt.count}
-                                    </span>
+                                    {opt.count}
                                   </span>
-                                </button>
-                              ))}
-                            </div>
+                                </span>
+                              </button>
+                            ))}
                           </div>
                         </div>
 
-                          <div className="grid grid-cols-1 gap-4">
-                            {filteredScopusList.length > 0 ? (
-                              filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
-                                const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
-                                return (
-                                 <ScopusDocRow
-                                   key={idx}
-                                   doc={doc}
-                                   isAlsoScholar={isAlsoScholar}
-                                   idx={idx}
-                                   onRefresh={onRefresh}
-                                 />
-                               );
-                             })
-                           ) : (
-                             <div className="flex flex-col items-center justify-center py-12 text-slate-300 space-y-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-100 dark:border-slate-800/80 rounded-[2rem]">
-                               <Search className="w-6 h-6 opacity-30" />
-                               <div className="text-center">
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tidak Ada Dokumen</p>
-                                 <p className="text-[9px] font-bold text-slate-400/80 mt-1">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
-                               </div>
-                             </div>
-                           )}
-                         </div>
-
-                        <Pagination 
-                          totalItems={filteredScopusList?.length || 0} 
-                          currentPage={currentPage} 
-                          onPageChange={setCurrentPage}
-                          itemsPerPage={itemsPerPage}
-                          setItemsPerPage={setItemsPerPage}
-                        />
+                        {/* Row 2: Filter Tipe Dokumen */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
+                          <div className="flex items-center gap-2">
+                            <Filter className="w-4 h-4 text-slate-400" />
+                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Tipe Dokumen:</span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            {[
+                              { id: 'all', label: 'Semua Tipe', count: scopusList.length },
+                              {
+                                id: 'article',
+                                label: 'Article / Journal',
+                                count: scopusList.filter((doc: any) => !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article').length
+                              },
+                              {
+                                id: 'non-article',
+                                label: 'Non-Article',
+                                count: scopusList.filter((doc: any) => doc.subtype && doc.subtype.toLowerCase() !== 'ar' && doc.subtype.toLowerCase() !== 'article').length
+                              }
+                            ].map((opt) => (
+                              <button
+                                key={opt.id}
+                                onClick={() => {
+                                  setArticleFilter(opt.id as any);
+                                  setCurrentPage(1);
+                                }}
+                                className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${articleFilter === opt.id
+                                    ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
+                                  }`}
+                              >
+                                <span className="flex items-center gap-1.5">
+                                  <span>{opt.label}</span>
+                                  <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${articleFilter === opt.id
+                                      ? 'bg-white/20 text-white'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                    }`}>
+                                    {opt.count}
+                                  </span>
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
+
+                      <div className="grid grid-cols-1 gap-4">
+                        {filteredScopusList.length > 0 ? (
+                          filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                            const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
+                            return (
+                              <ScopusDocRow
+                                key={idx}
+                                doc={doc}
+                                isAlsoScholar={isAlsoScholar}
+                                idx={idx}
+                                onRefresh={onRefresh}
+                              />
+                            );
+                          })
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-12 text-slate-300 space-y-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-100 dark:border-slate-800/80 rounded-[2rem]">
+                            <Search className="w-6 h-6 opacity-30" />
+                            <div className="text-center">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tidak Ada Dokumen</p>
+                              <p className="text-[9px] font-bold text-slate-400/80 mt-1">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <Pagination
+                        totalItems={filteredScopusList?.length || 0}
+                        currentPage={currentPage}
+                        onPageChange={setCurrentPage}
+                        itemsPerPage={itemsPerPage}
+                        setItemsPerPage={setItemsPerPage}
+                      />
+                    </div>
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">
@@ -1326,7 +1359,7 @@ export default function ExternalDocumentsView({
                       {/* Decorative Blobs */}
                       <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl group-hover/chart-container:bg-blue-500/10 transition-colors duration-700"></div>
                       <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl group-hover/chart-container:bg-indigo-500/10 transition-colors duration-700"></div>
-                      
+
                       <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
                           <div className="flex items-center gap-4">
@@ -1343,11 +1376,11 @@ export default function ExternalDocumentsView({
                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Statistik Tahunan</span>
                           </div>
                         </div>
-                        
+
                         <div className="h-[350px] w-full">
-                          <ProfileTrendChart 
-                            chartData={scholarChartData.chartData} 
-                            leftDomainMax={scholarChartData.leftMax} 
+                          <ProfileTrendChart
+                            chartData={scholarChartData.chartData}
+                            leftDomainMax={scholarChartData.leftMax}
                             rightDomainMax={scholarChartData.rightMax}
                             barColor="#3b82f6" // blue-500
                             barGradientColor="#60a5fa" // blue-400
@@ -1393,9 +1426,9 @@ export default function ExternalDocumentsView({
                           );
                         })}
                       </div>
-                      <Pagination 
-                        totalItems={scholarList?.length || 0} 
-                        currentPage={currentPage} 
+                      <Pagination
+                        totalItems={scholarList?.length || 0}
+                        currentPage={currentPage}
                         onPageChange={setCurrentPage}
                         itemsPerPage={itemsPerPage}
                         setItemsPerPage={setItemsPerPage}
@@ -1469,9 +1502,9 @@ export default function ExternalDocumentsView({
                     </div>
                   )}
                 </div>
-                <Pagination 
-                  totalItems={crossIndexedDocs?.length || 0} 
-                  currentPage={currentPage} 
+                <Pagination
+                  totalItems={crossIndexedDocs?.length || 0}
+                  currentPage={currentPage}
                   onPageChange={setCurrentPage}
                   itemsPerPage={itemsPerPage}
                   setItemsPerPage={setItemsPerPage}
@@ -1548,7 +1581,7 @@ export default function ExternalDocumentsView({
                           <div className="w-1 h-8 bg-orange-500 rounded-full"></div>
                           <h5 className="text-sm font-black text-orange-700 dark:text-orange-400 uppercase tracking-wider">Jumlah Penulis = 2</h5>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {/* Sub-Section 2a: First = Corresponding */}
                           <div className="bg-white dark:bg-slate-900/70 rounded-xl p-5 border border-orange-100 dark:border-orange-900/20">

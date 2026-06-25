@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import { 
+import {
   User, GraduationCap, Settings,
   Fingerprint, ShieldCheck, Award, Globe, FileText,
   AlertCircle, ArrowRight, CheckCircle, XCircle
@@ -58,13 +58,13 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tabParam = params.get('tab');
-    
+
     // 1. Handle tab switching from URL params
     if (tabParam === 'integrasi' || params.get('warning') === 'true') {
       setActiveTab('integrasi');
     } else if (tabParam === 'info') {
       setActiveTab('info');
-    } 
+    }
     // 2. Handle initial load of user details
     else if (user && !userLoadedRef.current) {
       userLoadedRef.current = true;
@@ -135,7 +135,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       const authorOrder = Number(pub.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
       const isCorresponding = !!pub.is_corresponding;
       const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
-      const q = ['Q1','Q2','Q3','Q4'].includes(pub.quartile) ? pub.quartile : 'None';
+      const q = ['Q1', 'Q2', 'Q3', 'Q4'].includes(pub.quartile) ? pub.quartile : 'None';
       const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
 
       let awardedPoints = 0;
@@ -192,9 +192,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       return Math.round(awardedPoints * 100) / 100;
     };
 
-    const extCross    = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const extScopus   = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const extScholar  = parseFloat(
+    const extCross = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const extScopus = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const extScholar = parseFloat(
       (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1)
     );
     const extTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
@@ -207,23 +207,23 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     const grandTotal = parseFloat((extTotal + internalTotal).toFixed(1));
 
     return [
-      { 
-        label: 'Total KPI', 
-        val: grandTotal.toLocaleString(), 
-        icon: Award, 
-        color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
+      {
+        label: 'Total KPI',
+        val: grandTotal.toLocaleString(),
+        icon: Award,
+        color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
       },
-      { 
+      {
         label: 'Poin (External)',
         val: extTotal.toLocaleString(),
-        icon: Globe, 
-        color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
+        icon: Globe,
+        color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400'
       },
-      { 
+      {
         label: 'Poin (Internal)',
         val: internalTotal.toLocaleString(),
-        icon: FileText, 
-        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
+        icon: FileText,
+        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
       }
     ];
   }, [user, publications, scopusPublications, internalDocuments]);
@@ -232,27 +232,27 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     if (!publications || publications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
     const chartDataMap = new Map();
     publications.forEach((pub: any) => {
-       if (pub.year && pub.year !== 'Unknown') {
-         const yearKey = String(pub.year).trim();
-         if (!chartDataMap.has(yearKey)) {
-            chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
-         }
-         const current = chartDataMap.get(yearKey);
-         current.publications += 1;
-         current.citations += (Number(pub.citations) || 0);
-       }
+      if (pub.year && pub.year !== 'Unknown') {
+        const yearKey = String(pub.year).trim();
+        if (!chartDataMap.has(yearKey)) {
+          chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
+        }
+        const current = chartDataMap.get(yearKey);
+        current.publications += 1;
+        current.citations += (Number(pub.citations) || 0);
+      }
     });
     const chartData = Array.from(chartDataMap.values()).sort((a: any, b: any) => parseInt(a.name) - parseInt(b.name));
     const getNiceMax = (max: number) => {
       if (!max || max <= 0) return 10;
-      const roughMax = max * 1.15; 
+      const roughMax = max * 1.15;
       const magnitude = Math.pow(10, Math.floor(Math.log10(roughMax)));
       return Math.ceil(roughMax / magnitude) * magnitude;
     };
-    return { 
-      chartData, 
-      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)), 
-      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0)) 
+    return {
+      chartData,
+      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)),
+      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0))
     };
   }, [publications]);
 
@@ -260,27 +260,27 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     if (!scopusPublications || scopusPublications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
     const chartDataMap = new Map();
     scopusPublications.forEach((pub: any) => {
-       if (pub.year && pub.year !== 'Unknown') {
-         const yearKey = String(pub.year).trim();
-         if (!chartDataMap.has(yearKey)) {
-            chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
-         }
-         const current = chartDataMap.get(yearKey);
-         current.publications += 1;
-         current.citations += (Number(pub.citations) || 0);
-       }
+      if (pub.year && pub.year !== 'Unknown') {
+        const yearKey = String(pub.year).trim();
+        if (!chartDataMap.has(yearKey)) {
+          chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
+        }
+        const current = chartDataMap.get(yearKey);
+        current.publications += 1;
+        current.citations += (Number(pub.citations) || 0);
+      }
     });
     const chartData = Array.from(chartDataMap.values()).sort((a: any, b: any) => parseInt(a.name) - parseInt(b.name));
     const getNiceMax = (max: number) => {
       if (!max || max <= 0) return 10;
-      const roughMax = max * 1.15; 
+      const roughMax = max * 1.15;
       const magnitude = Math.pow(10, Math.floor(Math.log10(roughMax)));
       return Math.ceil(roughMax / magnitude) * magnitude;
     };
-    return { 
-      chartData, 
-      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)), 
-      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0)) 
+    return {
+      chartData,
+      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)),
+      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0))
     };
   }, [scopusPublications]);
 
@@ -315,15 +315,15 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       const res = await fetch(`/api/users/${user.id}/scholar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           scholar_id: scholarId,
-          avatar: checkedAuthor?.thumbnail 
+          avatar: checkedAuthor?.thumbnail
         }),
       });
       if (res.ok) {
         setMessage({ text: 'Scholar ID berhasil disimpan.', type: 'success' });
-        setUser({ 
-          ...user, 
+        setUser({
+          ...user,
           scholar_id: scholarId,
           avatar: checkedAuthor?.thumbnail || user.avatar
         });
@@ -387,9 +387,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       const res = await fetch(`/api/users/${user.id}/scholar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           scholar_id: null,
-          avatar: null 
+          avatar: null
         }),
       });
       if (res.ok) {
@@ -397,8 +397,8 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         setScholarId('');
         setScholarData(null);
         setPublications([]);
-        setUser({ 
-          ...user, 
+        setUser({
+          ...user,
           scholar_id: null,
           avatar: null
         });
@@ -491,18 +491,18 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       setMessage({ text: 'Simpan setidaknya satu ID (Scholar atau Scopus) terlebih dahulu.', type: 'error' });
       return;
     }
-    
+
     try {
       setLoading(true);
       setMessage({ text: 'Sedang sinkronisasi data...', type: '' });
-      
+
       const syncPromises = [];
       if (scholarId) syncPromises.push(fetch(`/api/users/${user.id}/sync`, { method: 'POST' }));
       if (scopusId) syncPromises.push(fetch(`/api/users/${user.id}/sync-scopus`, { method: 'POST' }));
-      
+
       const results = await Promise.all(syncPromises);
       const allOk = results.every(res => res.ok);
-      
+
       if (allOk) {
         setMessage({ text: 'Semua data berhasil disinkronisasi.', type: 'success' });
         // Refresh data
@@ -549,11 +549,11 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                 <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-300">
                   <AlertCircle className="h-7 w-7" />
                 </div>
-                
+
                 <h3 className="mb-3 text-2xl font-black tracking-tight text-slate-950 dark:text-white">
                   ID Publikasi Diperlukan
                 </h3>
-                
+
                 <p className="mb-8 text-sm font-medium leading-6 text-slate-500 dark:text-slate-400">
                   Untuk sinkronisasi poin performa Anda secara otomatis, Anda <span className="text-primary-600 dark:text-primary-400">diwajibkan</span> mengisi ID Google Scholar dan Scopus pada tab <span className="text-slate-900 dark:text-white">Konfigurasi ID</span>.
                 </p>
@@ -586,9 +586,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
       </AnimatePresence>
 
       <div className="space-y-6">
-        
+
         {/* TOP COMPREHENSIVE HEADER CARD */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
@@ -607,9 +607,9 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
               <div className="relative">
                 <div className="h-24 w-24 rounded-3xl bg-white p-1 shadow-lg dark:bg-slate-900 border-2 border-white dark:border-slate-800">
                   {user?.avatar ? (
-                    <img 
-                      src={user.avatar} 
-                      alt={user.name} 
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
                       className="h-full w-full rounded-2xl object-cover"
                     />
                   ) : (
@@ -652,8 +652,8 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             {/* KPI Stats Row (Full Width - Zero Overlap!) */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 w-full">
               {stats?.map((stat, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className="flex min-h-[92px] items-center gap-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white/85 px-5 py-4 dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-950/50 dark:to-slate-900/30 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 group"
                 >
                   <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${stat.color} transition-transform duration-300 group-hover:scale-110 shadow-sm`}>
@@ -678,19 +678,18 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`group/tab relative pb-3 text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2 whitespace-nowrap ${
-                activeTab === tab.id 
-                  ? 'text-primary-600 dark:text-primary-400' 
+              className={`group/tab relative pb-3 text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === tab.id
+                  ? 'text-primary-600 dark:text-primary-400'
                   : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
               {tab.label}
               {/* Active indicator */}
               {activeTab === tab.id && (
-                <motion.div 
+                <motion.div
                   layoutId="profile-subtab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary-600 dark:bg-primary-500 rounded-full" 
+                  className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary-600 dark:bg-primary-500 rounded-full"
                 />
               )}
               {/* Hover underline */}
@@ -714,7 +713,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             {activeTab === 'info' ? (
               <DetailInformasi user={user} tabVariants={tabVariants} />
             ) : (
-              <Konfigurasi 
+              <Konfigurasi
                 user={user}
                 setUser={setUser}
                 scholarId={scholarId}
@@ -762,11 +761,10 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
               initial={{ opacity: 0, y: -20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.9 }}
-              className={`pointer-events-auto flex items-center gap-3 rounded-lg border px-5 py-4 shadow-xl ${
-                message.type === 'success'
+              className={`pointer-events-auto flex items-center gap-3 rounded-lg border px-5 py-4 shadow-xl ${message.type === 'success'
                   ? 'bg-emerald-50 dark:bg-emerald-950/90 backdrop-blur border-emerald-100 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-400'
                   : 'bg-red-50 dark:bg-red-950/90 backdrop-blur border-red-100 dark:border-red-900/50 text-red-800 dark:text-red-400'
-              }`}
+                }`}
             >
               {message.type === 'success' ? (
                 <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
