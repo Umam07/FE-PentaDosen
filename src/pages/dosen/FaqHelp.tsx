@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  HelpCircle, Search, ChevronDown, ChevronUp, BookOpen, 
-  Globe, Award, FileText, Zap, Info 
+  HelpCircle, Search, ChevronDown, BookOpen, 
+  Globe, Award, Zap, Info 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -43,99 +43,145 @@ export default function FaqHelp({ user }: { user: any }) {
     setExpandedFaqId(expandedFaqId === id ? null : id);
   };
 
-  const getCategoryIcon = (cat: string) => {
+  const getCategoryTheme = (cat: string) => {
     switch (cat) {
-      case 'Google Scholar': return <BookOpen className="w-4 h-4 text-blue-500" />;
-      case 'Scopus': return <Globe className="w-4 h-4 text-orange-500" />;
-      case 'Upload KPI': return <Award className="w-4 h-4 text-emerald-500" />;
-      case 'Penelitian': return <Zap className="w-4 h-4 text-indigo-500" />;
-      default: return <Info className="w-4 h-4 text-gray-500" />;
+      case 'Google Scholar': 
+        return {
+          icon: BookOpen,
+          classes: 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400'
+        };
+      case 'Scopus': 
+        return {
+          icon: Globe,
+          classes: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400'
+        };
+      case 'Upload KPI': 
+        return {
+          icon: Award,
+          classes: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400'
+        };
+      case 'Penelitian': 
+        return {
+          icon: Zap,
+          classes: 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400'
+        };
+      default: 
+        return {
+          icon: Info,
+          classes: 'bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400'
+        };
     }
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-8 pb-20">
-      {/* Header Banner */}
+    <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-8 pb-20">
+      
+      {/* 1. PREMIUM HEADER BANNER */}
       <motion.div 
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-8 bg-gradient-to-r from-primary-600 to-indigo-700 rounded-[2.5rem] text-white shadow-xl shadow-primary-500/10 relative overflow-hidden"
+        className="relative overflow-hidden rounded-[2rem] border border-slate-200/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-8 py-10 dark:border-slate-800 shadow-sm"
       >
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-md">
-              <HelpCircle className="w-8 h-8" />
+        {/* Soft glowing decorations */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 left-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-inner text-white">
+              <HelpCircle className="w-8 h-8 text-primary-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-black uppercase tracking-tight">Pusat Bantuan & Panduan</h2>
-              <p className="text-xs font-bold opacity-80 mt-1">Temukan jawaban atas pertanyaan umum seputar integrasi Scholar, Scopus, dan perhitungan KPI.</p>
+              <span className="text-[10px] font-black text-primary-400 uppercase tracking-[0.2em]">Pusat Dukungan</span>
+              <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mt-1">Bantuan & FAQ</h2>
+              <p className="text-xs font-bold text-slate-400 mt-1.5 max-w-xl leading-relaxed">
+                Temukan jawaban atas pertanyaan umum seputar integrasi Scholar, Scopus, perhitungan poin, dan tata cara verifikasi dokumen kinerja.
+              </p>
             </div>
           </div>
         </div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-24 -mt-24 blur-xl" />
       </motion.div>
 
-      {/* Search Input */}
-      <div className="flex justify-center max-w-2xl mx-auto">
-        <div className="relative w-full">
-          <Search className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Cari panduan atau pertanyaan di sini..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-3xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/10 transition-all text-gray-900 dark:text-zinc-100 shadow-sm"
-          />
+      {/* 2. SEARCH BAR & FILTERS SECTION */}
+      <div className="space-y-6">
+        {/* Sleek Search Bar */}
+        <div className="flex justify-center max-w-2xl mx-auto w-full">
+          <div className="relative w-full group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+            <input
+              type="text"
+              placeholder="Cari panduan, kata kunci, atau pertanyaan..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-semibold outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 dark:focus:border-primary-500/30 transition-all text-slate-900 dark:text-white shadow-sm"
+            />
+          </div>
+        </div>
+
+        {/* Elegant Pills Categories */}
+        <div className="flex flex-wrap justify-center gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-6 overflow-x-auto no-scrollbar">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => { setActiveCategory(cat); setExpandedFaqId(null); }}
+              className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+                activeCategory === cat
+                  ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/10 dark:shadow-primary-900/20 scale-[1.02]'
+                  : 'bg-white dark:bg-slate-900 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-primary-600 border border-slate-200 dark:border-slate-800'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Tabs Categories */}
-      <div className="flex flex-wrap justify-center gap-2 border-b border-gray-100 dark:border-zinc-800/80 pb-4">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => { setActiveCategory(cat); setExpandedFaqId(null); }}
-            className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
-              activeCategory === cat
-                ? 'bg-primary-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900/20'
-                : 'bg-white dark:bg-zinc-900 text-gray-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 border border-gray-100 dark:border-zinc-800'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* FAQ Lists */}
+      {/* 3. FAQ LISTS ACCORDIONS */}
       <div className="max-w-3xl mx-auto space-y-4">
         {loading ? (
-          [1, 2, 3].map(i => <div key={i} className="h-16 bg-white dark:bg-zinc-900 rounded-2xl animate-pulse" />)
+          /* Premium skeletons */
+          [1, 2, 3].map(i => (
+            <div 
+              key={i} 
+              className="h-16 w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/50 dark:border-slate-800/50 animate-pulse flex items-center px-6 justify-between"
+            >
+              <div className="flex items-center gap-3 w-2/3">
+                <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-4/5" />
+              </div>
+              <div className="h-5 w-5 bg-slate-100 dark:bg-slate-800 rounded-full" />
+            </div>
+          ))
         ) : filteredFaqs.length > 0 ? (
+          /* Actual FAQs */
           filteredFaqs.map((faq) => {
             const isExpanded = expandedFaqId === faq.id;
+            const theme = getCategoryTheme(faq.category);
+            const ThemeIcon = theme.icon;
+
             return (
               <motion.div
                 key={faq.id}
-                layout
-                className="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800/80 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                layout="position"
+                className="bg-white dark:bg-slate-900/40 rounded-[1.75rem] border border-slate-200/50 dark:border-slate-800/80 overflow-hidden shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300"
               >
                 <button
                   onClick={() => toggleExpand(faq.id)}
-                  className="w-full px-6 py-5 text-left flex justify-between items-center gap-4 focus:outline-none"
+                  className="w-full px-6 py-5 text-left flex justify-between items-center gap-4 focus:outline-none group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-50 dark:bg-zinc-800/50 rounded-xl shrink-0">
-                      {getCategoryIcon(faq.category)}
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${theme.classes} transition-transform duration-300 group-hover:scale-105 shadow-sm`}>
+                      <ThemeIcon className="w-4 h-4" />
                     </div>
-                    <span className="text-xs sm:text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                    <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight truncate pr-2">
                       {faq.question}
                     </span>
                   </div>
-                  {isExpanded ? (
-                    <ChevronUp className="w-5 h-5 text-gray-400" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
-                  )}
+                  
+                  <div className={`p-1 rounded-lg bg-slate-50 dark:bg-slate-800/50 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-all ${isExpanded ? 'rotate-180 bg-primary-50 dark:bg-primary-950/20 text-primary-600 dark:text-primary-400' : ''}`}>
+                    <ChevronDown className="w-4 h-4 transition-transform duration-300" />
+                  </div>
                 </button>
 
                 <AnimatePresence initial={false}>
@@ -144,10 +190,10 @@ export default function FaqHelp({ user }: { user: any }) {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
                     >
-                      <div className="px-6 pb-6 pt-2 border-t border-gray-50 dark:border-zinc-800/50 text-xs sm:text-sm font-bold text-gray-500 dark:text-zinc-400 leading-relaxed whitespace-pre-line">
-                        {faq.answer}
+                      <div className="px-6 pb-6 pt-2 border-t border-slate-100/50 dark:border-slate-800/30 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-line">
+                        <p className="pl-14">{faq.answer}</p>
                       </div>
                     </motion.div>
                   )}
@@ -156,9 +202,20 @@ export default function FaqHelp({ user }: { user: any }) {
             );
           })
         ) : (
-          <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-12 text-center text-gray-400 font-bold italic uppercase text-xs tracking-widest">
-            Tidak ada panduan bantuan yang sesuai pencarian atau kategori ini.
-          </div>
+          /* Empty State */
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-[2rem] p-12 text-center shadow-sm max-w-xl mx-auto"
+          >
+            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-slate-100 dark:border-slate-800">
+              <HelpCircle className="w-8 h-8 text-slate-400" />
+            </div>
+            <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-2">Panduan Tidak Ditemukan</h3>
+            <p className="text-xs font-bold text-slate-400 max-w-xs mx-auto leading-relaxed">
+              Tidak ada panduan bantuan yang cocok dengan pencarian atau kategori ini. Silakan coba kata kunci lain.
+            </p>
+          </motion.div>
         )}
       </div>
     </div>
