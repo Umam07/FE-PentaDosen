@@ -161,8 +161,6 @@ export default function AdminLecturerProfile() {
   const [profile, setProfile] = useState<any>(null);
   const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [syncingScholar, setSyncingScholar] = useState(false);
-  const [syncingScopus, setSyncingScopus] = useState(false);
   const [message, setMessage] = useState('');
   
   const [pubFilter, setPubFilter] = useState<'all' | 'scholar' | 'scopus'>('scholar');
@@ -246,55 +244,7 @@ export default function AdminLecturerProfile() {
     }
   }, [id]);
 
-  const handleSyncScholar = async () => {
-    if (!profile?.user?.scholar_id) {
-      setMessage('Dosen belum memiliki Google Scholar ID.');
-      return;
-    }
-    try {
-      setSyncingScholar(true);
-      setMessage('');
-      const res = await fetch(`/api/users/${id}/sync`, { method: 'POST' });
-      if (res.ok) {
-        setMessage('Data Google Scholar berhasil disinkronisasi.');
-        const profileRes = await fetch(`/api/users/${id}`);
-        const data = await profileRes.json();
-        setProfile(data);
-      } else {
-        setMessage('Gagal melakukan sinkronisasi Google Scholar.');
-      }
-    } catch (err) {
-      setMessage('Terjadi kesalahan koneksi.');
-    } finally {
-      setSyncingScholar(false);
-      setTimeout(() => setMessage(''), 5000); 
-    }
-  };
 
-  const handleSyncScopus = async () => {
-    if (!profile?.user?.scopus_id) {
-      setMessage('Dosen belum memiliki Scopus ID.');
-      return;
-    }
-    try {
-      setSyncingScopus(true);
-      setMessage('');
-      const res = await fetch(`/api/users/${id}/sync-scopus`, { method: 'POST' });
-      if (res.ok) {
-        setMessage('Data Scopus berhasil disinkronisasi.');
-        const profileRes = await fetch(`/api/users/${id}`);
-        const data = await profileRes.json();
-        setProfile(data);
-      } else {
-        setMessage('Gagal melakukan sinkronisasi Scopus. Cek konfigurasi API.');
-      }
-    } catch (err) {
-      setMessage('Terjadi kesalahan koneksi.');
-    } finally {
-      setSyncingScopus(false);
-      setTimeout(() => setMessage(''), 5000); 
-    }
-  };
 
   if (loading) return (
     <div className="max-w-none space-y-6 animate-pulse pb-12">
@@ -467,99 +417,121 @@ export default function AdminLecturerProfile() {
             ))}
           </div>
 
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-100 dark:border-zinc-800 pt-8">
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 dark:border-slate-800 pt-8">
               
               {/* Box Scholar */}
-              <div className="bg-gray-50/50 dark:bg-zinc-800/30 rounded-2xl border border-gray-200 dark:border-zinc-700/50 p-5">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center">
-                    <div className="bg-primary-100 dark:bg-primary-900/30 p-2 rounded-lg mr-3">
-                      <BookOpen className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              <div className="rounded-3xl border border-slate-200/60 bg-slate-50/50 p-6 dark:border-slate-800/80 dark:bg-slate-950/20 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-start justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50/80 text-blue-600 dark:border-blue-900/30 dark:bg-blue-950/20 dark:text-blue-400 shadow-sm">
+                        <BookOpen className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Google Scholar</h3>
+                        {user.scholar_id ? (
+                          <p className="text-[11px] font-mono text-slate-400 dark:text-slate-500 mt-1">ID: {user.scholar_id}</p>
+                        ) : (
+                          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mt-1">ID tidak terkonfigurasi</p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-base font-semibold text-gray-900 dark:text-white leading-tight">Google Scholar</h3>
-                      {user.scholar_id && <p className="text-[11px] font-mono text-gray-500 dark:text-zinc-400 mt-0.5">ID: {user.scholar_id}</p>}
-                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                        scholarData
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-300'
+                          : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-400'
+                      }`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${scholarData ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`} />
+                      {scholarData ? 'Tersinkron' : 'Belum Sinkron'}
+                    </span>
                   </div>
-                  <button
-                    onClick={handleSyncScholar}
-                    disabled={syncingScholar}
-                    className="inline-flex justify-center items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 dark:bg-primary-900/30 dark:text-primary-400 dark:border-primary-800/50 dark:hover:bg-primary-900/50 transition-colors disabled:opacity-50"
-                  >
-                    <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${syncingScholar ? 'animate-spin' : ''}`} />
-                    {syncingScholar ? 'Syncing...' : 'Sync'}
-                  </button>
-                </div>
 
-                {scholarData ? (
-                  <>
+                  {scholarData ? (
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-white dark:bg-zinc-800 p-3 rounded-xl border border-gray-100 dark:border-zinc-700 shadow-sm text-center flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Total Sitasi</p>
-                        <p className="text-xl font-extrabold text-blue-600 dark:text-blue-400">{scholarData.total_citations}</p>
+                      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
+                        <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Sitasi</span>
+                        <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tabular-nums">{scholarData.total_citations}</span>
                       </div>
-                      <div className="bg-white dark:bg-zinc-800 p-3 rounded-xl border border-gray-100 dark:border-zinc-700 shadow-sm text-center flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-1">h-index</p>
-                        <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">{scholarData.h_index}</p>
+                      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
+                        <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">h-index</span>
+                        <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">{scholarData.h_index}</span>
                       </div>
-                      <div className="bg-white dark:bg-zinc-800 p-3 rounded-xl border border-gray-100 dark:border-zinc-700 shadow-sm text-center flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-1">i10-index</p>
-                        <p className="text-xl font-extrabold text-purple-600 dark:text-purple-400">{scholarData.i10_index}</p>
+                      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
+                        <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">i10-index</span>
+                        <span className="text-2xl font-black text-purple-600 dark:text-purple-400 tabular-nums">{scholarData.i10_index}</span>
                       </div>
                     </div>
-                    <div className="text-[10px] text-gray-400 dark:text-zinc-500 text-right mt-3">
-                      Update: {new Date(scholarData.last_synced).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm">
+                      <BookOpen className="h-8 w-8 text-slate-200 dark:text-slate-800 mb-2" />
+                      <p className="text-slate-400 dark:text-slate-500 text-xs font-semibold">Belum ada data terhubung</p>
                     </div>
-                  </>
-                ) : (
-                  <p className="text-gray-500 dark:text-zinc-400 text-sm font-medium text-center py-4">Belum ada data terhubung.</p>
+                  )}
+                </div>
+                {scholarData && (
+                  <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 text-right mt-5">
+                    Update Terakhir: {new Date(scholarData.last_synced).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                  </div>
                 )}
               </div>
 
               {/* Box Scopus */}
-              <div className="bg-gray-50/50 dark:bg-zinc-800/30 rounded-2xl border border-gray-200 dark:border-zinc-700/50 p-5">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center">
-                    <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-lg mr-3">
-                      <Globe className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              <div className="rounded-3xl border border-slate-200/60 bg-slate-50/50 p-6 dark:border-slate-800/80 dark:bg-slate-950/20 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-start justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-orange-100 bg-orange-50/80 text-orange-600 dark:border-orange-900/30 dark:bg-orange-950/20 dark:text-orange-400 shadow-sm">
+                        <Globe className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Scopus</h3>
+                        {user.scopus_id ? (
+                          <p className="text-[11px] font-mono text-slate-400 dark:text-slate-500 mt-1">ID: {user.scopus_id}</p>
+                        ) : (
+                          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mt-1">ID tidak terkonfigurasi</p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-base font-semibold text-gray-900 dark:text-white leading-tight">Scopus</h3>
-                      {user.scopus_id && <p className="text-[11px] font-mono text-gray-500 dark:text-zinc-400 mt-0.5">ID: {user.scopus_id}</p>}
-                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                        scopusData
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-300'
+                          : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-400'
+                      }`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${scopusData ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`} />
+                      {scopusData ? 'Tersinkron' : 'Belum Sinkron'}
+                    </span>
                   </div>
-                  <button
-                    onClick={handleSyncScopus}
-                    disabled={syncingScopus}
-                    className="inline-flex justify-center items-center px-3 py-1.5 text-xs font-semibold rounded-lg text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800/50 dark:hover:bg-orange-900/50 transition-colors disabled:opacity-50"
-                  >
-                    <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${syncingScopus ? 'animate-spin' : ''}`} />
-                    {syncingScopus ? 'Syncing...' : 'Sync'}
-                  </button>
-                </div>
 
-                {scopusData ? (
-                  <>
+                  {scopusData ? (
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-white dark:bg-zinc-800 p-3 rounded-xl border border-gray-100 dark:border-zinc-700 shadow-sm text-center flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Dokumen</p>
-                        <p className="text-xl font-extrabold text-indigo-600 dark:text-indigo-400">{scopusData.document_count}</p>
+                      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
+                        <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Dokumen</span>
+                        <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 tabular-nums">{scopusData.document_count}</span>
                       </div>
-                      <div className="bg-white dark:bg-zinc-800 p-3 rounded-xl border border-gray-100 dark:border-zinc-700 shadow-sm text-center flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Sitasi</p>
-                        <p className="text-xl font-extrabold text-amber-600 dark:text-amber-400">{scopusData.total_citations}</p>
+                      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
+                        <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Sitasi</span>
+                        <span className="text-2xl font-black text-amber-600 dark:text-amber-400 tabular-nums">{scopusData.total_citations}</span>
                       </div>
-                      <div className="bg-white dark:bg-zinc-800 p-3 rounded-xl border border-gray-100 dark:border-zinc-700 shadow-sm text-center flex flex-col justify-center">
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider mb-1">h-index</p>
-                        <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">{scopusData.h_index}</p>
+                      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
+                        <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">h-index</span>
+                        <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">{scopusData.h_index}</span>
                       </div>
                     </div>
-                    <div className="text-[10px] text-gray-400 dark:text-zinc-500 text-right mt-3">
-                      Update: {new Date(scopusData.last_synced).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm">
+                      <Globe className="h-8 w-8 text-slate-200 dark:text-slate-800 mb-2" />
+                      <p className="text-slate-400 dark:text-slate-500 text-xs font-semibold">Belum ada data terhubung</p>
                     </div>
-                  </>
-                ) : (
-                  <p className="text-gray-500 dark:text-zinc-400 text-sm font-medium text-center py-4">Belum ada data terhubung.</p>
+                  )}
+                </div>
+                {scopusData && (
+                  <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 text-right mt-5">
+                    Update Terakhir: {new Date(scopusData.last_synced).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                  </div>
                 )}
               </div>
 
