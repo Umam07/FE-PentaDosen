@@ -85,8 +85,8 @@ export default function Features() {
             transition={{ duration: 0.6 }}
             className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-none mb-6"
           >
-            Sistem Cerdas <br />
-            Untuk <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">Efisiensi</span> Tertinggi
+            Platform Terpadu <br />
+            Kinerja <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">Penta Dosen</span>
           </motion.h2>
           
           <motion.p
@@ -96,7 +96,7 @@ export default function Features() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-base md:text-lg font-bold text-gray-500 dark:text-gray-400 leading-relaxed"
           >
-            Dirancang dengan tata letak visual modern untuk tata kelola data publikasi instansi Anda secara komprehensif.
+            Dirancang untuk memfasilitasi integrasi, verifikasi, dan analisis data Tri Dharma perguruan tinggi dalam satu dashboard modern.
           </motion.p>
         </div>
 
@@ -109,8 +109,8 @@ export default function Features() {
               <div className={`w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
                 <LineChart className="w-5 h-5" />
               </div>
-              <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-3">Scopus & Scholar Sync</h3>
-              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Dapat menarik sitasi dan indeks otomatis berkala demi akurasi data visualisasi institusi secara real-time.</p>
+              <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-3">Sinkronisasi Publikasi</h3>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Sinkronisasi otomatis data publikasi, sitasi, dan H-Index dosen langsung dari API Scopus dan Google Scholar.</p>
             </div>
             <div className="relative w-full md:w-1/2 flex items-center justify-center h-44 mt-4 md:mt-0">
               <motion.div 
@@ -145,8 +145,8 @@ export default function Features() {
               <div className={`w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
                 <CheckCircle className="w-5 h-5" />
               </div>
-              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Verifikasi Dokumen</h3>
-              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed mb-4">Mekanisme checklist dinamis terintegrasi status real-time pimpinan.</p>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Verifikasi Berjenjang</h3>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed mb-4">Sistem persetujuan berjenjang dari tingkat Fakultas hingga LPPM untuk menjamin validitas portofolio akademik.</p>
             </div>
             <div className="relative h-20 w-full mt-auto">
               <div className="absolute inset-x-0 bottom-2 flex items-center justify-between z-10">
@@ -169,15 +169,15 @@ export default function Features() {
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="absolute w-36 h-36 rounded-full border-[8px] border-blue-50/50 dark:border-blue-950/50 border-t-blue-500" />
               <motion.div animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute w-28 h-28 rounded-full border-[6px] border-sky-50/50 dark:border-sky-950/50 border-r-sky-400" />
               <div className="absolute flex flex-col items-center">
-                <div className="text-2xl font-black text-gray-800 dark:text-white">84%</div><p className="text-[10px] font-bold text-gray-400 tracking-wider">Kapasitas</p>
+                <div className="text-2xl font-black text-gray-800 dark:text-white">85%</div><p className="text-[10px] font-bold text-gray-400 tracking-wider">Tri Dharma</p>
               </div>
             </div>
             <div className="mt-auto">
               <div className={`w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
                 <RefreshCw className="w-5 h-5" />
               </div>
-              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Visualisasi Grafik</h3>
-              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Representasi grafik terperinci peningkatan kinerja visual fakultas.</p>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Analisis & Metrik</h3>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Visualisasi performa riset dan tren publikasi dosen melalui diagram interaktif dan grafik metrik sitasi.</p>
             </div>
           </FeatureCard>
 
@@ -190,7 +190,7 @@ export default function Features() {
                 </motion.div>
                 <motion.div whileHover={{ x: 10, rotate: 4 }} className="absolute w-28 h-36 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-md z-20 flex flex-col p-3">
                    <FileText className="w-6 h-6 text-amber-500 mb-2" />
-                   <div className="text-[9px] font-black text-gray-800 dark:text-gray-200 break-all">DOCUMENT_REPORT_2026.pdf</div>
+                   <div className="text-[9px] font-black text-gray-800 dark:text-gray-200 break-all">Jurnal_Nasional_Q1.pdf</div>
                    <div className="text-[7px] text-gray-400 mt-1">2.4 MB</div>
                 </motion.div>
               </div>
@@ -199,8 +199,8 @@ export default function Features() {
               <div className={`w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg`}>
                 <FileText className="w-5 h-5" />
               </div>
-              <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-3">Penyimpanan Aman</h3>
-              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Modul brankas file aman terorganisir, siap diunduh fungsional kapan pun.</p>
+              <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-3">Arsip Digital Aman</h3>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Pengarsipan dokumen digital aman untuk HKI, buku, penelitian, dan pengabdian masyarakat yang siap diunduh.</p>
             </div>
           </FeatureCard>
 
@@ -211,7 +211,7 @@ export default function Features() {
                 <Zap className="w-5 h-5" />
               </div>
               <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Akses Responsif</h3>
-              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Optimal dalam variasi perangkat seluler atau browser.</p>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Desain antarmuka responsif yang memudahkan akses dashboard dari perangkat mobile maupun desktop.</p>
             </div>
             <div className="relative h-20 w-full flex items-end justify-center mt-4">
               <motion.div whileHover={{ y: -4 }} className="w-14 h-24 bg-gray-900 dark:bg-slate-800 rounded-t-xl border-x-4 border-t-4 border-gray-800 dark:border-slate-700 z-20 flex flex-col p-1">
@@ -229,8 +229,8 @@ export default function Features() {
               <div className={`w-12 h-12 bg-gradient-to-br from-violet-500 to-violet-600 text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
                 <Shield className="w-5 h-5" />
               </div>
-              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Validasi Berlapis</h3>
-              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Enkripsi berstandar tinggi demi jaminan otentikasi data data.</p>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Autentikasi Kampus</h3>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-relaxed">Sistem login terintegrasi Active Directory kampus untuk kemudahan akses dan keamanan data pengguna.</p>
             </div>
             <div className="relative h-24 w-full flex items-center justify-center mt-2">
                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }} transition={{ duration: 3, repeat: Infinity }} className="absolute w-16 h-16 rounded-full border border-violet-500/30" />

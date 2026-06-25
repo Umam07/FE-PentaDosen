@@ -4,11 +4,9 @@ import {
   UserCheck, 
   FileText, 
   ShieldCheck, 
-  Award, 
   PieChart,
   ArrowRight,
   User,
-  Users,
   Settings
 } from 'lucide-react';
 
@@ -24,44 +22,44 @@ export default function Workflow() {
     {
       id: 1,
       title: 'Otentikasi & Integrasi',
-      subtitle: 'Seamless Access',
-      description: 'Login menggunakan akun institusi yang terhubung dengan sistem autentikasi LDAP dan sinkronisasi data akademik secara otomatis.',
+      subtitle: 'Identity & Integration',
+      description: 'Integrasi akun via LDAP institusi dan sinkronisasi otomatis data eksternal Scopus serta Google Scholar.',
       icon: UserCheck,
-      role: 'Dosen',
+      role: 'Dosen & Staf',
       color: 'blue'
     },
     {
       id: 2,
-      title: 'Manajemen Kinerja',
-      subtitle: 'Unified Portfolio',
-      description: 'Input terpusat untuk publikasi, HKI, penelitian, dan buku.',
+      title: 'Input Portofolio',
+      subtitle: 'Data Ingestion',
+      description: 'Pencatatan terpusat untuk publikasi ilmiah, HKI, penelitian, dan buku melalui form manual atau impor massal.',
       icon: FileText,
       role: 'Dosen',
       color: 'blue'
     },
     {
       id: 3,
-      title: 'Verifikasi Berjenjang',
-      subtitle: 'Initial Audit',
-      description: 'Review komprehensif oleh Admin Fakultas untuk menjamin validitas berkas sebelum diproses lebih lanjut.',
-      icon: ShieldCheck,
-      role: 'Admin Fakultas',
+      title: 'Deduplikasi & Scoring',
+      subtitle: 'Core Processing',
+      description: 'Pembersihan otomatis data ganda berbasis DOI/Fuzzy Match dan kalkulasi poin kinerja berdasarkan bobot aturan.',
+      icon: Settings,
+      role: 'Sistem',
       color: 'blue'
     },
     {
       id: 4,
-      title: 'Validasi Akhir LPPM',
-      subtitle: 'Final Accreditation',
-      description: 'Verifikasi tingkat universitas oleh LPPM untuk sinkronisasi skor SIKD dan penetapan status kinerja.',
-      icon: Award,
-      role: 'Admin LPPM',
+      title: 'Verifikasi & Validasi',
+      subtitle: 'Verification Layer',
+      description: 'Pemeriksaan berkas portofolio oleh Admin Fakultas dan LPPM untuk validitas dan persetujuan status kinerja.',
+      icon: ShieldCheck,
+      role: 'Admin & LPPM',
       color: 'blue'
     },
     {
       id: 5,
-      title: 'Analisis Statistik',
+      title: 'Dashboard & Analisis',
       subtitle: 'Executive Insight',
-      description: 'Visualisasi skor kinerja dan tren produktivitas dosen secara real-time untuk pengambilan keputusan strategis.',
+      description: 'Penyajian grafik statistik produktivitas dan pemeringkatan dosen secara real-time untuk keputusan strategis.',
       icon: PieChart,
       role: 'Dosen & Pimpinan',
       color: 'blue'
