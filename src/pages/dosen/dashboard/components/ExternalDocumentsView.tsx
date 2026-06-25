@@ -847,6 +847,7 @@ export default function ExternalDocumentsView({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
+  const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
 
   // Reset page when switching tabs
   useEffect(() => {
@@ -869,22 +870,36 @@ export default function ExternalDocumentsView({
   const crossIndexedDocs = baseCrossIndexedDocs;
 
   const filteredScopusList = useMemo(() => {
+    let result = scopusList;
+
+    // Korespondensi Filter
     if (scopusFilter === 'unconfirmed') {
-      return scopusList.filter((doc: any) => {
+      result = result.filter((doc: any) => {
         const totalAuthors = Number(doc.total_authors) || 1;
         const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
         return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
       });
-    }
-    if (scopusFilter === 'confirmed') {
-      return scopusList.filter((doc: any) => {
+    } else if (scopusFilter === 'confirmed') {
+      result = result.filter((doc: any) => {
         const totalAuthors = Number(doc.total_authors) || 1;
         const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
         return !isArticle || totalAuthors <= 1 || doc.is_corresponding_confirmed;
       });
     }
-    return scopusList;
-  }, [scopusList, scopusFilter]);
+
+    // Article/Non-Article Filter
+    if (articleFilter === 'article') {
+      result = result.filter((doc: any) => {
+        return !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+      });
+    } else if (articleFilter === 'non-article') {
+      result = result.filter((doc: any) => {
+        return doc.subtype && doc.subtype.toLowerCase() !== 'ar' && doc.subtype.toLowerCase() !== 'article';
+      });
+    }
+
+    return result;
+  }, [scopusList, scopusFilter, articleFilter]);
 
   // Pagination Helper Component
   const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: { 
@@ -1153,57 +1168,107 @@ export default function ExternalDocumentsView({
                        </div>
 
                         {/* === Filter Bar === */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
-                          <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-slate-400" />
-                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Korespondensi:</span>
-                          </div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            {[
-                              { id: 'all', label: 'Semua Dokumen', count: scopusList.length },
-                              { 
-                                id: 'unconfirmed', 
-                                label: 'Perlu Konfirmasi', 
-                                count: scopusList.filter((doc: any) => {
-                                  const totalAuthors = Number(doc.total_authors) || 1;
-                                  const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
-                                  return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
-                                }).length
-                              },
-                              { 
-                                id: 'confirmed', 
-                                label: 'Sudah Dikonfirmasi / Selesai', 
-                                count: scopusList.filter((doc: any) => {
-                                  const totalAuthors = Number(doc.total_authors) || 1;
-                                  const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
-                                  return !isArticle || totalAuthors <= 1 || doc.is_corresponding_confirmed;
-                                }).length
-                              }
-                            ].map((opt) => (
-                              <button
-                                key={opt.id}
-                                onClick={() => {
-                                  setScopusFilter(opt.id as any);
-                                  setCurrentPage(1);
-                                }}
-                                className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                                  scopusFilter === opt.id
-                                    ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
-                                }`}
-                              >
-                                <span className="flex items-center gap-1.5">
-                                  <span>{opt.label}</span>
-                                  <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${
+                        <div className="flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
+                          {/* Row 1: Filter Korespondensi */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-2">
+                              <Filter className="w-4 h-4 text-slate-400" />
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Korespondensi:</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {[
+                                { id: 'all', label: 'Semua Dokumen', count: scopusList.length },
+                                { 
+                                  id: 'unconfirmed', 
+                                  label: 'Perlu Konfirmasi', 
+                                  count: scopusList.filter((doc: any) => {
+                                    const totalAuthors = Number(doc.total_authors) || 1;
+                                    const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                                    return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
+                                  }).length
+                                },
+                                { 
+                                  id: 'confirmed', 
+                                  label: 'Sudah Dikonfirmasi / Selesai', 
+                                  count: scopusList.filter((doc: any) => {
+                                    const totalAuthors = Number(doc.total_authors) || 1;
+                                    const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                                    return !isArticle || totalAuthors <= 1 || doc.is_corresponding_confirmed;
+                                  }).length
+                                }
+                              ].map((opt) => (
+                                <button
+                                  key={opt.id}
+                                  onClick={() => {
+                                    setScopusFilter(opt.id as any);
+                                    setCurrentPage(1);
+                                  }}
+                                  className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${
                                     scopusFilter === opt.id
-                                      ? 'bg-white/20 text-white'
-                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                  }`}>
-                                    {opt.count}
+                                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
+                                  }`}
+                                >
+                                  <span className="flex items-center gap-1.5">
+                                    <span>{opt.label}</span>
+                                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${
+                                      scopusFilter === opt.id
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                    }`}>
+                                      {opt.count}
+                                    </span>
                                   </span>
-                                </span>
-                              </button>
-                            ))}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Row 2: Filter Tipe Dokumen */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
+                            <div className="flex items-center gap-2">
+                              <Filter className="w-4 h-4 text-slate-400" />
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Tipe Dokumen:</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {[
+                                { id: 'all', label: 'Semua Tipe', count: scopusList.length },
+                                { 
+                                  id: 'article', 
+                                  label: 'Article / Journal', 
+                                  count: scopusList.filter((doc: any) => !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article').length 
+                                },
+                                { 
+                                  id: 'non-article', 
+                                  label: 'Non-Article', 
+                                  count: scopusList.filter((doc: any) => doc.subtype && doc.subtype.toLowerCase() !== 'ar' && doc.subtype.toLowerCase() !== 'article').length 
+                                }
+                              ].map((opt) => (
+                                <button
+                                  key={opt.id}
+                                  onClick={() => {
+                                    setArticleFilter(opt.id as any);
+                                    setCurrentPage(1);
+                                  }}
+                                  className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${
+                                    articleFilter === opt.id
+                                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
+                                  }`}
+                                >
+                                  <span className="flex items-center gap-1.5">
+                                    <span>{opt.label}</span>
+                                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${
+                                      articleFilter === opt.id
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                    }`}>
+                                      {opt.count}
+                                    </span>
+                                  </span>
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
 
