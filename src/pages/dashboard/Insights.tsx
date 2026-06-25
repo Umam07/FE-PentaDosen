@@ -6,7 +6,7 @@ import {
 import { 
   Trophy, Users, FileText, Building2, 
   ChevronRight, ArrowUpRight, CheckCircle2, LayoutDashboard, 
-  BookOpen, Sparkles, Zap, TrendingUp, Search, Filter
+  BookOpen, Sparkles, Zap, TrendingUp, Search, Filter, Crown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Navbar from '../../components/Home/Navbar';
@@ -622,17 +622,33 @@ export default function Insights() {
                     onClick={() => navigate(`/lecturer/${user.id}`)}
                     className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                   >
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-sm relative shrink-0 ${
-                      index === 0 ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' : 
-                      index === 1 ? 'bg-slate-300 text-slate-700 dark:bg-slate-800 dark:text-slate-300' : 
-                      index === 2 ? 'bg-orange-300 text-orange-800 dark:bg-amber-900/30 dark:text-amber-400' :
-                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                    {/* Rank Number */}
+                    <div className={`w-6 text-center shrink-0 ${
+                      index === 0 ? 'text-amber-500 dark:text-amber-400 text-base font-black' : 
+                      index === 1 ? 'text-slate-400 dark:text-slate-300 text-sm font-black' : 
+                      index === 2 ? 'text-orange-400 dark:text-orange-300 text-sm font-black' :
+                      'text-slate-400 dark:text-slate-500 text-sm font-bold'
                     }`}>
                       {index + 1}
+                    </div>
+
+                    {/* Lecturer Photo / Avatar */}
+                    <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-sm relative shrink-0 border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                      <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
+                        {user.thumbnail ? (
+                          <img src={user.thumbnail} alt={user.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-slate-500 dark:text-slate-400 uppercase">
+                            {user.name?.charAt(0)}
+                          </span>
+                        )}
+                      </div>
                       {index === 0 && (
-                        <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4">
+                        <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 z-10">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-4 w-4 bg-amber-500 items-center justify-center text-[8px] text-white">🏆</span>
+                          <span className="relative inline-flex rounded-full h-5 w-5 bg-white dark:bg-slate-900 border border-amber-500 items-center justify-center shadow-md">
+                            <Crown className="w-3 h-3 text-amber-500 fill-amber-400" />
+                          </span>
                         </span>
                       )}
                     </div>
