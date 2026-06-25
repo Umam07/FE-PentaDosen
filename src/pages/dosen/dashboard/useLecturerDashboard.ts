@@ -12,7 +12,7 @@ export default function useLecturerDashboard(user: any) {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('penelitian');
   const [activeView, setActiveView] = useState<'all' | 'internal' | 'external'>('all');
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed' | 'metriks'>('scopus');
   const [announcements, setAnnouncements] = useState<any[]>([]);
