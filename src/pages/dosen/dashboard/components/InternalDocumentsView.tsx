@@ -94,7 +94,7 @@ export default function InternalDocumentsView({
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
               {docCategories.map((cat) => {
                 const catDocs = allInternalDocs.filter(
-                  (d) => d.category?.toLowerCase() === cat.id.toLowerCase()
+                  (d) => d.category?.toLowerCase().includes(cat.id.toLowerCase())
                 );
                 const approvedCatDocs = catDocs.filter((d) => d.status === 'Approved');
                 const points = approvedCatDocs.reduce(
