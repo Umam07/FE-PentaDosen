@@ -84,7 +84,7 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
           {citations > 0 && (
             <div className="mb-3.5">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Dampak Sitasi</span>
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Sitasi</span>
                 <span className="text-[8px] font-black text-blue-500">{citations} sitasi</span>
               </div>
               <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -561,7 +561,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
           {bd.citations > 0 && (
             <div className="mb-3.5">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Dampak Sitasi</span>
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Sitasi</span>
                 <span className="text-[8px] font-black text-orange-500">{bd.citations} sitasi</span>
               </div>
               <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -761,7 +761,7 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
           {citations > 0 && (
             <div className="mb-3.5">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Dampak Sitasi</span>
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Sitasi</span>
                 <span className="text-[8px] font-black text-emerald-500">{citations} sitasi</span>
               </div>
               <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -1368,7 +1368,7 @@ export default function ExternalDocumentsView({
                             </div>
                             <div>
                               <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Tren Google Scholar</h4>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Analisis Publikasi & Dampak Sitasi</p>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Analisis Publikasi & Sitasi</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
