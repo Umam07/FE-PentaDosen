@@ -24,7 +24,7 @@ Dasbor dirancang dengan fokus pada ketajaman informasi dan visual yang memikat:
 *   **Tema Utama:** *High-Tech Academic Workspace* bernuansa modern, futuristik, dan disiplin.
 *   **Efek Glassmorphism:** Elemen kartu (*cards*) semi-transparan buram menggunakan teknik *backdrop blur* premium (`backdrop-blur-md`).
 *   **Tipografi Presisi:**
-    *   **Geist Mono** untuk elemen teks antarmuka, judul, navigasi, dan deskripsi halaman.
+    *   **Plus Jakarta Sans** untuk elemen teks antarmuka, judul, navigasi, dan deskripsi halaman.
     *   **JetBrains Mono** untuk representasi data numerik, persentase statistik, dan kode dokumen agar mudah dibaca.
 *   **Sistem Warna Dinamis:** Aksen warna biru elektrik (`#3b82f6`) yang futuristik berpadu dengan tema gelap pekat (`slate-950`) dan terang bersih (`slate-50`).
 

@@ -59,11 +59,11 @@ Menciptakan tampilan dasbor bernuansa premium *cyber-workspace* yang nyaman untu
 
 ## 🔠 3. Tipografi (Typography)
 
-Sistem tipografi PentaDosen 2.0 sangat khas karena mengandalkan jenis huruf monospace modern. Di Figma, silakan unduh dan terapkan font Google gratis berikut ini:
+Sistem tipografi PentaDosen 2.0 menggunakan kombinasi jenis huruf sans-serif modern dan monospace yang presisi. Di Figma, silakan unduh dan terapkan font Google gratis berikut ini:
 
-1.  **Geist Mono (Google Fonts / Vercel Fonts)**
+1.  **Plus Jakarta Sans (Google Fonts)**
     *   *Fungsi:* Font utama untuk seluruh antarmuka teks, heading, label menu, dan paragraf.
-    *   *Kesan:* Modern, terstruktur, futuristik, dan sangat rapi.
+    *   *Kesan:* Sangat terbaca, bersih, profesional, dan ergonomis untuk penggunaan jangka panjang.
 2.  **JetBrains Mono (Google Fonts)**
     *   *Fungsi:* Font sekunder untuk angka, statistik, metrik dasbor, dan data tabular.
     *   *Kesan:* Sangat mudah dibaca untuk angka desimal, persentase, dan deretan kode/sandi dokumen.
