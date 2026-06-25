@@ -130,6 +130,14 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
   // Cari nama halaman aktif (termasuk children)
   // Cari nama halaman aktif (termasuk children)
   const currentPage = (() => {
+    // Custom route matching for non-sidebar pages
+    if (location.pathname === '/profile') {
+      return { name: 'Profil Diri' };
+    }
+    if (location.pathname.startsWith('/admin/lecturers/')) {
+      return { name: 'Detail Performa Dosen' };
+    }
+
     // 1. Cari yang paling spesifik (cocok pathname + query search)
     for (const item of navItems) {
       if (item.children) {
