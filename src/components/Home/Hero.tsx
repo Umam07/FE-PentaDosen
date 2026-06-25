@@ -24,14 +24,16 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.05] mb-8 transition-colors duration-300"
+            className="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-8 transition-colors duration-300"
           >
-            Masa Depan <br />
-            <span className="relative inline-block mt-2">
-              <span className="relative z-10 bg-gradient-to-r from-primary-600 via-indigo-600 to-purple-600 dark:from-primary-400 dark:via-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-                Karir Akademik Anda
-              </span>
-              <span className="absolute bottom-2 left-0 w-full h-3 bg-primary-100/60 dark:bg-primary-900/40 -z-10 rotate-1"></span>
+            {/* Line 1 */}
+            <span className="block text-slate-800 dark:text-slate-100 mb-2">
+              Masa Depan
+            </span>
+
+            {/* Line 2 */}
+            <span className="text-primary-600 dark:text-primary-400">
+              Karir Akademik Anda
             </span>
           </motion.h1>
 
@@ -92,6 +94,10 @@ export default function Hero() {
         }
         .animation-delay-2000 {
           animation-delay: 2s;
+        }
+        @keyframes textShimmer {
+          0%   { background-position: 0% center; }
+          100% { background-position: 200% center; }
         }
       `}} />
     </section>

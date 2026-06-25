@@ -25,7 +25,7 @@ export default function Workflow() {
       id: 1,
       title: 'Otentikasi & Integrasi',
       subtitle: 'Seamless Access',
-      description: 'Login menggunakan akun institusi (SSO) yang terhubung dengan LDAP dan sinkronisasi otomatis SINTA/Sister.',
+      description: 'Login menggunakan akun institusi yang terhubung dengan sistem autentikasi LDAP dan sinkronisasi data akademik secara otomatis.',
       icon: UserCheck,
       role: 'Dosen',
       color: 'blue'
@@ -34,7 +34,7 @@ export default function Workflow() {
       id: 2,
       title: 'Manajemen Kinerja',
       subtitle: 'Unified Portfolio',
-      description: 'Input terpusat untuk publikasi, HKI, penelitian, dan pengabdian masyarakat dalam satu dasbor intuitif.',
+      description: 'Input terpusat untuk publikasi, HKI, penelitian, dan buku.',
       icon: FileText,
       role: 'Dosen',
       color: 'blue'
@@ -129,7 +129,7 @@ export default function Workflow() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-6 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-6 relative z-10 items-stretch">
             {steps.map((step, index) => {
               const Icon = step.icon;
               
@@ -147,9 +147,9 @@ export default function Workflow() {
                 <motion.div
                   key={step.id}
                   style={{ scale, opacity }}
-                  className="relative group pt-4"
+                  className="relative group pt-4 h-full"
                 >
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center h-full">
                     {/* Node Icon Cluster */}
                     <div className="relative mb-8">
                       {/* Active Pulse Aura */}
@@ -182,7 +182,7 @@ export default function Workflow() {
                     {/* Content Glass Card */}
                     <motion.div 
                       whileHover={{ y: -10 }}
-                      className="w-full bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-[40px] p-8 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] group-hover:bg-white dark:group-hover:bg-white/[0.05]"
+                      className="w-full flex-1 flex flex-col bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-[40px] p-8 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] group-hover:bg-white dark:group-hover:bg-white/[0.05]"
                     >
                       <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[.2em] mb-3">
                         {step.subtitle}
@@ -190,7 +190,7 @@ export default function Workflow() {
                       <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-4 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
                         {step.title}
                       </h3>
-                      <p className="text-sm lg:text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                      <p className="flex-1 text-sm lg:text-base text-gray-500 dark:text-gray-400 leading-relaxed">
                         {step.description}
                       </p>
 

@@ -39,7 +39,7 @@ function FeatureCard({ className = "", lightColor, children, delay = 0 }: Featur
         className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none"
       />
 
-      <div className="absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-gray-50/40 to-transparent pointer-events-none z-0" />
+      <div className="absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-gray-50/40 dark:from-slate-900/40 to-transparent pointer-events-none z-0" />
 
       <div className="relative z-10 flex flex-col h-full w-full">
         {children}
@@ -61,7 +61,7 @@ export default function Features() {
             y: [0, -40, 0],
           }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-12 -right-12 w-[400px] h-[400px] bg-primary-100/60 rounded-full filter blur-3xl"
+          className="absolute -top-12 -right-12 w-[400px] h-[400px] bg-primary-100/60 dark:bg-primary-900/20 rounded-full filter blur-3xl"
         />
         <motion.div
           animate={{
@@ -71,7 +71,7 @@ export default function Features() {
             y: [0, 50, 0],
           }}
           transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-          className="absolute -bottom-24 -left-24 w-[500px] h-[500px] bg-emerald-100/40 rounded-full filter blur-[100px]"
+          className="absolute -bottom-24 -left-24 w-[500px] h-[500px] bg-emerald-100/40 dark:bg-emerald-900/15 rounded-full filter blur-[100px]"
         />
       </div>
 
