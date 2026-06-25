@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Zap, ShieldCheck, Book, TrendingUp, Calendar, ExternalLink, Search,
   ChevronLeft, ChevronRight, Globe, Beaker, Filter
@@ -1111,8 +1111,16 @@ export default function ExternalDocumentsView({
 
           {/* Publication Content */}
           <div className="space-y-12">
-            {publicationSubTab === 'scopus' ? (
-              <div className="space-y-10">
+            <AnimatePresence mode="wait">
+              {publicationSubTab === 'scopus' ? (
+                <motion.div
+                  key="scopus"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="space-y-10"
+                >
                 {scopusChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
@@ -1350,9 +1358,16 @@ export default function ExternalDocumentsView({
                     </div>
                   </div>
                 )}
-              </div>
-            ) : publicationSubTab === 'scholar' ? (
-              <div className="space-y-10">
+                </motion.div>
+              ) : publicationSubTab === 'scholar' ? (
+                <motion.div
+                  key="scholar"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="space-y-10"
+                >
                 {scholarChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
@@ -1445,9 +1460,16 @@ export default function ExternalDocumentsView({
                     </div>
                   </div>
                 )}
-              </div>
-            ) : publicationSubTab === 'cross_indexed' ? (
-              <div className="space-y-6">
+                </motion.div>
+              ) : publicationSubTab === 'cross_indexed' ? (
+                <motion.div
+                  key="cross_indexed"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="space-y-6"
+                >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Publikasi Terindeks Ganda</h4>
@@ -1509,9 +1531,16 @@ export default function ExternalDocumentsView({
                   itemsPerPage={itemsPerPage}
                   setItemsPerPage={setItemsPerPage}
                 />
-              </div>
-            ) : publicationSubTab === 'metriks' ? (
-              <div className="space-y-8">
+                </motion.div>
+              ) : publicationSubTab === 'metriks' ? (
+                <motion.div
+                  key="metriks"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="space-y-8"
+                >
                 {/* Header Banner */}
                 <div className="p-6 bg-gradient-to-r from-orange-500/10 via-blue-500/10 to-emerald-500/10 border border-slate-200 dark:border-slate-800 rounded-[2rem] relative overflow-hidden">
                   <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1857,8 +1886,9 @@ export default function ExternalDocumentsView({
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : null}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         </div>
       </div>
