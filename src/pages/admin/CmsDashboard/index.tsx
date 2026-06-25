@@ -63,28 +63,40 @@ export default function CmsDashboard({ user }: { user: any }) {
         )}
       </AnimatePresence>
 
-      {/* Navigation Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-gray-100 dark:border-zinc-800 pb-3">
+      {/* Navigation Tabs (Redesigned) */}
+      <div className="bg-white dark:bg-zinc-900/80 backdrop-blur-md p-2 rounded-[2rem] border border-gray-100 dark:border-zinc-800/80 shadow-sm flex flex-wrap gap-1.5">
         {[
           { id: 'users', label: 'Hak Akses & Users', icon: Users },
           { id: 'kpi', label: 'Bobot KPI & Periode', icon: Settings },
           { id: 'announcements', label: 'Pengumuman', icon: Megaphone },
           { id: 'faq', label: 'Panduan & FAQ', icon: HelpCircle },
           { id: 'templates', label: 'Template Berkas', icon: FileSpreadsheet },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
-              activeTab === tab.id
-                ? 'bg-primary-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900/30'
-                : 'bg-white dark:bg-zinc-900 text-gray-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 border border-gray-100 dark:border-zinc-800'
-            }`}
-          >
-            <tab.icon className="w-4 h-4" />
-            {tab.label}
-          </button>
-        ))}
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`relative group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 outline-none select-none ${
+                isActive
+                  ? 'text-white'
+                  : 'text-gray-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50/50 dark:hover:bg-zinc-800/50'
+              }`}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="active-cms-tab"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  className="absolute inset-0 bg-primary-600 dark:bg-primary-600 rounded-2xl shadow-lg shadow-primary-500/20"
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-2">
+                <tab.icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Dynamic Content Rendering */}

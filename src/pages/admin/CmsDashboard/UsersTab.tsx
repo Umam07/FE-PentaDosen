@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Edit, X } from 'lucide-react';
+import { Search, Edit, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FAKULTAS_PRODI_MAP: Record<string, string[]> = {
@@ -34,6 +34,7 @@ export default function UsersTab({ triggerMessage }: { triggerMessage: (text: st
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [perPage, setPerPage] = useState(20);
 
   // Edit user modal state
   const [editingUser, setEditingUser] = useState<any | null>(null);
@@ -45,7 +46,7 @@ export default function UsersTab({ triggerMessage }: { triggerMessage: (text: st
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/cms/users?search=${search}&role=${selectedRole}&page=${page}`);
+      const res = await fetch(`/api/admin/cms/users?search=${search}&role=${selectedRole}&page=${page}&per_page=${perPage}`);
       const data = await res.json();
       setUsers(data.data || []);
       setLastPage(data.last_page || 1);
@@ -60,7 +61,7 @@ export default function UsersTab({ triggerMessage }: { triggerMessage: (text: st
 
   useEffect(() => {
     fetchUsers();
-  }, [page, selectedRole]);
+  }, [page, selectedRole, perPage]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,9 +176,17 @@ export default function UsersTab({ triggerMessage }: { triggerMessage: (text: st
                 <tr key={u.id} className="hover:bg-primary-50/10 dark:hover:bg-zinc-800/10 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-black text-sm uppercase">
-                        {u.name?.charAt(0)}
-                      </div>
+                      {u.avatar ? (
+                        <img 
+                          src={u.avatar} 
+                          alt="" 
+                          className="w-10 h-10 rounded-xl object-cover ring-2 ring-transparent group-hover:ring-primary-100/50 transition-all shadow-md"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-black text-sm uppercase">
+                          {u.name?.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <p className="font-extrabold text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{u.name}</p>
                         <p className="text-[10px] font-bold text-gray-400 lowercase">{u.email}</p>
@@ -223,27 +232,72 @@ export default function UsersTab({ triggerMessage }: { triggerMessage: (text: st
         </table>
       </div>
 
-      {/* Pagination */}
-      {users.length > 0 && (
-        <div className="p-6 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/10 flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total: {total} Users</span>
-          <div className="flex gap-2">
+      {/* Pagination Controls (Redesigned) */}
+      {!loading && users.length > 0 && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="px-6 py-6 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
+        >
+          <div className="flex items-center gap-4">
+            <span className="text-[11px] font-black text-gray-400 dark:text-zinc-505 uppercase tracking-widest leading-none">
+              Showing {(page - 1) * perPage + 1} - {Math.min(page * perPage, total)} of {total} Users
+            </span>
+            <div className="h-5 w-px bg-gray-200 dark:bg-zinc-700 hidden sm:block" />
+            <div className="hidden sm:flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase text-gray-300 tracking-widest">Limit:</span>
+              <select 
+                value={perPage} 
+                onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}
+                className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold py-1 px-3 focus:ring-4 focus:ring-primary-100 outline-none cursor-pointer shadow-sm text-gray-700 dark:text-zinc-300"
+              >
+                {[10, 20, 50, 100].map(val => (
+                  <option key={val} value={val}>{val} per page</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => Math.max(1, p - 1))}
-              className="px-4 py-2 border rounded-xl text-xs font-black uppercase tracking-wider bg-white dark:bg-zinc-900 border-gray-100 dark:border-zinc-800 text-gray-500 disabled:opacity-40"
+              className="p-2.5 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
-              Prev
+              <ChevronLeft className="w-5 h-5" />
             </button>
+
+            <div className="flex items-center gap-2">
+              {Array.from({ length: lastPage }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
+                .map((p, index, array) => (
+                  <React.Fragment key={p}>
+                    {index > 0 && array[index - 1] !== p - 1 && (
+                      <span className="px-1.5 text-gray-300 font-bold">...</span>
+                    )}
+                    <button
+                      onClick={() => setPage(p)}
+                      className={`min-w-[38px] h-9 flex items-center justify-center rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        page === p 
+                          ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30 scale-105' 
+                          : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 hover:text-primary-600 shadow-sm'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  </React.Fragment>
+                ))}
+            </div>
+
             <button
-              disabled={page === lastPage}
+              disabled={page === lastPage || lastPage === 0}
               onClick={() => setPage(p => Math.min(lastPage, p + 1))}
-              className="px-4 py-2 border rounded-xl text-xs font-black uppercase tracking-wider bg-white dark:bg-zinc-900 border-gray-100 dark:border-zinc-800 text-gray-500 disabled:opacity-40"
+              className="p-2.5 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
-              Next
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Edit Access Modal Dialog */}
