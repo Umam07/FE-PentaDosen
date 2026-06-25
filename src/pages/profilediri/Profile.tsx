@@ -208,19 +208,19 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
 
     return [
       { 
-        label: 'Total Performance', 
+        label: 'Total KPI', 
         val: grandTotal.toLocaleString(), 
         icon: Award, 
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
       },
       { 
-        label: 'Poin API (External)',
+        label: 'Poin (External)',
         val: extTotal.toLocaleString(),
         icon: Globe, 
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
       },
       { 
-        label: 'Poin Upload (Internal)',
+        label: 'Poin (Internal)',
         val: internalTotal.toLocaleString(),
         icon: FileText, 
         color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
@@ -679,13 +679,16 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
 
               <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 xl:w-auto">
                 {stats?.map((stat, i) => (
-                  <div key={i} className="flex min-h-[92px] items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/40 xl:min-w-[190px]">
-                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${stat.color}`}>
+                  <div 
+                    key={i} 
+                    className="flex min-h-[92px] items-center gap-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white/80 px-5 py-4 dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-950/50 dark:to-slate-900/30 xl:min-w-[210px] shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 group"
+                  >
+                    <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${stat.color} transition-transform duration-300 group-hover:scale-110 shadow-sm`}>
                       <stat.icon className="h-5 w-5" />
                     </div>
-                    <div className="min-w-0">
-                      <span className="block truncate text-xs font-semibold text-slate-500 dark:text-slate-400">{stat.label}</span>
-                      <span className="mt-1 block text-xl font-black leading-none tracking-tight text-slate-950 dark:text-white">{stat.val}</span>
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">{stat.label}</span>
+                      <span className="mt-1.5 block text-2xl font-black leading-none tracking-tight text-slate-900 dark:text-white tabular-nums">{stat.val}</span>
                     </div>
                   </div>
                 ))}
