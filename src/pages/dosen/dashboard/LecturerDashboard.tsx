@@ -100,6 +100,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
       {activeView === 'internal' && (
         <InternalDocumentsView 
           filteredDocs={filteredDocs}
+          allInternalDocs={internalDocumentsOnly}
           loading={loading}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}

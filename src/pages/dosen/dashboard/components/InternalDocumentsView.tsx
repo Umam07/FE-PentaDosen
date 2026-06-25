@@ -13,6 +13,7 @@ import { HKI_CATEGORIES } from '../../hki/constants';
 
 interface InternalDocumentsViewProps {
   filteredDocs: any[];
+  allInternalDocs?: any[];
   loading: boolean;
   currentPage: number;
   setCurrentPage: (page: number) => void;
@@ -31,6 +32,7 @@ const docCategories = [
 
 export default function InternalDocumentsView({
   filteredDocs,
+  allInternalDocs = [],
   loading,
   currentPage,
   setCurrentPage,
@@ -88,6 +90,55 @@ export default function InternalDocumentsView({
         {/* ══════════ TAB: DOKUMEN ══════════ */}
         {activeTab === 'dokumen' && (
           <>
+            {/* Statistics Cards Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+              {docCategories.map((cat) => {
+                const catDocs = allInternalDocs.filter(
+                  (d) => d.category?.toLowerCase() === cat.id.toLowerCase()
+                );
+                const approvedCatDocs = catDocs.filter((d) => d.status === 'Approved');
+                const points = approvedCatDocs.reduce(
+                  (acc, d) => acc + (Number(d.awarded_points) || 0),
+                  0
+                );
+                const count = approvedCatDocs.length;
+
+                return (
+                  <div
+                    key={cat.id}
+                    onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
+                    className={`p-5 rounded-3xl border cursor-pointer transition-all ${
+                      categoryFilter === cat.id
+                        ? 'bg-primary-50/30 dark:bg-primary-950/10 border-primary-200 dark:border-primary-800 shadow-md shadow-primary-500/5'
+                        : 'bg-slate-50/40 dark:bg-slate-950/20 border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 flex items-center justify-center">
+                        <cat.icon className={`w-4 h-4 ${
+                          categoryFilter === cat.id 
+                            ? 'text-primary-600 dark:text-primary-400' 
+                            : 'text-slate-400'
+                        }`} />
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                        Poin
+                      </span>
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
+                      {cat.label}
+                    </p>
+                    <h4 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight mt-1">
+                      +{points} <span className="text-xs font-black text-slate-400 dark:text-slate-500">PTS</span>
+                    </h4>
+                    <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 mt-1">
+                      {count} Dokumen Disetujui
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Category filter sub-tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
               <div className="flex items-center gap-5 overflow-x-auto no-scrollbar">
