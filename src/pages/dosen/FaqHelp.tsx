@@ -74,9 +74,9 @@ export default function FaqHelp({ user }: { user: any }) {
   };
 
   return (
-    <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-6 pb-20">
+    <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-4 pb-20">
       
-      {/* 1. COMPACT HEADER BANNER — horizontal strip with inline search */}
+      {/* 1. COMPACT HEADER BANNER — title only, no search */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -85,33 +85,40 @@ export default function FaqHelp({ user }: { user: any }) {
         <div className="absolute top-0 right-0 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-4 md:gap-6 px-5 py-4 sm:px-7 sm:py-5">
-          {/* Left: Icon + Title */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 border border-white/10">
-              <HelpCircle className="w-5 h-5 text-primary-400" />
-            </div>
-            <div>
-              <p className="text-[8px] font-black text-primary-400 uppercase tracking-[0.2em] leading-none mb-0.5">Pusat Dukungan</p>
-              <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Bantuan &amp; FAQ</h2>
-            </div>
+        <div className="relative z-10 flex items-center gap-4 px-5 py-4 sm:px-7">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 border border-white/10">
+            <HelpCircle className="w-5 h-5 text-primary-400" />
           </div>
-
-          {/* Divider (desktop only) */}
-          <div className="hidden md:block h-8 w-px bg-white/10 shrink-0" />
-
-          {/* Right: Search Bar — grows to fill remaining space */}
-          <div className="relative flex-1 group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary-400 transition-colors" />
-            <input
-              type="text"
-              placeholder="Cari panduan, kata kunci, atau pertanyaan..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500/40 transition-all text-white placeholder-slate-500"
-            />
+          <div>
+            <p className="text-[8px] font-black text-primary-400 uppercase tracking-[0.2em] leading-none mb-0.5">Pusat Dukungan</p>
+            <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Bantuan &amp; FAQ</h2>
           </div>
         </div>
+      </motion.div>
+
+      {/* 2. STANDALONE SEARCH BAR — high contrast, fully visible */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="relative group"
+      >
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary-500 transition-colors z-10" />
+        <input
+          type="text"
+          placeholder="Cari panduan, kata kunci, atau pertanyaan..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:border-primary-500/50 transition-all text-slate-900 dark:text-white placeholder-slate-400 shadow-sm"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+          >
+            <span className="text-xs font-black">✕</span>
+          </button>
+        )}
       </motion.div>
 
       {/* 2. UNIFIED CARD: Tabs on top + FAQ Accordions below */}
