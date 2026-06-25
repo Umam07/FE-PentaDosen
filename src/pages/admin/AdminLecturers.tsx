@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Users, GraduationCap, TrendingUp, Search, Edit3, Save, 
-  X, ChevronRight, Mail, BookOpen, ChevronLeft, Filter, 
-  UserCircle2, BadgeCheck
+  Users, GraduationCap, Search, ChevronRight, Mail, BookOpen, ChevronLeft, Filter, BadgeCheck
 } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AdminLecturers() {
   const { user } = useOutletContext<{ user: any }>();
@@ -13,10 +11,6 @@ export default function AdminLecturers() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFakultas, setSelectedFakultas] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [editScholar, setEditScholar] = useState<{ [key: string]: string }>({});
-  const [editScopus, setEditScopus] = useState<{ [key: string]: string }>({});
-  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -35,46 +29,10 @@ export default function AdminLecturers() {
       const res = await fetch(`/api/admin/lecturers?role=${user?.role}&user_id=${user?.id}`);
       const data = await res.json();
       setLecturers(data.lecturers);
-      const initialScholar: any = {};
-      const initialScopus: any = {};
-      data.lecturers.forEach((l: any) => {
-        initialScholar[l.id] = l.scholar_id || '';
-        initialScopus[l.id] = l.scopus_id || '';
-      });
-      setEditScholar(initialScholar);
-      setEditScopus(initialScopus);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSaveBulk = async () => {
-    try {
-      setSaving(true);
-      const updatesScholar = lecturers.map(l => ({ id: l.id, scholar_id: editScholar[l.id] }));
-      const updatesScopus = lecturers.map(l => ({ id: l.id, scopus_id: editScopus[l.id] }));
-
-      await Promise.all([
-        fetch('/api/admin/lecturers/bulk-scholar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lecturers: updatesScholar })
-        }),
-        fetch('/api/admin/lecturers/bulk-scopus', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lecturers: updatesScopus })
-        })
-      ]);
-
-      setIsEditing(false);
-      fetchLecturers();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -97,50 +55,8 @@ export default function AdminLecturers() {
         <div>
           <h1 className="text-3xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Database Dosen</h1>
           <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
-            Manajemen ID Publikasi & Pemantauan Kinerja
+            Manajemen Database Dosen, Dokumen Akademik & Pemantauan Kinerja
           </p>
-        </div>
-
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <AnimatePresence mode="wait">
-            {isEditing ? (
-              <motion.div 
-                key="editing-actions"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="flex gap-2 w-full"
-              >
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="flex-1 sm:flex-none px-6 py-3 border border-gray-200 dark:border-zinc-700 rounded-2xl bg-white dark:bg-zinc-800 text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-zinc-700 active:scale-95 transition-all shadow-sm"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={handleSaveBulk}
-                  disabled={saving}
-                  className="flex-1 sm:flex-none px-6 py-3 bg-primary-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary-500/10 hover:bg-primary-700 active:scale-95 transition-all flex items-center justify-center gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  {saving ? 'Saving...' : 'Simpan'}
-                </button>
-              </motion.div>
-            ) : (
-              <motion.button
-                key="edit-button"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                onClick={() => setIsEditing(true)}
-                disabled={loading}
-                className="w-full sm:w-auto px-6 py-3 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-[10px] font-black text-gray-700 dark:text-zinc-300 uppercase tracking-widest hover:bg-primary-50 dark:hover:bg-primary-900/10 hover:border-primary-200 hover:text-primary-600 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
-              >
-                <Edit3 className="h-4 w-4" />
-                Edit Bulk IDs
-              </motion.button>
-            )}
-          </AnimatePresence>
         </div>
       </div>
 
@@ -167,7 +83,7 @@ export default function AdminLecturers() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="block w-full pl-12 pr-4 py-3.5 border border-gray-200 dark:border-zinc-700 rounded-[1.25rem] bg-white dark:bg-zinc-800 text-sm font-bold text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 outline-none transition-all shadow-inner"
-                  disabled={isEditing || loading}
+                  disabled={loading}
                 />
               </div>
               {user?.role === 'admin lppm' && (
@@ -176,7 +92,7 @@ export default function AdminLecturers() {
                     value={selectedFakultas}
                     onChange={(e) => setSelectedFakultas(e.target.value)}
                     className="appearance-none w-full px-5 py-3 pl-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm"
-                    disabled={isEditing || loading}
+                    disabled={loading}
                   >
                     <option value="">Semua Fakultas</option>
                     <option value="Fakultas Kedokteran">Kedokteran</option>
@@ -226,8 +142,8 @@ export default function AdminLecturers() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05, duration: 0.2 }}
-                      className={`group transition-all ${!isEditing ? 'hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/[0.03] cursor-pointer' : ''}`}
-                      onClick={() => !isEditing && navigate(`/admin/lecturers/${lecturer.id}`)}
+                      className="group transition-all hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/[0.03] cursor-pointer"
+                      onClick={() => navigate(`/admin/lecturers/${lecturer.id}`)}
                     >
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
@@ -255,62 +171,50 @@ export default function AdminLecturers() {
                         </div>
                       </td>
                       <td className="px-6 py-6">
-                        <span className="text-[10px] font-black text-gray-600 dark:text-zinc-300 bg-gray-50 dark:bg-zinc-800 px-3 py-1.5 rounded-xl uppercase tracking-widest border border-gray-100 dark:border-zinc-700 shadow-sm">
-                          {lecturer.fakultas ? `${lecturer.fakultas} • ` : ''}{lecturer.program_studi || 'N/A'}
-                        </span>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                            {lecturer.program_studi || 'N/A'}
+                          </span>
+                          {lecturer.fakultas && (
+                            <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1.5">
+                              {lecturer.fakultas}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-6">
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editScholar[lecturer.id] ?? ''}
-                            onChange={(e) => setEditScholar(p => ({ ...p, [lecturer.id]: e.target.value }))}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-56 px-4 py-2 text-xs font-bold border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 rounded-xl focus:ring-4 focus:ring-primary-100 outline-none transition-all placeholder:text-gray-300"
-                            placeholder="ID Scholar..."
-                          />
-                        ) : (
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2 text-[11px] font-bold text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
-                              <BookOpen className="h-4 w-4 text-blue-500" />
-                              {lecturer.scholar_id || <span className="text-gray-300 italic font-medium">Not Set</span>}
-                            </div>
-                            {lecturer.scholar_id && (
-                              <p className="text-[9px] font-black text-primary-400 uppercase mt-1.5 tracking-[0.1em]">CIT: {lecturer.total_citations || 0} • HI: {lecturer.h_index || 0}</p>
-                            )}
+                        {lecturer.scholar_id ? (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest shadow-sm">
+                            <BookOpen className="h-3.5 w-3.5 text-blue-500" />
+                            <span className="font-mono">{lecturer.scholar_id}</span>
                           </div>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100/50 dark:border-slate-800/30 text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider italic shadow-sm">
+                            Not Configured
+                          </span>
                         )}
                       </td>
                       <td className="px-6 py-6">
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editScopus[lecturer.id] ?? ''}
-                            onChange={(e) => setEditScopus(p => ({ ...p, [lecturer.id]: e.target.value }))}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-56 px-4 py-2 text-xs font-bold border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 rounded-xl focus:ring-4 focus:ring-primary-100 outline-none transition-all placeholder:text-gray-300"
-                            placeholder="ID Scopus..."
-                          />
-                        ) : (
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2 text-[11px] font-bold text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
-                              <GraduationCap className="h-4 w-4 text-orange-500" />
-                              {lecturer.scopus_id || <span className="text-gray-300 italic font-medium">Not Set</span>}
-                            </div>
-                            {lecturer.scopus_id && (
-                              <p className="text-[9px] font-black text-emerald-500 uppercase mt-1.5 tracking-[0.1em]">DOC: {lecturer.scopus_document_count || 0} • CIT: {lecturer.scopus_total_citations || 0}</p>
-                            )}
+                        {lecturer.scopus_id ? (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-50/80 dark:bg-orange-950/20 border border-orange-100/50 dark:border-orange-900/30 text-orange-700 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest shadow-sm">
+                            <GraduationCap className="h-3.5 w-3.5 text-orange-500" />
+                            <span className="font-mono">{lecturer.scopus_id}</span>
                           </div>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100/50 dark:border-slate-800/30 text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider italic shadow-sm">
+                            Not Configured
+                          </span>
                         )}
                       </td>
                       <td className="px-6 py-6 text-right">
                         <div className="flex items-center justify-end gap-3 group/pts">
                           <div className="text-right">
-                            <p className="text-base font-black text-primary-600 tracking-tight">+{lecturer.total_kpi_points?.toLocaleString() || 0}</p>
-                            <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest leading-none">Points Accum.</p>
+                            <span className="inline-flex items-center px-3.5 py-1.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-xs uppercase tracking-wider border border-emerald-500/20 shadow-inner tabular-nums">
+                              +{lecturer.total_kpi_points?.toLocaleString() || 0} pts
+                            </span>
                           </div>
-                          <div className="p-2 rounded-lg bg-gray-50 dark:bg-zinc-800 text-gray-300 group-hover/pts:text-primary-500 group-hover/pts:bg-primary-50 transition-all">
-                             <ChevronRight className="w-4 h-4 translate-x-0 group-hover/pts:translate-x-0.5 transition-transform" />
+                          <div className="p-2 rounded-xl bg-gray-50 dark:bg-zinc-850 text-gray-400 group-hover/pts:text-primary-500 group-hover/pts:bg-primary-500/10 dark:group-hover/pts:bg-primary-500/20 group-hover/pts:border-primary-200/50 border border-transparent transition-all duration-300 shadow-sm">
+                             <ChevronRight className="w-4 h-4 translate-x-0 group-hover/pts:translate-x-1 transition-transform" />
                           </div>
                         </div>
                       </td>
