@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   HelpCircle, Search, ChevronDown, BookOpen, 
-  Globe, Award, Zap, Info 
+  Globe, Award, Zap, Info, FileText
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
+import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
 export default function FaqHelp({ user }: { user: any }) {
   const [faqs, setFaqs] = useState<any[]>([]);
@@ -11,6 +12,7 @@ export default function FaqHelp({ user }: { user: any }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [expandedFaqId, setExpandedFaqId] = useState<number | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -208,6 +210,21 @@ export default function FaqHelp({ user }: { user: any }) {
                       >
                         <div className="px-5 pb-5 pt-2 border-t border-slate-100 dark:border-slate-800/50 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-line">
                           <p className="pl-[52px]">{faq.answer}</p>
+                          {faq.file_url && (
+                            <div className="mt-4 pl-[52px]">
+                              <button
+                                onClick={() => setPreviewDoc({
+                                  fileUrl: faq.file_url,
+                                  title: faq.question,
+                                  category: faq.category
+                                })}
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900/30 text-primary-600 dark:text-primary-400 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-primary-100/50 dark:hover:bg-primary-900/40 transition-all active:scale-95 shadow-sm"
+                              >
+                                <FileText className="w-4 h-4" />
+                                Lihat Panduan PDF
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </motion.div>
                     )}
@@ -232,6 +249,15 @@ export default function FaqHelp({ user }: { user: any }) {
           )}
         </div>
       </div>
+
+      {/* PDF Preview Modal */}
+      <PdfPreviewModal
+        isOpen={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        fileUrl={previewDoc?.fileUrl ?? null}
+        title={previewDoc?.title}
+        category={previewDoc?.category}
+      />
     </div>
   );
 }

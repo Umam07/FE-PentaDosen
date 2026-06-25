@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, X, FileText, Eye } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
 
 export default function FaqTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
   const [faqs, setFaqs] = useState<any[]>([]);
@@ -14,6 +15,12 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
   const [orderIndex, setOrderIndex] = useState('0');
   const [saving, setSaving] = useState(false);
   const [isOpenForm, setIsOpenForm] = useState(false);
+
+  // PDF specific states
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [existingFileUrl, setExistingFileUrl] = useState<string | null>(null);
+  const [removeFile, setRemoveFile] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
   const fetchFaqs = async () => {
     setLoading(true);
@@ -38,6 +45,9 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
     setAnswer('');
     setCategory('Umum');
     setOrderIndex('0');
+    setPdfFile(null);
+    setExistingFileUrl(null);
+    setRemoveFile(false);
     setIsOpenForm(true);
   };
 
@@ -47,7 +57,28 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
     setAnswer(f.answer);
     setCategory(f.category);
     setOrderIndex((f.order_index ?? 0).toString());
+    setPdfFile(null);
+    setExistingFileUrl(f.file_url || null);
+    setRemoveFile(false);
     setIsOpenForm(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        triggerMessage('File harus berformat PDF.', 'error');
+        e.target.value = '';
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        triggerMessage('Ukuran file maksimal 10MB.', 'error');
+        e.target.value = '';
+        return;
+      }
+      setPdfFile(file);
+      setRemoveFile(false);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -55,18 +86,30 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
     setSaving(true);
     try {
       const url = editingId ? `/api/cms/faqs/${editingId}` : '/api/cms/faqs';
-      const method = editingId ? 'PUT' : 'POST';
-      const payload = {
-        question,
-        answer,
-        category,
-        order_index: parseInt(orderIndex) || 0
-      };
+      
+      const formData = new FormData();
+      formData.append('question', question);
+      formData.append('answer', answer);
+      formData.append('category', category);
+      formData.append('order_index', (parseInt(orderIndex) || 0).toString());
+
+      if (pdfFile) {
+        formData.append('file', pdfFile);
+      }
+
+      if (editingId) {
+        formData.append('_method', 'PUT');
+        if (removeFile) {
+          formData.append('remove_file', 'true');
+        }
+      }
 
       const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: 'POST', // Use POST for multipart form submissions
+        headers: {
+          'Accept': 'application/json',
+        },
+        body: formData
       });
       const data = await res.json();
       if (res.ok) {
@@ -139,18 +182,43 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                     </span>
                   </td>
                   <td className="px-6 py-4 font-extrabold text-gray-900 dark:text-zinc-100 uppercase tracking-tight text-xs">{f.question}</td>
-                  <td className="px-6 py-4 text-xs font-bold text-gray-500 max-w-sm truncate">{f.answer}</td>
+                  <td className="px-6 py-4 text-xs font-bold text-gray-500 max-w-sm truncate">
+                    <div className="flex items-center gap-2">
+                      {f.file_url && (
+                        <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-950/30 rounded text-[9px] font-black tracking-widest uppercase">
+                          <FileText className="w-2.5 h-2.5" />
+                          PDF
+                        </span>
+                      )}
+                      <span className="truncate">{f.answer}</span>
+                    </div>
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1">
+                      {f.file_url && (
+                        <button
+                          onClick={() => setPreviewDoc({
+                            fileUrl: f.file_url,
+                            title: f.question,
+                            category: f.category
+                          })}
+                          className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all"
+                          title="Preview PDF"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      )}
                       <button
                         onClick={() => handleOpenEdit(f)}
                         className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all"
+                        title="Edit Panduan"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(f.id)}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800 rounded-lg transition-all"
+                        title="Hapus Panduan"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -243,12 +311,61 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                   <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Detail Panduan / Jawaban</label>
                   <textarea
                     required
-                    rows={6}
+                    rows={4}
                     placeholder="Tuliskan isi panduan lengkap langkah demi langkah..."
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 resize-none"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Dokumen Panduan PDF (Opsional)</label>
+                  {existingFileUrl && !removeFile ? (
+                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-850 border border-gray-150 dark:border-zinc-800 rounded-xl">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText className="w-4 h-4 text-red-500 shrink-0" />
+                        <span className="text-xs font-bold text-gray-600 dark:text-zinc-400 truncate max-w-[280px]">
+                          {existingFileUrl.split('/').pop() || 'panduan.pdf'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewDoc({
+                            fileUrl: existingFileUrl,
+                            title: question,
+                            category: category
+                          })}
+                          className="text-[10px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-wider hover:underline"
+                        >
+                          Lihat
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setRemoveFile(true)}
+                        className="px-3 py-1 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
+                      >
+                        Hapus PDF
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={handleFileChange}
+                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-xs text-gray-900 dark:text-zinc-100 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-primary-50 file:text-primary-600 dark:file:bg-primary-950/30 dark:file:text-primary-400 hover:file:bg-primary-100/50 cursor-pointer"
+                      />
+                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+                        Format file harus PDF, ukuran maksimal 10MB.
+                      </p>
+                      {removeFile && (
+                        <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">
+                          * PDF lama akan dihapus setelah Anda menyimpan perubahan.
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-4 flex gap-3">
@@ -272,6 +389,15 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
           </div>
         )}
       </AnimatePresence>
+
+      {/* PDF Preview Modal */}
+      <PdfPreviewModal
+        isOpen={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        fileUrl={previewDoc?.fileUrl ?? null}
+        title={previewDoc?.title}
+        category={previewDoc?.category}
+      />
     </div>
   );
 }
