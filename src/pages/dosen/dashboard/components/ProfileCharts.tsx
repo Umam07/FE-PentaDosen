@@ -50,11 +50,16 @@ export const CustomCrosshair = (props: any) => {
 // 2. Komponen Tooltip
 export const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    const filteredPayload = payload.filter((entry: any) => {
+      const nameLower = (entry.name || '').toLowerCase();
+      return nameLower !== 'citations' && nameLower !== 'citation';
+    });
+
     return (
       <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-2xl min-w-[180px] ring-1 ring-black/5">
         <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-800 pb-3">Tahun {label}</p>
         <div className="space-y-3">
-          {payload.map((entry: any, index: number) => (
+          {filteredPayload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center justify-between gap-6">
               <div className="flex items-center gap-3">
                 <div 
@@ -213,6 +218,7 @@ export const ProfileTrendChart = ({
             stroke="none"
             fill={`url(#areaGradient-${gradientId})`}
             legendType="none"
+            tooltipType="none"
             animationBegin={500}
             animationDuration={2000}
           />
