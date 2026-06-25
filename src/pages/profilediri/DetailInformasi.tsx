@@ -155,11 +155,11 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
       </div>
 
       {/* Main info grid */}
-      <div className="grid gap-6 lg:grid-cols-2 items-start">
+      <div className="space-y-6">
         {/* Informasi Akademik */}
-        <div className="rounded-[2rem] border border-slate-200/60 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
-          <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600 dark:bg-primary-950/20 dark:text-primary-300">
+        <div className="rounded-[2rem] border border-slate-200/60 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary-600 dark:bg-primary-950/20 dark:text-primary-300">
               <GraduationCap className="h-5 w-5" />
             </div>
             <div>
@@ -172,7 +172,7 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
             </div>
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <InfoTile label="Alamat Email" value={user?.email} icon={Mail} />
             <InfoTile label="Nomor Telepon" value={user?.phone} icon={Phone} />
             <InfoTile label="Fakultas" value={user?.fakultas} icon={BookOpen} />
@@ -183,9 +183,9 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
         </div>
 
         {/* Identitas Publikasi */}
-        <div className="rounded-[2rem] border border-slate-200/60 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
-          <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-300">
+        <div className="rounded-[2rem] border border-slate-200/60 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-300">
               <Globe className="h-5 w-5" />
             </div>
             <div>
@@ -198,7 +198,7 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
             </div>
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <IdentityBadge label="Google Scholar" value={user?.scholar_id} icon={Globe} tone="blue" />
             <IdentityBadge label="Scopus" value={user?.scopus_id} icon={Hash} tone="rose" />
             <IdentityBadge label="Penta ID" value={user?.penta_id} icon={Fingerprint} tone="emerald" />
