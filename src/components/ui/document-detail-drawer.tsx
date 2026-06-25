@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   XCircle, CheckCircle, Clock, AlertCircle, 
@@ -67,7 +68,7 @@ export function DocumentDetailDrawer({
   onPreviewClick,
   onUploadPdf,
 }: DocumentDetailDrawerProps) {
-  return (
+  const drawerContent = (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[8000] flex justify-end">
@@ -78,7 +79,7 @@ export function DocumentDetailDrawer({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-gray-950/60 backdrop-blur-md"
           />
           
           {/* Drawer Panel */}
@@ -286,4 +287,8 @@ export function DocumentDetailDrawer({
       )}
     </AnimatePresence>
   );
+
+  return typeof document !== 'undefined'
+    ? createPortal(drawerContent, document.body)
+    : null;
 }

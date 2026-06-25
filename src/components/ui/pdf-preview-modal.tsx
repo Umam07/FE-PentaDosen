@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Download, ZoomIn, ZoomOut, RotateCw, FileText, AlertCircle, ExternalLink, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -47,7 +48,7 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
 
   const isValidFileUrl = resolvedUrl && resolvedUrl !== `${window.location.origin}-` && resolvedUrl !== `${window.location.origin}/`;
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
@@ -226,4 +227,8 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
       )}
     </AnimatePresence>
   );
+
+  return typeof document !== 'undefined'
+    ? createPortal(modalContent, document.body)
+    : null;
 }
