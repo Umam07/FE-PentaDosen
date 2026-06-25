@@ -3,7 +3,7 @@ import {
   Users, Settings, Megaphone, HelpCircle, FileSpreadsheet, 
   CheckCircle, AlertCircle, ShieldAlert 
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 import UsersTab from './UsersTab';
 import KpiTab from './KpiTab';

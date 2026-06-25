@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Megaphone, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function AnnouncementsTab({ triggerMessage, user }: { triggerMessage: (text: string, type?: 'success' | 'error') => void, user: any }) {
   const [announcements, setAnnouncements] = useState<any[]>([]);

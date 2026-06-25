@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function FaqTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
   const [faqs, setFaqs] = useState<any[]>([]);

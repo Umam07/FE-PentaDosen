@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Edit, X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 const FAKULTAS_PRODI_MAP: Record<string, string[]> = {
   'Fakultas Kedokteran': ['Kedokteran'],
