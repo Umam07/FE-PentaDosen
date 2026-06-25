@@ -955,7 +955,8 @@ export default function ExternalDocumentsView({
                           />
                         </div>
                       </div>
-                    </div>                     <div className="space-y-5">
+                    </div>
+                     <div className="space-y-5">
                        {/* === Formula Info Banner === */}
                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50/60 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
                          <div className="flex items-start gap-3 flex-1">
@@ -1185,79 +1186,215 @@ export default function ExternalDocumentsView({
                 </div>
 
                 {/* Grid 1: Scopus */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Card 1: Scopus Article */}
+                <div className="grid grid-cols-1 gap-8">
+                  {/* Card 1: Scopus Article - New Matrix Structure */}
                   <div className="bg-white dark:bg-slate-950 p-8 rounded-[2.5rem] border border-slate-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center border border-orange-500/20 shadow-inner">
-                        <Book className="w-5 h-5 text-orange-500" />
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="w-12 h-12 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-2xl flex items-center justify-center border border-orange-500/20 shadow-inner">
+                        <Book className="w-6 h-6 text-orange-500" />
                       </div>
-                      <div>
-                        <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Scopus Article</h4>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Dokumen tipe Artikel Jurnal</p>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Matriks Penilaian KPI Publikasi</h4>
+                        <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-1">Sistem distribusi poin berdasarkan peran dan koresponden penulis</p>
                       </div>
                     </div>
 
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 dark:border-slate-800">
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Peran Penulis</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Quartile</th>
-                            <th className="pb-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Poin KPI (SINTA)</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-xs font-bold text-slate-700 dark:text-slate-300">
-                          {/* Single Author */}
-                          <tr className="bg-violet-50/50 dark:bg-violet-950/10">
-                            <td className="py-2.5 font-black text-violet-700 dark:text-violet-400">Single Author</td>
-                            <td className="py-2.5 text-center text-slate-400">Semua</td>
-                            <td className="py-2.5 text-right text-violet-700 dark:text-violet-400 font-black">40</td>
-                          </tr>
-                          {/* First Author */}
-                          {[{q:'Q1',pts:24},{q:'Q2',pts:22},{q:'Q3',pts:20},{q:'Q4',pts:18}].map(row => (
-                            <tr key={`fa-${row.q}`}>
-                              <td className="py-2.5 text-orange-700 dark:text-orange-400">First Author <span className="text-[9px] text-slate-400 font-normal">(Utama)</span></td>
-                              <td className="py-2.5 text-center">
-                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
-                                  row.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                  row.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
-                                  row.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
-                                  'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                                }`}>{row.q}</span>
-                              </td>
-                              <td className="py-2.5 text-right text-orange-600 font-black">{row.pts}</td>
-                            </tr>
-                          ))}
-                          {/* Member Author */}
-                          {[{q:'Q1',pool:16},{q:'Q2',pool:14},{q:'Q3',pool:12},{q:'Q4',pool:10}].map(row => (
-                            <tr key={`ma-${row.q}`}>
-                              <td className="py-2.5 text-slate-600 dark:text-slate-400">Member Author <span className="text-[9px] text-slate-400 font-normal">(Anggota)</span></td>
-                              <td className="py-2.5 text-center">
-                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
-                                  row.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                  row.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
-                                  row.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
-                                  'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                                }`}>{row.q}</span>
-                              </td>
-                              <td className="py-2.5 text-right text-orange-600 font-black">{row.pool} ÷ n</td>
-                            </tr>
-                          ))}
-                          {/* Hyperauthor */}
-                          <tr className="bg-red-50/40 dark:bg-red-950/10">
-                            <td className="py-2.5 text-red-600 dark:text-red-400">Hyperauthor First</td>
-                            <td className="py-2.5 text-center text-red-500 font-black">&gt;16</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">24</td>
-                          </tr>
-                          <tr className="bg-red-50/40 dark:bg-red-950/10">
-                            <td className="py-2.5 text-red-600 dark:text-red-400">Hyperauthor Member</td>
-                            <td className="py-2.5 text-center text-red-500 font-black">&gt;16</td>
-                            <td className="py-2.5 text-right text-orange-600 font-black">1</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <div className="space-y-8">
+                      {/* Section 1: Single Author */}
+                      <div className="bg-gradient-to-r from-violet-50/50 to-white dark:from-violet-950/10 dark:to-slate-950 rounded-2xl border border-violet-100 dark:border-violet-900/30 p-6">
+                        <div className="flex items-center gap-3 mb-5">
+                          <div className="w-1 h-8 bg-violet-500 rounded-full"></div>
+                          <h5 className="text-sm font-black text-violet-700 dark:text-violet-400 uppercase tracking-wider">Single Author</h5>
+                        </div>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-violet-200 dark:border-violet-800/50">
+                                <th className="pb-3 pl-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">Kategori</th>
+                                <th className="pb-3 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Base SKS</th>
+                                <th className="pb-3 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Jumlah Penulis</th>
+                                <th className="pb-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                <th className="pb-3 pr-2 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Persentase</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                              <tr className="bg-violet-100/50 dark:bg-violet-900/10">
+                                <td className="py-3 pl-2">Semua</td>
+                                <td className="py-3 text-right">100%</td>
+                                <td className="py-3 text-right">1</td>
+                                <td className="py-3 text-violet-700 dark:text-violet-400 font-black">Single Author</td>
+                                <td className="py-3 pr-2 text-right font-black text-violet-700 dark:text-violet-400">100%</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
 
+                      {/* Section 2: Author = 2 */}
+                      <div className="bg-gradient-to-r from-orange-50/50 to-white dark:from-orange-950/10 dark:to-slate-950 rounded-2xl border border-orange-100 dark:border-orange-900/30 p-6">
+                        <div className="flex items-center gap-3 mb-5">
+                          <div className="w-1 h-8 bg-orange-500 rounded-full"></div>
+                          <h5 className="text-sm font-black text-orange-700 dark:text-orange-400 uppercase tracking-wider">Jumlah Penulis = 2</h5>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Sub-Section 2a: First = Corresponding */}
+                          <div className="bg-white dark:bg-slate-900/70 rounded-xl p-5 border border-orange-100 dark:border-orange-900/20">
+                            <h6 className="text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                              First = Corresponding
+                            </h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-left border-collapse">
+                                <thead>
+                                  <tr className="border-b border-slate-100 dark:border-slate-800/50">
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest text-right">Persentase</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                  <tr>
+                                    <td className="py-3 text-orange-700 dark:text-orange-400 font-bold">First + Corresponding</td>
+                                    <td className="py-3 text-right font-black">60%</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-3">Member</td>
+                                    <td className="py-3 text-right font-black">40%</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* Sub-Section 2b: First ≠ Corresponding */}
+                          <div className="bg-white dark:bg-slate-900/70 rounded-xl p-5 border border-blue-100 dark:border-blue-900/20">
+                            <h6 className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                              First ≠ Corresponding
+                            </h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-left border-collapse">
+                                <thead>
+                                  <tr className="border-b border-slate-100 dark:border-slate-800/50">
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest text-right">Persentase</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                  <tr>
+                                    <td className="py-3 text-orange-700 dark:text-orange-400 font-bold">First Author</td>
+                                    <td className="py-3 text-right font-black">50%</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-3 text-blue-700 dark:text-blue-400 font-bold">Member + Corresponding</td>
+                                    <td className="py-3 text-right font-black">50%</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section 3: Author > 2 */}
+                      <div className="bg-gradient-to-r from-emerald-50/50 to-white dark:from-emerald-950/10 dark:to-slate-950 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 p-6">
+                        <div className="flex items-center gap-3 mb-5">
+                          <div className="w-1 h-8 bg-emerald-500 rounded-full"></div>
+                          <h5 className="text-sm font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Jumlah Penulis &gt; 2</h5>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Sub-Section 3a: First = Corresponding */}
+                          <div className="bg-white dark:bg-slate-900/70 rounded-xl p-5 border border-emerald-100 dark:border-emerald-900/20">
+                            <h6 className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                              First = Corresponding
+                            </h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-left border-collapse">
+                                <thead>
+                                  <tr className="border-b border-slate-100 dark:border-slate-800/50">
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Persentase</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                  <tr>
+                                    <td className="py-3 text-orange-700 dark:text-orange-400 font-bold">First + Corresponding</td>
+                                    <td className="py-3 font-black">60%</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-3">Member</td>
+                                    <td className="py-3 font-black">(40% / n-1)</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* Sub-Section 3b: First ≠ Corresponding */}
+                          <div className="bg-white dark:bg-slate-900/70 rounded-xl p-5 border border-purple-100 dark:border-purple-900/20">
+                            <h6 className="text-xs font-black text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                              First ≠ Corresponding
+                            </h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-left border-collapse">
+                                <thead>
+                                  <tr className="border-b border-slate-100 dark:border-slate-800/50">
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                    <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Persentase</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                  <tr>
+                                    <td className="py-3 text-orange-700 dark:text-orange-400 font-bold">First Author</td>
+                                    <td className="py-3 font-black">40%</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-3 text-blue-700 dark:text-blue-400 font-bold">Member + Corresponding</td>
+                                    <td className="py-3 font-black">40%</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="py-3">Member</td>
+                                    <td className="py-3 font-black">(20% / n-2)</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section 4: Fallback */}
+                      <div className="bg-gradient-to-r from-red-50/50 to-white dark:from-red-950/10 dark:to-slate-950 rounded-2xl border border-red-100 dark:border-red-900/30 p-6">
+                        <div className="flex items-center gap-3 mb-5">
+                          <div className="w-1 h-8 bg-red-500 rounded-full"></div>
+                          <h5 className="text-sm font-black text-red-700 dark:text-red-400 uppercase tracking-wider">Fallback (Corresponding Tidak Ditemukan)</h5>
+                        </div>
+                        <div className="bg-white dark:bg-slate-900/70 rounded-xl p-5">
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                              <thead>
+                                <tr className="border-b border-slate-100 dark:border-slate-800/50">
+                                  <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                  <th className="pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Persentase</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                <tr className="bg-red-50/60 dark:bg-red-900/10">
+                                  <td className="py-3 text-red-700 dark:text-red-400 font-black">First Author</td>
+                                  <td className="py-3 font-black text-red-700 dark:text-red-400">60%</td>
+                                </tr>
+                                <tr className="bg-red-50/60 dark:bg-red-900/10">
+                                  <td className="py-3 text-red-700 dark:text-red-400">Member</td>
+                                  <td className="py-3 font-black text-red-700 dark:text-red-400">(40% / n-1)</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
