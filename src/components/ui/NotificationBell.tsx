@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, ElementType, MouseEvent as ReactMouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   Bell, CheckCheck, Trash2, X,
   CheckCircle, XCircle, Clock, ShieldCheck,
@@ -54,6 +55,7 @@ function timeAgo(dateStr: string): string {
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function NotificationBell({ userId }: NotificationBellProps) {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -146,8 +148,113 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
     setIsOpen(prev => !prev);
   };
 
-  const handleNotifClick = (notif: NotificationItem) => {
-    if (!notif.is_read) markRead(notif.id);
+  const handleNotifClick = async (notif: NotificationItem) => {
+    if (!notif.is_read) {
+      await markRead(notif.id);
+    }
+
+    // Get current user information from sessionStorage to check role
+    const storedUserStr = sessionStorage.getItem('pentadosen_user');
+    let currentUser: any = null;
+    if (storedUserStr) {
+      try {
+        currentUser = JSON.parse(storedUserStr);
+      } catch (e) {
+        console.error('Failed to parse user from sessionStorage', e);
+      }
+    }
+
+    if (!currentUser) {
+      setIsOpen(false);
+      return;
+    }
+
+    const isDosen = currentUser.role === 'dosen';
+    const isAdmin = currentUser.role === 'admin lppm' || currentUser.role === 'admin fakultas';
+    const isSuperAdmin = currentUser.role === 'super admin';
+
+    // 1. Check if it's a research (penelitian) notification
+    const isResearch =
+      notif.type.includes('penelitian') ||
+      notif.message.toLowerCase().includes('penelitian') ||
+      notif.title.toLowerCase().includes('penelitian') ||
+      !!notif.data?.penelitian_id;
+
+    if (isResearch) {
+      if (isAdmin) {
+        navigate('/admin/verify?tab=penelitian');
+      } else if (isDosen) {
+        navigate('/research');
+      }
+      setIsOpen(false);
+      return;
+    }
+
+    // 2. Otherwise, it is a document-related notification (Publication, Buku, HKI)
+    const docId = notif.data?.doc_id;
+    let category = '';
+
+    // Quick check based on message/title content as a primary filter or fallback
+    const messageLower = notif.message.toLowerCase();
+    const titleLower = notif.title.toLowerCase();
+
+    if (messageLower.includes('buku') || titleLower.includes('buku')) {
+      category = 'Buku';
+    } else if (messageLower.includes('hki') || titleLower.includes('hki')) {
+      category = 'HKI';
+    }
+
+    // If we have a docId, query the actual document to find its exact category
+    if (docId) {
+      try {
+        if (isDosen) {
+          const res = await fetch(`/api/users/${currentUser.id}/documents`);
+          if (res.ok) {
+            const data = await res.json();
+            const doc = data.documents?.find((d: any) => d.id === docId);
+            if (doc) {
+              category = doc.category;
+            }
+          }
+        } else if (isAdmin) {
+          const res = await fetch(`/api/admin/documents?role=${currentUser.role}&user_id=${currentUser.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            const doc = data.documents?.find((d: any) => d.id === docId);
+            if (doc) {
+              category = doc.category;
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching document category for redirection:', err);
+      }
+    }
+
+    // 3. Route based on the category and role
+    const categoryLower = (category || '').toLowerCase();
+
+    if (isAdmin) {
+      if (categoryLower.includes('buku')) {
+        navigate('/admin/verify?tab=buku');
+      } else if (categoryLower.includes('hki')) {
+        navigate('/admin/verify?tab=hki');
+      } else {
+        navigate('/admin/verify?tab=publikasi');
+      }
+    } else if (isDosen) {
+      if (categoryLower.includes('buku')) {
+        navigate(category ? `/buku?kategori=${encodeURIComponent(category)}` : '/buku');
+      } else if (categoryLower.includes('hki')) {
+        navigate('/hki');
+      } else {
+        navigate(category ? `/publication?kategori=${encodeURIComponent(category)}` : '/publication');
+      }
+    } else if (isSuperAdmin) {
+      navigate('/admin/cms');
+    }
+
+    setIsOpen(false);
   };
 
   // ── Dropdown position (relative to bell button) ───────────────────────────

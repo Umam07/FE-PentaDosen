@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as XLSX from 'xlsx';
@@ -20,6 +21,11 @@ import BukuDeleteModal from './components/BukuDeleteModal';
 import { BUKU_CATEGORIES } from './constants';
 
 export default function Buku({ user }: { user: any }) {
+  const location = useLocation();
+  const urlKategori = useMemo(() => {
+    return new URLSearchParams(location.search).get('kategori') || '';
+  }, [location.search]);
+
   const [selectedDocForDetail, setSelectedDocForDetail] = useState<any>(null);
   const [documents, setDocuments] = useState<any[]>([]);
 
@@ -34,6 +40,12 @@ export default function Buku({ user }: { user: any }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filterKategori, setFilterKategori] = useState('');
+
+  useEffect(() => {
+    if (urlKategori) {
+      setFilterKategori(urlKategori);
+    }
+  }, [urlKategori]);
   const [isImporting, setIsImporting] = useState(false);
   const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);

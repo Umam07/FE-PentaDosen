@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { 
   Check, X, FileText, ExternalLink, Award, Archive, 
   CalendarDays, ShieldAlert, CheckCircle2, Zap, 
@@ -11,7 +11,15 @@ import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
 export default function AdminVerification() {
   const { user } = useOutletContext<{ user: any }>();
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab ] = useState<'publikasi' | 'hki' | 'penelitian' | 'buku'>('publikasi');
+
+  useEffect(() => {
+    if (tabParam && ['publikasi', 'hki', 'penelitian', 'buku'].includes(tabParam)) {
+      setActiveTab(tabParam as any);
+    }
+  }, [tabParam]);
   const [documents, setDocuments] = useState([]);
   const [research, setResearch] = useState([]);
   const [loading, setLoading] = useState(true);
