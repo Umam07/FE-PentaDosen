@@ -38,7 +38,6 @@ export default function PublicationUploadModal({
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
-  const [isCorresponding, setIsCorresponding] = useState<boolean | null>(null);
   
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -102,12 +101,6 @@ export default function PublicationUploadModal({
       return;
     }
 
-    const isJournal = category === 'Jurnal Internasional' || category === 'Jurnal Nasional';
-    if (isJournal && isCorresponding === null) {
-      onShowMessage('Harap tentukan apakah Anda penulis korespondensi atau bukan.', 'error');
-      return;
-    }
-
     if (duplicateFound) {
       onShowMessage('Dokumen ini sudah terdata dalam sistem.', 'error');
       return;
@@ -120,9 +113,6 @@ export default function PublicationUploadModal({
     formData.append('user_id', user.id);
     formData.append('published_at', `${tahun}-01-01`);
     formData.append('doc_type', docType);
-    if (isJournal) {
-      formData.append('is_corresponding', isCorresponding ? '1' : '0');
-    }
 
     try {
       setLoading(true);
@@ -136,7 +126,6 @@ export default function PublicationUploadModal({
         setTitle('');
         setFile(null);
         setTahun(new Date().getFullYear().toString());
-        setIsCorresponding(null);
         onClose(); // Tutup modal saat sukses
         
         setIsTableLoading(true);
@@ -307,37 +296,6 @@ export default function PublicationUploadModal({
               </AnimatePresence>
             </div>
 
-            {(category === 'Jurnal Internasional' || category === 'Jurnal Nasional') && (
-              <div className="space-y-2">
-                <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                  Penulis Korespondensi (Corresponding Author) <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsCorresponding(true)}
-                    className={`flex items-center justify-center p-3.5 rounded-xl border-2 font-bold text-xs uppercase tracking-wider transition-all duration-300 ${
-                      isCorresponding === true
-                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/10 ring-4 ring-primary-500/10 text-primary-700 dark:text-primary-300'
-                        : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 hover:border-gray-200 dark:hover:border-zinc-700'
-                    }`}
-                  >
-                    Ya, Korespondensi
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsCorresponding(false)}
-                    className={`flex items-center justify-center p-3.5 rounded-xl border-2 font-bold text-xs uppercase tracking-wider transition-all duration-300 ${
-                      isCorresponding === false
-                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/10 ring-4 ring-primary-500/10 text-primary-700 dark:text-primary-300'
-                        : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 hover:border-gray-200 dark:hover:border-zinc-700'
-                    }`}
-                  >
-                    Tidak
-                  </button>
-                </div>
-              </div>
-            )}
 
             <div className="space-y-2">
               <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">File Publikasi (PDF)</label>
