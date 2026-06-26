@@ -453,7 +453,7 @@ export default function Publication({ user }: { user: any }) {
         onPreviewClick={() => setPreviewDoc({ fileUrl: activeDetailDoc?.file_url, title: activeDetailDoc?.title, category: activeDetailDoc?.category })}
         onUploadPdf={handleUploadPdf}
         customMetadata={
-          (activeDetailDoc?.quartile || activeDetailDoc?.author_role) && (
+          (activeDetailDoc?.quartile || activeDetailDoc?.author_role || activeDetailDoc?.is_corresponding !== undefined) && (
             <div className="col-span-2 pt-2 border-t border-gray-100 dark:border-zinc-800 space-y-2">
               <p className="text-[9px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest leading-none mb-1">Detail Scopus (Metrik SINTA)</p>
               <div className="flex flex-wrap gap-2">
@@ -472,6 +472,15 @@ export default function Publication({ user }: { user: any }) {
                     Hyperauthor
                   </span>
                 ) : null}
+                {activeDetailDoc.is_corresponding !== undefined && (
+                  <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${
+                    activeDetailDoc.is_corresponding
+                      ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-900/30'
+                      : 'text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800 border-gray-100 dark:border-zinc-700'
+                  }`}>
+                    Korespondensi: {activeDetailDoc.is_corresponding ? 'Ya' : 'Tidak'}
+                  </span>
+                )}
               </div>
             </div>
           )

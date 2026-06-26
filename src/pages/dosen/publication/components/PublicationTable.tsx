@@ -88,7 +88,7 @@ export default function PublicationTable({
                           <span>{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
                           {doc.category}
                         </p>
-                        {(doc.quartile || doc.author_role) && (
+                        {(doc.quartile || doc.author_role || doc.is_corresponding) && (
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             {doc.quartile && (
                               <span className="px-1.5 py-0.5 bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 text-[8px] font-black uppercase rounded border border-orange-100/50 dark:border-orange-900/20">
@@ -103,6 +103,11 @@ export default function PublicationTable({
                             {doc.is_hyperauthor && (
                               <span className="px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-[8px] font-black uppercase rounded border border-red-100/50 dark:border-red-900/20">
                                 Hyper
+                              </span>
+                            )}
+                            {doc.is_corresponding && (
+                              <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100/50 dark:border-emerald-900/20">
+                                Corresponding
                               </span>
                             )}
                           </div>

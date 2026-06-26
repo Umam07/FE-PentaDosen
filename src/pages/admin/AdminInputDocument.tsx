@@ -26,6 +26,7 @@ export default function AdminInputDocument() {
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
+  const [isCorresponding, setIsCorresponding] = useState<boolean | null>(null);
 
   // Penelitian Specific States
   const [danaDisetujui, setDanaDisetujui] = useState('');
@@ -150,6 +151,13 @@ export default function AdminInputDocument() {
       return;
     }
 
+    const isJournal = mainCategory === 'Jurnal Internasional' || mainCategory === 'Jurnal Nasional';
+    if (isJournal && isCorresponding === null) {
+      setMessage('Harap tentukan apakah Anda penulis korespondensi atau bukan.');
+      setMessageType('error');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('user_id', selectedUserId);
@@ -170,6 +178,9 @@ export default function AdminInputDocument() {
       formData.append('category', subCategory);
       formData.append('published_at', `${tahun}-01-01`);
       formData.append('doc_type', docType);
+      if (isJournal) {
+        formData.append('is_corresponding', isCorresponding ? '1' : '0');
+      }
     }
 
     try {
@@ -186,6 +197,7 @@ export default function AdminInputDocument() {
         setFile(null);
         setDanaDisetujui('');
         setTahun(new Date().getFullYear().toString());
+        setIsCorresponding(null);
       } else {
         setMessage(data.message || 'Gagal menginput data.');
         setMessageType('error');
@@ -361,6 +373,38 @@ export default function AdminInputDocument() {
                             </div>
                           </button>
                         ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {(mainCategory === 'Jurnal Internasional' || mainCategory === 'Jurnal Nasional') && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">
+                        Penulis Korespondensi (Corresponding Author) <span className="text-red-500">*</span>
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setIsCorresponding(true)}
+                          className={`flex items-center justify-center p-4 rounded-2xl border-2 transition-all font-bold text-xs uppercase tracking-wider ${
+                            isCorresponding === true
+                              ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-md'
+                              : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'
+                          }`}
+                        >
+                          Ya, Korespondensi
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsCorresponding(false)}
+                          className={`flex items-center justify-center p-4 rounded-2xl border-2 transition-all font-bold text-xs uppercase tracking-wider ${
+                            isCorresponding === false
+                              ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-md'
+                              : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'
+                          }`}
+                        >
+                          Tidak
+                        </button>
                       </div>
                     </div>
                   )}
