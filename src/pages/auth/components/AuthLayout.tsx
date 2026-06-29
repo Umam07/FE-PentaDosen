@@ -21,11 +21,12 @@ export default function AuthLayout({
   maxWidth = "max-w-[480px]"
 }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans transition-all selection:bg-primary-100 selection:text-primary-900 relative">
+    <main className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans transition-all selection:bg-primary-100 selection:text-primary-900 relative">
       {/* Back to Homepage Button */}
       <Link 
         to="/" 
-        className="absolute top-4 left-4 md:top-8 md:left-8 inline-flex items-center gap-2 text-xs font-black text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 uppercase tracking-widest transition-all duration-200 group bg-white dark:bg-gray-900 px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md"
+        aria-label="Kembali ke halaman utama"
+        className="absolute top-4 left-4 md:top-8 md:left-8 inline-flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 uppercase tracking-widest transition-all duration-200 group bg-white dark:bg-gray-900 px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Kembali
@@ -54,7 +55,7 @@ export default function AuthLayout({
               <>{brandTitle}</>
             )}
           </motion.h1>
-          <p className="text-gray-500 dark:text-gray-400 font-bold text-xs uppercase tracking-widest mt-2">{brandSubtitle}</p>
+          <p className="text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-widest mt-2">{brandSubtitle}</p>
         </div>
 
         {/* Auth Card */}
@@ -70,7 +71,7 @@ export default function AuthLayout({
             {title && (
               <div className="mb-8 text-center sm:text-left">
                 <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight uppercase mb-1">{title}</h2>
-                <p className="text-gray-400 dark:text-gray-500 font-bold text-[10px] uppercase tracking-[0.2em]">{subtitle}</p>
+                <p className="text-slate-600 dark:text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{subtitle}</p>
               </div>
             )}
             
@@ -78,6 +79,6 @@ export default function AuthLayout({
           </div>
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }

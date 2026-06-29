@@ -58,12 +58,12 @@ export default function Login({ setUser }: { setUser: any }) {
     >
       <form className="space-y-6" onSubmit={handleLogin}>
         <div className="space-y-2">
-          <label htmlFor="username" className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] ml-1">
+          <label htmlFor="username" className="text-[11px] font-bold text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] ml-1">
             LDAP Username
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors border-r border-gray-100 dark:border-gray-800 pr-3">
-              <UserIcon className="h-4 w-4 text-gray-400 group-focus-within:text-primary-500" />
+              <UserIcon className="h-4 w-4 text-slate-500 group-focus-within:text-primary-500" />
             </div>
             <input
               id="username"
@@ -71,19 +71,19 @@ export default function Login({ setUser }: { setUser: any }) {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full pl-14 pr-4 py-4 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 rounded-2xl font-bold focus:bg-white dark:focus:bg-gray-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-sm placeholder:text-gray-300 dark:placeholder:text-gray-600 dark:text-white"
-              placeholder="Masukkan username atau NIK"
+              className="w-full pl-14 pr-4 py-4 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 rounded-2xl font-bold focus:bg-white dark:focus:bg-gray-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-white"
+              placeholder="Masukkan username"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="password" className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] ml-1">
+          <label htmlFor="password" className="text-[11px] font-bold text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] ml-1">
             LDAP Password
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors border-r border-gray-100 dark:border-gray-800 pr-3">
-              <Lock className="h-4 w-4 text-gray-400 group-focus-within:text-primary-500" />
+              <Lock className="h-4 w-4 text-slate-500 group-focus-within:text-primary-500" />
             </div>
             <input
               id="password"
@@ -91,13 +91,14 @@ export default function Login({ setUser }: { setUser: any }) {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-14 pr-12 py-4 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 rounded-2xl font-bold focus:bg-white dark:focus:bg-gray-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-sm placeholder:text-gray-300 dark:placeholder:text-gray-600 dark:text-white"
+              className="w-full pl-14 pr-12 py-4 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 rounded-2xl font-bold focus:bg-white dark:focus:bg-gray-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-sm placeholder:text-slate-450 dark:placeholder:text-slate-500 dark:text-white"
               placeholder="••••••••"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+              className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -108,7 +109,7 @@ export default function Login({ setUser }: { setUser: any }) {
           <motion.div 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider border border-red-100 dark:border-red-900/40"
+            className="bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider border border-red-100 dark:border-red-900/40"
           >
             {error}
           </motion.div>
@@ -127,7 +128,7 @@ export default function Login({ setUser }: { setUser: any }) {
             href="https://www.yarsi.ac.id/ganti-password-akun-yarsi" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="text-[10px] font-black text-gray-400 hover:text-primary-600 dark:text-gray-500 dark:hover:text-primary-400 uppercase tracking-widest transition-colors underline decoration-dashed"
+            className="text-[10px] font-black text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 uppercase tracking-widest transition-colors underline decoration-dashed"
           >
             Lupa Password atau Username?
           </a>
@@ -137,7 +138,7 @@ export default function Login({ setUser }: { setUser: any }) {
         <div className="pt-2 w-full max-w-xs">
           <Link 
             to="/admin" 
-            className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/40 dark:hover:bg-gray-800/80 border border-gray-100 dark:border-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all shadow-sm cursor-pointer"
+            className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/40 dark:hover:bg-gray-800/80 border border-gray-100 dark:border-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-all shadow-sm cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4 text-primary-600 dark:text-primary-400" />
             <span>Portal Login Administrator</span>
@@ -147,8 +148,8 @@ export default function Login({ setUser }: { setUser: any }) {
 
       <div className="mt-8 pt-8 border-t border-gray-50 dark:border-gray-800">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <ShieldCheck className="w-4 h-4 text-gray-300 dark:text-gray-600" />
-          <span className="text-[10px] font-black text-gray-300 dark:text-gray-600 uppercase tracking-widest">Akun Dummy Serverless Local DB</span>
+          <ShieldCheck className="w-4 h-4 text-slate-500 dark:text-slate-500" />
+          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Akun Dummy Serverless Local DB</span>
         </div>
         <div className="grid grid-cols-1 gap-2">
           {[
@@ -160,10 +161,10 @@ export default function Login({ setUser }: { setUser: any }) {
               className="bg-gray-50/50 dark:bg-gray-800/30 p-3 rounded-xl border border-gray-100 dark:border-gray-800 flex justify-between items-center group/acc cursor-pointer hover:border-primary-200 dark:hover:border-primary-800 transition-all"
             >
                <div className="text-left font-mono">
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold group-hover/acc:text-primary-600 dark:group-hover/acc:text-primary-400 transition-colors">{acc.role}</p>
-                  <p className="text-[11px] text-gray-700 dark:text-gray-300 font-black">{acc.username}</p>
+                  <p className="text-[10px] text-slate-650 dark:text-slate-400 font-bold group-hover/acc:text-primary-600 dark:group-hover/acc:text-primary-400 transition-colors">{acc.role}</p>
+                  <p className="text-[11px] text-slate-850 dark:text-slate-350 font-black">{acc.username}</p>
                </div>
-               <div className="text-[10px] bg-white dark:bg-gray-800 px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 font-black dark:text-gray-300 group-hover/acc:bg-primary-600 group-hover/acc:text-white dark:group-hover/acc:bg-primary-600 group-hover/acc:border-primary-600 transition-all">SELECT</div>
+               <div className="text-[10px] bg-white dark:bg-gray-800 px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 font-black text-slate-700 dark:text-slate-300 group-hover/acc:bg-primary-600 group-hover/acc:text-white dark:group-hover/acc:bg-primary-600 group-hover/acc:border-primary-600 transition-all">SELECT</div>
             </div>
           ))}
         </div>
