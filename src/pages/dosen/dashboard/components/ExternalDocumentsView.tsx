@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Zap, ShieldCheck, Book, TrendingUp, Calendar, ExternalLink, Search,
-  ChevronLeft, ChevronRight, Globe, Beaker, Filter
+  ChevronLeft, ChevronRight, Globe, Beaker, Filter, Lock
 } from 'lucide-react';
 import { ProfileTrendChart } from './ProfileCharts';
 import { calculateScholarPoints } from '../pointsCalculator';
@@ -307,8 +307,8 @@ const calculateScopusBreakdown = (pub: any) => {
 };
 
 // === Sub-component: Scopus row — SINTA points calculation (UPGRADED) ===
-function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
-  doc: any; isAlsoScholar: boolean; idx: number; onRefresh?: () => void; key?: React.Key;
+function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh, isPublic = false }: {
+  doc: any; isAlsoScholar: boolean; idx: number; onRefresh?: () => void; isPublic?: boolean; key?: React.Key;
 }) {
   const [showBreakdown, setShowBreakdown] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
@@ -467,7 +467,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
           </div>
 
           {/* Corresponding Author Toggle Section */}
-          {showCorrespondingControls && (
+          {!isPublic && showCorrespondingControls && (
             <div className={`mt-3 mb-4 p-3 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner transition-colors duration-200 ${
               !bd.isCorrespondingConfirmed && !isEditingCorresponding
                 ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30'
@@ -873,6 +873,7 @@ interface ExternalDocumentsViewProps {
   tabVariants: any;
   onRefresh?: () => void;
   loading?: boolean;
+  isPublic?: boolean;
 }
 
 export default function ExternalDocumentsView({
@@ -886,7 +887,8 @@ export default function ExternalDocumentsView({
   scopusPublications,
   tabVariants,
   onRefresh,
-  loading = false
+  loading = false,
+  isPublic = false
 }: ExternalDocumentsViewProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -1178,7 +1180,7 @@ export default function ExternalDocumentsView({
                     </div>
                     <div className="space-y-5">
                       {/* === Unconfirmed Publications Banner === */}
-                      {(() => {
+                      {!isPublic && (() => {
                         const unconfirmedScopusCount = (scopusList || []).filter((doc: any) => {
                           const totalAuthors = Number(doc.total_authors) || 1;
                           const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
@@ -1230,109 +1232,111 @@ export default function ExternalDocumentsView({
                       </div>
 
                       {/* === Filter Bar === */}
-                      <div className="flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
-                        {/* Row 1: Filter Korespondensi */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-slate-400" />
-                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Korespondensi:</span>
-                          </div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            {[
-                              { id: 'all', label: 'Semua Dokumen', count: scopusList.length },
-                              {
-                                id: 'unconfirmed',
-                                label: 'Perlu Konfirmasi',
-                                count: scopusList.filter((doc: any) => {
-                                  const totalAuthors = Number(doc.total_authors) || 1;
-                                  const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
-                                  return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
-                                }).length
-                              },
-                              {
-                                id: 'confirmed',
-                                label: 'Sudah Dikonfirmasi / Selesai',
-                                count: scopusList.filter((doc: any) => {
-                                  const totalAuthors = Number(doc.total_authors) || 1;
-                                  const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
-                                  return !isArticle || totalAuthors <= 1 || doc.is_corresponding_confirmed;
-                                }).length
-                              }
-                            ].map((opt) => (
-                              <button
-                                key={opt.id}
-                                onClick={() => {
-                                  setScopusFilter(opt.id as any);
-                                  setCurrentPage(1);
-                                }}
-                                className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${scopusFilter === opt.id
-                                    ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
-                                  }`}
-                              >
-                                <span className="flex items-center gap-1.5">
-                                  <span>{opt.label}</span>
-                                  <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${scopusFilter === opt.id
-                                      ? 'bg-white/20 text-white'
-                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                    }`}>
-                                    {opt.count}
+                      {!isPublic && (
+                        <div className="flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
+                          {/* Row 1: Filter Korespondensi */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-2">
+                              <Filter className="w-4 h-4 text-slate-400" />
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Korespondensi:</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {[
+                                { id: 'all', label: 'Semua Dokumen', count: scopusList.length },
+                                {
+                                  id: 'unconfirmed',
+                                  label: 'Perlu Konfirmasi',
+                                  count: scopusList.filter((doc: any) => {
+                                    const totalAuthors = Number(doc.total_authors) || 1;
+                                    const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                                    return isArticle && totalAuthors > 1 && !doc.is_corresponding_confirmed;
+                                  }).length
+                                },
+                                {
+                                  id: 'confirmed',
+                                  label: 'Sudah Dikonfirmasi / Selesai',
+                                  count: scopusList.filter((doc: any) => {
+                                    const totalAuthors = Number(doc.total_authors) || 1;
+                                    const isArticle = !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article';
+                                    return !isArticle || totalAuthors <= 1 || doc.is_corresponding_confirmed;
+                                  }).length
+                                }
+                              ].map((opt) => (
+                                <button
+                                  key={opt.id}
+                                  onClick={() => {
+                                    setScopusFilter(opt.id as any);
+                                    setCurrentPage(1);
+                                  }}
+                                  className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${scopusFilter === opt.id
+                                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
+                                    }`}
+                                >
+                                  <span className="flex items-center gap-1.5">
+                                    <span>{opt.label}</span>
+                                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${scopusFilter === opt.id
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                      }`}>
+                                      {opt.count}
+                                    </span>
                                   </span>
-                                </span>
-                              </button>
-                            ))}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Row 2: Filter Tipe Dokumen */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
-                          <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-slate-400" />
-                            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Tipe Dokumen:</span>
-                          </div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            {[
-                              { id: 'all', label: 'Semua Tipe', count: scopusList.length },
-                              {
-                                id: 'article',
-                                label: 'Article / Journal',
-                                count: scopusList.filter((doc: any) => !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article').length
-                              },
-                              {
-                                id: 'non-article',
-                                label: 'Non-Article',
-                                count: scopusList.filter((doc: any) => doc.subtype && doc.subtype.toLowerCase() !== 'ar' && doc.subtype.toLowerCase() !== 'article').length
-                              }
-                            ].map((opt) => (
-                              <button
-                                key={opt.id}
-                                onClick={() => {
-                                  setArticleFilter(opt.id as any);
-                                  setCurrentPage(1);
-                                }}
-                                className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${articleFilter === opt.id
-                                    ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
-                                  }`}
-                              >
-                                <span className="flex items-center gap-1.5">
-                                  <span>{opt.label}</span>
-                                  <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${articleFilter === opt.id
-                                      ? 'bg-white/20 text-white'
-                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                    }`}>
-                                    {opt.count}
+                          {/* Row 2: Filter Tipe Dokumen */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
+                            <div className="flex items-center gap-2">
+                              <Filter className="w-4 h-4 text-slate-400" />
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filter Tipe Dokumen:</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {[
+                                { id: 'all', label: 'Semua Tipe', count: scopusList.length },
+                                {
+                                  id: 'article',
+                                  label: 'Article / Journal',
+                                  count: scopusList.filter((doc: any) => !doc.subtype || doc.subtype.toLowerCase() === 'ar' || doc.subtype.toLowerCase() === 'article').length
+                                },
+                                {
+                                  id: 'non-article',
+                                  label: 'Non-Article',
+                                  count: scopusList.filter((doc: any) => doc.subtype && doc.subtype.toLowerCase() !== 'ar' && doc.subtype.toLowerCase() !== 'article').length
+                                }
+                              ].map((opt) => (
+                                <button
+                                  key={opt.id}
+                                  onClick={() => {
+                                    setArticleFilter(opt.id as any);
+                                    setCurrentPage(1);
+                                  }}
+                                  className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${articleFilter === opt.id
+                                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-orange-600 hover:border-orange-400'
+                                    }`}
+                                >
+                                  <span className="flex items-center gap-1.5">
+                                    <span>{opt.label}</span>
+                                    <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black ${articleFilter === opt.id
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                      }`}>
+                                      {opt.count}
+                                    </span>
                                   </span>
-                                </span>
-                              </button>
-                            ))}
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
 
                       <div className="grid grid-cols-1 gap-4">
                         {filteredScopusList.length > 0 ? (
-                          filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                          (isPublic ? filteredScopusList.slice(0, 5) : filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc: any, idx: number) => {
                             const isAlsoScholar = crossIndexedDocs.some((c: any) => normalizeTitle(c.title) === normalizeTitle(doc.title));
                             return (
                               <ScopusDocRow
@@ -1341,6 +1345,7 @@ export default function ExternalDocumentsView({
                                 isAlsoScholar={isAlsoScholar}
                                 idx={idx}
                                 onRefresh={onRefresh}
+                                isPublic={isPublic}
                               />
                             );
                           })
@@ -1355,13 +1360,30 @@ export default function ExternalDocumentsView({
                         )}
                       </div>
 
-                      <Pagination
-                        totalItems={filteredScopusList?.length || 0}
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        itemsPerPage={itemsPerPage}
-                        setItemsPerPage={setItemsPerPage}
-                      />
+                      {isPublic ? (
+                        filteredScopusList.length > 5 && (
+                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-850/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
+                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
+                              + {filteredScopusList.length - 5} Dokumen Scopus Lainnya Tersedia
+                            </p>
+                            <button
+                              onClick={() => window.location.href = '/login'}
+                              className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm"
+                            >
+                              <Lock className="w-3.5 h-3.5" />
+                              <span>Login untuk Lihat Semua</span>
+                            </button>
+                          </div>
+                        )
+                      ) : (
+                        <Pagination
+                          totalItems={filteredScopusList?.length || 0}
+                          currentPage={currentPage}
+                          onPageChange={setCurrentPage}
+                          itemsPerPage={itemsPerPage}
+                          setItemsPerPage={setItemsPerPage}
+                        />
+                      )}
                     </div>
                   </>
                 ) : (
@@ -1449,7 +1471,7 @@ export default function ExternalDocumentsView({
                       </div>
 
                       <div className="grid grid-cols-1 gap-4">
-                        {scholarList?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                        {scholarList && (isPublic ? scholarList.slice(0, 5) : scholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc: any, idx: number) => {
                           const docPoints = calculateScholarPoints(doc);
                           const scopusMatch = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                           const isAlsoScopus = !!scopusMatch;
@@ -1467,13 +1489,31 @@ export default function ExternalDocumentsView({
                           );
                         })}
                       </div>
-                      <Pagination
-                        totalItems={scholarList?.length || 0}
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        itemsPerPage={itemsPerPage}
-                        setItemsPerPage={setItemsPerPage}
-                      />
+
+                      {isPublic ? (
+                        scholarList.length > 5 && (
+                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-850/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
+                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
+                              + {scholarList.length - 5} Dokumen Google Scholar Lainnya Tersedia
+                            </p>
+                            <button
+                              onClick={() => window.location.href = '/login'}
+                              className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm"
+                            >
+                              <Lock className="w-3.5 h-3.5" />
+                              <span>Login untuk Lihat Semua</span>
+                            </button>
+                          </div>
+                        )
+                      ) : (
+                        <Pagination
+                          totalItems={scholarList?.length || 0}
+                          currentPage={currentPage}
+                          onPageChange={setCurrentPage}
+                          itemsPerPage={itemsPerPage}
+                          setItemsPerPage={setItemsPerPage}
+                        />
+                      )}
                     </div>
                   </>
                 ) : (

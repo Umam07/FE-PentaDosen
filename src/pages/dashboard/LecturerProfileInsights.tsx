@@ -465,6 +465,7 @@ export default function LecturerProfileInsights() {
             tabVariants={tabVariants}
             onRefresh={fetchProfileAndDocs}
             loading={loading}
+            isPublic={true}
           />
         ) : (
           <InternalDocumentsView 
@@ -476,6 +477,7 @@ export default function LecturerProfileInsights() {
             itemsPerPage={itemsPerPage}
             categoryFilter={categoryFilter}
             setCategoryFilter={setCategoryFilter}
+            isPublic={true}
           />
         )}
       </div>

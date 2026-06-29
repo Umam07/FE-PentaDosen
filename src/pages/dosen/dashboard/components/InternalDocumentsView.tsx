@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  FileText, Beaker, ShieldCheck, Book, Globe, BookMarked, Search, BarChart2
+  FileText, Beaker, ShieldCheck, Book, Globe, BookMarked, Search, BarChart2, Lock
 } from 'lucide-react';
 import { PdfPreviewModal } from '../../../../components/ui/pdf-preview-modal';
 import { DocumentDetailDrawer } from '../../../../components/ui/document-detail-drawer';
@@ -23,6 +23,7 @@ interface InternalDocumentsViewProps {
   itemsPerPage: number;
   categoryFilter: string;
   setCategoryFilter: (filter: string) => void;
+  isPublic?: boolean;
 }
 
 const docCategories = [
@@ -41,7 +42,8 @@ export default function InternalDocumentsView({
   setCurrentPage,
   itemsPerPage,
   categoryFilter,
-  setCategoryFilter
+  setCategoryFilter,
+  isPublic = false
 }: InternalDocumentsViewProps) {
   const [activeTab, setActiveTab] = useState<'dokumen' | 'metriks'>('dokumen');
   const [selectedDocForDetail, setSelectedDocForDetail] = useState<any>(null);
@@ -49,7 +51,7 @@ export default function InternalDocumentsView({
 
   const renderActiveTable = () => {
     const tableProps = {
-      filteredDocs,
+      filteredDocs: isPublic ? filteredDocs.slice(0, 5) : filteredDocs,
       currentPage,
       itemsPerPage,
       setCurrentPage,
@@ -201,6 +203,20 @@ export default function InternalDocumentsView({
             ) : filteredDocs.length > 0 ? (
               <div className="space-y-4">
                 {renderActiveTable()}
+                {isPublic && filteredDocs.length > 5 && (
+                  <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
+                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
+                      + {filteredDocs.length - 5} Dokumen Internal Lainnya Tersedia
+                    </p>
+                    <button
+                      onClick={() => window.location.href = '/login'}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm"
+                    >
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Login untuk Lihat Semua</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="py-24 text-center">
