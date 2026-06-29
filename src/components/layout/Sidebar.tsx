@@ -127,6 +127,7 @@ export default function Sidebar({
         {!isMobile ? (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             className={`p-2 rounded-xl transition-all duration-300 hover:bg-primary-50 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-primary-600 flex-shrink-0 ${isCollapsed ? 'mx-auto' : ''}`}
           >
             {isCollapsed ? (
@@ -149,7 +150,7 @@ export default function Sidebar({
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest ml-3 mb-3"
+              className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest ml-3 mb-3"
             >
               Main Menu
             </motion.p>

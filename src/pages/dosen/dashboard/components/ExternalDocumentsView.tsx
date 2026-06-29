@@ -165,6 +165,7 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
           href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`Buka dokumen "${doc.title}" di Google Scholar`}
           className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-blue-500 hover:text-white transition-all flex-shrink-0 self-start"
         >
           <ExternalLink className="w-4 h-4" />
@@ -649,6 +650,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh }: {
           href={doc.link || `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`Buka dokumen "${doc.title}" di Scopus`}
           className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-orange-500 hover:text-white transition-all flex-shrink-0 self-start"
         >
           <ExternalLink className="w-4 h-4" />
@@ -849,6 +851,7 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
           href={doc.link || '#'}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`Buka dokumen "${doc.title}" di Portal Eksternal`}
           className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-emerald-500 hover:text-white transition-all flex-shrink-0 self-start"
         >
           <ExternalLink className="w-4 h-4" />
@@ -869,6 +872,7 @@ interface ExternalDocumentsViewProps {
   scopusPublications: any[];
   tabVariants: any;
   onRefresh?: () => void;
+  loading?: boolean;
 }
 
 export default function ExternalDocumentsView({
@@ -881,7 +885,8 @@ export default function ExternalDocumentsView({
   publications,
   scopusPublications,
   tabVariants,
-  onRefresh
+  onRefresh,
+  loading = false
 }: ExternalDocumentsViewProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -966,6 +971,7 @@ export default function ExternalDocumentsView({
             <select
               value={itemsPerPage}
               onChange={(e) => { setItemsPerPage(Number(e.target.value)); onPageChange(1); }}
+              aria-label="Pilih batas jumlah data per halaman"
               className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[10px] font-black py-1 px-3 focus:ring-4 focus:ring-primary-100 outline-none cursor-pointer uppercase tracking-tighter"
             >
               {[10, 25, 50, 100].map(val => (
@@ -979,6 +985,7 @@ export default function ExternalDocumentsView({
           <button
             disabled={currentPage === 1}
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+            aria-label="Halaman sebelumnya"
             className="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -1008,6 +1015,7 @@ export default function ExternalDocumentsView({
           <button
             disabled={currentPage === totalPages || totalPages === 0}
             onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+            aria-label="Halaman berikutnya"
             className="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             <ChevronRight className="w-5 h-5" />
@@ -1121,7 +1129,16 @@ export default function ExternalDocumentsView({
                   transition={{ duration: 0.15 }}
                   className="space-y-10"
                 >
-                {scopusChartData.chartData.length > 0 ? (
+                {loading ? (
+                  <div className="space-y-6">
+                    <div className="h-64 bg-slate-50 dark:bg-slate-900/50 animate-pulse rounded-[3rem] border border-slate-200/60 dark:border-slate-800" />
+                    <div className="space-y-4">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 animate-pulse rounded-[1.75rem]" />
+                      ))}
+                    </div>
+                  </div>
+                ) : scopusChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
                       {/* Decorative Blobs */}
@@ -1368,7 +1385,16 @@ export default function ExternalDocumentsView({
                   transition={{ duration: 0.15 }}
                   className="space-y-10"
                 >
-                {scholarChartData.chartData.length > 0 ? (
+                {loading ? (
+                  <div className="space-y-6">
+                    <div className="h-64 bg-slate-50 dark:bg-slate-900/50 animate-pulse rounded-[3rem] border border-slate-200/60 dark:border-slate-800" />
+                    <div className="space-y-4">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 animate-pulse rounded-[1.75rem]" />
+                      ))}
+                    </div>
+                  </div>
+                ) : scholarChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
                       {/* Decorative Blobs */}
@@ -1504,26 +1530,34 @@ export default function ExternalDocumentsView({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  {crossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
-                    const scopusDoc = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
-                    return (
-                      <CrossIndexedDocRow
-                        key={idx}
-                        doc={doc}
-                        scopusDoc={scopusDoc}
-                        idx={idx}
-                      />
-                    );
-                  })}
-                  {crossIndexedDocs.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">
-                      <div className="text-center">
-                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Belum Ada Publikasi Terindeks Ganda</p>
+                {loading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 animate-pulse rounded-[1.75rem]" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4">
+                    {crossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                      const scopusDoc = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
+                      return (
+                        <CrossIndexedDocRow
+                          key={idx}
+                          doc={doc}
+                          scopusDoc={scopusDoc}
+                          idx={idx}
+                        />
+                      );
+                    })}
+                    {crossIndexedDocs.length === 0 && (
+                      <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">
+                        <div className="text-center">
+                          <p className="text-xs font-black uppercase tracking-widest text-slate-400">Belum Ada Publikasi Terindeks Ganda</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
                 <Pagination
                   totalItems={crossIndexedDocs?.length || 0}
                   currentPage={currentPage}

@@ -26,6 +26,7 @@ export default function Pagination({
         <button
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
+          aria-label="Halaman sebelumnya"
           className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 disabled:opacity-30"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -33,6 +34,7 @@ export default function Pagination({
         <button
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
+          aria-label="Halaman berikutnya"
           className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 disabled:opacity-30"
         >
           <ChevronRight className="w-5 h-5" />

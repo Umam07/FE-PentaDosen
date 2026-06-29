@@ -160,7 +160,7 @@ export default function Topbar({
             </div>
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
-              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
+              <p className="text-[10px] font-bold text-slate-650 dark:text-slate-400 uppercase tracking-widest">
                 {user?.role === 'super admin' ? 'Super Admin' : user?.role === 'admin lppm' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
               </p>
             </div>
