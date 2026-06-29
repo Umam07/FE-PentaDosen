@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { 
-  Building2, ChevronRight, Search, Filter, 
-  Stethoscope, Cpu, Library, Briefcase, 
+  Search, Stethoscope, Cpu, Briefcase, 
   Scale, Brain, GraduationCap, ArrowLeft,
-  Loader2
+  Loader2, ChevronRight
 } from 'lucide-react';
 import Navbar from '../../components/Home/Navbar';
 import Footer from '../../components/Home/Footer';
@@ -17,41 +16,74 @@ interface DepartmentStats {
   total_points: number;
 }
 
-const FAKULTAS_METADATA: Record<string, any> = {
+const FAKULTAS_METADATA: Record<string, {
+  icon: any;
+  color: string;
+  textColor: string;
+  bgColor: string;
+  badgeBg: string;
+  glowColor: string;
+  description: string;
+  prodi: string[];
+}> = {
   'Fakultas Kedokteran': { 
     icon: Stethoscope, 
     color: 'bg-emerald-500',
-    description: 'Fokus pada pendidikan medis, penelitian klinis, dan pelayanan kesehatan masyarakat.',
+    textColor: 'text-emerald-600 dark:text-emerald-400',
+    bgColor: 'bg-emerald-500/10',
+    badgeBg: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-100/50 dark:border-emerald-900/30',
+    glowColor: 'group-hover:shadow-emerald-500/10',
+    description: 'Mewujudkan Fakultas Kedokteran Islam bermutu tinggi, adaptif terhadap iptek, serta berkontribusi dalam kesehatan masyarakat nasional dan internasional.',
     prodi: ['Kedokteran']
   },
   'Fakultas Kedokteran Gigi': { 
     icon: Stethoscope, 
-    color: 'bg-teal-500',
-    description: 'Keunggulan dalam pendidikan dokter gigi dan spesialis kedokteran gigi.',
+    color: 'bg-purple-500',
+    textColor: 'text-purple-600 dark:text-purple-400',
+    bgColor: 'bg-purple-500/10',
+    badgeBg: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-100/50 dark:border-purple-900/30',
+    glowColor: 'group-hover:shadow-purple-500/10',
+    description: 'Mewujudkan Fakultas Kedokteran Gigi Islam bermutu tinggi di bidang kesehatan gigi dan mulut, serta mampu bersaing di tingkat nasional dan internasional.',
     prodi: ['Kedokteran Gigi']
   },
   'Fakultas Teknologi Informasi': { 
     icon: Cpu, 
-    color: 'bg-blue-600',
-    description: 'Pusat inovasi teknologi, kecerdasan buatan, keamanan siber, dan sains data.',
+    color: 'bg-sky-500',
+    textColor: 'text-sky-600 dark:text-sky-400',
+    bgColor: 'bg-sky-500/10',
+    badgeBg: 'bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-400 border-sky-100/50 dark:border-sky-900/30',
+    glowColor: 'group-hover:shadow-sky-500/10',
+    description: 'Mewujudkan Fakultas Teknologi Informasi berkarakteristik Islam, terpandang, bermutu tinggi, serta mampu berkompetisi di tingkat nasional dan internasional.',
     prodi: ['Teknik Informatika', 'Perpustakaan dan Sains Informasi']
   },
   'Fakultas Ekonomi dan Bisnis': { 
     icon: Briefcase, 
     color: 'bg-amber-500',
-    description: 'Mencetak pemimpin bisnis masa depan dengan kapabilitas global.',
+    textColor: 'text-amber-600 dark:text-amber-400',
+    bgColor: 'bg-amber-500/10',
+    badgeBg: 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-100/50 dark:border-amber-900/30',
+    glowColor: 'group-hover:shadow-amber-500/10',
+    description: 'Mewujudkan Fakultas Ekonomi dan Bisnis Islam bermutu tinggi, terpandang, berwibawa, serta mampu bersaing di tingkat nasional dan internasional.',
     prodi: ['Manajemen', 'Akuntansi']
   },
   'Fakultas Hukum': { 
     icon: Scale, 
-    color: 'bg-red-600',
-    description: 'Studi hukum komprehensif berlandaskan keadilan, integritas, dan etika.',
+    color: 'bg-red-500',
+    textColor: 'text-red-600 dark:text-red-400',
+    bgColor: 'bg-red-500/10',
+    badgeBg: 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-100/50 dark:border-red-900/30',
+    glowColor: 'group-hover:shadow-red-500/10',
+    description: 'Mewujudkan Fakultas Hukum berwawasan Islam, bermutu tinggi, berintegritas, serta mampu bersaing di tingkat nasional maupun regional Asia Tenggara.',
     prodi: ['Ilmu Hukum']
   },
   'Fakultas Psikologi': { 
     icon: Brain, 
     color: 'bg-pink-500',
-    description: 'Memahami perilaku manusia, riset psikologi, dan layanan kesehatan mental.',
+    textColor: 'text-pink-600 dark:text-pink-400',
+    bgColor: 'bg-pink-500/10',
+    badgeBg: 'bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 border-pink-100/50 dark:border-pink-900/30',
+    glowColor: 'group-hover:shadow-pink-500/10',
+    description: 'Mewujudkan Fakultas Psikologi Islami bermutu tinggi, terpandang, dan berwibawa dalam pengembangan Psikologi Kesehatan nasional dan internasional.',
     prodi: ['Psikologi']
   }
 };
@@ -107,25 +139,28 @@ export default function DepartementList() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-all duration-500 font-mono">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-all duration-500 font-sans">
       <Navbar />
       
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
           <div className="space-y-4">
             <button 
               onClick={() => navigate('/insights')}
-              className="group flex items-center gap-2 text-slate-500 hover:text-primary-600 transition-colors"
+              className="group flex items-center gap-2 text-slate-500 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 transition-colors px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold w-fit shadow-xs"
             >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              <span className="text-xs font-black uppercase tracking-widest">Kembali ke Dashboard</span>
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+              <span>Kembali ke Dashboard</span>
             </button>
-            <div className="space-y-2">
-              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-white">
+            <div className="space-y-3">
+              <span className="inline-block text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-primary-500/10 text-primary-600 dark:text-primary-400 rounded-full border border-primary-500/20">
+                Direktori Akademik
+              </span>
+              <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                 Daftar <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-emerald-500">Fakultas</span>
               </h1>
-              <p className="text-slate-500 dark:text-slate-400 text-lg font-medium max-w-2xl leading-relaxed">
+              <p className="text-slate-500 dark:text-slate-400 text-base font-medium max-w-2xl leading-relaxed">
                 Eksplorasi ekosistem akademik di seluruh Fakultas Universitas. 
                 Data disinkronkan langsung dengan basis data kepegawaian.
               </p>
@@ -133,14 +168,14 @@ export default function DepartementList() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative group/search">
+            <div className="relative w-full md:w-80 group/search">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/search:text-primary-500 transition-colors" />
               <input 
                 type="text" 
                 placeholder="Cari fakultas..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-11 pr-6 py-4 bg-white dark:bg-slate-900 rounded-[2rem] text-sm font-bold border border-slate-200 dark:border-slate-800 focus:border-primary-500 outline-none w-full md:w-80 transition-all shadow-sm" 
+                className="pl-11 pr-6 py-3.5 bg-white/85 dark:bg-slate-900/80 backdrop-blur-md rounded-full text-sm font-semibold border border-slate-200 dark:border-slate-850 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-500/10 outline-none w-full transition-all shadow-xs dark:text-white" 
               />
             </div>
           </div>
@@ -154,65 +189,81 @@ export default function DepartementList() {
         ) : (
           <>
             {/* Departments Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredDepartments.map((dept, i) => (
                 <motion.div
                   key={dept.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  whileHover={{ y: -8 }}
-                  className="group bg-white dark:bg-slate-900 p-8 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] transition-all duration-500 cursor-pointer overflow-hidden relative"
+                  whileHover={{ y: -6 }}
+                  className={`group relative bg-white dark:bg-slate-900/90 backdrop-blur-md p-7 rounded-3xl border border-slate-200/60 dark:border-slate-800/80 shadow-xs hover:shadow-xl ${dept.glowColor} transition-all duration-500 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[460px]`}
                   onClick={() => navigate(`/lecturers?fakultas=${dept.name}`)}
                 >
-                  <div className={`absolute -right-12 -top-12 w-32 h-32 ${dept.color} opacity-[0.03] group-hover:opacity-10 rounded-full blur-2xl transition-all duration-700`}></div>
+                  {/* Decorative background glow */}
+                  <div className={`absolute -right-10 -top-10 w-28 h-28 ${dept.color} opacity-5 group-hover:opacity-15 group-hover:scale-125 rounded-full blur-xl transition-all duration-700`}></div>
                   
-                  <div className="relative z-10">
-                    <div className={`w-16 h-16 rounded-2xl ${dept.color} bg-opacity-10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500`}>
-                      <dept.icon className={`w-8 h-8 ${dept.color.replace('bg-', 'text-')}`} />
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                        {dept.name}
-                      </h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-xs font-medium leading-relaxed">
-                        {dept.description}
-                      </p>
-                    </div>
+                  <div className="relative z-10 flex flex-col h-full justify-between flex-1">
+                    <div className="space-y-5">
+                      {/* Icon and Title Header */}
+                      <div className="flex items-start justify-between">
+                        <div className={`w-14 h-14 rounded-2xl ${dept.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
+                          <dept.icon className={`w-7 h-7 ${dept.textColor}`} />
+                        </div>
+                        <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 dark:bg-slate-800/40 rounded-full border border-slate-100 dark:border-slate-800">
+                          <GraduationCap className="w-3 h-3 text-slate-400" />
+                          <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Fakultas</span>
+                        </div>
+                      </div>
 
-                    <div className="mt-8 pt-8 border-t border-slate-50 dark:border-slate-800/50 grid grid-cols-3 gap-2">
-                      <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Dosen</p>
-                        <p className="text-lg font-black text-slate-900 dark:text-white leading-none">{dept.lecturerCount}</p>
+                      {/* Title & Aligned Description */}
+                      <div className="space-y-3">
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                          {dept.name}
+                        </h3>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs font-normal leading-relaxed text-justify">
+                          {dept.description}
+                        </p>
                       </div>
-                      <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Riset</p>
-                        <p className="text-lg font-black text-slate-900 dark:text-white leading-none">{dept.researchCount}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Prodi</p>
-                        <p className="text-lg font-black text-slate-900 dark:text-white leading-none">{dept.prodi?.length || 0}</p>
-                      </div>
-                    </div>
 
-                    <div className="mt-4 space-y-1.5 min-h-[4.5rem]">
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Program Studi:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {dept.prodi?.map((p: string) => (
-                          <span key={p} className="text-[8px] font-bold px-2 py-0.5 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded border border-slate-100 dark:border-slate-800">
-                            {p}
-                          </span>
-                        ))}
+                      {/* Program Studi Badges */}
+                      <div className="space-y-2">
+                        <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Program Studi:</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {dept.prodi?.map((p: string) => (
+                            <span key={p} className={`text-[9px] font-semibold px-2.5 py-0.5 rounded-md border transition-all ${dept.badgeBg}`}>
+                              {p}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-6 flex items-center justify-between">
-                      <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-full border border-slate-100 dark:border-slate-700">
-                        <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="text-[10px] font-black text-slate-500 uppercase">Fakultas</span>
+                    {/* Bottom Section: Stats & Action */}
+                    <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/50 space-y-4">
+                      {/* Micro-metrics Grid */}
+                      <div className="grid grid-cols-3 gap-2 text-center p-3 bg-slate-50/50 dark:bg-slate-950/40 rounded-2xl border border-slate-100/50 dark:border-slate-900/50">
+                        <div>
+                          <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Dosen</p>
+                          <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.lecturerCount}</p>
+                        </div>
+                        <div className="border-x border-slate-200/50 dark:border-slate-800/50">
+                          <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Riset</p>
+                          <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.researchCount}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Prodi</p>
+                          <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.prodi?.length || 0}</p>
+                        </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+
+                      {/* Read more trigger */}
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                        <span>Lihat Direktori Dosen</span>
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center ${dept.bgColor} text-slate-500 dark:text-slate-400 group-hover:bg-primary-500 group-hover:text-white transition-all duration-300`}>
+                          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
