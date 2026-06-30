@@ -1,7 +1,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Hexagon, Menu, X, ArrowRight } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Hexagon, Menu, X, ArrowRight, Home, Trophy, Sparkles, Settings, LogIn, LayoutDashboard } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from '../layout/ThemeToggle';
 
 export default function Navbar() {
@@ -10,7 +10,6 @@ export default function Navbar() {
   const [user, setUser] = useState<any>(null);
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') === 'dark');
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (isDark) {
@@ -37,10 +36,10 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Beranda', href: '#hero' },
-    { name: 'Leaderboard', href: '#leaderboard' },
-    { name: 'Fitur', href: '#features' },
-    { name: 'Sistem Kerja', href: '#workflow' },
+    { name: 'Beranda', href: '#hero', icon: Home },
+    { name: 'Leaderboard', href: '#leaderboard', icon: Trophy },
+    { name: 'Fitur', href: '#features', icon: Sparkles },
+    { name: 'Sistem Kerja', href: '#workflow', icon: Settings },
   ];
 
   const handleScrollTo = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -138,6 +137,7 @@ export default function Navbar() {
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
+              aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -145,60 +145,126 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Drawer Navigation */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className={`md:hidden absolute left-0 right-0 bg-white dark:bg-gray-900 border-b dark:border-gray-800 border-gray-100 shadow-xl transition-all duration-300 ${
-              isScrolled ? 'top-[68px] rounded-b-xl mx-0' : 'top-[88px]'
-            }`}
-          >
-            <div className="p-4 space-y-3">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={location.pathname === '/' ? link.href : `/${link.href}`}
-                  onClick={(e: any) => handleScrollTo(e, link.href)}
-                  className="block p-3 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all"
-                >
-                  {link.name}
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+              onClick={() => setIsMenuOpen(false)}
+            />
+
+            {/* Slide-out Drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-white/95 dark:bg-gray-955/95 backdrop-blur-2xl border-l border-gray-100 dark:border-gray-800 shadow-2xl flex flex-col md:hidden"
+            >
+              {/* Header inside drawer */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
+                <Link to="/" className="flex items-center gap-2 group" onClick={() => setIsMenuOpen(false)}>
+                  <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex-shrink-0">
+                    <Hexagon className="w-5 h-5 text-white fill-white/15" />
+                  </div>
+                  <span className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                    Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
+                  </span>
                 </Link>
-              ))}
-              <hr className="border-gray-100 my-2" />
-              <div className="pt-2">
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                  aria-label="Tutup menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* User profile section if logged in */}
+              {user && (
+                <div className="p-6 bg-gray-50/50 dark:bg-gray-900/30 border-b border-gray-100 dark:border-gray-800">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-950 flex items-center justify-center font-black text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800 uppercase">
+                      {user.name ? user.name.charAt(0) : 'U'}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-black text-gray-800 dark:text-gray-200 truncate uppercase tracking-tight">
+                        {user.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {user.email || 'Dosen'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation links */}
+              <div className="flex-1 overflow-y-auto py-6 px-4">
+                <nav className="space-y-2">
+                  {navLinks.map((link, idx) => {
+                    const Icon = link.icon;
+                    return (
+                      <motion.div
+                        key={link.name}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 + 0.1 }}
+                      >
+                        <Link
+                          to={location.pathname === '/' ? link.href : `/${link.href}`}
+                          onClick={(e: any) => handleScrollTo(e, link.href)}
+                          className="flex items-center gap-3.5 p-3 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-950/30 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all"
+                        >
+                          <Icon className="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
+                          {link.name}
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </nav>
+              </div>
+
+              {/* Footer inside drawer with Action Buttons */}
+              <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-gray-950/50">
                 {user ? (
-                  <Link 
+                  <Link
                     to="/dashboard"
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center justify-center p-3 text-sm font-black text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:from-primary-700 hover:to-primary-600 transition-all shadow-md shadow-primary-100"
+                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-black text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:from-primary-700 hover:to-primary-600 transition-all shadow-lg shadow-primary-500/10 hover:shadow-primary-500/25"
                   >
+                    <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                   </Link>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3">
-                    <Link 
+                  <div className="flex flex-col gap-3">
+                    <Link
                       to="/login"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center p-3 text-sm font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-all"
                     >
+                      <LogIn className="w-4 h-4" />
                       Masuk
                     </Link>
-                    <Link 
+                    <Link
                       to="/insights"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center p-3 text-sm font-bold text-white bg-primary-600 rounded-xl hover:bg-primary-700 transition-all shadow-md shadow-primary-100"
+                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-md shadow-primary-500/10"
                     >
                       Insights
+                      <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
                 )}
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.header>

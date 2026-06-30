@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 
 export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
   const navigate = useNavigate();
+  const HeadingTag = isHero ? 'h2' : 'h3';
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3">
               <Trophy className="w-6 h-6 text-amber-500" />
-              <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat</h3>
+              <HeadingTag className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat</HeadingTag>
             </div>
             <button 
               onClick={() => navigate('/lecturers')}
@@ -128,7 +129,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-8 pb-4 border-b border-white/10">
             <Sparkles className="w-6 h-6 text-primary-400" />
-            <h3 className="text-lg font-black uppercase tracking-wider">Statistik Produktivitas</h3>
+            <HeadingTag className="text-lg font-black uppercase tracking-wider">Statistik Produktivitas</HeadingTag>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

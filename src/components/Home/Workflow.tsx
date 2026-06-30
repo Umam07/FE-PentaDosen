@@ -171,8 +171,8 @@ export default function Workflow() {
 
                       {/* Role Floating Label */}
                       <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1 bg-white dark:bg-gray-900 border border-gray-100 dark:border-white/10 rounded-full shadow-md z-30">
-                         <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-1">
-                           <User size={10} className="text-blue-500" /> {step.role}
+                         <span className="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest flex items-center gap-1">
+                           <User size={12} className="text-blue-600 dark:text-blue-400" /> {step.role}
                          </span>
                       </div>
                     </div>
@@ -182,18 +182,18 @@ export default function Workflow() {
                       whileHover={{ y: -10 }}
                       className="w-full flex-1 flex flex-col bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-[40px] p-8 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] group-hover:bg-white dark:group-hover:bg-white/[0.05]"
                     >
-                      <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[.2em] mb-3">
+                      <p className="text-xs font-black text-blue-700 dark:text-blue-300 uppercase tracking-[.2em] mb-3">
                         {step.subtitle}
                       </p>
                       <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-4 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
                         {step.title}
                       </h3>
-                      <p className="flex-1 text-sm lg:text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                      <p className="flex-1 text-sm lg:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                         {step.description}
                       </p>
 
                       <div className="mt-8 pt-6 border-t border-gray-50 dark:border-white/5 flex items-center justify-between">
-                         <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400">0{step.id} / 05</span>
+                         <span className="text-xs font-bold text-gray-600 dark:text-gray-300">0{step.id} / 05</span>
                          <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <ArrowRight size={14} className="text-blue-600" />
                          </div>
