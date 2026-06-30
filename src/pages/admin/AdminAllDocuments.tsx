@@ -31,25 +31,25 @@ export default function AdminAllDocuments() {
   const tabDetails = {
     publikasi: {
       title: 'Daftar Publikasi',
-      description: 'Pengelolaan Publikasi Ilmiah: Kelola, monitoring, dan validasi seluruh publikasi ilmiah dosen.',
+      description: 'Pengelolaan Publikasi: Kelola, monitoring, dan validasi data publikasi ilmiah dosen.',
       icon: FileText,
       colorClass: 'text-primary-600 bg-primary-50 dark:bg-primary-900/20 border-primary-100/50 dark:border-primary-900/30'
     },
     hki: {
       title: 'Daftar HKI',
-      description: 'Pengelolaan Hak Kekayaan Intelektual: Monitoring dan verifikasi data Paten, Merk, Hak Cipta, dan Desain Industri dosen.',
+      description: 'Pengelolaan HKI: Kelola, monitoring, dan verifikasi data hak kekayaan intelektual dosen.',
       icon: Award,
       colorClass: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 border-indigo-100/50 dark:border-indigo-900/30'
     },
     penelitian: {
       title: 'Daftar Penelitian',
-      description: 'Pengelolaan Penelitian: Monitoring, pendanaan, skema hibah, dan laporan penelitian dosen.',
+      description: 'Pengelolaan Penelitian: Kelola, monitoring, dan laporan data penelitian dosen.',
       icon: Beaker,
       colorClass: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100/50 dark:border-emerald-900/30'
     },
     buku: {
       title: 'Daftar Buku',
-      description: 'Pengelolaan Buku Dosen: Monitoring dan verifikasi Karya Tulis, Buku Referensi, Buku Ajar, dan Monograf akademik dosen.',
+      description: 'Pengelolaan Buku: Kelola, monitoring, dan verifikasi data buku akademik dosen.',
       icon: Book,
       colorClass: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-100/50 dark:border-amber-900/30'
     }
@@ -339,7 +339,7 @@ export default function AdminAllDocuments() {
                 cell.numFmt = '"Rp"#,##0';
                 cell.alignment = { vertical: 'middle', horizontal: 'right' };
               } else if (colIdx === 10) {
-                cell.numFmt = '+#,##0;-#,##0;0';
+                cell.numFmt = '#,##0;-#,##0;0';
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
               } else {
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -348,7 +348,7 @@ export default function AdminAllDocuments() {
               if ([2, 3, 4, 5].includes(colIdx)) {
                 cell.alignment = { vertical: 'middle', horizontal: 'left' };
               } else if (colIdx === 10) {
-                cell.numFmt = '+#,##0;-#,##0;0';
+                cell.numFmt = '#,##0;-#,##0;0';
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
               } else {
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -609,12 +609,12 @@ export default function AdminAllDocuments() {
                         </div>
                         <div>
                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
-                            {activeTab === 'penelitian' ? 'Dana Disetujui' : 'Poin Achieved'}
+                            {activeTab === 'penelitian' ? 'Dana' : 'Poin'}
                           </p>
                           <p className="text-sm font-black text-gray-900 dark:text-zinc-100">
                             {activeTab === 'penelitian' 
                               ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(doc.dana_disetujui)
-                              : `+${doc.awarded_points || 0} PTS`}
+                              : `${doc.awarded_points || 0} PTS`}
                           </p>
                         </div>
                       </div>
@@ -727,7 +727,7 @@ export default function AdminAllDocuments() {
                           </td>
                           <td className="px-6 py-6 whitespace-nowrap text-center">
                              <div className="flex flex-col items-center">
-                                <span className="text-sm font-black text-gray-900 dark:text-zinc-100">+{doc.awarded_points || 0}</span>
+                                <span className="text-sm font-black text-gray-900 dark:text-zinc-100">{doc.awarded_points || 0}</span>
                                 {activeTab !== 'penelitian' && doc.is_kpi_counted && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">KPI Verified</span>}
                              </div>
                           </td>
