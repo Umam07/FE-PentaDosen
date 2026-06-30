@@ -1,295 +1,334 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Input } from "./input";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    Search,
-    Send,
-    BarChart2,
-    Globe,
-    Video,
-    PlaneTakeoff,
-    AudioLines,
+  Search,
+  Activity,
+  FileText,
+  Award,
+  Beaker,
+  Book,
+  FolderOpen,
+  CheckSquare,
+  PlusCircle,
+  Users,
+  RefreshCw,
+  ShieldAlert,
+  HelpCircle,
+  User,
+  LogOut,
+  ChevronRight,
+  Sparkles,
 } from "lucide-react";
-
-function useDebounce<T>(value: T, delay: number = 500): T {
-    const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
-
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [value, delay]);
-
-    return debouncedValue;
-}
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandShortcut,
+} from "./command";
 
 export interface Action {
-    id: string;
-    label: string;
-    icon: React.ReactNode;
-    description?: string;
-    short?: string;
-    end?: string;
-    path?: string; // Added path for navigation
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  description?: string;
+  short?: string;
+  end?: string;
+  path?: string;
 }
-
-interface SearchResult {
-    actions: Action[];
-}
-
-const allActions = [
-    {
-        id: "1",
-        label: "Book tickets",
-        icon: <PlaneTakeoff className="h-4 w-4 text-blue-500" />,
-        description: "Operator",
-        short: "⌘K",
-        end: "Agent",
-    },
-    {
-        id: "2",
-        label: "Summarize",
-        icon: <BarChart2 className="h-4 w-4 text-orange-500" />,
-        description: "gpt-4o",
-        short: "⌘cmd+p",
-        end: "Command",
-    },
-    {
-        id: "3",
-        label: "Screen Studio",
-        icon: <Video className="h-4 w-4 text-purple-500" />,
-        description: "gpt-4o",
-        short: "",
-        end: "Application",
-    },
-    {
-        id: "4",
-        label: "Talk to Jarvis",
-        icon: <AudioLines className="h-4 w-4 text-green-500" />,
-        description: "gpt-4o voice",
-        short: "",
-        end: "Active",
-    },
-    {
-        id: "5",
-        label: "Translate",
-        icon: <Globe className="h-4 w-4 text-blue-500" />,
-        description: "gpt-4o",
-        short: "",
-        end: "Command",
-    },
-];
 
 interface ActionSearchBarProps {
-    actions?: Action[];
-    onSelect?: (action: Action) => void;
-    placeholder?: string;
-    className?: string;
+  actions?: Action[];
+  onSelect?: (action: Action) => void;
+  placeholder?: string;
+  className?: string;
+  user?: {
+    id?: string | number;
+    name?: string;
+    role?: string;
+    avatar?: string;
+  };
 }
 
-function ActionSearchBar({ actions = allActions, onSelect, placeholder = "Search...", className }: ActionSearchBarProps) {
-    const [query, setQuery] = useState("");
-    const [result, setResult] = useState<SearchResult | null>(null);
-    const [isFocused, setIsFocused] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
-    const [selectedAction, setSelectedAction] = useState<Action | null>(null);
-    const debouncedQuery = useDebounce(query, 200);
+const roleMenus: Record<string, { label: string; path: string; icon: React.ReactNode; category: string }[]> = {
+  "dosen": [
+    { label: "Dashboard Poin", path: "/lecturer-dashboard", icon: <Activity className="h-4 w-4 text-emerald-500" />, category: "Menu Utama" },
+    { label: "Publikasi Jurnal Internasional", path: "/publication?kategori=Jurnal Internasional", icon: <FileText className="h-4 w-4 text-blue-500" />, category: "Publikasi" },
+    { label: "Publikasi Jurnal Nasional", path: "/publication?kategori=Jurnal Nasional", icon: <FileText className="h-4 w-4 text-indigo-500" />, category: "Publikasi" },
+    { label: "HKI (Hak Kekayaan Intelektual)", path: "/hki", icon: <Award className="h-4 w-4 text-amber-500" />, category: "Karya Ilmiah" },
+    { label: "Penelitian Dosen", path: "/research", icon: <Beaker className="h-4 w-4 text-purple-500" />, category: "Karya Ilmiah" },
+    { label: "Buku & Monograf", path: "/buku", icon: <Book className="h-4 w-4 text-pink-500" />, category: "Karya Ilmiah" },
+    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+  ],
+  "admin lppm": [
+    { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
+    { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4 text-emerald-500" />, category: "Persetujuan" },
+    { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4 text-violet-500" />, category: "Dokumen" },
+    { label: "Daftar Dosen Universitas", path: "/admin/lecturers", icon: <Users className="h-4 w-4 text-blue-500" />, category: "Keanggotaan" },
+    { label: "Sinkronisasi Data API", path: "/admin/sync", icon: <RefreshCw className="h-4 w-4 text-orange-500" />, category: "Integrasi" },
+    { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4 text-rose-500" />, category: "Sistem Audit" },
+    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+  ],
+  "admin fakultas": [
+    { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
+    { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4 text-emerald-500" />, category: "Persetujuan" },
+    { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4 text-violet-500" />, category: "Dokumen" },
+    { label: "Daftar Dosen Fakultas", path: "/admin/lecturers", icon: <Users className="h-4 w-4 text-blue-500" />, category: "Keanggotaan" },
+    { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4 text-rose-500" />, category: "Sistem Audit" },
+    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+  ],
+  "super admin": [
+    { label: "Panel CMS (Manajemen User)", path: "/admin/cms", icon: <ShieldAlert className="h-4 w-4 text-red-500" />, category: "Administrator" },
+    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+  ]
+};
 
-    useEffect(() => {
-        if (!isFocused) {
-            setResult(null);
-            return;
+const roleLabels: Record<string, string> = {
+  "dosen": "Dosen",
+  "admin lppm": "Admin LPPM",
+  "admin fakultas": "Admin Fak",
+  "super admin": "Super Admin",
+};
+
+function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", className, user }: ActionSearchBarProps) {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Determine current active role of the user (default to dosen if none)
+  const userRole = user?.role?.toLowerCase() || "dosen";
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (roleMenus[userRole]) return userRole;
+    return "dosen";
+  });
+
+  // Keep activeTab updated if user changes
+  useEffect(() => {
+    const role = user?.role?.toLowerCase() || "dosen";
+    if (roleMenus[role]) {
+      setActiveTab(role);
+    }
+  }, [user]);
+
+  // Keyboard shortcut listener
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      // Toggle dialog: Ctrl+K
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+
+      // Navigate to profile: Ctrl+I
+      if (e.key === "i" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen(false);
+        navigate("/profile");
+      }
+
+      // Logout: Ctrl+Shift+Q
+      if (e.key === "q" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen(false);
+        const logoutBtn = document.querySelector('[data-logout-trigger]');
+        if (logoutBtn instanceof HTMLElement) {
+          logoutBtn.click();
+        } else {
+          sessionStorage.removeItem("pentadosen_user");
+          window.location.href = "/login";
         }
-
-        if (!debouncedQuery) {
-            setResult({ actions: actions.slice(0, 5) });
-            return;
-        }
-
-        const normalizedQuery = debouncedQuery.toLowerCase().trim();
-        const filteredActions = actions.filter((action) => {
-            const searchableText = action.label.toLowerCase();
-            const searchableDescription = action.description?.toLowerCase() || "";
-            return searchableText.includes(normalizedQuery) || searchableDescription.includes(normalizedQuery);
-        });
-
-        setResult({ actions: filteredActions.slice(0, 5) });
-    }, [debouncedQuery, isFocused, actions]);
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuery(e.target.value);
-        setIsTyping(true);
+      }
     };
 
-    const container = {
-        hidden: { opacity: 0, height: 0 },
-        show: {
-            opacity: 1,
-            height: "auto",
-            transition: {
-                height: {
-                    duration: 0.4,
-                },
-                staggerChildren: 0.1,
-            },
-        },
-        exit: {
-            opacity: 0,
-            height: 0,
-            transition: {
-                height: {
-                    duration: 0.3,
-                },
-                opacity: {
-                    duration: 0.2,
-                },
-            },
-        },
-    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [navigate]);
 
-    const item = {
-        hidden: { opacity: 0, y: 20 },
-        show: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.3,
-            },
-        },
-        exit: {
-            opacity: 0,
-            y: -10,
-            transition: {
-                duration: 0.2,
-            },
-        },
-    };
+  const handleItemSelect = (path: string, originalAction?: Action) => {
+    setOpen(false);
+    if (originalAction && onSelect) {
+      onSelect(originalAction);
+    } else {
+      navigate(path);
+    }
+  };
 
-    // Reset selectedAction when focusing the input
-    const handleFocus = () => {
-        setSelectedAction(null);
-        setIsFocused(true);
-    };
+  // Split lecturers actions from menu actions
+  const lecturerActions = actions.filter((act) => act.end === "LECTURER");
 
-    const handleActionClick = (action: Action) => {
-        setSelectedAction(action);
-        if (onSelect) {
-            onSelect(action);
-        }
-    };
+  // Get available tabs based on system roles
+  const rolesList = ["dosen", "admin lppm", "admin fakultas", "super admin"];
 
-    return (
-        <div className={`w-full max-w-xl mx-auto ${className}`}>
-            <div className="relative flex flex-col justify-start items-center">
-                <div className="w-full sticky top-0 bg-transparent z-10">
-                    <div className="relative">
-                        <Input
-                            type="text"
-                            placeholder={placeholder}
-                            value={query}
-                            onChange={handleInputChange}
-                            onFocus={handleFocus}
-                            onBlur={() =>
-                                setTimeout(() => setIsFocused(false), 200)
-                            }
-                            className="pl-3 pr-9 py-1.5 h-9 text-xs lg:text-sm rounded-xl focus-visible:ring-primary-500/20 border-gray-100 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/50 backdrop-blur-sm"
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4">
-                            <AnimatePresence mode="popLayout">
-                                {query.length > 0 ? (
-                                    <motion.div
-                                        key="send"
-                                        initial={{ y: -20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: 20, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <Send className="w-4 h-4 text-primary-500" />
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        key="search"
-                                        initial={{ y: -20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: 20, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <Search className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="w-full absolute top-full left-0 mt-2">
-                    <AnimatePresence mode="wait">
-                        {isFocused && result && result.actions.length > 0 && !selectedAction && (
-                            <motion.div
-                                className="w-full border rounded-2xl shadow-2xl overflow-hidden border-gray-100 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl z-50 px-1 py-1"
-                                variants={container}
-                                initial="hidden"
-                                animate="show"
-                                exit="exit"
-                            >
-                                <motion.ul>
-                                    {result.actions.map((action) => (
-                                        <motion.li
-                                            key={action.id}
-                                            className="px-3 py-2 flex items-center justify-between hover:bg-primary-50 dark:hover:bg-zinc-800/60 cursor-pointer rounded-xl group transition-all"
-                                            variants={item}
-                                            layout
-                                            onClick={() => handleActionClick(action)}
-                                        >
-                                            <div className="flex items-center gap-3 overflow-hidden">
-                                                <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-950/40 transition-colors">
-                                                    {action.icon}
-                                                </div>
-                                                <div className="flex flex-col min-w-0">
-                                                    <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight truncate">
-                                                        {action.label}
-                                                    </span>
-                                                    {action.description && (
-                                                        <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate">
-                                                            {action.description}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                                                {action.short && (
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 dark:bg-zinc-800 text-gray-400">
-                                                        {action.short}
-                                                    </span>
-                                                )}
-                                                {action.end && (
-                                                    <span className="text-[9px] font-bold text-primary-500 uppercase tracking-tighter">
-                                                        {action.end}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </motion.li>
-                                    ))}
-                                </motion.ul>
-                                <div className="mt-1 px-3 py-2 border-t border-gray-100 dark:border-gray-800">
-                                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                                        <span>Navigate with keys</span>
-                                        <span>ESC to close</span>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </div>
+  return (
+    <div className={`w-full ${className}`}>
+      {/* Search Trigger Button */}
+      <button
+        onClick={() => setOpen(true)}
+        className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 hover:bg-gray-100/60 dark:hover:bg-zinc-800/60 transition-all text-gray-400 dark:text-zinc-500 shadow-inner group overflow-hidden"
+      >
+        <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
+          <Search className="h-4 w-4 text-gray-400 group-hover:text-primary-500 transition-colors shrink-0" />
+          <span className="truncate">{placeholder}</span>
         </div>
-    );
+        <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 font-mono text-[9px] font-bold text-gray-400 dark:text-zinc-500 shadow-sm shrink-0">
+          Ctrl+K
+        </kbd>
+      </button>
+
+      {/* Command Dialog Modal */}
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Ketik perintah atau cari halaman..." />
+        
+        {/* Dynamic Role Tabs inside Command Menu */}
+        <div className="px-4 py-2 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-900/30 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            {rolesList.map((roleKey) => {
+              const isActive = activeTab === roleKey;
+              return (
+                <button
+                  key={roleKey}
+                  onClick={() => setActiveTab(roleKey)}
+                  className={`relative px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
+                    isActive
+                      ? "text-primary-600 dark:text-zinc-100"
+                      : "text-gray-450 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-zinc-300 hover:bg-gray-100/50 dark:hover:bg-zinc-800/50"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeRoleTab"
+                      className="absolute inset-0 bg-primary-50 dark:bg-zinc-850 rounded-lg -z-10 border border-primary-100/30 dark:border-zinc-700/50"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  {roleLabels[roleKey]}
+                </button>
+              );
+            })}
+          </div>
+          <div className="hidden xs:flex items-center gap-1 text-[9px] font-bold text-primary-500/80 dark:text-primary-450/80 bg-primary-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest shrink-0">
+            <Sparkles className="w-2.5 h-2.5" />
+            <span>Role Mode</span>
+          </div>
+        </div>
+
+        <CommandList>
+          <CommandEmpty>Hasil pencarian tidak ditemukan.</CommandEmpty>
+
+          {/* Dynamic Role specific menus */}
+          {roleMenus[activeTab] && (
+            <CommandGroup heading={`Navigasi Menu ${roleLabels[activeTab]}`}>
+              {roleMenus[activeTab].map((menu, idx) => (
+                <CommandItem
+                  key={`menu-${idx}`}
+                  value={menu.label}
+                  onSelect={() => handleItemSelect(menu.path)}
+                >
+                  <div className="flex items-center gap-3 w-full">
+                    <div className="p-1.5 rounded-lg bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350">
+                      {menu.icon}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[11px] font-bold tracking-tight">{menu.label}</span>
+                      <span className="text-[9px] font-semibold text-gray-400 lowercase tracking-normal">
+                        {menu.category} • {menu.path}
+                      </span>
+                    </div>
+                    <ChevronRight className="ml-auto w-3 h-3 text-gray-350 dark:text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+
+          {/* Lecturers search (Visible on LPPM / Fakultas tabs) */}
+          {(activeTab === "admin lppm" || activeTab === "admin fakultas") && lecturerActions.length > 0 && (
+            <CommandGroup heading="Daftar Dosen Terkait">
+              {lecturerActions.map((act) => (
+                <CommandItem
+                  key={act.id}
+                  value={act.label}
+                  onSelect={() => handleItemSelect(act.path || "", act)}
+                >
+                  <div className="flex items-center gap-3 w-full">
+                    <div className="p-1.5 rounded-lg bg-primary-500/10 text-primary-500">
+                      <User className="h-4 w-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[11px] font-bold tracking-tight">{act.label}</span>
+                      {act.description && (
+                        <span className="text-[9px] font-semibold text-gray-400 lowercase tracking-normal">
+                          {act.description}
+                        </span>
+                      )}
+                    </div>
+                    {act.end && (
+                      <span className="ml-auto text-[8px] font-black tracking-widest text-primary-500 bg-primary-500/10 px-1.5 py-0.5 rounded">
+                        {act.end}
+                      </span>
+                    )}
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+
+          {/* Account Settings / General commands */}
+          <CommandGroup heading="Aksi & Sistem">
+            <CommandItem
+              value="Pengaturan Profil Diri"
+              onSelect={() => handleItemSelect("/profile")}
+            >
+              <div className="flex items-center gap-3 w-full">
+                <div className="p-1.5 rounded-lg bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350">
+                  <User className="h-4 w-4 text-blue-500" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-bold tracking-tight">Pengaturan Profil Diri</span>
+                  <span className="text-[9px] font-semibold text-gray-400 lowercase tracking-normal">
+                    kelola profil dan integrasi ID Scopus/Scholar
+                  </span>
+                </div>
+                 <CommandShortcut>Ctrl+I</CommandShortcut>
+              </div>
+            </CommandItem>
+            <CommandItem
+              value="Keluar Logout Sistem"
+              onSelect={() => {
+                setOpen(false);
+                // Dispatch event or call a reload/navigate to handle logout
+                const logoutBtn = document.querySelector('[data-logout-trigger]');
+                if (logoutBtn instanceof HTMLElement) {
+                  logoutBtn.click();
+                } else {
+                  // Fallback: clear storage and navigate
+                  sessionStorage.removeItem("pentadosen_user");
+                  window.location.href = "/login";
+                }
+              }}
+            >
+              <div className="flex items-center gap-3 w-full">
+                <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500">
+                  <LogOut className="h-4 w-4" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-bold text-red-650 dark:text-red-400 tracking-tight">Keluar dari Sistem</span>
+                  <span className="text-[9px] font-semibold text-red-400/70 lowercase tracking-normal">
+                    akhiri sesi login saat ini
+                  </span>
+                </div>
+                 <CommandShortcut>Ctrl+Shift+Q</CommandShortcut>
+              </div>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+    </div>
+  );
 }
 
 export { ActionSearchBar };

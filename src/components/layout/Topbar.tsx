@@ -122,6 +122,7 @@ export default function Topbar({
             actions={searchActions} 
             onSelect={handleActionSelect}
             placeholder="Search commands or lecturers..."
+            user={user}
           />
         </div>
 
@@ -196,7 +197,8 @@ export default function Topbar({
                   <div className="border-t border-gray-100 dark:border-zinc-800 my-1"></div>
                   <button 
                     onClick={handleLogout} 
-                    className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 w-full text-left transition-colors uppercase tracking-widest"
+                    data-logout-trigger
+                    className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-red-650 hover:bg-red-50 dark:hover:bg-red-950/30 w-full text-left transition-colors uppercase tracking-widest"
                   >
                     <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
                       <LogOut className="w-4 h-4" />
@@ -228,6 +230,7 @@ export default function Topbar({
                     onSelect={handleActionSelect}
                     placeholder="Apa yang Anda cari?"
                     className="max-w-full"
+                    user={user}
                   />
                   <button 
                     onClick={() => setIsMobileSearchOpen(false)}
