@@ -229,7 +229,7 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
                     <div className="flex flex-col gap-0.5">
                       <span className="text-sm font-bold tracking-tight">{menu.label}</span>
                       <span className="text-xs font-medium text-gray-400 lowercase tracking-normal">
-                        {menu.category} • {menu.path}
+                        {menu.category}
                       </span>
                     </div>
                     <ChevronRight className="ml-auto w-4 h-4 text-gray-350 dark:text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity" />
