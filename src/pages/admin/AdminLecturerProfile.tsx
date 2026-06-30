@@ -33,16 +33,16 @@ export default function AdminLecturerProfile() {
 
     const extCross    = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
     const extScopus   = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const extScholar  = parseFloat(
-      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1)
+    const extScholar  = (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+    const extTotal = Math.round(extCross + extScopus + extScholar);
+
+    const internalTotal = Math.round(
+      (internalDocuments || [])
+        .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '')
+        .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
     );
-    const extTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
 
-    const internalTotal = (internalDocuments || [])
-      .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '')
-      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
-
-    const grandTotal = parseFloat((extTotal + internalTotal).toFixed(1));
+    const grandTotal = extTotal + internalTotal;
 
     return [
       { 

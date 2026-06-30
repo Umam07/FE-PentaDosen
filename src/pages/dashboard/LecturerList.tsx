@@ -333,7 +333,7 @@ export default function LecturerList() {
                         <div className="space-y-1">
                           <p className="text-[9px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-widest opacity-80">Total KPI</p>
                           <p className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-none">
-                            {lecturer.total_kpi_points.toLocaleString()}
+                            {Math.round(lecturer.total_kpi_points).toLocaleString()}
                           </p>
                         </div>
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center ${theme.bgColor} text-slate-500 dark:text-slate-400 group-hover:bg-primary-500 group-hover:text-white transition-all duration-300`}>

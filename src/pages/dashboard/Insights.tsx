@@ -411,7 +411,7 @@ export default function Insights() {
                       <p className="text-3xl lg:text-4xl font-extrabold tracking-tight group-hover:text-amber-400 transition-colors duration-500">{stats?.top_performer?.name || 'N/A'}</p>
                       <div className="flex items-center justify-center sm:justify-start gap-3">
                         <p className="text-slate-400 font-semibold text-sm tracking-tight">Akumulasi:</p>
-                        <p className="text-white font-extrabold text-xl">{stats?.top_performer?.total_kpi_points?.toLocaleString() || '0'} <span className="text-[11px] uppercase text-slate-500 tracking-widest ml-1 font-bold">Poin KPI</span></p>
+                        <p className="text-white font-extrabold text-xl">{Math.round(stats?.top_performer?.total_kpi_points || 0).toLocaleString()} <span className="text-[11px] uppercase text-slate-500 tracking-widest ml-1 font-bold">Poin KPI</span></p>
                       </div>
                     </>
                   )}
@@ -683,7 +683,7 @@ export default function Insights() {
                         <p className="text-[10px] font-bold text-slate-500 truncate">{user.program_studi}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-slate-900 dark:text-white">{user.total_kpi_points.toLocaleString()}</p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">{Math.round(user.total_kpi_points).toLocaleString()}</p>
                         <p className="text-[8px] font-bold text-slate-500 uppercase">Poin KPI</p>
                       </div>
                     </button>

@@ -145,9 +145,9 @@ export default function AdminLecturers() {
         lec.program_studi || '-',
         lec.scholar_id || '-',
         lec.scopus_id || '-',
-        lec.total_kpi_points || 0,
-        lec.poin_external || 0,
-        lec.poin_internal || 0,
+        Math.round(lec.total_kpi_points || 0),
+        Math.round(lec.poin_external || 0),
+        Math.round(lec.poin_internal || 0),
         lec.scholar_document_count || 0,
         lec.total_citations || 0,
         lec.h_index || 0,
@@ -389,7 +389,7 @@ export default function AdminLecturers() {
                         <div className="flex items-center justify-end gap-3 group/pts">
                           <div className="text-right">
                             <span className="inline-flex items-center px-3.5 py-1.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-xs uppercase tracking-wider border border-emerald-500/20 shadow-inner tabular-nums">
-                              {lecturer.total_kpi_points?.toLocaleString() || 0} pts
+                              {Math.round(lecturer.total_kpi_points || 0).toLocaleString()} pts
                             </span>
                           </div>
                           <div className="p-2 rounded-xl bg-gray-50 dark:bg-zinc-850 text-gray-400 group-hover/pts:text-primary-500 group-hover/pts:bg-primary-500/10 dark:group-hover/pts:bg-primary-500/20 group-hover/pts:border-primary-200/50 border border-transparent transition-all duration-300 shadow-sm">

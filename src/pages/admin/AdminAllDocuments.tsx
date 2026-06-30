@@ -304,7 +304,7 @@ export default function AdminAllDocuments() {
             fakultasVal,
             item.status || 'Pending',
             dana,
-            item.awarded_points || 0,
+            Math.round(item.awarded_points || 0),
             createdAt
           ];
         } else {
@@ -323,7 +323,7 @@ export default function AdminAllDocuments() {
             publishedAt,
             source,
             kpiStatus,
-            item.awarded_points || 0,
+            Math.round(item.awarded_points || 0),
             createdAt
           ];
         }
@@ -622,7 +622,7 @@ export default function AdminAllDocuments() {
                           <p className="text-sm font-black text-gray-900 dark:text-zinc-100">
                             {activeTab === 'penelitian' 
                               ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(doc.dana_disetujui)
-                              : `${doc.awarded_points || 0} PTS`}
+                              : `${Math.round(doc.awarded_points || 0)} PTS`}
                           </p>
                         </div>
                       </div>
@@ -735,7 +735,7 @@ export default function AdminAllDocuments() {
                           </td>
                           <td className="px-6 py-6 whitespace-nowrap text-center">
                              <div className="flex flex-col items-center">
-                                <span className="text-sm font-black text-gray-900 dark:text-zinc-100">{doc.awarded_points || 0}</span>
+                                <span className="text-sm font-black text-gray-900 dark:text-zinc-100">{Math.round(doc.awarded_points || 0)}</span>
                                 {activeTab !== 'penelitian' && doc.is_kpi_counted && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">KPI Verified</span>}
                              </div>
                           </td>

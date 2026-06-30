@@ -202,7 +202,7 @@ export default function ResearchTable({
                   </td>
                   <td className="px-6 py-4 text-right">
                     <span className="text-sm font-black text-primary-600">
-                      +{res.awarded_points}
+                      +{Math.round(res.awarded_points)}
                     </span>
                   </td>
 

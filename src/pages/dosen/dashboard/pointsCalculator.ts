@@ -79,7 +79,7 @@ export const calculateScopusSintaPoints = (pub: any): number => {
     }
   }
 
-  return Math.round(awardedPoints * 100) / 100;
+  return Math.round(awardedPoints);
 };
 
 export const calculateScholarPoints = (pub: any): number => {
@@ -87,7 +87,7 @@ export const calculateScholarPoints = (pub: any): number => {
   const docPoints = 0.5;
   const citationBonus = citations > 0 ? 0.5 : 0;
   const citationPoints = Math.min(citations, 500) * 0.25;
-  return docPoints + citationBonus + citationPoints;
+  return Math.round(docPoints + citationBonus + citationPoints);
 };
 
 export const normalizeTitle = (title: string): string => {

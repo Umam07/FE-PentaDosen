@@ -117,7 +117,7 @@ export default function Research({ user }: ResearchProps) {
       total: researchList.length,
       approved: researchList.filter((d: any) => d.status === 'Approved').length,
       pending: researchList.filter((d: any) => d.status === 'Pending' || d.status === 'Verified by Fakultas').length,
-      points: researchList.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0).toFixed(2),
+      points: Math.round(researchList.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)),
     };
   }, [researchList]);
 

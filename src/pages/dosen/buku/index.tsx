@@ -168,7 +168,7 @@ export default function Buku({ user }: { user: any }) {
       total: filteredDocuments.length,
       approved: filteredDocuments.filter(d => d.status === 'Approved').length,
       pending: filteredDocuments.filter(d => d.status === 'Pending' || d.status === 'Verified by Fakultas').length,
-      points: valid.reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0),
+      points: Math.round(valid.reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)),
       validCount: valid.length,
     };
   }, [filteredDocuments, currentYear]);

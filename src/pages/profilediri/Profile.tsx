@@ -189,22 +189,22 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
         }
       }
 
-      return Math.round(awardedPoints * 100) / 100;
+      return Math.round(awardedPoints);
     };
 
     const extCross = (scopusPublications || []).filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
     const extScopus = (scopusPublications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const extScholar = parseFloat(
-      (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1)
-    );
-    const extTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
+    const extScholar = (publications || []).filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+    const extTotal = Math.round(extCross + extScopus + extScholar);
 
     // Poin internal dokumen (hanya yang upload mandiri/internal)
-    const internalTotal = (internalDocuments || [])
-      .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '')
-      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0);
+    const internalTotal = Math.round(
+      (internalDocuments || [])
+        .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '')
+        .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
+    );
 
-    const grandTotal = parseFloat((extTotal + internalTotal).toFixed(1));
+    const grandTotal = extTotal + internalTotal;
 
     return [
       {

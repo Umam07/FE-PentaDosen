@@ -63,9 +63,9 @@ export default function ResearchEditModal({
             </label>
             <div className="grid grid-cols-3 gap-3">
               {[
-                { key: 'hibah internal', label: 'Hibah Internal', icon: Home, pts: 40 },
-                { key: 'hibah dikti', label: 'Hibah Dikti', icon: Landmark, pts: 50 },
-                { key: 'hibah luar negeri', label: 'Hibah Luar Negeri', icon: Globe, pts: 60 },
+                { key: 'hibah internal', label: 'Hibah Internal', icon: Home, pts: 3 },
+                { key: 'hibah dikti', label: 'Hibah Dikti', icon: Landmark, pts: 6 },
+                { key: 'hibah luar negeri', label: 'Hibah Luar Negeri', icon: Globe, pts: 10 },
               ].map((item) => (
                 <button
                   key={item.key}

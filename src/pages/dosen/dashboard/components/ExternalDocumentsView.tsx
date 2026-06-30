@@ -36,7 +36,7 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
             <span className="text-[7px] font-black text-blue-400/80 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
           <div className="px-2.5 py-0.5 bg-blue-600 text-white rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-sm shadow-blue-500/30">
-            +{docPoints.toFixed(1)} pts
+            +{Math.round(docPoints)} pts
           </div>
         </div>
 
@@ -153,7 +153,7 @@ function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
                 </div>
                 <div className="flex justify-between items-center pt-2">
                   <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Total Poin</span>
-                  <span className="text-base font-black text-blue-600">{docPoints.toFixed(2)} pts</span>
+                  <span className="text-base font-black text-blue-600">{Math.round(docPoints)} pts</span>
                 </div>
               </div>
             </motion.div>
@@ -385,7 +385,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh, isPublic = false }: 
             <span className="text-[7px] font-black text-orange-400/80 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
           <div className="px-2.5 py-0.5 bg-orange-600 text-white rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-sm shadow-orange-500/30">
-            +{bd.totalPoints.toFixed(1)} pts
+            +{Math.round(bd.totalPoints)} pts
           </div>
         </div>
 
@@ -638,7 +638,7 @@ function ScopusDocRow({ doc, isAlsoScholar, idx, onRefresh, isPublic = false }: 
                 )}
                 <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
                   <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Total Poin</span>
-                  <span className="text-base font-black text-orange-600">{bd.totalPoints.toFixed(2)} pts</span>
+                  <span className="text-base font-black text-orange-600">{Math.round(bd.totalPoints)} pts</span>
                 </div>
               </div>
             </motion.div>
@@ -690,7 +690,7 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
             <span className="text-[7px] font-black text-emerald-400/80 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
           <div className="px-2.5 py-0.5 bg-emerald-600 text-white rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-sm shadow-emerald-500/30">
-            +{bd.totalPoints.toFixed(1)} pts
+            +{Math.round(bd.totalPoints)} pts
           </div>
         </div>
 
@@ -839,7 +839,7 @@ function CrossIndexedDocRow({ doc, scopusDoc, idx }: {
                 )}
                 <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
                   <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Total Poin</span>
-                  <span className="text-base font-black text-emerald-600">{bd.totalPoints.toFixed(2)} pts</span>
+                  <span className="text-base font-black text-emerald-600">{Math.round(bd.totalPoints)} pts</span>
                 </div>
               </div>
             </motion.div>
@@ -1084,8 +1084,8 @@ export default function ExternalDocumentsView({
             );
             const crossPts = scopusList.filter(s => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusBreakdown(d).totalPoints, 0);
             const scopusOnly = scopusList.filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusBreakdown(d).totalPoints, 0);
-            const scholarOnly = parseFloat(scholarList.filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1));
-            const grandTotal = parseFloat((crossPts + scopusOnly + scholarOnly).toFixed(1));
+            const scholarOnly = Math.round(scholarList.filter(s => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0));
+            const grandTotal = crossPts + scopusOnly + scholarOnly;
             const scopusOnlyCount = scopusList.length - crossTitles.size;
             const scholarOnlyCount = scholarList.length - crossTitles.size;
 
@@ -1093,27 +1093,27 @@ export default function ExternalDocumentsView({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {/* Scopus-only */}
                 <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-2xl border border-orange-100 dark:border-orange-900/30">
-                  <p className="text-[8px] font-black text-orange-500 uppercase tracking-widest mb-1">Scopus-Only</p>
-                  <p className="text-xl font-black text-orange-700 dark:text-orange-300">{scopusOnly.toFixed(1)} <span className="text-[9px] font-bold">pts</span></p>
-                  <p className="text-[9px] font-bold text-orange-400 mt-1">{scopusOnlyCount} dokumen · SINTA metrik</p>
+                   <p className="text-[8px] font-black text-orange-500 uppercase tracking-widest mb-1">Scopus-Only</p>
+                   <p className="text-xl font-black text-orange-700 dark:text-orange-300">{Math.round(scopusOnly)} <span className="text-[9px] font-bold">pts</span></p>
+                   <p className="text-[9px] font-bold text-orange-400 mt-1">{scopusOnlyCount} dokumen · SINTA metrik</p>
                 </div>
                 {/* Scholar-only */}
                 <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-2xl border border-blue-100 dark:border-blue-900/30">
-                  <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-1">Scholar-Only</p>
-                  <p className="text-xl font-black text-blue-700 dark:text-blue-300">{scholarOnly.toFixed(1)} <span className="text-[9px] font-bold">pts</span></p>
-                  <p className="text-[9px] font-bold text-blue-400 mt-1">{scholarOnlyCount} dokumen · SINTA GS metrik</p>
+                   <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-1">Scholar-Only</p>
+                   <p className="text-xl font-black text-blue-700 dark:text-blue-300">{Math.round(scholarOnly)} <span className="text-[9px] font-bold">pts</span></p>
+                   <p className="text-[9px] font-bold text-blue-400 mt-1">{scholarOnlyCount} dokumen · SINTA GS metrik</p>
                 </div>
                 {/* Cross-indexed */}
                 <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
-                  <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-1">Cross-Indexed</p>
-                  <p className="text-xl font-black text-emerald-700 dark:text-emerald-300">{crossPts.toFixed(1)} <span className="text-[9px] font-bold">pts</span></p>
-                  <p className="text-[9px] font-bold text-emerald-400 mt-1">{crossTitles.size} irisan · poin Scopus dipakai</p>
+                   <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-1">Cross-Indexed</p>
+                   <p className="text-xl font-black text-emerald-700 dark:text-emerald-300">{Math.round(crossPts)} <span className="text-[9px] font-bold">pts</span></p>
+                   <p className="text-[9px] font-bold text-emerald-400 mt-1">{crossTitles.size} irisan · poin Scopus dipakai</p>
                 </div>
                 {/* Grand Total */}
                 <div className="p-4 bg-violet-50 dark:bg-violet-950/20 rounded-2xl border border-violet-200 dark:border-violet-900/30">
-                  <p className="text-[8px] font-black text-violet-500 uppercase tracking-widest mb-1">Total (No Double-Count)</p>
-                  <p className="text-xl font-black text-violet-700 dark:text-violet-300">{grandTotal.toFixed(1)} <span className="text-[9px] font-bold">pts</span></p>
-                  <p className="text-[9px] font-bold text-violet-400 mt-1">Scopus + Scholar + Cross</p>
+                   <p className="text-[8px] font-black text-violet-500 uppercase tracking-widest mb-1">Total (No Double-Count)</p>
+                   <p className="text-xl font-black text-violet-700 dark:text-violet-300">{Math.round(grandTotal)} <span className="text-[9px] font-bold">pts</span></p>
+                   <p className="text-[9px] font-bold text-violet-400 mt-1">Scopus + Scholar + Cross</p>
                 </div>
               </div>
             );
@@ -1545,10 +1545,10 @@ export default function ExternalDocumentsView({
                     <div className="text-right">
                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Poin</p>
                       <p className="text-lg font-black text-emerald-600">
-                        {crossIndexedDocs.reduce((acc: number, doc: any) => {
+                        {Math.round(crossIndexedDocs.reduce((acc: number, doc: any) => {
                           const sd = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                           return acc + calculateScopusBreakdown(sd || doc).totalPoints;
-                        }, 0).toFixed(2)} pts
+                        }, 0))} pts
                       </p>
                     </div>
                     <div className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">

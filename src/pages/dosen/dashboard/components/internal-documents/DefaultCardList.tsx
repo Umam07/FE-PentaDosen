@@ -36,7 +36,7 @@ export default function DefaultCardList({
             >
               <div className={`w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm transition-colors ${theme.iconBg}`}>
                 <span className="text-lg font-black text-slate-900 dark:text-white leading-none">
-                  {Number(doc.awarded_points) || 0}
+                  {Math.round(Number(doc.awarded_points) || 0)}
                 </span>
                 <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">
                   PTS

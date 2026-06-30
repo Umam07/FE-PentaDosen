@@ -120,7 +120,7 @@ export default function HKITable({
                     </td>
                     <td className="px-6 py-4 text-right">
                       <span className="text-sm font-black text-primary-600 whitespace-nowrap">
-                        +{Number(doc.awarded_points) || 0} PTS
+                        +{Math.round(Number(doc.awarded_points) || 0)} PTS
                       </span>
                     </td>
                     <td className="hidden sm:table-cell px-6 py-4">

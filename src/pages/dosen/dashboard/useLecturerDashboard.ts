@@ -90,25 +90,22 @@ export default function useLecturerDashboard(user: any) {
     );
     
     const scopusPts = (scopusPublications || []).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const scholarPts = parseFloat(
-      (publications || [])
+    const scholarPts = (publications || [])
         .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)))
-        .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0)
-        .toFixed(1)
-    );
+        .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
     
     return {
-      total: parseFloat((scopusPts + scholarPts).toFixed(1)),
-      scopus: scopusPts,
-      scholar: scholarPts
+      total: Math.round(scopusPts + scholarPts),
+      scopus: Math.round(scopusPts),
+      scholar: Math.round(scholarPts)
     };
   }, [profileData]);
 
   const internalPoints = useMemo(() => {
-    return approvedDocs.reduce((acc, doc) => acc + (Number(doc.awarded_points) || 0), 0);
+    return Math.round(approvedDocs.reduce((acc, doc) => acc + (Number(doc.awarded_points) || 0), 0));
   }, [approvedDocs]);
 
-  const grandTotal = parseFloat((apiPoints.total + internalPoints).toFixed(1));
+  const grandTotal = apiPoints.total + internalPoints;
 
   const filteredDocs = useMemo(() => {
     const base = internalDocumentsOnly;

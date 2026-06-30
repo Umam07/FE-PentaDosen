@@ -103,7 +103,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                   <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400 truncate">{user.program_studi}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-black text-slate-900 dark:text-white">{user.total_kpi_points.toLocaleString()}</p>
+                  <p className="text-sm font-black text-slate-900 dark:text-white">{Math.round(user.total_kpi_points).toLocaleString()}</p>
                   <p className="text-[8px] font-black text-slate-600 dark:text-slate-400 uppercase">Poin KPI</p>
                 </div>
               </button>

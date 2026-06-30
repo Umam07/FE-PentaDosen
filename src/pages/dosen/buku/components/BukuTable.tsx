@@ -212,7 +212,7 @@ export default function BukuTable({
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle text-right">
                       <div className="flex flex-col items-end">
                         <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter">
-                          +{doc.awarded_points || 0} PTS
+                          +{Math.round(doc.awarded_points || 0)} PTS
                         </span>
                       </div>
                     </td>

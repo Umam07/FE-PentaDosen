@@ -190,7 +190,7 @@ export default function Publication({ user }: { user: any }) {
       total: src.length,
       approved: src.filter((d: any) => d.status === 'Approved').length,
       pending: src.filter((d: any) => d.status === 'Pending' || d.status === 'Verified by Fakultas').length,
-      points: src.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
+      points: Math.round(src.reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0))
     };
   }, [filteredDocuments]);
 

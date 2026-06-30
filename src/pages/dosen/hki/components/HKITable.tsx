@@ -182,7 +182,7 @@ export default function HKITable({
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
                       <div className="flex flex-col items-end sm:items-start">
                         <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter">
-                          +{doc.awarded_points} PTS
+                          +{Math.round(doc.awarded_points)} PTS
                         </span>
                       </div>
                     </td>

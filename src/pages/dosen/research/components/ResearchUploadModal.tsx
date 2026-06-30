@@ -58,18 +58,15 @@ export default function ResearchUploadModal({
     if (!rawValue || isNaN(Number(rawValue))) return null;
 
     let basePoints = 0;
-    if (program === 'hibah luar negeri') basePoints = 60;
-    else if (program === 'hibah dikti') basePoints = 50;
-    else if (program === 'hibah internal') basePoints = 40;
-
-    const danaPoints = (Number(rawValue) / 1000000) * 0.05;
-    const totalPoints = basePoints + danaPoints;
+    if (program === 'hibah luar negeri') basePoints = 10;
+    else if (program === 'hibah dikti') basePoints = 6;
+    else if (program === 'hibah internal') basePoints = 3;
 
     return {
       base: basePoints,
-      dana: danaPoints.toFixed(2),
-      total: totalPoints.toFixed(2),
-      message: `Estimasi Poin: ${basePoints} (Program) + ${danaPoints.toFixed(2)} (Dana) = ${totalPoints.toFixed(2)} Poin`,
+      dana: '0',
+      total: basePoints.toString(),
+      message: `Estimasi Poin: ${basePoints} Poin`,
     };
   }, [program, danaDisetujui]);
 
@@ -136,9 +133,9 @@ export default function ResearchUploadModal({
               </label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[
-                  { key: 'hibah internal', label: 'Hibah Internal', icon: Home, pts: 40 },
-                  { key: 'hibah dikti', label: 'Hibah Dikti', icon: Landmark, pts: 50 },
-                  { key: 'hibah luar negeri', label: 'Hibah Luar Negeri', icon: Globe, pts: 60 },
+                  { key: 'hibah internal', label: 'Hibah Internal', icon: Home, pts: 3 },
+                  { key: 'hibah dikti', label: 'Hibah Dikti', icon: Landmark, pts: 6 },
+                  { key: 'hibah luar negeri', label: 'Hibah Luar Negeri', icon: Globe, pts: 10 },
                 ].map((item) => (
                   <button
                     key={item.key}
@@ -416,10 +413,9 @@ export default function ResearchUploadModal({
             </div>
             <div className="space-y-2.5">
               {[
-                { label: 'Hibah Luar Negeri', pts: '60 Pts Base', desc: 'Penelitian tingkat internasional' },
-                { label: 'Hibah Dikti (Eksternal)', pts: '50 Pts Base', desc: 'Hibah nasional / kementerian' },
-                { label: 'Hibah Internal Institusi', pts: '40 Pts Base', desc: 'Pendanaan internal kampus' },
-                { label: 'Multiplier Dana', pts: '+0.05 / Juta', desc: 'Tambahan poin dari dana disetujui' },
+                { label: 'Hibah Luar Negeri', pts: '10 Pts', desc: 'Penelitian tingkat internasional' },
+                { label: 'Hibah Dikti (Eksternal)', pts: '6 Pts', desc: 'Hibah nasional / kementerian' },
+                { label: 'Hibah Internal Institusi', pts: '3 Pts', desc: 'Pendanaan internal kampus' },
               ].map((w) => (
                 <div
                   key={w.label}

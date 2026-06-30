@@ -130,20 +130,20 @@ export default function LecturerProfileInsights() {
         }
       }
 
-      return Math.round(awardedPoints * 100) / 100;
+      return Math.round(awardedPoints);
     };
 
     const extCross = (scopusPublications || []).filter((s: any) => crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
     const extScopus = (scopusPublications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
-    const extScholar = parseFloat(
-      (publications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0).toFixed(1)
-    );
-    const apiTotal = parseFloat((extCross + extScopus + extScholar).toFixed(1));
+    const extScholar = (publications || []).filter((s: any) => !crossTitles.has(normalizeT(s.title))).reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+    const apiTotal = Math.round(extCross + extScopus + extScholar);
 
     // Calculate Internal points from approved documents with file_url
-    const internalTotal = documents
-      .filter(d => d.status === 'Approved' && d.file_url && d.file_url !== '')
-      .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0);
+    const internalTotal = Math.round(
+      documents
+        .filter(d => d.status === 'Approved' && d.file_url && d.file_url !== '')
+        .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)
+    );
 
     return [
       { 
