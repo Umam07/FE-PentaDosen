@@ -200,9 +200,9 @@ export default function AdminAllDocuments() {
       titleCell.alignment = { vertical: 'middle', horizontal: 'left' };
       sheet.getRow(1).height = 30;
 
-      // Subtitle Section
+      // Metadata Section
       sheet.mergeCells('A2:L2');
-      const subtitleCell = sheet.getCell('A2');
+      const metaCell = sheet.getCell('A2');
       const dateStr = new Date().toLocaleDateString('id-ID', { 
         weekday: 'long', 
         year: 'numeric', 
@@ -211,13 +211,21 @@ export default function AdminAllDocuments() {
         hour: '2-digit',
         minute: '2-digit'
       });
-      subtitleCell.value = `Diekspor pada: ${dateStr}${selectedFakultas ? ` | Filter Fakultas: ${selectedFakultas}` : ''}${searchTerm ? ` | Kata Kunci: "${searchTerm}"` : ''}`;
-      subtitleCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
-      subtitleCell.alignment = { vertical: 'middle', horizontal: 'left' };
+      metaCell.value = `Diekspor oleh : ${user?.name || 'Admin'}  |  Diekspor pada : ${dateStr}`;
+      metaCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+      metaCell.alignment = { vertical: 'middle', horizontal: 'left' };
       sheet.getRow(2).height = 20;
 
+      // Filter Section
+      sheet.mergeCells('A3:L3');
+      const filterCell = sheet.getCell('A3');
+      filterCell.value = `Filter Fakultas : ${selectedFakultas || 'Semua Fakultas'}  |  Kata Kunci : "${searchTerm || '-'}"`;
+      filterCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+      filterCell.alignment = { vertical: 'middle', horizontal: 'left' };
+      sheet.getRow(3).height = 20;
+
       // Empty Row
-      sheet.getRow(3).height = 10;
+      sheet.getRow(4).height = 10;
 
       // Define Columns and Headers
       let headers: string[] = [];
@@ -248,7 +256,7 @@ export default function AdminAllDocuments() {
       }
 
       // Add Header Row
-      const headerRowNumber = 4;
+      const headerRowNumber = 5;
       const headerRow = sheet.getRow(headerRowNumber);
       headerRow.height = 28;
       
