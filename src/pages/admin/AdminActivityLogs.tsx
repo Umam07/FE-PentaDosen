@@ -4,9 +4,11 @@ import {
   Activity, Clock, ShieldAlert, User as UserIcon, 
   ChevronLeft, ChevronRight, LogOut, RefreshCw, 
   FileText, Beaker, Award, BookOpen, Book, Filter, Search,
-  TrendingUp, Zap, Shield, Copy, Check
+  TrendingUp, Zap, Shield, Copy, Check, FileDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export default function AdminActivityLogs() {
   const { user } = useOutletContext<{ user: any }>();
@@ -42,6 +44,175 @@ export default function AdminActivityLogs() {
       setLogs(data.logs || []);
       setTotalItems(data.total || 0);
       setTotalPages(data.last_page || 1);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setLoading(true);
+      // Fetch all matching logs
+      let url = `/api/admin/activity-logs?page=1&per_page=100000`;
+      if (selectedAction) url += `&action=${selectedAction}`;
+      
+      const res = await fetch(url);
+      const data = await res.json();
+      const allLogs = data.logs || [];
+
+      // Filter locally by search term
+      const filteredAllLogs = allLogs.filter((log: any) => 
+        log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      if (filteredAllLogs.length === 0) return;
+
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet('Log Aktivitas');
+
+      // Grid lines
+      sheet.views = [{ showGridLines: true }];
+
+      // Title Section
+      sheet.mergeCells('A1:F1');
+      const titleCell = sheet.getCell('A1');
+      titleCell.value = 'LOG AKTIVITAS SISTEM - PENTADOSEN';
+      titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF1E293B' } };
+      titleCell.alignment = { vertical: 'middle', horizontal: 'left' };
+      sheet.getRow(1).height = 30;
+
+      // Metadata Section
+      sheet.mergeCells('A2:F2');
+      const metaCell = sheet.getCell('A2');
+      const dateStr = new Date().toLocaleDateString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      metaCell.value = `Diekspor oleh : ${user?.name || 'Admin'}  |  Diekspor pada : ${dateStr}`;
+      metaCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+      metaCell.alignment = { vertical: 'middle', horizontal: 'left' };
+      sheet.getRow(2).height = 20;
+
+      // Filters Section
+      sheet.mergeCells('A3:F3');
+      const filterCell = sheet.getCell('A3');
+      filterCell.value = `Filter Aksi : ${selectedAction || 'Semua Aksi'}  |  Kata Kunci : "${searchTerm || '-'}"`;
+      filterCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+      filterCell.alignment = { vertical: 'middle', horizontal: 'left' };
+      sheet.getRow(3).height = 20;
+
+      // Empty space row
+      sheet.getRow(4).height = 10;
+
+      // Table Headers
+      const headers = ['No', 'Waktu', 'Nama Pengguna', 'Peran', 'Aksi', 'Deskripsi Detail'];
+      const colWidths = [
+        { width: 6 },
+        { width: 22 },
+        { width: 25 },
+        { width: 16 },
+        { width: 18 },
+        { width: 65 }
+      ];
+
+      const headerRowNumber = 5;
+      const headerRow = sheet.getRow(headerRowNumber);
+      headerRow.height = 28;
+
+      headers.forEach((h, colIdx) => {
+        const cell = headerRow.getCell(colIdx + 1);
+        cell.value = h;
+        cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF4F46E5' } // Indigo 600
+        };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF312E81' } },
+          bottom: { style: 'medium', color: { argb: 'FF312E81' } },
+          left: { style: 'thin', color: { argb: 'FF312E81' } },
+          right: { style: 'thin', color: { argb: 'FF312E81' } }
+        };
+      });
+
+      // Populate Data Rows
+      filteredAllLogs.forEach((log: any, dataIdx) => {
+        const rowNum = headerRowNumber + 1 + dataIdx;
+        const row = sheet.getRow(rowNum);
+        row.height = 22;
+
+        const formattedTime = new Date(log.created_at).toLocaleString('id-ID', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+
+        const rowValues = [
+          dataIdx + 1,
+          formattedTime,
+          log.user?.name || 'Sistem / Anonim',
+          log.user?.role || 'System',
+          log.action || '-',
+          log.description || '-'
+        ];
+
+        rowValues.forEach((val, colIdx) => {
+          const cell = row.getCell(colIdx + 1);
+          cell.value = val;
+          cell.font = { name: 'Arial', size: 10, color: { argb: 'FF334155' } };
+          
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+          };
+
+          // Alignments
+          if (colIdx === 0 || colIdx === 1 || colIdx === 3 || colIdx === 4) {
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          } else {
+            cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: colIdx === 5 };
+          }
+
+          // Zebra striping
+          if (dataIdx % 2 === 1) {
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFF8FAFC' }
+            };
+          }
+        });
+      });
+
+      colWidths.forEach((col, idx) => {
+        sheet.getColumn(idx + 1).width = col.width;
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const now = new Date();
+      const YYYY = now.getFullYear();
+      const MM = String(now.getMonth() + 1).padStart(2, '0');
+      const DD = String(now.getDate()).padStart(2, '0');
+      const HH = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+
+      const filename = `Log-Aktivitas_${YYYY}${MM}${DD}_${HH}${mm}.xlsx`;
+      saveAs(new Blob([buffer]), filename);
     } catch (err) {
       console.error(err);
     } finally {
@@ -179,12 +350,12 @@ export default function AdminActivityLogs() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => fetchLogs(currentPage, itemsPerPage, selectedAction)}
-            disabled={loading}
-            className="p-3.5 rounded-2xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-900/30 transition-all shadow-sm flex items-center justify-center disabled:opacity-50"
-            title="Refresh logs"
+            onClick={handleExportExcel}
+            disabled={loading || totalItems === 0}
+            className="flex items-center justify-center px-6 py-3.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-sm text-xs font-black uppercase tracking-widest text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <FileDown className="h-4 w-4 mr-2 text-primary-600" />
+            Export to excel
           </button>
           <div className="flex items-center gap-2 bg-primary-50 dark:bg-primary-900/20 px-5 py-3.5 rounded-2xl border border-primary-100 dark:border-primary-900/30">
             <div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
