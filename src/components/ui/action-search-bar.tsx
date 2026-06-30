@@ -62,7 +62,7 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
     { label: "Publikasi Jurnal Nasional", path: "/publication?kategori=Jurnal Nasional", icon: <FileText className="h-4 w-4 text-indigo-500" />, category: "Publikasi" },
     { label: "HKI (Hak Kekayaan Intelektual)", path: "/hki", icon: <Award className="h-4 w-4 text-amber-500" />, category: "Karya Ilmiah" },
     { label: "Penelitian Dosen", path: "/research", icon: <Beaker className="h-4 w-4 text-purple-500" />, category: "Karya Ilmiah" },
-    { label: "Buku & Monograf", path: "/buku", icon: <Book className="h-4 w-4 text-pink-500" />, category: "Karya Ilmiah" },
+    { label: "Buku", path: "/buku", icon: <Book className="h-4 w-4 text-pink-500" />, category: "Karya Ilmiah" },
     { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ],
   "admin lppm": [
