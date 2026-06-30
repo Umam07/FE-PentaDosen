@@ -4,7 +4,7 @@ import {
   GraduationCap, Globe, Users, ChevronRight, X, ChevronLeft,
   ShieldCheck, ArrowRight, Zap, Database, ExternalLink, Filter,
   CheckCircle2, Play, Pause, Square, Terminal, Copy, Check,
-  AlertTriangle, Clock, Activity, Info, Settings, Loader2
+  AlertTriangle, Clock, Activity, Info, Settings, Loader2, Mail
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useOutletContext } from 'react-router-dom';
@@ -1116,8 +1116,13 @@ export default function AdminSync() {
           <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800">
             <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
               <tr>
-                {['Dosen Peneliti', 'Scholar Status', 'Scopus Status', 'Kendali'].map((h, i) => (
-                  <th key={i} className={`px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em] ${h === 'Kendali' ? 'text-right' : ''}`}>
+                {['Nama Dosen', 'Fakultas / Prodi', 'Scholar Status', 'Scopus Status', 'Kendali'].map((h, i) => (
+                  <th 
+                    key={i} 
+                    className={`px-6 py-5 text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em] ${
+                      ['Scholar Status', 'Scopus Status', 'Kendali'].includes(h) ? 'text-center' : 'text-left'
+                    }`}
+                  >
                     {h}
                   </th>
                 ))}
@@ -1135,7 +1140,7 @@ export default function AdminSync() {
                       ${isCurrentlySyncing ? 'bg-emerald-50/10 dark:bg-emerald-950/5 border-l-4 border-l-emerald-500' : ''}
                     `}
                   >
-                    <td className="px-6 py-6">
+                    <td className="px-6 py-6 text-left">
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-2xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-gray-400 dark:text-zinc-500 font-black text-lg border border-gray-200 dark:border-zinc-700 shadow-inner group-hover:scale-105 transition-transform overflow-hidden shrink-0">
                           {l.thumbnail ? (
@@ -1156,15 +1161,26 @@ export default function AdminSync() {
                               </span>
                             )}
                           </div>
-                          <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 tracking-wider flex items-center gap-2 mt-1 uppercase tracking-widest">
-                             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                             {l.email?.split('@')[0]}
+                          <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 tracking-wider flex items-center gap-1.5 mt-1 uppercase tracking-widest">
+                             <Mail className="w-3.5 h-3.5 text-primary-400/70" />
+                             {l.email || 'N/A'}
                           </p>
                         </div>
                       </div>
                     </td>
                     
-                    <td className="px-6 py-6">
+                    <td className="px-6 py-6 text-left">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                          {l.program_studi || 'N/A'}
+                        </span>
+                        <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1.5">
+                          {l.fakultas || 'N/A'}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    <td className="px-6 py-6 text-center">
                       {l.scholar_id ? (
                         <div className="space-y-1.5">
                           <span className="inline-flex items-center gap-2 text-[9px] font-black text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3.5 py-1.5 rounded-xl border border-blue-100 dark:border-blue-900/40 uppercase tracking-wider shadow-sm">
@@ -1182,7 +1198,7 @@ export default function AdminSync() {
                       )}
                     </td>
                     
-                    <td className="px-6 py-6">
+                    <td className="px-6 py-6 text-center">
                       {l.scopus_id ? (
                         <div className="space-y-1.5">
                           <span className="inline-flex items-center gap-2 text-[9px] font-black text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 px-3.5 py-1.5 rounded-xl border border-orange-100 dark:border-orange-900/40 uppercase tracking-wider shadow-sm">
@@ -1200,7 +1216,7 @@ export default function AdminSync() {
                       )}
                     </td>
                     
-                    <td className="px-6 py-6 text-right">
+                    <td className="px-6 py-6 text-center">
                        <button
                          onClick={() => {
                            setSelectedLecturerId(l.id);
