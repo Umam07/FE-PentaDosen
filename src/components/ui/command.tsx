@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { type DialogProps } from "@radix-ui/react-dialog";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
 import { Search } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -23,55 +23,129 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-interface CommandDialogProps extends DialogProps {}
+interface CommandDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
+}
 
-const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
+// Framer-motion variants
+const overlayVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2, ease: "easeOut" } },
+  exit: { opacity: 0, transition: { duration: 0.18, ease: "easeIn" } },
+};
+
+const modalVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.94,
+    y: -12,
+    filter: "blur(4px)",
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      type: "spring",
+      stiffness: 380,
+      damping: 30,
+      mass: 0.8,
+      // stagger children slightly
+      staggerChildren: 0.04,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.96,
+    y: -8,
+    filter: "blur(3px)",
+    transition: {
+      duration: 0.16,
+      ease: [0.4, 0, 1, 1],
+    },
+  },
+};
+
+const CommandDialog = ({ children, open, onOpenChange }: CommandDialogProps) => {
   return (
-    <Dialog {...props}>
-      <DialogContent
-        className={cn(
-          "overflow-hidden p-0 gap-0",
-          // Wider modal: 92vw on mobile, max-w-3xl on larger screens
-          "w-[92vw] max-w-3xl",
-          "rounded-2xl sm:rounded-2xl",
-          // Glass-morphism
-          "bg-white/96 dark:bg-zinc-950/96 backdrop-blur-2xl",
-          // Border
-          "border border-gray-100/80 dark:border-zinc-800/60",
-          // Premium layered shadow
-          "shadow-[0_32px_80px_-12px_rgba(0,0,0,0.16),0_2px_16px_-2px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.03)]",
-          "dark:shadow-[0_32px_80px_-12px_rgba(0,0,0,0.7),0_2px_16px_-2px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.04)]"
-        )}
-      >
-        {/* Top gradient accent bar */}
-        <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-2xl bg-gradient-to-r from-transparent via-primary-500/50 to-transparent pointer-events-none z-10" />
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <AnimatePresence>
+        {open && (
+          <DialogPrimitive.Portal forceMount>
+            {/* Animated backdrop */}
+            <DialogPrimitive.Overlay asChild forceMount>
+              <motion.div
+                className="fixed inset-0 z-[101] bg-black/50 backdrop-blur-sm"
+                variants={overlayVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              />
+            </DialogPrimitive.Overlay>
 
-        <Command
-          className={cn(
-            // Group heading
-            "[&_[cmdk-group-heading]]:px-4",
-            "[&_[cmdk-group-heading]]:pt-5 [&_[cmdk-group-heading]]:pb-2",
-            "[&_[cmdk-group-heading]]:font-black",
-            "[&_[cmdk-group-heading]]:text-[9px]",
-            "[&_[cmdk-group-heading]]:uppercase",
-            "[&_[cmdk-group-heading]]:tracking-[0.2em]",
-            "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-600",
-            // Group wrapper
-            "[&_[cmdk-group]]:px-2",
-            // Input wrapper icon
-            "[&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5",
-            // Input height — taller
-            "[&_[cmdk-input]]:h-16",
-            // Item spacing
-            "[&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3",
-            // Item icon size
-            "[&_[cmdk-item]_svg]:h-4 [&_[cmdk-item]_svg]:w-4"
-          )}
-        >
-          {children}
-        </Command>
-      </DialogContent>
-    </Dialog>
+            {/* Animated modal */}
+            <DialogPrimitive.Content asChild forceMount>
+              <motion.div
+                className={cn(
+                  // Position
+                  "fixed left-1/2 top-[22%] z-[102] -translate-x-1/2 -translate-y-0",
+                  // Layout
+                  "overflow-hidden",
+                  // Sizing — wider
+                  "w-[92vw] max-w-3xl",
+                  // Shape
+                  "rounded-2xl",
+                  // Glass-morphism background
+                  "bg-white/96 dark:bg-zinc-950/96 backdrop-blur-2xl",
+                  // Border
+                  "border border-gray-100/80 dark:border-zinc-800/60",
+                  // Premium layered shadow
+                  "shadow-[0_32px_80px_-12px_rgba(0,0,0,0.18),0_4px_24px_-4px_rgba(0,0,0,0.10),0_0_0_1px_rgba(0,0,0,0.03)]",
+                  "dark:shadow-[0_32px_80px_-12px_rgba(0,0,0,0.75),0_4px_24px_-4px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)]",
+                  // Focus ring
+                  "outline-none"
+                )}
+                variants={modalVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                {/* Top gradient accent bar */}
+                <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-2xl bg-gradient-to-r from-transparent via-primary-500/60 to-transparent pointer-events-none z-10" />
+
+                <Command
+                  className={cn(
+                    // Group heading
+                    "[&_[cmdk-group-heading]]:px-4",
+                    "[&_[cmdk-group-heading]]:pt-5 [&_[cmdk-group-heading]]:pb-2",
+                    "[&_[cmdk-group-heading]]:font-black",
+                    "[&_[cmdk-group-heading]]:text-[9px]",
+                    "[&_[cmdk-group-heading]]:uppercase",
+                    "[&_[cmdk-group-heading]]:tracking-[0.2em]",
+                    "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-600",
+                    // Group wrapper
+                    "[&_[cmdk-group]]:px-2",
+                    // Input wrapper icon
+                    "[&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5",
+                    // Input height — taller
+                    "[&_[cmdk-input]]:h-16",
+                    // Item spacing
+                    "[&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3",
+                    // Item icon size
+                    "[&_[cmdk-item]_svg]:h-4 [&_[cmdk-item]_svg]:w-4"
+                  )}
+                >
+                  {children}
+                </Command>
+              </motion.div>
+            </DialogPrimitive.Content>
+          </DialogPrimitive.Portal>
+        )}
+      </AnimatePresence>
+    </DialogPrimitive.Root>
   );
 };
 
