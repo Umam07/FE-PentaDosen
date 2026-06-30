@@ -118,24 +118,24 @@ const CommandDialog = ({ children, open, onOpenChange }: CommandDialogProps) => 
 
                 <Command
                   className={cn(
-                    // Group heading
+                    // Group heading — lebih besar
                     "[&_[cmdk-group-heading]]:px-4",
                     "[&_[cmdk-group-heading]]:pt-5 [&_[cmdk-group-heading]]:pb-2",
                     "[&_[cmdk-group-heading]]:font-black",
-                    "[&_[cmdk-group-heading]]:text-[9px]",
+                    "[&_[cmdk-group-heading]]:text-[11px]",
                     "[&_[cmdk-group-heading]]:uppercase",
-                    "[&_[cmdk-group-heading]]:tracking-[0.2em]",
-                    "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-600",
+                    "[&_[cmdk-group-heading]]:tracking-[0.18em]",
+                    "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-500",
                     // Group wrapper
                     "[&_[cmdk-group]]:px-2",
-                    // Input wrapper icon
-                    "[&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5",
-                    // Input height — taller
-                    "[&_[cmdk-input]]:h-16",
-                    // Item spacing
-                    "[&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3",
-                    // Item icon size
-                    "[&_[cmdk-item]_svg]:h-4 [&_[cmdk-item]_svg]:w-4"
+                    // Input wrapper icon — lebih besar
+                    "[&_[cmdk-input-wrapper]_svg]:h-6 [&_[cmdk-input-wrapper]_svg]:w-6",
+                    // Input height — lebih tinggi
+                    "[&_[cmdk-input]]:h-20",
+                    // Item spacing — lebih longgar
+                    "[&_[cmdk-item]]:px-4 [&_[cmdk-item]]:py-4",
+                    // Item icon size — lebih besar
+                    "[&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5"
                   )}
                 >
                   {children}
@@ -154,18 +154,18 @@ const CommandInput = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
   <div
-    className="flex items-center gap-3 border-b border-gray-100/80 dark:border-zinc-800/80 px-5"
+    className="flex items-center gap-4 border-b border-gray-100/80 dark:border-zinc-800/80 px-5"
     cmdk-input-wrapper=""
   >
-    {/* Styled search icon */}
-    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-500/10 shrink-0">
-      <Search className="h-4 w-4 text-primary-500 dark:text-primary-400" />
+    {/* Styled search icon — lebih besar */}
+    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-500/10 shrink-0">
+      <Search className="h-5 w-5 text-primary-500 dark:text-primary-400" />
     </div>
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-16 w-full rounded-md bg-transparent py-4",
-        "text-sm font-medium outline-none",
+        "flex h-20 w-full rounded-md bg-transparent py-4",
+        "text-base font-medium outline-none",
         "placeholder:text-gray-400/70 dark:placeholder:text-zinc-500",
         "text-gray-900 dark:text-zinc-100",
         "disabled:cursor-not-allowed disabled:opacity-50",
@@ -186,8 +186,8 @@ const CommandList = React.forwardRef<
     ref={ref}
     className={cn(
       // Taller list area
-      "max-h-[480px] overflow-y-auto overflow-x-hidden",
-      "p-2 pb-4",
+      "max-h-[540px] overflow-y-auto overflow-x-hidden",
+      "p-3 pb-5",
       className
     )}
     {...props}
@@ -202,14 +202,14 @@ const CommandEmpty = React.forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className="flex flex-col items-center justify-center py-14 gap-2 text-gray-400 dark:text-zinc-600"
+    className="flex flex-col items-center justify-center py-14 gap-3 text-gray-400 dark:text-zinc-600"
     {...props}
   >
-    <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-zinc-900 flex items-center justify-center mb-1 shadow-inner">
-      <Search className="w-5 h-5 opacity-40" />
+    <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-zinc-900 flex items-center justify-center mb-1 shadow-inner">
+      <Search className="w-7 h-7 opacity-40" />
     </div>
-    <span className="text-xs font-black uppercase tracking-[0.15em]">Tidak ditemukan</span>
-    <span className="text-[10px] text-gray-300 dark:text-zinc-700 font-medium">Coba kata kunci lain</span>
+    <span className="text-sm font-black uppercase tracking-[0.15em]">Tidak ditemukan</span>
+    <span className="text-xs text-gray-300 dark:text-zinc-700 font-medium">Coba kata kunci lain</span>
   </CommandPrimitive.Empty>
 ));
 
@@ -225,12 +225,12 @@ const CommandGroup = React.forwardRef<
       "overflow-hidden p-1",
       "text-gray-900 dark:text-zinc-100",
       "[&_[cmdk-group-heading]]:px-3",
-      "[&_[cmdk-group-heading]]:pt-4 [&_[cmdk-group-heading]]:pb-1.5",
-      "[&_[cmdk-group-heading]]:text-[9px]",
+      "[&_[cmdk-group-heading]]:pt-4 [&_[cmdk-group-heading]]:pb-2",
+      "[&_[cmdk-group-heading]]:text-[11px]",
       "[&_[cmdk-group-heading]]:font-black",
       "[&_[cmdk-group-heading]]:uppercase",
-      "[&_[cmdk-group-heading]]:tracking-[0.2em]",
-      "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-600",
+      "[&_[cmdk-group-heading]]:tracking-[0.18em]",
+      "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-500",
       className
     )}
     {...props}
@@ -263,10 +263,10 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      // Base layout
-      "relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2.5 gap-3",
-      // Typography
-      "text-xs font-semibold text-gray-700 dark:text-zinc-300",
+      // Base layout — lebih longgar
+      "relative flex cursor-pointer select-none items-center rounded-xl px-4 py-3.5 gap-4",
+      // Typography — lebih besar
+      "text-sm font-semibold text-gray-700 dark:text-zinc-300",
       // Transition
       "outline-none transition-all duration-150",
       // Selected: gradient background
@@ -275,7 +275,7 @@ const CommandItem = React.forwardRef<
       "dark:data-[selected='true']:from-zinc-800/80 dark:data-[selected='true']:to-zinc-800/30",
       "data-[selected='true']:text-primary-700 dark:data-[selected='true']:text-zinc-100",
       // Left accent bar on selected
-      "before:absolute before:left-0 before:inset-y-2 before:w-[3px] before:rounded-full before:bg-transparent before:transition-colors",
+      "before:absolute before:left-0 before:inset-y-2.5 before:w-[3px] before:rounded-full before:bg-transparent before:transition-colors",
       "data-[selected='true']:before:bg-primary-500",
       // Disabled
       "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
@@ -295,8 +295,8 @@ const CommandShortcut = ({
     <span
       className={cn(
         "ml-auto shrink-0",
-        "text-[9px] font-black tracking-widest uppercase",
-        "px-2 py-0.5 rounded-md",
+        "text-[10px] font-black tracking-widest uppercase",
+        "px-2.5 py-1 rounded-md",
         "bg-gray-100 dark:bg-zinc-800/80",
         "text-gray-400 dark:text-zinc-500",
         "border border-gray-200/80 dark:border-zinc-700/60",

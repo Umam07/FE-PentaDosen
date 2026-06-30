@@ -178,15 +178,15 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
         <CommandInput placeholder="Ketik perintah atau cari halaman..." />
         
         {/* Dynamic Role Tabs inside Command Menu */}
-        <div className="px-4 py-2 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-900/30 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <div className="px-4 py-2.5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-900/30 flex items-center justify-between">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
             {rolesList.map((roleKey) => {
               const isActive = activeTab === roleKey;
               return (
                 <button
                   key={roleKey}
                   onClick={() => setActiveTab(roleKey)}
-                  className={`relative px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
+                  className={`relative px-3.5 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg transition-all ${
                     isActive
                       ? "text-primary-600 dark:text-zinc-100"
                       : "text-gray-450 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-zinc-300 hover:bg-gray-100/50 dark:hover:bg-zinc-800/50"
@@ -204,8 +204,8 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
               );
             })}
           </div>
-          <div className="hidden xs:flex items-center gap-1 text-[9px] font-bold text-primary-500/80 dark:text-primary-450/80 bg-primary-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest shrink-0">
-            <Sparkles className="w-2.5 h-2.5" />
+          <div className="hidden xs:flex items-center gap-1.5 text-[10px] font-bold text-primary-500/80 dark:text-primary-450/80 bg-primary-500/10 px-2.5 py-1 rounded-full uppercase tracking-widest shrink-0">
+            <Sparkles className="w-3 h-3" />
             <span>Role Mode</span>
           </div>
         </div>
@@ -222,17 +222,17 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
                   value={menu.label}
                   onSelect={() => handleItemSelect(menu.path)}
                 >
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="p-1.5 rounded-lg bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350">
+                  <div className="flex items-center gap-4 w-full">
+                    <div className="p-2 rounded-xl bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350 shrink-0">
                       {menu.icon}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-[11px] font-bold tracking-tight">{menu.label}</span>
-                      <span className="text-[9px] font-semibold text-gray-400 lowercase tracking-normal">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-bold tracking-tight">{menu.label}</span>
+                      <span className="text-xs font-medium text-gray-400 lowercase tracking-normal">
                         {menu.category} • {menu.path}
                       </span>
                     </div>
-                    <ChevronRight className="ml-auto w-3 h-3 text-gray-350 dark:text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ChevronRight className="ml-auto w-4 h-4 text-gray-350 dark:text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </CommandItem>
               ))}
@@ -248,20 +248,20 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
                   value={act.label}
                   onSelect={() => handleItemSelect(act.path || "", act)}
                 >
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="p-1.5 rounded-lg bg-primary-500/10 text-primary-500">
-                      <User className="h-4 w-4" />
+                  <div className="flex items-center gap-4 w-full">
+                    <div className="p-2 rounded-xl bg-primary-500/10 text-primary-500 shrink-0">
+                      <User className="h-5 w-5" />
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-[11px] font-bold tracking-tight">{act.label}</span>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-bold tracking-tight">{act.label}</span>
                       {act.description && (
-                        <span className="text-[9px] font-semibold text-gray-400 lowercase tracking-normal">
+                        <span className="text-xs font-medium text-gray-400 lowercase tracking-normal">
                           {act.description}
                         </span>
                       )}
                     </div>
                     {act.end && (
-                      <span className="ml-auto text-[8px] font-black tracking-widest text-primary-500 bg-primary-500/10 px-1.5 py-0.5 rounded">
+                      <span className="ml-auto text-[9px] font-black tracking-widest text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded">
                         {act.end}
                       </span>
                     )}
@@ -277,13 +277,13 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
               value="Pengaturan Profil Diri"
               onSelect={() => handleItemSelect("/profile")}
             >
-              <div className="flex items-center gap-3 w-full">
-                <div className="p-1.5 rounded-lg bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350">
-                  <User className="h-4 w-4 text-blue-500" />
+              <div className="flex items-center gap-4 w-full">
+                <div className="p-2 rounded-xl bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350 shrink-0">
+                  <User className="h-5 w-5 text-blue-500" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-bold tracking-tight">Pengaturan Profil Diri</span>
-                  <span className="text-[9px] font-semibold text-gray-400 lowercase tracking-normal">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-bold tracking-tight">Pengaturan Profil Diri</span>
+                  <span className="text-xs font-medium text-gray-400 lowercase tracking-normal">
                     kelola profil dan integrasi ID Scopus/Scholar
                   </span>
                 </div>
@@ -297,13 +297,13 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
                  window.dispatchEvent(new CustomEvent("penta-logout"));
                }}
             >
-              <div className="flex items-center gap-3 w-full">
-                <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500">
-                  <LogOut className="h-4 w-4" />
+              <div className="flex items-center gap-4 w-full">
+                <div className="p-2 rounded-xl bg-red-500/10 text-red-500 shrink-0">
+                  <LogOut className="h-5 w-5" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-bold text-red-650 dark:text-red-400 tracking-tight">Keluar dari Sistem</span>
-                  <span className="text-[9px] font-semibold text-red-400/70 lowercase tracking-normal">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-bold text-red-650 dark:text-red-400 tracking-tight">Keluar dari Sistem</span>
+                  <span className="text-xs font-medium text-red-400/70 lowercase tracking-normal">
                     akhiri sesi login saat ini
                   </span>
                 </div>
