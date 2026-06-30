@@ -55,6 +55,14 @@ export default function Topbar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const performLogout = () => {
+      handleLogout();
+    };
+    window.addEventListener("penta-logout", performLogout);
+    return () => window.removeEventListener("penta-logout", performLogout);
+  }, [handleLogout]);
+
   const menuItems = user?.role === 'super admin' ? [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Panel CMS', path: '/admin/cms', icon: ShieldAlert, category: 'Menu' },

@@ -118,29 +118,23 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       // Toggle dialog: Ctrl+K
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
 
       // Navigate to profile: Ctrl+I
-      if (e.key === "i" && (e.metaKey || e.ctrlKey)) {
+      if (e.key.toLowerCase() === "i" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen(false);
         navigate("/profile");
       }
 
       // Logout: Ctrl+Shift+Q
-      if (e.key === "q" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
+      if (e.key.toLowerCase() === "q" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen(false);
-        const logoutBtn = document.querySelector('[data-logout-trigger]');
-        if (logoutBtn instanceof HTMLElement) {
-          logoutBtn.click();
-        } else {
-          sessionStorage.removeItem("pentadosen_user");
-          window.location.href = "/login";
-        }
+        window.dispatchEvent(new CustomEvent("penta-logout"));
       }
     };
 
@@ -298,18 +292,10 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
             </CommandItem>
             <CommandItem
               value="Keluar Logout Sistem"
-              onSelect={() => {
-                setOpen(false);
-                // Dispatch event or call a reload/navigate to handle logout
-                const logoutBtn = document.querySelector('[data-logout-trigger]');
-                if (logoutBtn instanceof HTMLElement) {
-                  logoutBtn.click();
-                } else {
-                  // Fallback: clear storage and navigate
-                  sessionStorage.removeItem("pentadosen_user");
-                  window.location.href = "/login";
-                }
-              }}
+               onSelect={() => {
+                 setOpen(false);
+                 window.dispatchEvent(new CustomEvent("penta-logout"));
+               }}
             >
               <div className="flex items-center gap-3 w-full">
                 <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500">
