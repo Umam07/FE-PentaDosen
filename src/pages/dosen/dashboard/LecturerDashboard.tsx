@@ -2,7 +2,6 @@ import React from 'react';
 import { Info, Sparkles, FileText, Globe, RefreshCw } from 'lucide-react';
 
 import useLecturerDashboard from './useLecturerDashboard';
-import AnnouncementsBanner from './components/AnnouncementsBanner';
 import PerformanceSummary from './components/PerformanceSummary';
 import InternalDocumentsView from './components/InternalDocumentsView';
 import ExternalDocumentsView from './components/ExternalDocumentsView';
@@ -19,7 +18,6 @@ export default function LecturerDashboard({ user }: { user: any }) {
     setActiveView,
     publicationSubTab,
     setPublicationSubTab,
-    announcements,
     profileData,
     fetchData,
     internalDocumentsOnly,
@@ -41,8 +39,6 @@ export default function LecturerDashboard({ user }: { user: any }) {
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-10 pb-20">
-      {/* Announcements Banner List */}
-      <AnnouncementsBanner announcements={announcements} />
 
       {/* Information Notice — minimalist inline */}
       <div className="flex items-start gap-2.5 px-4 py-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl">

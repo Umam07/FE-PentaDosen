@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Bell, CheckCheck, Trash2, X,
   CheckCircle, XCircle, Clock, ShieldCheck,
-  FileText, Beaker, RefreshCw
+  FileText, Beaker, RefreshCw, Megaphone
 } from 'lucide-react';
 
 interface NotificationItem {
@@ -40,6 +40,7 @@ const typeConfig: Record<string, {
   penelitian_pending_lppm: { icon: Clock,      iconColor: 'text-amber-500',   bg: 'bg-amber-500/10',   dot: 'bg-amber-500'   },
   doc_submitted:         { icon: FileText,     iconColor: 'text-indigo-500',  bg: 'bg-indigo-500/10',  dot: 'bg-indigo-500'  },
   penelitian_submitted:  { icon: Beaker,       iconColor: 'text-violet-500',  bg: 'bg-violet-500/10',  dot: 'bg-violet-500'  },
+  announcement:          { icon: Megaphone,    iconColor: 'text-primary-500', bg: 'bg-primary-500/10', dot: 'bg-primary-500'  },
 };
 
 const getTypeConfig = (type: string) =>
@@ -151,6 +152,12 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
   const handleNotifClick = async (notif: NotificationItem) => {
     if (!notif.is_read) {
       await markRead(notif.id);
+    }
+
+    if (notif.type === 'announcement') {
+      navigate('/help');
+      setIsOpen(false);
+      return;
     }
 
     // Get current user information from sessionStorage to check role

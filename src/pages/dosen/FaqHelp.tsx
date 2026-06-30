@@ -1,13 +1,85 @@
 import React, { useState, useEffect } from 'react';
 import { 
   HelpCircle, Search, ChevronDown, BookOpen, 
-  Globe, Award, Zap, Info, FileText
+  Globe, Award, Zap, Info, FileText, Megaphone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
+const AnnouncementCard: React.FC<{ ann: any }> = ({ ann }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isLongContent = ann.content.length > 180;
+  
+  return (
+    <motion.div
+      layout
+      className="relative overflow-hidden rounded-[2rem] border border-amber-200/50 dark:border-slate-800 bg-gradient-to-br from-amber-500/[0.03] to-orange-500/[0.01] dark:from-amber-500/[0.02] dark:to-transparent hover:border-amber-500/30 dark:hover:border-amber-500/10 shadow-sm hover:shadow-md transition-all duration-300 p-6 pl-8"
+    >
+      {/* Left accent indicator line */}
+      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-r-full" />
+      
+      {/* Background glow highlights */}
+      <div className="pointer-events-none absolute -right-8 -bottom-8 w-28 h-28 bg-amber-500/[0.03] rounded-full blur-xl" />
+
+      <div className="flex items-start gap-4">
+        <div className="p-3 bg-amber-100/60 dark:bg-amber-950/20 border border-amber-200/20 dark:border-amber-900/10 rounded-2xl text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5 shadow-sm">
+          <Megaphone className="w-5 h-5" />
+        </div>
+        
+        <div className="flex-1 space-y-2 min-w-0">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider bg-amber-100/50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full border border-amber-200/20 dark:border-amber-900/20">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+              </span>
+              PENGUMUMAN
+            </span>
+            {ann.created_at && (
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                Diterbitkan: {new Date(ann.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </span>
+            )}
+          </div>
+          
+          <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight leading-snug">
+            {ann.title}
+          </h4>
+          
+          <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+            {isLongContent && !isExpanded ? (
+              <>
+                {ann.content.slice(0, 180)}...
+                <button
+                  onClick={() => setIsExpanded(true)}
+                  className="ml-1 text-xs font-black text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 uppercase tracking-widest cursor-pointer"
+                >
+                  Selengkapnya
+                </button>
+              </>
+            ) : (
+              <>
+                {ann.content}
+                {isLongContent && (
+                  <button
+                    onClick={() => setIsExpanded(false)}
+                    className="block mt-2 text-xs font-black text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 uppercase tracking-widest cursor-pointer"
+                  >
+                    Sembunyikan
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function FaqHelp({ user }: { user: any }) {
   const [faqs, setFaqs] = useState<any[]>([]);
+  const [announcements, setAnnouncements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('Semua');
@@ -15,20 +87,29 @@ export default function FaqHelp({ user }: { user: any }) {
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
   useEffect(() => {
-    const fetchFaqs = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/cms/faqs');
-        if (res.ok) {
-          const data = await res.json();
+        const [faqsRes, annRes] = await Promise.all([
+          fetch('/api/cms/faqs'),
+          fetch('/api/dosen/announcements')
+        ]);
+
+        if (faqsRes.ok) {
+          const data = await faqsRes.json();
           setFaqs(data.faqs || []);
         }
+
+        if (annRes.ok) {
+          const data = await annRes.json();
+          setAnnouncements(data.announcements || []);
+        }
       } catch (e) {
-        console.error('Error fetching FAQs:', e);
+        console.error('Error fetching FAQ/Announcements data:', e);
       } finally {
         setLoading(false);
       }
     };
-    fetchFaqs();
+    fetchData();
   }, []);
 
   const categories = ['Semua', 'Umum', 'Google Scholar', 'Scopus', 'Upload KPI', 'Penelitian'];
@@ -76,7 +157,7 @@ export default function FaqHelp({ user }: { user: any }) {
   };
 
   return (
-    <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-4 pb-20">
+    <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-6 pb-20">
       
       {/* 1. COMPACT HEADER BANNER — title only, no search */}
       <motion.div 
@@ -123,7 +204,29 @@ export default function FaqHelp({ user }: { user: any }) {
         )}
       </motion.div>
 
-      {/* 2. UNIFIED CARD: Tabs on top + FAQ Accordions below */}
+      {/* 3. ANNOUNCEMENTS SECTION */}
+      {announcements.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="space-y-3"
+        >
+          <div className="flex items-center gap-2 px-2">
+            <Megaphone className="w-4 h-4 text-amber-500" />
+            <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Pengumuman Terbaru ({announcements.length})
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            {announcements.map((ann) => (
+              <AnnouncementCard key={ann.id} ann={ann} />
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* 4. UNIFIED CARD: Tabs on top + FAQ Accordions below */}
       <div className="overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         
         {/* Tab Header — flush inside the card */}

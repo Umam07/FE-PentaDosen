@@ -15,16 +15,14 @@ export default function useLecturerDashboard(user: any) {
   const [categoryFilter, setCategoryFilter] = useState<string>('penelitian');
   const [activeView, setActiveView] = useState<'all' | 'internal' | 'external'>('all');
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed' | 'metriks'>('scopus');
-  const [announcements, setAnnouncements] = useState<any[]>([]);
 
   const fetchData = async () => {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const [docsRes, profileRes, annRes, penRes] = await Promise.all([
+      const [docsRes, profileRes, penRes] = await Promise.all([
         fetch(`/api/users/${user.id}/documents`),
         fetch(`/api/users/${user.id}`),
-        fetch('/api/dosen/announcements'),
         fetch(`/api/penelitian?user_id=${user.id}`)
       ]);
 
@@ -56,10 +54,7 @@ export default function useLecturerDashboard(user: any) {
         setProfileData(data);
       }
 
-      if (annRes.ok) {
-        const data = await annRes.json();
-        setAnnouncements(data.announcements || []);
-      }
+
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -209,7 +204,6 @@ export default function useLecturerDashboard(user: any) {
     setActiveView,
     publicationSubTab,
     setPublicationSubTab,
-    announcements,
     profileData,
     fetchData,
     internalDocumentsOnly,
