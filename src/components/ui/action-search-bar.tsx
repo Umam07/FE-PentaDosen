@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Activity,
@@ -20,7 +19,6 @@ import {
   User,
   LogOut,
   ChevronRight,
-  Sparkles,
 } from "lucide-react";
 import {
   CommandDialog,
@@ -99,20 +97,10 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Determine current active role of the user (default to dosen if none)
+  // Tentukan role user yang sedang login (default: dosen)
   const userRole = user?.role?.toLowerCase() || "dosen";
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (roleMenus[userRole]) return userRole;
-    return "dosen";
-  });
-
-  // Keep activeTab updated if user changes
-  useEffect(() => {
-    const role = user?.role?.toLowerCase() || "dosen";
-    if (roleMenus[role]) {
-      setActiveTab(role);
-    }
-  }, [user]);
+  // Normalisasi ke key yang ada di roleMenus, fallback ke "dosen"
+  const resolvedRole = roleMenus[userRole] ? userRole : "dosen";
 
   // Keyboard shortcut listener
   useEffect(() => {
@@ -154,9 +142,6 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
   // Split lecturers actions from menu actions
   const lecturerActions = actions.filter((act) => act.end === "LECTURER");
 
-  // Get available tabs based on system roles
-  const rolesList = ["dosen", "admin lppm", "admin fakultas", "super admin"];
-
   return (
     <div className={`w-full ${className}`}>
       {/* Search Trigger Button */}
@@ -176,47 +161,14 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
       {/* Command Dialog Modal */}
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Ketik perintah atau cari halaman..." />
-        
-        {/* Dynamic Role Tabs inside Command Menu */}
-        <div className="px-4 py-2.5 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-900/30 flex items-center justify-between">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {rolesList.map((roleKey) => {
-              const isActive = activeTab === roleKey;
-              return (
-                <button
-                  key={roleKey}
-                  onClick={() => setActiveTab(roleKey)}
-                  className={`relative px-3.5 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg transition-all ${
-                    isActive
-                      ? "text-primary-600 dark:text-zinc-100"
-                      : "text-gray-450 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-zinc-300 hover:bg-gray-100/50 dark:hover:bg-zinc-800/50"
-                  }`}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeRoleTab"
-                      className="absolute inset-0 bg-primary-50 dark:bg-zinc-850 rounded-lg -z-10 border border-primary-100/30 dark:border-zinc-700/50"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                  {roleLabels[roleKey]}
-                </button>
-              );
-            })}
-          </div>
-          <div className="hidden xs:flex items-center gap-1.5 text-[10px] font-bold text-primary-500/80 dark:text-primary-450/80 bg-primary-500/10 px-2.5 py-1 rounded-full uppercase tracking-widest shrink-0">
-            <Sparkles className="w-3 h-3" />
-            <span>Role Mode</span>
-          </div>
-        </div>
 
         <CommandList>
           <CommandEmpty>Hasil pencarian tidak ditemukan.</CommandEmpty>
 
-          {/* Dynamic Role specific menus */}
-          {roleMenus[activeTab] && (
-            <CommandGroup heading={`Navigasi Menu ${roleLabels[activeTab]}`}>
-              {roleMenus[activeTab].map((menu, idx) => (
+          {/* Menu sesuai role user yang login */}
+          {roleMenus[resolvedRole] && (
+            <CommandGroup heading={`Menu ${roleLabels[resolvedRole]}`}>
+              {roleMenus[resolvedRole].map((menu, idx) => (
                 <CommandItem
                   key={`menu-${idx}`}
                   value={menu.label}
@@ -239,8 +191,8 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
             </CommandGroup>
           )}
 
-          {/* Lecturers search (Visible on LPPM / Fakultas tabs) */}
-          {(activeTab === "admin lppm" || activeTab === "admin fakultas") && lecturerActions.length > 0 && (
+          {/* Lecturers search (hanya untuk admin LPPM / Fakultas) */}
+          {(resolvedRole === "admin lppm" || resolvedRole === "admin fakultas") && lecturerActions.length > 0 && (
             <CommandGroup heading="Daftar Dosen Terkait">
               {lecturerActions.map((act) => (
                 <CommandItem
