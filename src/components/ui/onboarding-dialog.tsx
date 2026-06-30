@@ -10,48 +10,43 @@ function cn(...classes: (string | boolean | undefined | null)[]) {
 const slides = [
   {
     id: "welcome",
-    title: "Selamat Datang di Penta Dosen",
-    description: "Platform integrasi data masa depan untuk para akademisi. Kelola publikasi, penelitian, dan pengabdian masyarakat Anda dalam satu ekosistem cerdas.",
+    title: "Selamat Datang di PentaDosen",
+    description: "Satu ekosistem akademik cerdas untuk mengelola publikasi dan penelitian Anda secara terintegrasi.",
     image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200&h=800",
-    color: "from-blue-600/20 to-indigo-600/20",
-    accent: "bg-blue-500",
-    icon: <Rocket className="w-8 h-8 text-blue-500" />,
+    color: "from-primary-500/20 to-blue-600/20",
+    icon: <Rocket className="w-6 h-6 text-primary-500" />,
   },
   {
     id: "about",
-    title: "Sentralisasi Data Akademik",
-    description: "Lupakan cara manual. Kami mengintegrasikan Scopus, Google Scholar secara otomatis untuk memvalidasi portofolio Anda secara real-time.",
+    title: "Sinkronisasi Otomatis",
+    description: "Integrasi langsung dengan Google Scholar dan Scopus untuk memperbarui portofolio akademik secara real-time.",
     image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200&h=800",
-    color: "from-emerald-600/20 to-teal-600/20",
-    accent: "bg-emerald-500",
-    icon: <BookOpen className="w-8 h-8 text-emerald-500" />,
+    color: "from-emerald-500/20 to-teal-500/20",
+    icon: <BookOpen className="w-6 h-6 text-emerald-500" />,
   },
   {
     id: "workflow",
-    title: "Alur Kerja yang Efisien",
-    description: "Tarik data, verifikasi detailnya, dan hasilkan laporan kinerja Anda hanya dalam hitungan detik. Fokus pada penelitian, biar kami yang urus administrasinya.",
+    title: "Alur Kerja Efisien",
+    description: "Tarik data, verifikasi berkas, dan unduh laporan kinerja akademik Anda hanya dalam beberapa klik.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200&h=800",
-    color: "from-orange-600/20 to-amber-600/20",
-    accent: "bg-orange-500",
-    icon: <CheckCircle2 className="w-8 h-8 text-orange-500" />,
+    color: "from-amber-500/20 to-orange-500/20",
+    icon: <CheckCircle2 className="w-6 h-6 text-amber-500" />,
   },
   {
     id: "privacy",
-    title: "Keamanan Tanpa Kompromi",
-    description: "Privasi data Anda adalah prioritas utama kami. Kami menggunakan enkripsi standar industri untuk memastikan aset intelektual Anda tetap aman.",
+    title: "Keamanan Terjamin",
+    description: "Perlindungan data dan aset intelektual Anda dengan standar enkripsi industri yang aman dan tepercaya.",
     image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200&h=800",
-    color: "from-purple-600/20 to-pink-600/20",
-    accent: "bg-purple-500",
-    icon: <Shield className="w-8 h-8 text-purple-500" />,
+    color: "from-purple-500/20 to-indigo-500/20",
+    icon: <Shield className="w-6 h-6 text-purple-500" />,
   },
   {
     id: "final",
     title: "Lengkapi Profil Anda",
-    description: "Langkah terakhir, pastikan Anda mengisi Scopus ID dan Google Scholar ID pada halaman profil ini, lalu klik tombol sinkronisasi untuk menarik data publikasi Anda secara otomatis.",
+    description: "Hubungkan Google Scholar & Scopus ID Anda di menu integrasi, lalu jalankan sinkronisasi untuk menarik data.",
     image: "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&q=80&w=1200&h=800",
-    color: "from-blue-600/20 to-cyan-600/20",
-    accent: "bg-blue-500",
-    icon: <RefreshCw className="w-8 h-8 text-blue-500" />,
+    color: "from-blue-500/20 to-cyan-500/20",
+    icon: <RefreshCw className="w-6 h-6 text-primary-500" />,
   },
 ] as const
 
@@ -94,100 +89,107 @@ export function OnboardingDialog() {
   return (
     <AnimatePresence mode="wait">
       {open && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-8 font-[system-ui,sans-serif]">
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 sm:p-6 font-sans">
           {/* Backdrop with sophisticated blur */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-md"
           />
 
           {/* Main Container */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 40 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 40 }}
-            className="relative w-full max-w-5xl h-[600px] md:h-[650px] bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col md:flex-row border border-white/10"
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-4xl h-auto md:h-[550px] lg:h-[580px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-200/50 dark:border-slate-800/80"
           >
             {/* Close Button */}
             <button 
               onClick={handleComplete}
-              className="absolute top-6 right-6 z-50 p-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 transition-all text-white"
+              className="absolute top-5 right-5 z-50 p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-slate-500 dark:text-slate-400 cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
-            {/* Left Side: Visual Experience */}
-            <div className="relative w-full md:w-[45%] h-[200px] md:h-auto overflow-hidden">
+            {/* Left Side: Visual Experience (Desktop Only) */}
+            <div className="relative hidden md:block md:w-[40%] h-full overflow-hidden border-r border-slate-100 dark:border-slate-800/50">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
-                  initial={{ opacity: 0, scale: 1.1 }}
+                  initial={{ opacity: 0, scale: 1.05 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.1 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  exit={{ opacity: 0, scale: 1.05 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
                   className="absolute inset-0"
                 >
                   <div className={cn("absolute inset-0 bg-gradient-to-br mix-blend-overlay z-10", currentSlide.color)} />
                   <img
                     src={currentSlide.image}
                     alt={currentSlide.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover select-none"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent z-20" />
                 </motion.div>
               </AnimatePresence>
 
-              {/* Floating Badge */}
-              <div className="absolute bottom-8 left-8 z-30 flex items-center gap-4 bg-white/10 backdrop-blur-2xl p-4 rounded-3xl border border-white/20 shadow-2xl">
-                <div className="p-3 bg-white rounded-2xl shadow-xl">
+              {/* Floating Brand Badge */}
+              <div className="absolute bottom-6 left-6 right-6 z-30 flex items-center gap-3 bg-slate-950/60 backdrop-blur-xl p-3.5 rounded-2xl border border-white/10 shadow-lg">
+                <div className="p-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/10 text-white">
                   {currentSlide.icon}
                 </div>
-                <div className="text-white pr-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">System Ready</p>
-                  <p className="text-lg font-black tracking-tight">PENTA DASHBOARD</p>
+                <div className="text-white">
+                  <p className="text-[9px] font-bold font-mono uppercase tracking-[0.2em] text-primary-400">System Ready</p>
+                  <p className="text-sm font-extrabold tracking-tight font-sans">PENTADOSEN 2.0</p>
                 </div>
               </div>
             </div>
 
             {/* Right Side: Content & Interaction */}
-            <div className="flex-1 p-8 md:p-14 flex flex-col justify-between bg-zinc-50 dark:bg-zinc-900">
-              <div className="space-y-12">
+            <div className="flex-1 p-6 sm:p-10 md:p-12 lg:p-14 flex flex-col justify-between bg-slate-50 dark:bg-slate-900/40">
+              <div className="space-y-6 md:space-y-10">
                 {/* Progress Header */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     {slides.map((_, index) => (
                       <button
                         key={index}
                         onClick={() => setActiveIndex(index)}
                         className={cn(
-                          "h-1.5 rounded-full transition-all duration-500",
-                          index === activeIndex ? "w-10 bg-zinc-900 dark:bg-white" : "w-2 bg-zinc-300 dark:bg-zinc-700"
+                          "h-1.5 rounded-full transition-all duration-300 cursor-pointer",
+                          index === activeIndex 
+                            ? "w-8 bg-primary-600 dark:bg-primary-500" 
+                            : "w-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700"
                         )}
                       />
                     ))}
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Step {activeIndex + 1} of {slides.length}
                   </span>
                 </div>
 
                 {/* Main Content Animation */}
-                <div className="min-h-[250px]">
+                <div className="min-h-[220px] flex items-center">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeIndex}
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -30 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="space-y-6"
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -15 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="space-y-5 w-full"
                     >
-                      <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-zinc-900 dark:text-white leading-[1.1]">
+                      {/* Active icon for mobile display only */}
+                      <div className="inline-flex p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 rounded-2xl shadow-sm md:hidden">
+                        {currentSlide.icon}
+                      </div>
+
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 leading-[1.15]">
                         {currentSlide.title}
                       </h2>
-                      <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium max-w-lg">
+                      <p className="text-sm sm:text-base md:text-lg text-slate-500 dark:text-slate-400 leading-relaxed font-normal max-w-xl">
                         {currentSlide.description}
                       </p>
                     </motion.div>
@@ -196,35 +198,38 @@ export function OnboardingDialog() {
               </div>
 
               {/* Bottom Actions */}
-              <div className="flex items-center justify-between pt-8 border-t border-zinc-200 dark:border-zinc-800">
-                <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800/80">
+                <div className="flex items-center gap-3">
                   <button
                     onClick={handlePrevious}
                     disabled={isFirstSlide}
                     className={cn(
-                      "p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group",
+                      "p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group cursor-pointer",
                       isFirstSlide ? "opacity-0 pointer-events-none" : "opacity-100"
                     )}
                   >
-                    <ArrowLeft className="w-5 h-5 text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white" />
+                    <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-slate-800 dark:group-hover:text-slate-200" />
                   </button>
-                  <button
-                    onClick={handleComplete}
-                    className="text-sm font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                  >
-                    Skip
-                  </button>
+
+                  {!isLastSlide && (
+                    <button
+                      onClick={handleComplete}
+                      className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors cursor-pointer"
+                    >
+                      Skip
+                    </button>
+                  )}
                 </div>
 
                 <button
                   onClick={handleNext}
                   className={cn(
-                    "relative group px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest text-sm transition-all overflow-hidden flex items-center gap-3",
-                    "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-2xl hover:scale-[1.02] active:scale-95"
+                    "relative group px-6 py-3 rounded-xl font-bold text-sm transition-all overflow-hidden flex items-center gap-2 cursor-pointer",
+                    "bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:text-slate-950 dark:hover:bg-primary-400 shadow-md active:scale-98"
                   )}
                 >
-                  <span className="relative z-10">{isLastSlide ? "Get Started" : "Next"}</span>
-                  <ArrowRight className="w-4 h-4 relative z-10 transition-transform group-hover:translate-x-1" />
+                  <span>{isLastSlide ? "Mulai" : "Lanjut"}</span>
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                 </button>
               </div>
             </div>
@@ -234,3 +239,4 @@ export function OnboardingDialog() {
     </AnimatePresence>
   )
 }
+
