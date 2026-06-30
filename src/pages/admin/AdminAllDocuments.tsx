@@ -3,10 +3,12 @@ import {
   FileText, CheckCircle, XCircle, Clock, Download, 
   Search, FileDown, Award, Archive, CalendarDays, Filter,
   ChevronLeft, ChevronRight, Globe, User, GraduationCap, ShieldCheck, Zap, Eye,
-  Beaker, Landmark
+  Beaker, Landmark, Book
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOutletContext } from 'react-router-dom';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
 
 export default function AdminAllDocuments() {
@@ -25,48 +27,67 @@ export default function AdminAllDocuments() {
   // === State Preview Modal ===
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
-  useEffect(() => {
-    if (activeTab === 'penelitian') {
-      fetchResearch();
-    } else {
-      fetchDocuments();
+  // Tab configurations: icons, descriptions, colors
+  const tabDetails = {
+    publikasi: {
+      title: 'Daftar Publikasi',
+      description: 'Pengelolaan Publikasi Ilmiah: Kelola, monitoring, dan validasi seluruh publikasi ilmiah dosen.',
+      icon: FileText,
+      colorClass: 'text-primary-600 bg-primary-50 dark:bg-primary-900/20 border-primary-100/50 dark:border-primary-900/30'
+    },
+    hki: {
+      title: 'Daftar HKI',
+      description: 'Pengelolaan Hak Kekayaan Intelektual: Monitoring dan verifikasi data Paten, Merk, Hak Cipta, dan Desain Industri dosen.',
+      icon: Award,
+      colorClass: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 border-indigo-100/50 dark:border-indigo-900/30'
+    },
+    penelitian: {
+      title: 'Daftar Penelitian',
+      description: 'Pengelolaan Penelitian: Monitoring, pendanaan, skema hibah, dan laporan penelitian dosen.',
+      icon: Beaker,
+      colorClass: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100/50 dark:border-emerald-900/30'
+    },
+    buku: {
+      title: 'Daftar Buku',
+      description: 'Pengelolaan Buku Dosen: Monitoring dan verifikasi Karya Tulis, Buku Referensi, Buku Ajar, dan Monograf akademik dosen.',
+      icon: Book,
+      colorClass: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-100/50 dark:border-amber-900/30'
     }
-  }, [activeTab]);
+  };
+
+  const fetchData = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const [docsRes, resRes] = await Promise.all([
+        fetch(`/api/admin/documents/all?role=${user?.role}&user_id=${user?.id}`),
+        fetch(`/api/penelitian?role=${user?.role}&user_id=${user?.id}&all=true`)
+      ]);
+      
+      if (docsRes.ok) {
+        const docsData = await docsRes.json();
+        setDocuments(docsData.documents || []);
+      }
+      
+      if (resRes.ok) {
+        const resData = await resRes.json();
+        setResearch(resData.penelitian || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [user?.id, user?.role]);
 
   // Kembalikan ke halaman 1 setiap kali melakukan pencarian atau filter
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedFakultas]);
-
-  const fetchDocuments = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`/api/admin/documents/all?role=${user?.role}&user_id=${user?.id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setDocuments(data.documents || []);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchResearch = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`/api/penelitian?role=${user?.role}&user_id=${user?.id}&all=true`);
-      if (res.ok) {
-        const data = await res.json();
-        setResearch(data.penelitian || []);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -97,7 +118,39 @@ export default function AdminAllDocuments() {
     }
   };
 
-  // Dynamic Filtering based on activeTab
+  // Helper to filter data based on active filters
+  const getFilteredDataForTab = (tab: 'publikasi' | 'hki' | 'penelitian' | 'buku') => {
+    let baseData: any[] = [];
+    if (tab === 'penelitian') {
+      baseData = research;
+    } else if (tab === 'hki') {
+      baseData = documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('hki'));
+    } else if (tab === 'buku') {
+      baseData = documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('buku'));
+    } else { // publikasi
+      baseData = documents.filter((doc: any) => 
+        !(doc.category || '').toLowerCase().includes('hki') && 
+        !(doc.category || '').toLowerCase().includes('buku')
+      );
+    }
+
+    return baseData.filter(doc => {
+      const titleText = tab === 'penelitian' ? doc.judul_penelitian : doc.title;
+      const authorText = tab === 'penelitian' ? doc.user?.name : doc.user_name;
+      const catText = tab === 'penelitian' ? doc.program : doc.category;
+
+      const matchSearch = (titleText || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+        (authorText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (catText || '').toLowerCase().includes(searchTerm.toLowerCase());
+            
+      const itemFakultas = tab === 'penelitian' ? doc.user?.fakultas : doc.fakultas;
+      const matchFakultas = selectedFakultas ? itemFakultas === selectedFakultas : true;
+
+      return matchSearch && matchFakultas;
+    });
+  };
+
+  // Dynamic Filtering based on activeTab (for UI rendering count)
   const filteredDocsByTab = useMemo(() => {
     if (activeTab === 'penelitian') return research;
     if (activeTab === 'hki') {
@@ -115,20 +168,9 @@ export default function AdminAllDocuments() {
     return documents;
   }, [activeTab, documents, research]);
 
-  const filteredDocuments = filteredDocsByTab.filter(doc => {
-    const titleText = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
-    const authorText = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
-    const catText = activeTab === 'penelitian' ? doc.program : doc.category;
-
-    const matchSearch = (titleText || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (authorText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (catText || '').toLowerCase().includes(searchTerm.toLowerCase());
-          
-    const itemFakultas = activeTab === 'penelitian' ? doc.user?.fakultas : doc.fakultas;
-    const matchFakultas = selectedFakultas ? itemFakultas === selectedFakultas : true;
-
-    return matchSearch && matchFakultas;
-  });
+  const filteredDocuments = useMemo(() => {
+    return getFilteredDataForTab(activeTab);
+  }, [activeTab, documents, research, searchTerm, selectedFakultas]);
 
   // Hitungan untuk Pagination
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
@@ -136,42 +178,220 @@ export default function AdminAllDocuments() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredDocuments.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleExportCSV = () => {
-    if (filteredDocuments.length === 0) return;
+  const handleExportExcel = async () => {
+    if (documents.length === 0 && research.length === 0) return;
 
-    const isResearch = activeTab === 'penelitian';
-    const headers = isResearch 
-      ? ['ID,Judul Penelitian,Program,Skema,Fokus,Dosen Pengaju,Status,Dana,Points,Tanggal Pengajuan']
-      : ['ID,Judul Dokumen,Kategori,Dosen Pengaju,Status,Tgl Publikasi,Sumber,KPI,Points,Tanggal Pengajuan'];
+    const workbook = new ExcelJS.Workbook();
+    const tabs: ('publikasi' | 'hki' | 'penelitian' | 'buku')[] = ['publikasi', 'hki', 'penelitian', 'buku'];
 
-    const rows = filteredDocuments.map(doc => {
-      if (isResearch) {
-        const title = (doc.judul_penelitian || '').replace(/"/g, '""');
-        const author = doc.user?.name || '';
-        const dateStr = new Date(doc.created_at).toLocaleDateString('id-ID');
-        const dana = doc.dana_disetujui || 0;
-        return `"${doc.id}","${title}","${doc.program}","${doc.skema}","${doc.fokus}","${author}","${doc.status}","${dana}","${doc.awarded_points || 0}","${dateStr}"`;
+    tabs.forEach((tab) => {
+      const data = getFilteredDataForTab(tab);
+      const sheetName = tab.charAt(0).toUpperCase() + tab.slice(1);
+      const sheet = workbook.addWorksheet(sheetName);
+
+      // Show gridlines
+      sheet.views = [{ showGridLines: true }];
+
+      // Title Section
+      sheet.mergeCells('A1:L1');
+      const titleCell = sheet.getCell('A1');
+      titleCell.value = `LAPORAN DATA ${sheetName.toUpperCase()} - PENTADOSEN`;
+      titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF1E293B' } };
+      titleCell.alignment = { vertical: 'middle', horizontal: 'left' };
+      sheet.getRow(1).height = 30;
+
+      // Subtitle Section
+      sheet.mergeCells('A2:L2');
+      const subtitleCell = sheet.getCell('A2');
+      const dateStr = new Date().toLocaleDateString('id-ID', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      subtitleCell.value = `Diekspor pada: ${dateStr}${selectedFakultas ? ` | Filter Fakultas: ${selectedFakultas}` : ''}${searchTerm ? ` | Kata Kunci: "${searchTerm}"` : ''}`;
+      subtitleCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+      subtitleCell.alignment = { vertical: 'middle', horizontal: 'left' };
+      sheet.getRow(2).height = 20;
+
+      // Empty Row
+      sheet.getRow(3).height = 10;
+
+      // Define Columns and Headers
+      let headers: string[] = [];
+      let colWidths: { width: number }[] = [];
+
+      if (tab === 'penelitian') {
+        headers = [
+          'No', 'ID Penelitian', 'Judul Penelitian', 'Program', 'Skema', 
+          'Fokus', 'Dosen Pengaju', 'Fakultas', 'Status', 'Dana Disetujui', 
+          'Poin Awarded', 'Tanggal Pengajuan'
+        ];
+        colWidths = [
+          { width: 6 }, { width: 15 }, { width: 45 }, { width: 20 }, { width: 25 },
+          { width: 20 }, { width: 25 }, { width: 25 }, { width: 15 }, { width: 20 },
+          { width: 15 }, { width: 18 }
+        ];
       } else {
-        const title = (doc.title || '').replace(/"/g, '""');
-        const author = doc.user_name || '';
-        const dateStr = new Date(doc.created_at).toLocaleDateString('id-ID');
-        const pubDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID') : '-';
-        const kpiStatus = doc.is_kpi_counted ? 'KPI Aktif' : 'Arsip';
-        const source = doc.file_url ? 'Manual' : 'Synced';
-        return `"${doc.id}","${title}","${doc.category}","${author}","${doc.status}","${pubDate}","${source}","${kpiStatus}","${doc.awarded_points || 0}","${dateStr}"`;
+        headers = [
+          'No', 'ID Dokumen', `Judul ${sheetName}`, 'Kategori', 'Dosen Pengaju', 
+          'Fakultas', 'Status', 'Tanggal Publikasi', 'Sumber', 'Status KPI', 
+          'Poin Awarded', 'Tanggal Pengajuan'
+        ];
+        colWidths = [
+          { width: 6 }, { width: 15 }, { width: 45 }, { width: 25 }, { width: 25 },
+          { width: 25 }, { width: 15 }, { width: 18 }, { width: 12 }, { width: 15 },
+          { width: 15 }, { width: 18 }
+        ];
       }
+
+      // Add Header Row
+      const headerRowNumber = 4;
+      const headerRow = sheet.getRow(headerRowNumber);
+      headerRow.height = 28;
+      
+      headers.forEach((h, colIdx) => {
+        const cell = headerRow.getCell(colIdx + 1);
+        cell.value = h;
+        cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+        // Use primary indigo color for headers
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF4F46E5' } // Indigo 600
+        };
+        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF312E81' } },
+          bottom: { style: 'medium', color: { argb: 'FF312E81' } },
+          left: { style: 'thin', color: { argb: 'FF312E81' } },
+          right: { style: 'thin', color: { argb: 'FF312E81' } }
+        };
+      });
+
+      // Add Data Rows
+      data.forEach((item, dataIdx) => {
+        const rowNum = headerRowNumber + 1 + dataIdx;
+        const row = sheet.getRow(rowNum);
+        row.height = 22;
+
+        let rowValues: any[] = [];
+        const num = dataIdx + 1;
+        const createdAt = item.created_at ? new Date(item.created_at) : null;
+
+        if (tab === 'penelitian') {
+          const author = item.user?.name || '';
+          const fakultasVal = item.user?.fakultas || '';
+          const dana = item.dana_disetujui || 0;
+          rowValues = [
+            num,
+            item.id,
+            item.judul_penelitian || '',
+            item.program || '',
+            item.skema || '',
+            item.fokus || '',
+            author,
+            fakultasVal,
+            item.status || 'Pending',
+            dana,
+            item.awarded_points || 0,
+            createdAt
+          ];
+        } else {
+          const author = item.user_name || '';
+          const publishedAt = item.published_at ? new Date(item.published_at) : null;
+          const source = item.file_url ? 'Manual' : 'Synced';
+          const kpiStatus = item.is_kpi_counted ? 'KPI Aktif' : 'Arsip';
+          rowValues = [
+            num,
+            item.id,
+            item.title || '',
+            item.category || '',
+            author,
+            item.fakultas || '',
+            item.status || 'Pending',
+            publishedAt,
+            source,
+            kpiStatus,
+            item.awarded_points || 0,
+            createdAt
+          ];
+        }
+
+        // Write row values
+        rowValues.forEach((val, colIdx) => {
+          const cell = row.getCell(colIdx + 1);
+          
+          if (val instanceof Date) {
+            cell.value = val;
+            cell.numFmt = 'yyyy-mm-dd';
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          } else {
+            cell.value = val ?? '-';
+            
+            // Alignment based on tab and column index
+            if (tab === 'penelitian') {
+              if ([2, 3, 4, 5, 6, 7].includes(colIdx)) {
+                cell.alignment = { vertical: 'middle', horizontal: 'left' };
+              } else if (colIdx === 9) {
+                cell.numFmt = '"Rp"#,##0';
+                cell.alignment = { vertical: 'middle', horizontal: 'right' };
+              } else if (colIdx === 10) {
+                cell.numFmt = '+#,##0;-#,##0;0';
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              } else {
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              }
+            } else {
+              if ([2, 3, 4, 5].includes(colIdx)) {
+                cell.alignment = { vertical: 'middle', horizontal: 'left' };
+              } else if (colIdx === 10) {
+                cell.numFmt = '+#,##0;-#,##0;0';
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              } else {
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              }
+            }
+          }
+
+          cell.font = { name: 'Arial', size: 10, color: { argb: 'FF334155' } };
+          
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+          };
+
+          if (dataIdx % 2 === 1) {
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFF8FAFC' }
+            };
+          }
+        });
+      });
+
+      colWidths.forEach((col, idx) => {
+        sheet.getColumn(idx + 1).width = col.width;
+      });
     });
 
-    const csvContent = headers.concat(rows).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const buffer = await workbook.xlsx.writeBuffer();
     
-    link.href = url;
-    link.setAttribute('download', `Vault_Data_${activeTab.toUpperCase()}_PentaDosen.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // File format: Semua-Dokumen_YYYYMMDD_HHMM.xlsx
+    const now = new Date();
+    const YYYY = now.getFullYear();
+    const MM = String(now.getMonth() + 1).padStart(2, '0');
+    const DD = String(now.getDate()).padStart(2, '0');
+    const HH = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    
+    const filename = `Semua-Dokumen_${YYYY}${MM}${DD}_${HH}${mm}.xlsx`;
+    saveAs(new Blob([buffer]), filename);
   };
 
   // Dynamic counts for top cards based on tab
@@ -190,19 +410,19 @@ export default function AdminAllDocuments() {
           </p>
         </div>
         <button
-          onClick={handleExportCSV}
-          disabled={filteredDocuments.length === 0}
+          onClick={handleExportExcel}
+          disabled={loading || (documents.length === 0 && research.length === 0)}
           className="flex items-center justify-center px-6 py-3 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-sm text-xs font-black uppercase tracking-widest text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all disabled:opacity-50 active:scale-95"
         >
           <FileDown className="h-4 w-4 mr-2 text-primary-600" />
-          Export CSV ({activeTab.toUpperCase()})
+          Export to excel
         </button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {[
-          { label: `Total ${activeTab}`, value: totalCount, icon: FileText, color: 'primary' },
+          { label: `Total ${activeTab}`, value: totalCount, icon: tabDetails[activeTab].icon, color: 'primary' },
           { label: 'Telah Disetujui', value: approvedCount, icon: Award, color: 'emerald' },
           { label: 'Menunggu Verifikasi', value: pendingCount, icon: Archive, color: 'gray' }
         ].map((stat, i) => (
@@ -237,32 +457,38 @@ export default function AdminAllDocuments() {
         
         {/* Card Header Tab Bar */}
         <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 overflow-x-auto scrollbar-hide">
-          {(['publikasi', 'hki', 'penelitian', 'buku'] as const).map((tab) => (
-             <button
-               key={tab}
-               onClick={() => setActiveTab(tab)}
-               className={`px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] border-b-2 transition-all whitespace-nowrap ${
-                 activeTab === tab 
-                   ? 'border-primary-600 text-primary-600 dark:text-primary-400 bg-white dark:bg-zinc-900' 
-                   : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
-               }`}
-             >
-               {tab}
-             </button>
-          ))}
+          {(['publikasi', 'hki', 'penelitian', 'buku'] as const).map((tab) => {
+             const IconComponent = tabDetails[tab].icon;
+             return (
+               <button
+                 key={tab}
+                 onClick={() => setActiveTab(tab)}
+                 className={`px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] border-b-2 transition-all whitespace-nowrap flex items-center gap-2 ${
+                   activeTab === tab 
+                     ? 'border-primary-600 text-primary-600 dark:text-primary-400 bg-white dark:bg-zinc-900' 
+                     : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+                 }`}
+               >
+                 <IconComponent className="w-4 h-4" />
+                 {tab}
+               </button>
+             );
+          })}
         </div>
 
         <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10 backdrop-blur-sm">
           <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-              <div className="hidden md:flex p-3 bg-primary-50 dark:bg-primary-900/20 rounded-2xl text-primary-600 dark:text-primary-400 shadow-sm border border-primary-100/50 dark:border-primary-900/30">
-                 {activeTab === 'penelitian' ? <Beaker className="h-6 w-6" /> : <FileText className="h-6 w-6" />}
+              <div className={`hidden md:flex p-3 rounded-2xl shadow-sm border ${tabDetails[activeTab].colorClass}`}>
+                 {React.createElement(tabDetails[activeTab].icon, { className: "h-6 w-6" })}
               </div>
               <div>
                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
-                   Daftar {activeTab === 'publikasi' ? 'Publikasi' : activeTab === 'hki' ? 'HKI' : activeTab === 'buku' ? 'Buku' : 'Penelitian'}
+                   {tabDetails[activeTab].title}
                  </h3>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{user?.role === 'admin lppm' ? 'Penelitian' : 'Fakultas'} • Arsip & Validasi</p>
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
+                   {tabDetails[activeTab].description}
+                 </p>
               </div>
             </div>
 
