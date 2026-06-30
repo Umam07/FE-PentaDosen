@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Menu, Search, LogOut, ChevronDown, User, Users, X, BookOpen, BadgeCheck, LayoutDashboard, ArrowUpRight, ShieldAlert, HelpCircle } from 'lucide-react';
+import { Menu, Search, LogOut, ChevronDown, User, Users, X, BookOpen, BadgeCheck, LayoutDashboard, ArrowUpRight, ShieldAlert, HelpCircle, Settings, Shield, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
@@ -176,44 +176,54 @@ export default function Topbar({
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block`} />
           </button>
 
-          {/* Dropdown Menu */}
+          {/* Dropdown Menu — Redesigned Premium */}
           <AnimatePresence>
             {isDropdownOpen && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-100 dark:border-zinc-800 py-3 z-30 overflow-hidden"
-                >
-
-
-
-
-                  <button 
-                    onClick={() => {
-                      navigate('/profile');
-                      setIsDropdownOpen(false);
-                    }} 
-                    className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-gray-700 dark:text-zinc-300 hover:bg-primary-50 dark:hover:bg-zinc-800 hover:text-primary-600 w-full text-left transition-colors uppercase tracking-widest"
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                className="absolute right-0 top-full mt-3 w-60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl rounded-3xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] border border-white/60 dark:border-zinc-700/60 z-30 overflow-hidden"
+              >
+                {/* ── Menu Items ── */}
+                <div className="px-3 pt-3 pb-1.5 space-y-0.5">
+                  <motion.button
+                    whileHover={{ x: 3 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    onClick={() => { navigate('/profile'); setIsDropdownOpen(false); }}
+                    className="group flex items-center gap-3 w-full px-3 py-2.5 rounded-2xl hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors duration-150"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
-                      <User className="w-4 h-4 text-primary-500" />
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-500/20 dark:to-primary-600/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-150">
+                      <Settings className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                     </div>
-                    Pengaturan Profil
-                  </button>
-                  <div className="border-t border-gray-100 dark:border-zinc-800 my-1"></div>
-                  <button 
-                    onClick={handleLogout} 
+                    <div className="text-left">
+                      <p className="text-[11px] font-extrabold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Pengaturan Profil</p>
+                      <p className="text-[9px] text-gray-400 dark:text-zinc-500 font-medium">Kelola akun & preferensi</p>
+                    </div>
+                  </motion.button>
+                </div>
+
+                {/* ── Logout Section ── */}
+                <div className="px-3 pb-3">
+                  <div className="mx-1 mb-2 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-zinc-700 to-transparent" />
+                  <motion.button
+                    whileHover={{ x: 3 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    onClick={handleLogout}
                     data-logout-trigger
-                    className="flex items-center gap-3 px-5 py-3 text-[10px] font-black text-red-650 hover:bg-red-50 dark:hover:bg-red-950/30 w-full text-left transition-colors uppercase tracking-widest"
+                    className="group flex items-center gap-3 w-full px-3 py-2.5 rounded-2xl hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors duration-150"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
-                      <LogOut className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-100 to-red-200 dark:from-red-500/20 dark:to-red-600/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-150">
+                      <LogOut className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
                     </div>
-                    Log Out Sistem
-                  </button>
-                </motion.div>
+                    <div className="text-left">
+                      <p className="text-[11px] font-extrabold text-red-600 dark:text-red-400 uppercase tracking-widest">Keluar Sistem</p>
+                      <p className="text-[9px] text-red-400/70 dark:text-red-500/60 font-medium">Akhiri sesi sekarang</p>
+                    </div>
+                  </motion.button>
+                </div>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
