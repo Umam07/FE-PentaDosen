@@ -1,5 +1,5 @@
 import { MouseEvent } from 'react';
-import { MapPin, Mail, Phone, Hexagon, ArrowRight } from 'lucide-react';
+import { MapPin, Mail, Phone, Hexagon, ArrowRight, ShieldCheck, FileText, Database, Cpu, Lock, Share2, Users, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
   Dialog,
@@ -85,37 +85,66 @@ export default function Footer() {
                       <span className="group-hover:translate-x-1 transition-transform duration-300">Privacy Policy</span>
                     </button>
                   </DialogTrigger>
-                  <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg [&>button:last-child]:top-3.5 bg-[#0B0F19] border-gray-800 text-gray-300">
+                  <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,85vh)] sm:max-w-xl [&>button:last-child]:top-4.5 bg-[#0B0F19] border border-gray-900 rounded-3xl text-gray-300 shadow-2xl shadow-black/50 overflow-hidden">
                     <DialogHeader className="contents space-y-0 text-left">
-                      <DialogTitle className="border-b border-gray-800 px-6 py-4 text-base font-black text-white uppercase tracking-tighter">
-                        Privacy Policy
-                      </DialogTitle>
-                      <div className="overflow-y-auto">
+                      <div className="relative border-b border-gray-900 px-6 py-5 bg-gradient-to-b from-gray-950/40 to-transparent">
+                        <div className="absolute top-0 left-1/4 -translate-x-1/2 w-48 h-2 bg-primary-500/20 rounded-full filter blur-md" />
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-[10px] font-black text-primary-400 uppercase tracking-widest mb-2.5 w-fit">
+                          Last Updated: July 2026
+                        </div>
+                        <DialogTitle className="flex items-center gap-3 text-lg font-black text-white uppercase tracking-tight">
+                          <div className="p-2 border border-gray-900 rounded-xl text-primary-400 bg-gray-950/40">
+                            <ShieldCheck className="w-5 h-5" />
+                          </div>
+                          Privacy Policy
+                        </DialogTitle>
+                      </div>
+                      <div className="overflow-y-auto max-h-[50vh] pr-1.5 scrollbar-thin scrollbar-thumb-gray-800">
                         <DialogDescription asChild>
-                          <div className="px-6 py-6 text-sm leading-relaxed space-y-6">
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">1. Pengumpulan Data</h4>
-                              <p>Kami mengumpulkan informasi yang Anda berikan secara langsung kepada kami saat mendaftar, termasuk nama, email, dan data publikasi ilmiah Anda.</p>
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">2. Penggunaan Informasi</h4>
-                              <p>Informasi yang dikumpulkan digunakan untuk mengelola akun Anda, memvalidasi data publikasi melalui sistem TiDB, dan meningkatkan layanan kami.</p>
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">3. Keamanan Data</h4>
-                              <p>Kami menerapkan standar keamanan enkripsi SSL 256-bit untuk melindungi dokumen dan data pribadi Anda dari akses tidak sah.</p>
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">4. Berbagi Data</h4>
-                              <p>Kami tidak akan menjual data pribadi Anda kepada pihak ketiga. Data hanya dibagikan untuk kepentingan administrasi kampus sesuai regulasi yang berlaku.</p>
-                            </div>
+                          <div className="px-6 py-6 text-sm leading-relaxed space-y-5">
+                            {[
+                              {
+                                icon: Database,
+                                title: "1. Pengumpulan Data",
+                                text: "Kami mengumpulkan informasi yang Anda berikan secara langsung kepada kami saat mendaftar, termasuk nama, email, dan data publikasi ilmiah Anda.",
+                                color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
+                              },
+                              {
+                                icon: Cpu,
+                                title: "2. Penggunaan Informasi",
+                                text: "Informasi yang dikumpulkan digunakan untuk mengelola akun Anda, memvalidasi data publikasi melalui sistem TiDB, dan meningkatkan layanan kami.",
+                                color: "text-blue-400 border-blue-500/20 bg-blue-500/5",
+                              },
+                              {
+                                icon: Lock,
+                                title: "3. Keamanan Data",
+                                text: "Kami menerapkan standar keamanan enkripsi SSL 256-bit untuk melindungi dokumen dan data pribadi Anda dari akses tidak sah.",
+                                color: "text-violet-400 border-violet-500/20 bg-violet-500/5",
+                              },
+                              {
+                                icon: Share2,
+                                title: "4. Berbagi Data",
+                                text: "Kami tidak akan menjual data pribadi Anda kepada pihak ketiga. Data hanya dibagikan untuk kepentingan administrasi kampus sesuai regulasi yang berlaku.",
+                                color: "text-amber-400 border-amber-500/20 bg-amber-500/5",
+                              },
+                            ].map((item, index) => (
+                              <div key={index} className="flex items-start gap-4 p-4 rounded-2xl border border-gray-900/50 bg-gray-950/10 hover:border-gray-850 hover:bg-gray-950/30 transition-all duration-300 group/policy">
+                                <div className={`p-2.5 border rounded-xl flex-shrink-0 transition-transform duration-300 group-hover/policy:scale-105 ${item.color}`}>
+                                  <item.icon className="w-4 h-4" />
+                                </div>
+                                <div className="space-y-1">
+                                  <h4 className="font-extrabold text-white text-xs uppercase tracking-widest">{item.title}</h4>
+                                  <p className="text-sm font-medium text-gray-400 leading-relaxed mt-1">{item.text}</p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </DialogDescription>
-                        <DialogFooter className="px-6 pb-6 sm:justify-end">
-                          <DialogClose asChild>
-                            <Button type="button" className="bg-primary-500 hover:bg-primary-600 text-white font-bold uppercase tracking-widest text-[10px] px-6">Mengerti</Button>
-                          </DialogClose>
-                        </DialogFooter>
+                      </div>
+                      <div className="px-6 py-4 bg-gray-950/20 border-t border-gray-900 flex justify-end">
+                        <DialogClose asChild>
+                          <Button type="button" className="bg-primary-500 hover:bg-primary-600 text-white font-extrabold uppercase tracking-widest text-[10px] px-6 py-2 rounded-xl transition-all duration-300 shadow-lg shadow-primary-500/10 hover:shadow-primary-500/20 cursor-pointer">Mengerti</Button>
+                        </DialogClose>
                       </div>
                     </DialogHeader>
                   </DialogContent>
@@ -131,37 +160,66 @@ export default function Footer() {
                       <span className="group-hover:translate-x-1 transition-transform duration-300">Terms of Service</span>
                     </button>
                   </DialogTrigger>
-                  <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg [&>button:last-child]:top-3.5 bg-[#0B0F19] border-gray-800 text-gray-300">
+                  <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,85vh)] sm:max-w-xl [&>button:last-child]:top-4.5 bg-[#0B0F19] border border-gray-900 rounded-3xl text-gray-300 shadow-2xl shadow-black/50 overflow-hidden">
                     <DialogHeader className="contents space-y-0 text-left">
-                      <DialogTitle className="border-b border-gray-800 px-6 py-4 text-base font-black text-white uppercase tracking-tighter">
-                        Terms of Service
-                      </DialogTitle>
-                      <div className="overflow-y-auto">
+                      <div className="relative border-b border-gray-900 px-6 py-5 bg-gradient-to-b from-gray-950/40 to-transparent">
+                        <div className="absolute top-0 left-1/4 -translate-x-1/2 w-48 h-2 bg-primary-500/20 rounded-full filter blur-md" />
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-[10px] font-black text-primary-400 uppercase tracking-widest mb-2.5 w-fit">
+                          Ketentuan Penggunaan
+                        </div>
+                        <DialogTitle className="flex items-center gap-3 text-lg font-black text-white uppercase tracking-tight">
+                          <div className="p-2 border border-gray-900 rounded-xl text-primary-400 bg-gray-950/40">
+                            <FileText className="w-5 h-5" />
+                          </div>
+                          Terms of Service
+                        </DialogTitle>
+                      </div>
+                      <div className="overflow-y-auto max-h-[50vh] pr-1.5 scrollbar-thin scrollbar-thumb-gray-800">
                         <DialogDescription asChild>
-                          <div className="px-6 py-6 text-sm leading-relaxed space-y-6">
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">1. Penerimaan Ketentuan</h4>
-                              <p>Dengan menggunakan platform PentaDosen, Anda setuju untuk terikat oleh syarat dan ketentuan penggunaan yang berlaku.</p>
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">2. Akurasi Data</h4>
-                              <p>Dosen bertanggung jawab atas kebenaran data publikasi dan dokumen yang diunggah ke dalam sistem.</p>
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">3. Batasan Tanggung Jawab</h4>
-                              <p>Tim PentaDosen tidak bertanggung jawab atas kerugian yang timbul akibat kesalahan input data oleh pengguna atau penyalahgunaan akun.</p>
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-black text-white uppercase text-xs tracking-widest">4. Perubahan Ketentuan</h4>
-                              <p>Kami berhak memperbarui syarat dan ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan melalui platform kami.</p>
-                            </div>
+                          <div className="px-6 py-6 text-sm leading-relaxed space-y-5">
+                            {[
+                              {
+                                icon: Users,
+                                title: "1. Penerimaan Ketentuan",
+                                text: "Dengan menggunakan platform PentaDosen, Anda setuju untuk terikat oleh syarat dan ketentuan penggunaan yang berlaku.",
+                                color: "text-blue-400 border-blue-500/20 bg-blue-500/5",
+                              },
+                              {
+                                icon: CheckCircle2,
+                                title: "2. Akurasi Data",
+                                text: "Dosen bertanggung jawab atas kebenaran data publikasi dan dokumen yang diunggah ke dalam sistem.",
+                                color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
+                              },
+                              {
+                                icon: AlertTriangle,
+                                title: "3. Batasan Tanggung Jawab",
+                                text: "Tim PentaDosen tidak bertanggung jawab atas kerugian yang timbul akibat kesalahan input data oleh pengguna atau penyalahgunaan akun.",
+                                color: "text-rose-400 border-rose-500/20 bg-rose-500/5",
+                              },
+                              {
+                                icon: RefreshCw,
+                                title: "4. Perubahan Ketentuan",
+                                text: "Kami berhak memperbarui syarat dan ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan melalui platform kami.",
+                                color: "text-violet-400 border-violet-500/20 bg-violet-500/5",
+                              },
+                            ].map((item, index) => (
+                              <div key={index} className="flex items-start gap-4 p-4 rounded-2xl border border-gray-900/50 bg-gray-950/10 hover:border-gray-850 hover:bg-gray-950/30 transition-all duration-300 group/policy">
+                                <div className={`p-2.5 border rounded-xl flex-shrink-0 transition-transform duration-300 group-hover/policy:scale-105 ${item.color}`}>
+                                  <item.icon className="w-4 h-4" />
+                                </div>
+                                <div className="space-y-1">
+                                  <h4 className="font-extrabold text-white text-xs uppercase tracking-widest">{item.title}</h4>
+                                  <p className="text-sm font-medium text-gray-400 leading-relaxed mt-1">{item.text}</p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </DialogDescription>
-                        <DialogFooter className="px-6 pb-6 sm:justify-end">
-                          <DialogClose asChild>
-                            <Button type="button" className="bg-primary-500 hover:bg-primary-600 text-white font-bold uppercase tracking-widest text-[10px] px-6">Setuju</Button>
-                          </DialogClose>
-                        </DialogFooter>
+                      </div>
+                      <div className="px-6 py-4 bg-gray-950/20 border-t border-gray-900 flex justify-end">
+                        <DialogClose asChild>
+                          <Button type="button" className="bg-primary-500 hover:bg-primary-600 text-white font-extrabold uppercase tracking-widest text-[10px] px-6 py-2 rounded-xl transition-all duration-300 shadow-lg shadow-primary-500/10 hover:shadow-primary-500/20 cursor-pointer">Setuju</Button>
+                        </DialogClose>
                       </div>
                     </DialogHeader>
                   </DialogContent>
