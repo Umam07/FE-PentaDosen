@@ -28,8 +28,46 @@ interface CommandDialogProps extends DialogProps {}
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className="overflow-hidden p-0 shadow-2xl border-gray-150 dark:border-zinc-800 max-w-2xl bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl rounded-2xl sm:rounded-2xl gap-0">
-        <Command className="[&_[cmdk-group-heading]]:px-4 [&_[cmdk-group-heading]]:font-black [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-gray-400 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-14 [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:h-4 [&_[cmdk-item]_svg]:w-4">
+      <DialogContent
+        className={cn(
+          "overflow-hidden p-0 gap-0",
+          // Wider modal: 92vw on mobile, max-w-3xl on larger screens
+          "w-[92vw] max-w-3xl",
+          "rounded-2xl sm:rounded-2xl",
+          // Glass-morphism
+          "bg-white/96 dark:bg-zinc-950/96 backdrop-blur-2xl",
+          // Border
+          "border border-gray-100/80 dark:border-zinc-800/60",
+          // Premium layered shadow
+          "shadow-[0_32px_80px_-12px_rgba(0,0,0,0.16),0_2px_16px_-2px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.03)]",
+          "dark:shadow-[0_32px_80px_-12px_rgba(0,0,0,0.7),0_2px_16px_-2px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.04)]"
+        )}
+      >
+        {/* Top gradient accent bar */}
+        <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-2xl bg-gradient-to-r from-transparent via-primary-500/50 to-transparent pointer-events-none z-10" />
+
+        <Command
+          className={cn(
+            // Group heading
+            "[&_[cmdk-group-heading]]:px-4",
+            "[&_[cmdk-group-heading]]:pt-5 [&_[cmdk-group-heading]]:pb-2",
+            "[&_[cmdk-group-heading]]:font-black",
+            "[&_[cmdk-group-heading]]:text-[9px]",
+            "[&_[cmdk-group-heading]]:uppercase",
+            "[&_[cmdk-group-heading]]:tracking-[0.2em]",
+            "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-600",
+            // Group wrapper
+            "[&_[cmdk-group]]:px-2",
+            // Input wrapper icon
+            "[&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5",
+            // Input height — taller
+            "[&_[cmdk-input]]:h-16",
+            // Item spacing
+            "[&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3",
+            // Item icon size
+            "[&_[cmdk-item]_svg]:h-4 [&_[cmdk-item]_svg]:w-4"
+          )}
+        >
           {children}
         </Command>
       </DialogContent>
@@ -41,12 +79,22 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b border-gray-100 dark:border-zinc-800 px-4" cmdk-input-wrapper="">
-    <Search className="mr-3 h-4 w-4 shrink-0 text-gray-400 dark:text-zinc-500" />
+  <div
+    className="flex items-center gap-3 border-b border-gray-100/80 dark:border-zinc-800/80 px-5"
+    cmdk-input-wrapper=""
+  >
+    {/* Styled search icon */}
+    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-500/10 shrink-0">
+      <Search className="h-4 w-4 text-primary-500 dark:text-primary-400" />
+    </div>
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-12 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-gray-400 dark:placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 text-gray-900 dark:text-zinc-100",
+        "flex h-16 w-full rounded-md bg-transparent py-4",
+        "text-sm font-medium outline-none",
+        "placeholder:text-gray-400/70 dark:placeholder:text-zinc-500",
+        "text-gray-900 dark:text-zinc-100",
+        "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -62,7 +110,12 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={cn("max-h-[350px] overflow-y-auto overflow-x-hidden p-2", className)}
+    className={cn(
+      // Taller list area
+      "max-h-[480px] overflow-y-auto overflow-x-hidden",
+      "p-2 pb-4",
+      className
+    )}
     {...props}
   />
 ));
@@ -75,9 +128,15 @@ const CommandEmpty = React.forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className="py-6 text-center text-xs font-bold uppercase tracking-widest text-gray-400"
+    className="flex flex-col items-center justify-center py-14 gap-2 text-gray-400 dark:text-zinc-600"
     {...props}
-  />
+  >
+    <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-zinc-900 flex items-center justify-center mb-1 shadow-inner">
+      <Search className="w-5 h-5 opacity-40" />
+    </div>
+    <span className="text-xs font-black uppercase tracking-[0.15em]">Tidak ditemukan</span>
+    <span className="text-[10px] text-gray-300 dark:text-zinc-700 font-medium">Coba kata kunci lain</span>
+  </CommandPrimitive.Empty>
 ));
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
@@ -89,7 +148,15 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      "overflow-hidden p-1 text-gray-900 dark:text-zinc-150 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-black [&_[cmdk-group-heading]]:text-gray-400/90 dark:text-zinc-100",
+      "overflow-hidden p-1",
+      "text-gray-900 dark:text-zinc-100",
+      "[&_[cmdk-group-heading]]:px-3",
+      "[&_[cmdk-group-heading]]:pt-4 [&_[cmdk-group-heading]]:pb-1.5",
+      "[&_[cmdk-group-heading]]:text-[9px]",
+      "[&_[cmdk-group-heading]]:font-black",
+      "[&_[cmdk-group-heading]]:uppercase",
+      "[&_[cmdk-group-heading]]:tracking-[0.2em]",
+      "[&_[cmdk-group-heading]]:text-gray-400/80 dark:[&_[cmdk-group-heading]]:text-zinc-600",
       className
     )}
     {...props}
@@ -104,7 +171,12 @@ const CommandSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 h-px bg-gray-100 dark:bg-zinc-800", className)}
+    className={cn(
+      "-mx-1 my-1.5 h-px",
+      "bg-gradient-to-r from-transparent via-gray-100 to-transparent",
+      "dark:via-zinc-800",
+      className
+    )}
     {...props}
   />
 ));
@@ -117,7 +189,22 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-xs font-bold text-gray-700 dark:text-zinc-300 outline-none data-[selected='true']:bg-primary-50 dark:data-[selected='true']:bg-zinc-800/80 data-[selected='true']:text-primary-600 dark:data-[selected='true']:text-zinc-100 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 transition-all uppercase tracking-wider gap-3",
+      // Base layout
+      "relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2.5 gap-3",
+      // Typography
+      "text-xs font-semibold text-gray-700 dark:text-zinc-300",
+      // Transition
+      "outline-none transition-all duration-150",
+      // Selected: gradient background
+      "data-[selected='true']:bg-gradient-to-r",
+      "data-[selected='true']:from-primary-50 data-[selected='true']:to-primary-50/30",
+      "dark:data-[selected='true']:from-zinc-800/80 dark:data-[selected='true']:to-zinc-800/30",
+      "data-[selected='true']:text-primary-700 dark:data-[selected='true']:text-zinc-100",
+      // Left accent bar on selected
+      "before:absolute before:left-0 before:inset-y-2 before:w-[3px] before:rounded-full before:bg-transparent before:transition-colors",
+      "data-[selected='true']:before:bg-primary-500",
+      // Disabled
+      "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
       className
     )}
     {...props}
@@ -133,7 +220,13 @@ const CommandShortcut = ({
   return (
     <span
       className={cn(
-        "ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500",
+        "ml-auto shrink-0",
+        "text-[9px] font-black tracking-widest uppercase",
+        "px-2 py-0.5 rounded-md",
+        "bg-gray-100 dark:bg-zinc-800/80",
+        "text-gray-400 dark:text-zinc-500",
+        "border border-gray-200/80 dark:border-zinc-700/60",
+        "shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.06)] dark:shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.3)]",
         className
       )}
       {...props}
