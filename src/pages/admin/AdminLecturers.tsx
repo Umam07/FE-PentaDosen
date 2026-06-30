@@ -182,7 +182,7 @@ export default function AdminLecturers() {
 
         // Formats
         if (colIdx === 7 || colIdx === 8 || colIdx === 9) {
-          cell.numFmt = '+#,##0.0;-#,##0.0;0.0';
+          cell.numFmt = '#,##0.0;-#,##0.0;0.0';
         } else if (colIdx >= 10) {
           cell.numFmt = '#,##0';
         }
@@ -301,8 +301,14 @@ export default function AdminLecturers() {
               <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800 whitespace-nowrap">
                 <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
                   <tr>
-                    {['Informasi Dosen', 'Fakultas / Prodi', 'ID Scholar', 'ID Scopus', 'Kinerja KPI'].map((h, i) => (
-                      <th key={i} className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">
+                    {['Nama Dosen', 'Fakultas / Prodi', 'ID Scholar', 'ID Scopus', 'Total KPI'].map((h, i) => (
+                      <th 
+                        key={i} 
+                        className={`px-6 py-5 text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em] ${
+                          h === 'Total KPI' ? 'text-right pr-16' :
+                          h === 'ID Scholar' || h === 'ID Scopus' ? 'text-center' : 'text-left'
+                        }`}
+                      >
                         {h}
                       </th>
                     ))}
@@ -355,7 +361,7 @@ export default function AdminLecturers() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-6">
+                      <td className="px-6 py-6 text-center">
                         {lecturer.scholar_id ? (
                           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest shadow-sm">
                             <BookOpen className="h-3.5 w-3.5 text-blue-500" />
@@ -367,7 +373,7 @@ export default function AdminLecturers() {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-6">
+                      <td className="px-6 py-6 text-center">
                         {lecturer.scopus_id ? (
                           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-50/80 dark:bg-orange-950/20 border border-orange-100/50 dark:border-orange-900/30 text-orange-700 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest shadow-sm">
                             <GraduationCap className="h-3.5 w-3.5 text-orange-500" />
@@ -383,7 +389,7 @@ export default function AdminLecturers() {
                         <div className="flex items-center justify-end gap-3 group/pts">
                           <div className="text-right">
                             <span className="inline-flex items-center px-3.5 py-1.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-xs uppercase tracking-wider border border-emerald-500/20 shadow-inner tabular-nums">
-                              +{lecturer.total_kpi_points?.toLocaleString() || 0} pts
+                              {lecturer.total_kpi_points?.toLocaleString() || 0} pts
                             </span>
                           </div>
                           <div className="p-2 rounded-xl bg-gray-50 dark:bg-zinc-850 text-gray-400 group-hover/pts:text-primary-500 group-hover/pts:bg-primary-500/10 dark:group-hover/pts:bg-primary-500/20 group-hover/pts:border-primary-200/50 border border-transparent transition-all duration-300 shadow-sm">
