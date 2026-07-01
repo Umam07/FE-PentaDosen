@@ -15,6 +15,8 @@ import PublicationActionBar from './components/PublicationActionBar';
 import PublicationTable from './components/PublicationTable';
 import PublicationUploadModal from './components/PublicationUploadModal';
 import PublicationLinkingModal from './components/PublicationLinkingModal';
+import PublicationEditModal from './components/PublicationEditModal';
+import PublicationDeleteModal from './components/PublicationDeleteModal';
 
 export default function Publication({ user }: { user: any }) {
   const location = useLocation();
@@ -60,6 +62,12 @@ export default function Publication({ user }: { user: any }) {
   const [approvedResearch, setApprovedResearch] = useState<any[]>([]);
   const [isLinkingModalOpen, setIsLinkingModalOpen] = useState(false);
   const [docToLink, setDocToLink] = useState<any>(null);
+
+  const [editDoc, setEditDoc] = useState<any>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [deleteDoc, setDeleteDoc] = useState<any>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -376,6 +384,9 @@ export default function Publication({ user }: { user: any }) {
         setPreviewDoc={setPreviewDoc}
         uploadingPdfId={uploadingPdfId}
         handleUploadPdf={handleUploadPdf}
+        openEditModal={(doc) => { setEditDoc(doc); setIsEditModalOpen(true); }}
+        setDeleteDoc={setDeleteDoc}
+        setIsDeleteModalOpen={setIsDeleteModalOpen}
       />
 
       {/* Floating Toast Notification */}
@@ -426,6 +437,29 @@ export default function Publication({ user }: { user: any }) {
         docToLink={docToLink}
         setDocToLink={setDocToLink}
         fetchDocuments={fetchDocuments}
+        onShowMessage={showMessage}
+      />
+
+      {/* Edit Modal */}
+      <PublicationEditModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        editDoc={editDoc}
+        weights={weights}
+        fetchDocuments={fetchDocuments}
+        setIsTableLoading={setIsTableLoading}
+        onShowMessage={showMessage}
+      />
+
+      {/* Delete Modal */}
+      <PublicationDeleteModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        deleteDoc={deleteDoc}
+        setDeleteDoc={setDeleteDoc}
+        fetchDocuments={fetchDocuments}
+        setIsTableLoading={setIsTableLoading}
+        setCurrentPage={setCurrentPage}
         onShowMessage={showMessage}
       />
 

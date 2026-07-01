@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pencil, Home, Landmark, Globe, CalendarDays, ChevronDown } from 'lucide-react';
+import { Pencil, Home, Landmark, Globe, CalendarDays, ChevronDown, Upload, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
 import { DatePicker } from '../../../../components/ui/DatePicker';
@@ -20,6 +20,8 @@ interface ResearchEditModalProps {
   setEditFokus: (val: string) => void;
   editTahun: Date | undefined;
   setEditTahun: (val: Date | undefined) => void;
+  editFile: File | null;
+  setEditFile: (val: File | null) => void;
   isEditLoading: boolean;
   onSubmit: (e: React.FormEvent) => void;
 }
@@ -40,9 +42,33 @@ export default function ResearchEditModal({
   setEditFokus,
   editTahun,
   setEditTahun,
+  editFile,
+  setEditFile,
   isEditLoading,
   onSubmit,
 }: ResearchEditModalProps) {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile) {
+      if (droppedFile.type === 'application/pdf') {
+        setEditFile(droppedFile);
+      }
+    }
+  };
 
   return (
     <BaseFormModal
@@ -169,6 +195,52 @@ export default function ResearchEditModal({
               <DatePicker date={editTahun} onDateChange={setEditTahun} placeholder="Pilih tanggal pelaksanaan" />
             </div>
           </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">File Laporan Penelitian (PDF)</label>
+            <div 
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('research-edit-file-input')?.click()}
+              className={`relative group mt-1 flex justify-center px-6 py-6 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
+                isDragging 
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-8 ring-primary-500/10 scale-[1.01]' 
+                  : editFile 
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20' 
+                    : 'border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400'
+              }`}
+            >
+              <input
+                id="research-edit-file-input"
+                type="file"
+                accept=".pdf"
+                className="sr-only"
+                onChange={(e) => setEditFile(e.target.files?.[0] || null)}
+              />
+              <div className="space-y-2 text-center">
+                <div className={`mx-auto h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                  isDragging ? 'scale-110 bg-primary-600' : 
+                  editFile ? 'bg-emerald-100 dark:bg-emerald-900/40 shadow-sm' : 'bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5'
+                }`}>
+                  {editFile ? (
+                    <CheckCircle className="h-5 w-5 text-emerald-600 animate-bounce" />
+                  ) : (
+                    <Upload className="h-5 w-5 text-gray-400 group-hover:text-primary-600" />
+                  )}
+                </div>
+                <div className="flex flex-col gap-0.5 px-4">
+                  <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
+                    {editFile ? 'Laporan Terpilih!' : 'Drag & Drop PDF'}
+                  </p>
+                  <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate max-w-[250px]">
+                    {editFile ? editFile.name : editDoc.file_url && editDoc.file_url !== '-' ? 'Replaced current file: ' + editDoc.file_url.split('/').pop() : 'Pilih file PDF jika ingin memperbarui/mengunggah'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="mt-6 pt-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-end gap-3">
             <button
               type="button"

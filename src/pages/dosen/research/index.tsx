@@ -81,6 +81,7 @@ export default function Research({ user }: ResearchProps) {
   const [editSkema, setEditSkema] = useState('');
   const [editFokus, setEditFokus] = useState('');
   const [editTahun, setEditTahun] = useState<Date | undefined>(undefined);
+  const [editFile, setEditFile] = useState<File | null>(null);
   const [isEditLoading, setIsEditLoading] = useState(false);
 
   // Delete states
@@ -373,6 +374,7 @@ export default function Research({ user }: ResearchProps) {
     setEditSkema(res.skema || '');
     setEditFokus(res.fokus || '');
     setEditTahun(res.tahun ? new Date(res.tahun) : new Date());
+    setEditFile(null);
     setIsEditModalOpen(true);
   };
 
@@ -386,22 +388,28 @@ export default function Research({ user }: ResearchProps) {
     }
     try {
       setIsEditLoading(true);
+      const formData = new FormData();
+      formData.append('_method', 'PUT');
+      formData.append('judul_penelitian', editJudul);
+      formData.append('dana_disetujui', editDana.replace(/\./g, ''));
+      formData.append('program', editProgram);
+      formData.append('skema', editSkema);
+      formData.append('fokus', editFokus);
+      formData.append('tahun', editTahun ? formatToYYYYMMDD(editTahun) : '');
+      if (editFile) {
+        formData.append('file', editFile);
+      }
+
       const res = await fetch(`/api/penelitian/${editDoc.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          judul_penelitian: editJudul,
-          dana_disetujui: editDana.replace(/\./g, ''),
-          program: editProgram,
-          skema: editSkema,
-          fokus: editFokus,
-          tahun: editTahun ? formatToYYYYMMDD(editTahun) : '',
-        }),
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: formData,
       });
       const data = await res.json();
       if (res.ok) {
         setMessage(data.message || 'Penelitian berhasil diperbarui!');
         setMessageType('success');
+        setEditFile(null);
         setIsEditModalOpen(false);
         setIsTableLoading(true);
         await fetchResearch();
@@ -634,6 +642,8 @@ export default function Research({ user }: ResearchProps) {
         setEditFokus={setEditFokus}
         editTahun={editTahun}
         setEditTahun={setEditTahun}
+        editFile={editFile}
+        setEditFile={setEditFile}
         isEditLoading={isEditLoading}
         onSubmit={handleUpdate}
       />

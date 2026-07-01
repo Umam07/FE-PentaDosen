@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   FileText, Upload, CheckCircle, XCircle, Clock, 
-  Info, ChevronLeft, ChevronRight 
+  Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -17,6 +17,9 @@ interface PublicationTableProps {
   setPreviewDoc: (doc: { fileUrl: string; title: string; category: string } | null) => void;
   uploadingPdfId: number | null;
   handleUploadPdf: (e: React.ChangeEvent<HTMLInputElement>, id: number) => Promise<void>;
+  openEditModal: (doc: any) => void;
+  setDeleteDoc: (doc: any) => void;
+  setIsDeleteModalOpen: (isOpen: boolean) => void;
 }
 
 export default function PublicationTable({
@@ -30,8 +33,13 @@ export default function PublicationTable({
   setSelectedDocForDetail,
   setPreviewDoc,
   uploadingPdfId,
-  handleUploadPdf
+  handleUploadPdf,
+  openEditModal,
+  setDeleteDoc,
+  setIsDeleteModalOpen
 }: PublicationTableProps) {
+  const isDocLocked = (doc: any) =>
+    doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
   
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -52,6 +60,7 @@ export default function PublicationTable({
               <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
               <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin KPI</th>
               <th className="px-4 py-4 w-12 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Detail</th>
+              <th className="px-4 py-4 w-16 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Aksi</th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
@@ -71,6 +80,7 @@ export default function PublicationTable({
                   <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
                   <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
                   <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
+                  <td className="px-4 py-4 w-16"><div className="h-4 w-10 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
                 </tr>
               ))
             ) : currentDocuments.length > 0 ? (
@@ -173,11 +183,31 @@ export default function PublicationTable({
                       <Info className="w-4 h-4" />
                     </button>
                   </td>
+
+                  {/* Aksi */}
+                  <td className="px-4 py-4 text-center align-middle">
+                    {isDocLocked(doc) ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 text-[9px] font-black uppercase tracking-widest cursor-not-allowed" title="Dokumen sudah diverifikasi — tidak dapat diubah">
+                        <Lock className="w-3 h-3" /> Terkunci
+                      </span>
+                    ) : (
+                      <div className="flex items-center justify-center gap-1">
+                        <button type="button" onClick={() => openEditModal(doc)}
+                          className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/30 text-gray-400 hover:text-blue-600 transition-all" title="Edit Publikasi">
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button type="button" onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
+                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-gray-400 hover:text-red-600 transition-all" title="Hapus Publikasi">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="px-4 lg:px-8 py-16 text-center">
+                <td colSpan={6} className="px-4 lg:px-8 py-16 text-center">
                   <div className="flex flex-col items-center">
                      <FileText className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
                      <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest italic">Inventory Empty</p>
