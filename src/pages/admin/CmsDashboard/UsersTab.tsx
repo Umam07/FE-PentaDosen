@@ -279,7 +279,7 @@ export default function UsersTab({ triggerMessage }: { triggerMessage: (text: st
                       onClick={() => setPage(p)}
                       className={`min-w-[38px] h-9 flex items-center justify-center rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                         page === p 
-                          ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30 scale-105' 
+                          ? 'bg-primary-600 text-white shadow-sm scale-105' 
                           : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 hover:text-primary-600 shadow-sm'
                       }`}
                     >

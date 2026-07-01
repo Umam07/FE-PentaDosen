@@ -834,7 +834,7 @@ export default function AdminAllDocuments() {
                         onClick={() => setCurrentPage(p)}
                         className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
                           currentPage === p 
-                            ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30' 
+                            ? 'bg-primary-600 text-white shadow-sm' 
                             : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 hover:text-primary-600 shadow-sm'
                         }`}
                       >

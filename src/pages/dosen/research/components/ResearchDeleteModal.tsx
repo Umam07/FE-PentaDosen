@@ -64,7 +64,7 @@ export default function ResearchDeleteModal({
                 <button
                   onClick={onDelete}
                   disabled={isDeleteLoading}
-                  className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-red-900/30 transition-all active:scale-95 disabled:opacity-60"
+                  className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 disabled:opacity-60"
                 >
                   {isDeleteLoading ? 'Menghapus...' : 'Ya, Hapus'}
                 </button>

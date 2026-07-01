@@ -323,7 +323,7 @@ export default function AdminVerification() {
                       <button
                         onClick={() => handleVerify(item.id, 'Approved')}
                         disabled={actionLoading === item.id}
-                        className="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/10 transition-all active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50 whitespace-nowrap"
+                        className="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50 whitespace-nowrap"
                       >
                         {actionLoading === item.id ? (
                           <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -501,7 +501,7 @@ export default function AdminVerification() {
                             <button
                               onClick={() => handleVerify(item.id, 'Approved')}
                               disabled={actionLoading === item.id}
-                              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/10 transition-all active:scale-95 flex items-center gap-1.5 disabled:opacity-50 whitespace-nowrap font-sans font-black"
+                              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 flex items-center gap-1.5 disabled:opacity-50 whitespace-nowrap font-sans font-black"
                             >
                               {actionLoading === item.id ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : <ShieldCheck className="h-4 w-4" />}
                               Approve
@@ -589,7 +589,7 @@ export default function AdminVerification() {
                         onClick={() => setCurrentPage(p)}
                         className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
                           currentPage === p 
-                            ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30' 
+                            ? 'bg-primary-600 text-white shadow-sm' 
                             : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 hover:text-primary-600 shadow-sm'
                         }`}
                       >
@@ -683,7 +683,7 @@ export default function AdminVerification() {
                     await handleVerify(docId, 'Rejected', feedbackText);
                     setRejectingItem(null);
                   }}
-                  className="flex-1 px-5 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:opacity-50 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-500/10 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 px-5 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:opacity-50 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all flex items-center justify-center gap-2"
                 >
                   {actionLoading ? (
                     <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />

@@ -357,7 +357,7 @@ export default function PublicationUploadModal({
                 <button
                   type="submit"
                   disabled={loading || !!duplicateFound}
-                  className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 transition-all active:scale-95 disabled:opacity-50 flex-1 sm:flex-none"
+                  className="px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 disabled:opacity-50 flex-1 sm:flex-none"
                 >
                   {loading ? 'Mengunggah...' : 'Unggah Publikasi'}
                 </button>

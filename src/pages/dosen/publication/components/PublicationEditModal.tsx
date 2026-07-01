@@ -258,7 +258,7 @@ export default function PublicationEditModal({
             <button 
               type="submit" 
               disabled={isEditLoading} 
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-200 dark:shadow-blue-900/20 transition-all active:scale-95 disabled:opacity-50"
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 disabled:opacity-50"
             >
               {isEditLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
             </button>

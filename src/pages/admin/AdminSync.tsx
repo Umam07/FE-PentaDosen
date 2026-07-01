@@ -559,7 +559,7 @@ export default function AdminSync() {
           {syncState === 'idle' ? (
             <button 
               onClick={handleStartMassSync}
-              className="w-full md:w-auto flex items-center justify-center gap-3 bg-primary-600 hover:bg-primary-700 text-white px-8 py-3.5 rounded-2xl shadow-lg shadow-primary-600/15 border border-primary-500 transition-all active:scale-95 text-[11px] font-black uppercase tracking-[0.15em]"
+              className="w-full md:w-auto flex items-center justify-center gap-3 bg-primary-600 hover:bg-primary-700 text-white px-8 py-3.5 rounded-2xl shadow-sm border border-primary-500 transition-all active:scale-95 text-[11px] font-black uppercase tracking-[0.15em]"
             >
               <RefreshCw className="h-4 w-4" />
               Jalankan Sinkronisasi Total
@@ -930,7 +930,7 @@ export default function AdminSync() {
                       <button
                         onClick={handleSyncScholar}
                         disabled={loadingScholar || !scholarUser.scholar_id}
-                        className="flex items-center gap-2.5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 transition-all active:scale-95 disabled:opacity-50"
+                        className="flex items-center gap-2.5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 disabled:opacity-50"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${loadingScholar ? 'animate-spin' : ''}`} />
                         Sync Now
@@ -1023,7 +1023,7 @@ export default function AdminSync() {
                       <button
                         onClick={handleSyncScopus}
                         disabled={loadingScopus || !scholarUser.scopus_id}
-                        className="flex items-center gap-2.5 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-orange-600/10 transition-all active:scale-95 disabled:opacity-50"
+                        className="flex items-center gap-2.5 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 disabled:opacity-50"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${loadingScopus ? 'animate-spin' : ''}`} />
                         Sync Now
@@ -1281,7 +1281,7 @@ export default function AdminSync() {
                         onClick={() => setCurrentPage(p)}
                         className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
                           currentPage === p 
-                            ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30' 
+                            ? 'bg-primary-600 text-white shadow-sm' 
                             : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 hover:text-primary-600 shadow-sm'
                         }`}
                       >

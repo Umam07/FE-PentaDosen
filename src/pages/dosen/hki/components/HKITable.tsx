@@ -296,7 +296,7 @@ export default function HKITable({
                       onClick={() => setCurrentPage(p)}
                       className={`min-w-[36px] h-9 flex items-center justify-center rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
                         currentPage === p 
-                          ? 'bg-primary-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900/30' 
+                          ? 'bg-primary-600 text-white shadow-sm' 
                           : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
                       }`}
                     >

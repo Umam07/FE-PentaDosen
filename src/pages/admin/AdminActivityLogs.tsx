@@ -738,7 +738,7 @@ export default function AdminActivityLogs() {
                         onClick={() => setCurrentPage(p)}
                         className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
                           currentPage === p
-                            ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/25 dark:shadow-primary-900/25'
+                            ? 'bg-primary-600 text-white shadow-sm'
                             : 'bg-white dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 dark:hover:text-primary-400 shadow-sm'
                         }`}
                       >

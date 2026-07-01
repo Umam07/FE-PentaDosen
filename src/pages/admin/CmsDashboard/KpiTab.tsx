@@ -339,7 +339,7 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
             <button
               type="submit"
               disabled={savingPeriod || loading}
-              className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-primary-900/20 disabled:opacity-40 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+              className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-sm disabled:opacity-40 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
             >
               <Save className="w-4 h-4" />
               {savingPeriod ? 'Menyimpan...' : 'Perbarui Periode'}
