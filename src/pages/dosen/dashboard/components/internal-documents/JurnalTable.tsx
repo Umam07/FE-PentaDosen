@@ -37,7 +37,7 @@ export default function JurnalTable({
             {filteredDocs
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
               .map((doc: any, idx: number) => {
-                const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : '-';
+                const docDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
                 return (
                   <motion.tr
                     key={idx}
@@ -56,7 +56,7 @@ export default function JurnalTable({
                             {doc.title}
                           </p>
                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                            <span>{docYear} • </span>
+                            <span>{docDate} • </span>
                             {doc.category}
                           </p>
                           {(doc.quartile || doc.author_role) && (

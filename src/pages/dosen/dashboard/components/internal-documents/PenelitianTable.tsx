@@ -3,6 +3,21 @@ import { motion } from 'framer-motion';
 import { Beaker, FileText, Info } from 'lucide-react';
 import Pagination from '../Pagination';
 
+const formatDateVal = (dateStr: string | number) => {
+  if (!dateStr) return '-';
+  const str = String(dateStr);
+  if (str.length === 4 && !isNaN(Number(str))) {
+    return str;
+  }
+  try {
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return str;
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch {
+    return str;
+  }
+};
+
 interface PenelitianTableProps {
   filteredDocs: any[];
   currentPage: number;
@@ -41,7 +56,7 @@ export default function PenelitianTable({
                 Program &amp; Skema
               </th>
               <th className="hidden md:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest">
-                Tahun
+                Tanggal Pelaksanaan
               </th>
               <th className="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest">
                 Dana
@@ -81,7 +96,7 @@ export default function PenelitianTable({
                           {doc.title}
                         </p>
                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                          <span className="md:hidden">{doc.tahun_pelaksanaan || '-'} • </span>
+                          <span className="md:hidden">{formatDateVal(doc.tahun_pelaksanaan)} • </span>
                           ID: {doc.id_dokumen || ('RESEARCH-' + doc.id)}
                         </p>
                         {doc.status === 'Rejected' && doc.catatan && (
@@ -107,7 +122,7 @@ export default function PenelitianTable({
                   </td>
                   <td className="hidden md:table-cell px-6 py-4 text-center">
                     <span className="text-xs font-black text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg">
-                      {doc.tahun_pelaksanaan || '-'}
+                      {formatDateVal(doc.tahun_pelaksanaan)}
                     </span>
                   </td>
                   <td className="hidden sm:table-cell px-6 py-4 text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums">

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
+import { DatePicker } from '../../../../components/ui/DatePicker';
 
 interface ResearchUploadModalProps {
   isOpen: boolean;
@@ -19,8 +20,8 @@ interface ResearchUploadModalProps {
   setFokus: (val: string) => void;
   danaDisetujui: string;
   setDanaDisetujui: (val: string) => void;
-  tahun: string;
-  setTahun: (val: string) => void;
+  tahun: Date | undefined;
+  setTahun: (val: Date | undefined) => void;
   file: File | null;
   setFile: (val: File | null) => void;
   loading: boolean;
@@ -259,57 +260,9 @@ export default function ResearchUploadModal({
               <div className="space-y-2 relative">
                 <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
                   <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
-                  Tahun Pelaksanaan
+                  Tanggal Pelaksanaan
                 </label>
-                <button
-                  type="button"
-                  onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
-                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-left flex justify-between items-center text-gray-900 dark:text-zinc-100"
-                >
-                  <span>{tahun}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${
-                      isYearDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-
-                <AnimatePresence>
-                  {isYearDropdownOpen && (
-                    <>
-                      <div className="fixed inset-0 z-20" onClick={() => setIsYearDropdownOpen(false)} />
-                      <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        className="absolute z-30 w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden origin-top"
-                      >
-                        <div className="max-h-48 overflow-y-auto p-2.5 grid grid-cols-3 gap-1.5">
-                          {Array.from({ length: 24 }, (_, i) => {
-                            const y = (new Date().getFullYear() - 10 + i).toString();
-                            return (
-                              <button
-                                key={y}
-                                type="button"
-                                onClick={() => {
-                                  setTahun(y);
-                                  setIsYearDropdownOpen(false);
-                                }}
-                                className={`py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                                  tahun === y
-                                    ? 'bg-primary-600 border-primary-600 text-white'
-                                    : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 dark:text-zinc-300 hover:border-primary-200'
-                                }`}
-                              >
-                                {y}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
+                <DatePicker date={tahun} onDateChange={setTahun} placeholder="Pilih tanggal pelaksanaan" />
               </div>
             </div>
 

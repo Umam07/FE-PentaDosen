@@ -235,7 +235,7 @@ export default function AdminAllDocuments() {
         headers = [
           'No', 'ID Penelitian', 'Judul Penelitian', 'Program', 'Skema', 
           'Fokus', 'Dosen Pengaju', 'Fakultas', 'Status', 'Dana Disetujui', 
-          'Poin Awarded', 'Tanggal Pengajuan'
+          'Poin Awarded', 'Tanggal Pelaksanaan'
         ];
         colWidths = [
           { width: 6 }, { width: 15 }, { width: 45 }, { width: 20 }, { width: 25 },
@@ -293,6 +293,7 @@ export default function AdminAllDocuments() {
           const author = item.user?.name || '';
           const fakultasVal = item.user?.fakultas || '';
           const dana = item.dana_disetujui || 0;
+          const tanggalPelaksanaan = item.tahun ? new Date(item.tahun) : null;
           rowValues = [
             num,
             item.id,
@@ -305,7 +306,7 @@ export default function AdminAllDocuments() {
             item.status || 'Pending',
             dana,
             Math.round(item.awarded_points || 0),
-            createdAt
+            tanggalPelaksanaan
           ];
         } else {
           const author = item.user_name || '';
@@ -558,7 +559,7 @@ export default function AdminAllDocuments() {
                   const title = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
                   const author = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
                   const category = activeTab === 'penelitian' ? doc.program : doc.category;
-                  const dateVal = activeTab === 'penelitian' ? doc.created_at : doc.published_at;
+                  const dateVal = activeTab === 'penelitian' ? doc.tahun : doc.published_at;
 
                   return (
                     <div key={doc.id} className="p-6 space-y-4 bg-white dark:bg-zinc-900">
@@ -686,7 +687,7 @@ export default function AdminAllDocuments() {
                       const title = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
                       const author = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
                       const category = activeTab === 'penelitian' ? doc.program : doc.category;
-                      const dateVal = activeTab === 'penelitian' ? doc.created_at : doc.published_at;
+                      const dateVal = activeTab === 'penelitian' ? doc.tahun : doc.published_at;
 
                       return (
                         <tr key={doc.id} className="group hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/[0.03] transition-colors">

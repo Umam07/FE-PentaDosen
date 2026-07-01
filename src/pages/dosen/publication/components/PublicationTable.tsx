@@ -85,7 +85,7 @@ export default function PublicationTable({
                       <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-md">
                         <p className="text-[11px] sm:text-xs lg:text-sm font-extrabold text-gray-900 dark:text-zinc-100 truncate tracking-tight uppercase" title={doc.title}>{doc.title}</p>
                         <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate mt-0.5" title={doc.category}>
-                          <span>{doc.published_at ? new Date(doc.published_at).getFullYear() : '-'} • </span>
+                          <span>{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'} • </span>
                           {doc.category}
                         </p>
                         {(doc.quartile || doc.author_role || doc.is_corresponding) && (

@@ -5,6 +5,21 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
+const formatDateVal = (dateStr: string | number) => {
+  if (!dateStr) return '-';
+  const str = String(dateStr);
+  if (str.length === 4 && !isNaN(Number(str))) {
+    return str;
+  }
+  try {
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return str;
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch {
+    return str;
+  }
+};
+
 interface ResearchTableProps {
   researchList: any[];
   currentItems: any[];
@@ -72,7 +87,7 @@ export default function ResearchTable({
                 Program & Skema
               </th>
               <th className="hidden md:table-cell px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                Tahun
+                Tanggal Pelaksanaan
               </th>
               <th className="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Dana
@@ -117,7 +132,7 @@ export default function ResearchTable({
                           {res.judul_penelitian}
                         </p>
                         <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
-                          <span className="md:hidden">{res.tahun} • </span>
+                          <span className="md:hidden">{formatDateVal(res.tahun)} • </span>
                           <span className="lg:hidden">{res.program} • </span>
                           ID: #RES-{res.id.toString().padStart(4, '0')}
                         </p>
@@ -144,7 +159,7 @@ export default function ResearchTable({
                   </td>
                   <td className="hidden md:table-cell px-6 py-4 text-center">
                     <span className="text-xs font-black text-gray-600 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-800 px-3 py-1 rounded-lg">
-                      {res.tahun}
+                      {formatDateVal(res.tahun)}
                     </span>
                   </td>
                   <td className="hidden sm:table-cell px-6 py-4 text-xs font-black text-emerald-600 tabular-nums">

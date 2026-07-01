@@ -7,6 +7,7 @@ import {
   AlertCircle, ArrowRight, Home, Landmark, DollarSign, Book, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DatePicker, formatToYYYYMMDD } from '../../components/ui/DatePicker';
 
 export default function AdminInputDocument() {
   const { user: adminUser } = useOutletContext<{ user: any }>();
@@ -22,8 +23,7 @@ export default function AdminInputDocument() {
   const [mainCategory, setMainCategory] = useState('Penelitian');
   const [isMainCategoryDropdownOpen, setIsMainCategoryDropdownOpen] = useState(false);
   const [subCategory, setSubCategory] = useState('');
-  const [tahun, setTahun] = useState(new Date().getFullYear().toString());
-  const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
+  const [dateVal, setDateVal] = useState<Date | undefined>(new Date());
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
 
@@ -144,7 +144,7 @@ export default function AdminInputDocument() {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedUserId || !file || !title || !mainCategory || !tahun) {
+    if (!selectedUserId || !file || !title || !mainCategory || !dateVal) {
       setMessage('Harap lengkapi semua field.');
       setMessageType('error');
       return;
@@ -164,11 +164,11 @@ export default function AdminInputDocument() {
       formData.append('program', subCategory);
       formData.append('skema', 'kompetisi'); // Default value as it's removed from UI
       formData.append('fokus', fokus);
-      formData.append('tahun', tahun);
+      formData.append('tahun', dateVal ? formatToYYYYMMDD(dateVal) : '');
     } else {
       formData.append('title', title);
       formData.append('category', subCategory);
-      formData.append('published_at', `${tahun}-01-01`);
+      formData.append('published_at', dateVal ? formatToYYYYMMDD(dateVal) : '');
       formData.append('doc_type', docType);
     }
 
@@ -185,7 +185,7 @@ export default function AdminInputDocument() {
         setTitle('');
         setFile(null);
         setDanaDisetujui('');
-        setTahun(new Date().getFullYear().toString());
+        setDateVal(new Date());
       } else {
         setMessage(data.message || 'Gagal menginput data.');
         setMessageType('error');
@@ -441,53 +441,9 @@ export default function AdminInputDocument() {
                   <div className="space-y-2 relative">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 flex items-center">
                       <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
-                      Tahun
+                      Tanggal Terbit / Pelaksanaan
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
-                      className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold text-left flex justify-between items-center transition-all hover:border-primary-500"
-                    >
-                      <span className="text-gray-900 dark:text-zinc-100">{tahun}</span>
-                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isYearDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    <AnimatePresence>
-                      {isYearDropdownOpen && (
-                        <>
-                          <div className="fixed inset-0 z-[45]" onClick={() => setIsYearDropdownOpen(false)} />
-                          <motion.div
-                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                            className="absolute z-[50] w-full mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden origin-top"
-                          >
-                            <div className="max-h-64 overflow-y-auto p-3 grid grid-cols-3 sm:grid-cols-4 gap-2">
-                              {Array.from({ length: 15 }, (_, i) => {
-                                const y = (new Date().getFullYear() - i).toString();
-                                return (
-                                  <button
-                                    key={y}
-                                    type="button"
-                                    onClick={() => {
-                                      setTahun(y);
-                                      setIsYearDropdownOpen(false);
-                                    }}
-                                    className={`py-2.5 rounded-xl text-xs font-black uppercase transition-all border ${
-                                      tahun === y 
-                                        ? 'bg-primary-600 border-primary-600 text-white shadow-md' 
-                                        : 'border-transparent bg-gray-50/50 dark:bg-zinc-800/50 text-gray-600 dark:text-zinc-400 hover:border-primary-200 hover:bg-primary-50'
-                                    }`}
-                                  >
-                                    {y}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
+                    <DatePicker date={dateVal} onDateChange={setDateVal} placeholder="Pilih tanggal" />
                   </div>
                 </div>
               </div>

@@ -13,6 +13,21 @@ interface DefaultCardListProps {
   setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
 }
 
+const formatDateVal = (dateStr: string | number) => {
+  if (!dateStr) return '-';
+  const str = String(dateStr);
+  if (str.length === 4 && !isNaN(Number(str))) {
+    return str;
+  }
+  try {
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return str;
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch {
+    return str;
+  }
+};
+
 export default function DefaultCardList({
   filteredDocs,
   currentPage,
@@ -26,6 +41,7 @@ export default function DefaultCardList({
       <div className="grid grid-cols-1 gap-4">
         {filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc, idx) => {
           const theme = getCategoryTheme(doc.category);
+          const dateStr = doc.published_at || doc.tahun_pelaksanaan;
           return (
             <motion.div
               key={idx}
@@ -49,7 +65,7 @@ export default function DefaultCardList({
                   </span>
                   <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" /> 
-                    {doc.published_at ? new Date(doc.published_at).getFullYear() : (doc.tahun_pelaksanaan || '-')}
+                    {formatDateVal(dateStr)}
                   </span>
                 </div>
                 <h3 

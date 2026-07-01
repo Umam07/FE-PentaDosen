@@ -28,7 +28,7 @@ export default function BukuTable({
             <tr>
               <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Informasi Buku</th>
               <th className="hidden lg:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Kategori Buku</th>
-              <th className="hidden md:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Tahun</th>
+              <th className="hidden md:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Tanggal Terbit</th>
               <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Dokumen</th>
               <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Status</th>
               <th className="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Klasifikasi</th>
@@ -41,7 +41,7 @@ export default function BukuTable({
             {filteredDocs
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
               .map((doc: any, idx: number) => {
-                const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : '-';
+                const docDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
                 return (
                   <motion.tr
                     key={idx}
@@ -60,7 +60,7 @@ export default function BukuTable({
                             {doc.title}
                           </p>
                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                            <span className="lg:hidden">{docYear} • </span>
+                            <span className="lg:hidden">{docDate} • </span>
                             ID: {doc.id_dokumen || ('INTERNAL-' + doc.id)}
                           </p>
                           {doc.status === 'Rejected' && doc.catatan && (
@@ -76,8 +76,8 @@ export default function BukuTable({
                         {doc.category}
                       </span>
                     </td>
-                    <td className="hidden md:table-cell px-6 py-4 text-xs font-black text-slate-500 dark:text-slate-400 font-mono italic">
-                      {docYear}
+                    <td className="hidden md:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400">
+                      {docDate}
                     </td>
                     <td className="px-6 py-4">
                       {doc.file_url && doc.file_url !== '-' ? (

@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 
 import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
+import { formatToYYYYMMDD } from '../../../components/ui/DatePicker';
 
 import ResearchHeader from './components/ResearchHeader';
 import ResearchStats from './components/ResearchStats';
@@ -53,7 +54,7 @@ export default function Research({ user }: ResearchProps) {
 
   const [skema, setSkema] = useState('');
   const [fokus, setFokus] = useState('');
-  const [tahun, setTahun] = useState(new Date().getFullYear().toString());
+  const [tahun, setTahun] = useState<Date | undefined>(new Date());
   const [file, setFile] = useState<File | null>(null);
 
   // Loading states
@@ -79,7 +80,7 @@ export default function Research({ user }: ResearchProps) {
   const [editProgram, setEditProgram] = useState('hibah internal');
   const [editSkema, setEditSkema] = useState('');
   const [editFokus, setEditFokus] = useState('');
-  const [editTahun, setEditTahun] = useState('');
+  const [editTahun, setEditTahun] = useState<Date | undefined>(undefined);
   const [isEditLoading, setIsEditLoading] = useState(false);
 
   // Delete states
@@ -155,7 +156,7 @@ export default function Research({ user }: ResearchProps) {
     formData.append('program', program);
     formData.append('skema', skema);
     formData.append('fokus', fokus);
-    formData.append('tahun', tahun);
+    formData.append('tahun', tahun ? formatToYYYYMMDD(tahun) : '');
 
     try {
       setLoading(true);
@@ -175,6 +176,7 @@ export default function Research({ user }: ResearchProps) {
         setSkema('');
         setFokus('');
         setFile(null);
+        setTahun(new Date());
         setIsUploadModalOpen(false);
 
         setIsTableLoading(true);
@@ -370,7 +372,7 @@ export default function Research({ user }: ResearchProps) {
     setEditProgram(res.program || 'hibah internal');
     setEditSkema(res.skema || '');
     setEditFokus(res.fokus || '');
-    setEditTahun(res.tahun ? String(res.tahun) : new Date().getFullYear().toString());
+    setEditTahun(res.tahun ? new Date(res.tahun) : new Date());
     setIsEditModalOpen(true);
   };
 
@@ -393,7 +395,7 @@ export default function Research({ user }: ResearchProps) {
           program: editProgram,
           skema: editSkema,
           fokus: editFokus,
-          tahun: editTahun,
+          tahun: editTahun ? formatToYYYYMMDD(editTahun) : '',
         }),
       });
       const data = await res.json();
