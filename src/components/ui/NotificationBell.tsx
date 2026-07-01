@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Bell, CheckCheck, Trash2, X,
   CheckCircle, XCircle, Clock, ShieldCheck,
-  FileText, Beaker, RefreshCw, Megaphone
+  FileText, Beaker, RefreshCw, Megaphone,
+  BellOff
 } from 'lucide-react';
 
 interface NotificationItem {
@@ -29,22 +30,25 @@ const typeConfig: Record<string, {
   iconColor: string;
   bg: string;
   dot: string;
+  label: string;
+  labelColor: string;
+  labelBg: string;
 }> = {
-  doc_approved:          { icon: CheckCircle,  iconColor: 'text-emerald-500', bg: 'bg-emerald-500/10', dot: 'bg-emerald-500' },
-  penelitian_approved:   { icon: CheckCircle,  iconColor: 'text-emerald-500', bg: 'bg-emerald-500/10', dot: 'bg-emerald-500' },
-  doc_rejected:          { icon: XCircle,      iconColor: 'text-red-500',     bg: 'bg-red-500/10',     dot: 'bg-red-500'     },
-  penelitian_rejected:   { icon: XCircle,      iconColor: 'text-red-500',     bg: 'bg-red-500/10',     dot: 'bg-red-500'     },
-  doc_verified_prodi:    { icon: ShieldCheck,  iconColor: 'text-blue-500',    bg: 'bg-blue-500/10',    dot: 'bg-blue-500'    },
-  penelitian_verified_prodi: { icon: ShieldCheck, iconColor: 'text-blue-500', bg: 'bg-blue-500/10',   dot: 'bg-blue-500'    },
-  doc_pending_lppm:      { icon: Clock,        iconColor: 'text-amber-500',   bg: 'bg-amber-500/10',   dot: 'bg-amber-500'   },
-  penelitian_pending_lppm: { icon: Clock,      iconColor: 'text-amber-500',   bg: 'bg-amber-500/10',   dot: 'bg-amber-500'   },
-  doc_submitted:         { icon: FileText,     iconColor: 'text-indigo-500',  bg: 'bg-indigo-500/10',  dot: 'bg-indigo-500'  },
-  penelitian_submitted:  { icon: Beaker,       iconColor: 'text-violet-500',  bg: 'bg-violet-500/10',  dot: 'bg-violet-500'  },
-  announcement:          { icon: Megaphone,    iconColor: 'text-primary-500', bg: 'bg-primary-500/10', dot: 'bg-primary-500'  },
+  doc_approved:              { icon: CheckCircle,  iconColor: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/40',   dot: 'bg-emerald-500', label: 'Disetujui',     labelColor: 'text-emerald-700 dark:text-emerald-400', labelBg: 'bg-emerald-100 dark:bg-emerald-900/50'   },
+  penelitian_approved:       { icon: CheckCircle,  iconColor: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/40',   dot: 'bg-emerald-500', label: 'Disetujui',     labelColor: 'text-emerald-700 dark:text-emerald-400', labelBg: 'bg-emerald-100 dark:bg-emerald-900/50'   },
+  doc_rejected:              { icon: XCircle,      iconColor: 'text-red-600',     bg: 'bg-red-50 dark:bg-red-950/40',           dot: 'bg-red-500',     label: 'Ditolak',       labelColor: 'text-red-700 dark:text-red-400',         labelBg: 'bg-red-100 dark:bg-red-900/50'           },
+  penelitian_rejected:       { icon: XCircle,      iconColor: 'text-red-600',     bg: 'bg-red-50 dark:bg-red-950/40',           dot: 'bg-red-500',     label: 'Ditolak',       labelColor: 'text-red-700 dark:text-red-400',         labelBg: 'bg-red-100 dark:bg-red-900/50'           },
+  doc_verified_prodi:        { icon: ShieldCheck,  iconColor: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-950/40',         dot: 'bg-blue-500',    label: 'Terverifikasi', labelColor: 'text-blue-700 dark:text-blue-400',       labelBg: 'bg-blue-100 dark:bg-blue-900/50'         },
+  penelitian_verified_prodi: { icon: ShieldCheck,  iconColor: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-950/40',         dot: 'bg-blue-500',    label: 'Terverifikasi', labelColor: 'text-blue-700 dark:text-blue-400',       labelBg: 'bg-blue-100 dark:bg-blue-900/50'         },
+  doc_pending_lppm:          { icon: Clock,        iconColor: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-950/40',       dot: 'bg-amber-500',   label: 'Menunggu',      labelColor: 'text-amber-700 dark:text-amber-400',     labelBg: 'bg-amber-100 dark:bg-amber-900/50'       },
+  penelitian_pending_lppm:   { icon: Clock,        iconColor: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-950/40',       dot: 'bg-amber-500',   label: 'Menunggu',      labelColor: 'text-amber-700 dark:text-amber-400',     labelBg: 'bg-amber-100 dark:bg-amber-900/50'       },
+  doc_submitted:             { icon: FileText,     iconColor: 'text-indigo-600',  bg: 'bg-indigo-50 dark:bg-indigo-950/40',     dot: 'bg-indigo-500',  label: 'Dikirim',       labelColor: 'text-indigo-700 dark:text-indigo-400',   labelBg: 'bg-indigo-100 dark:bg-indigo-900/50'     },
+  penelitian_submitted:      { icon: Beaker,       iconColor: 'text-violet-600',  bg: 'bg-violet-50 dark:bg-violet-950/40',     dot: 'bg-violet-500',  label: 'Dikirim',       labelColor: 'text-violet-700 dark:text-violet-400',   labelBg: 'bg-violet-100 dark:bg-violet-900/50'     },
+  announcement:              { icon: Megaphone,    iconColor: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-950/40',   dot: 'bg-primary-500', label: 'Pengumuman',    labelColor: 'text-primary-700 dark:text-primary-400', labelBg: 'bg-primary-100 dark:bg-primary-900/50'   },
 };
 
 const getTypeConfig = (type: string) =>
-  typeConfig[type] ?? { icon: Bell, iconColor: 'text-gray-500', bg: 'bg-gray-500/10', dot: 'bg-gray-400' };
+  typeConfig[type] ?? { icon: Bell, iconColor: 'text-gray-500', bg: 'bg-gray-50 dark:bg-zinc-800', dot: 'bg-gray-400', label: 'Info', labelColor: 'text-gray-600 dark:text-gray-400', labelBg: 'bg-gray-100 dark:bg-zinc-700' };
 
 function timeAgo(dateStr: string): string {
   const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
@@ -52,6 +56,89 @@ function timeAgo(dateStr: string): string {
   if (diff < 3600) return `${Math.floor(diff / 60)} menit lalu`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} jam lalu`;
   return `${Math.floor(diff / 86400)} hari lalu`;
+}
+
+// ─── Notification Card Sub-Component ────────────────────────────────────────
+function NotificationCard({
+  notif,
+  onClick,
+  onDelete,
+}: {
+  notif: NotificationItem;
+  onClick: (n: NotificationItem) => void;
+  onDelete: (id: number, e: ReactMouseEvent<HTMLButtonElement>) => void;
+}) {
+  const cfg = getTypeConfig(notif.type);
+  const Icon = cfg.icon;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: 12, scale: 0.97 }}
+      transition={{ duration: 0.18 }}
+      onClick={() => onClick(notif)}
+      className={`group relative flex gap-3.5 p-4 rounded-2xl mb-1.5 cursor-pointer transition-all duration-200 ${
+        notif.is_read
+          ? 'bg-transparent hover:bg-gray-50/80 dark:hover:bg-zinc-800/50'
+          : 'bg-white dark:bg-zinc-800/80 shadow-sm shadow-black/5 hover:shadow-md hover:shadow-black/8'
+      }`}
+    >
+      {/* Unread indicator stripe */}
+      {!notif.is_read && (
+        <span className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-full ${cfg.dot}`} />
+      )}
+
+      {/* Icon */}
+      <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
+        <Icon className={`w-[18px] h-[18px] ${cfg.iconColor}`} />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0 pr-7">
+        {/* Title */}
+        <p className={`text-sm font-semibold leading-snug mb-1 ${
+          notif.is_read
+            ? 'text-gray-500 dark:text-zinc-400'
+            : 'text-gray-900 dark:text-zinc-100'
+        }`}>
+          {notif.title}
+        </p>
+
+        {/* Message */}
+        <p className={`text-xs leading-relaxed line-clamp-2 ${
+          notif.is_read
+            ? 'text-gray-400 dark:text-zinc-500'
+            : 'text-gray-600 dark:text-zinc-300'
+        }`}>
+          {notif.message}
+        </p>
+
+        {/* Status badge + time */}
+        <div className="flex items-center gap-2 mt-2">
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide ${cfg.labelColor} ${cfg.labelBg}`}>
+            {cfg.label}
+          </span>
+          <span className="text-[11px] text-gray-400 dark:text-zinc-500">
+            {timeAgo(notif.created_at)}
+          </span>
+          {!notif.is_read && (
+            <span className={`ml-auto w-2 h-2 rounded-full ${cfg.dot} flex-shrink-0`} />
+          )}
+        </div>
+      </div>
+
+      {/* Delete button (hover reveal) */}
+      <button
+        onClick={(e) => onDelete(notif.id, e)}
+        className="absolute top-3.5 right-3.5 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all duration-150"
+        title="Hapus notifikasi"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+    </motion.div>
+  );
 }
 
 // ─── Main Component ──────────────────────────────────────────────────────────
@@ -62,6 +149,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bellAnim, setBellAnim] = useState(false);
+  const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
 
   const bellRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -143,10 +231,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
     setNotifications([]);
     setUnreadCount(0);
     await fetch(`/api/notifications/${userId}/clear-all`, { method: 'DELETE' });
-  };
-
-  const handleBellClick = () => {
-    setIsOpen(prev => !prev);
   };
 
   const handleNotifClick = async (notif: NotificationItem) => {
@@ -264,7 +348,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
     setIsOpen(false);
   };
 
-  // ── Dropdown position (relative to bell button) ───────────────────────────
+  // ── Dropdown position ────────────────────────────────────────────────────────
   const [dropPos, setDropPos] = useState({ top: 0, right: 0 });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -273,7 +357,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       setIsMobile(window.innerWidth < 640);
       if (bellRef.current) {
         const rect = bellRef.current.getBoundingClientRect();
-        setDropPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+        setDropPos({ top: rect.bottom + 10, right: window.innerWidth - rect.right });
       }
     };
 
@@ -282,14 +366,19 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpen]);
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // ── Filtered list ─────────────────────────────────────────────────────────
+  const displayed = activeTab === 'unread'
+    ? notifications.filter(n => !n.is_read)
+    : notifications;
+
+  // ── Render ───────────────────────────────────────────────────────────────
   return (
     <>
       {/* Bell Button */}
       <button
         ref={bellRef}
         id="notification-bell-btn"
-        onClick={handleBellClick}
+        onClick={() => setIsOpen(prev => !prev)}
         className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 dark:hover:bg-zinc-700 border border-gray-100 dark:border-zinc-700 text-gray-500 hover:text-primary-600 transition-all duration-200 flex-shrink-0"
         aria-label="Notifikasi"
       >
@@ -308,7 +397,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center bg-red-500 text-white text-[9px] font-black rounded-full shadow-md shadow-red-500/30 leading-none"
+              className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md shadow-red-500/30 leading-none"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </motion.span>
@@ -322,154 +411,140 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
           {isOpen && (
             <motion.div
               ref={dropdownRef}
-              initial={{ opacity: 0, y: -10, scale: 0.97 }}
+              initial={{ opacity: 0, y: -8, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.97 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
+              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
               style={{
                 position: 'fixed',
                 top: dropPos.top,
-                left: isMobile ? '16px' : 'auto',
-                right: isMobile ? '16px' : dropPos.right,
-                zIndex: 9998
+                left: isMobile ? '12px' : 'auto',
+                right: isMobile ? '12px' : dropPos.right,
+                zIndex: 9998,
               }}
-              className="w-auto sm:w-[400px] bg-white dark:bg-zinc-900 rounded-[1.75rem] shadow-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden flex flex-col"
+              className="w-auto sm:w-[420px] bg-gray-50/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/15 border border-gray-200/80 dark:border-zinc-700/60 overflow-hidden flex flex-col"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-zinc-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-primary-500/10 flex items-center justify-center">
-                    <Bell className="w-4 h-4 text-primary-600" />
-                  </div>
+              {/* ── Header ────────────────────────────────────────────────── */}
+              <div className="px-5 pt-5 pb-4">
+                <div className="flex items-start justify-between">
+                  {/* Title + subtitle */}
                   <div>
-                    <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-widest">Notifikasi</p>
-                    {unreadCount > 0 && (
-                      <p className="text-[9px] font-bold text-primary-500 uppercase tracking-widest">
-                        {unreadCount} belum dibaca
+                    <div className="flex items-center gap-2.5 mb-0.5">
+                      <div className="w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
+                        <Bell className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                      </div>
+                      <h3 className="text-base font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
+                        Notifikasi
+                      </h3>
+                    </div>
+                    {unreadCount > 0 ? (
+                      <p className="text-xs text-gray-500 dark:text-zinc-400 ml-9">
+                        <span className="font-semibold text-primary-600 dark:text-primary-400">{unreadCount}</span> belum dibaca
                       </p>
+                    ) : (
+                      <p className="text-xs text-gray-400 dark:text-zinc-500 ml-9">Semua sudah dibaca</p>
                     )}
                   </div>
-                </div>
 
-                <div className="flex items-center gap-1">
-                  {/* Refresh */}
-                  <button
-                    onClick={() => { setLoading(true); fetchNotifications().finally(() => setLoading(false)); }}
-                    className="p-2 rounded-xl text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 transition-all"
-                    title="Refresh"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-                  </button>
-                  {/* Mark all read */}
-                  {unreadCount > 0 && (
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-1">
                     <button
-                      onClick={markAllRead}
-                      className="p-2 rounded-xl text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-zinc-800 transition-all"
-                      title="Tandai semua dibaca"
+                      onClick={() => { setLoading(true); fetchNotifications().finally(() => setLoading(false)); }}
+                      className="p-2 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                      title="Refresh"
                     >
-                      <CheckCheck className="w-3.5 h-3.5" />
+                      <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                     </button>
-                  )}
-                  {/* Clear all */}
-                  {notifications.length > 0 && (
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={markAllRead}
+                        className="p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                        title="Tandai semua dibaca"
+                      >
+                        <CheckCheck className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={clearAll}
+                        className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                        title="Hapus semua"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     <button
-                      onClick={clearAll}
-                      className="p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-zinc-800 transition-all"
-                      title="Hapus semua"
+                      onClick={() => setIsOpen(false)}
+                      className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-white dark:hover:bg-zinc-800 transition-all"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <X className="w-3.5 h-3.5" />
                     </button>
-                  )}
-                  {/* Close */}
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* List */}
-              <div className="overflow-y-auto max-h-[min(420px,calc(100vh-150px))] custom-scrollbar">
-                {notifications.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-                    <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-zinc-800 flex items-center justify-center mb-4">
-                      <Bell className="w-7 h-7 text-gray-300 dark:text-zinc-600" />
-                    </div>
-                    <p className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
-                      Tidak ada notifikasi
-                    </p>
-                    <p className="text-[9px] font-bold text-gray-300 dark:text-zinc-600 mt-1">
-                      Notifikasi baru akan muncul di sini
-                    </p>
                   </div>
-                ) : (
-                  <div className="p-2">
-                    {notifications.map((notif) => {
-                      const cfg = getTypeConfig(notif.type);
-                      const Icon = cfg.icon;
-                      return (
-                        <motion.div
-                          key={notif.id}
-                          layout
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 10 }}
-                          onClick={() => handleNotifClick(notif)}
-                          className={`group relative flex items-start gap-3 p-3.5 rounded-2xl mb-1 cursor-pointer transition-all duration-200 ${
-                            notif.is_read
-                              ? 'hover:bg-gray-50 dark:hover:bg-zinc-800/60'
-                              : 'bg-primary-50/60 dark:bg-zinc-800 hover:bg-primary-50 dark:hover:bg-zinc-700/60'
-                          }`}
-                        >
-                          {/* Unread dot */}
-                          {!notif.is_read && (
-                            <span className={`absolute top-4 right-3.5 w-2 h-2 rounded-full ${cfg.dot} shadow-sm`} />
-                          )}
+                </div>
 
-                          {/* Icon */}
-                          <div className={`w-9 h-9 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0 mt-0.5`}>
-                            <Icon className={`w-4 h-4 ${cfg.iconColor}`} />
-                          </div>
-
-                          {/* Content */}
-                          <div className="flex-1 min-w-0 pr-4">
-                            <p className={`text-[10px] font-black uppercase tracking-widest leading-none mb-1 ${
-                              notif.is_read ? 'text-gray-500 dark:text-zinc-400' : 'text-gray-900 dark:text-zinc-100'
-                            }`}>
-                              {notif.title}
-                            </p>
-                            <p className="text-[10px] font-semibold text-gray-500 dark:text-zinc-400 leading-relaxed line-clamp-2">
-                              {notif.message}
-                            </p>
-                            <p className="text-[9px] font-bold text-gray-300 dark:text-zinc-600 uppercase tracking-widest mt-1.5">
-                              {timeAgo(notif.created_at)}
-                            </p>
-                          </div>
-
-                          {/* Delete button (visible on hover) */}
-                          <button
-                            onClick={(e) => deleteNotif(notif.id, e)}
-                            className="absolute top-3 right-3 p-1 rounded-lg opacity-100 sm:opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </motion.div>
-                      );
-                    })}
+                {/* Tabs */}
+                {notifications.length > 0 && (
+                  <div className="flex gap-1 mt-4 bg-white dark:bg-zinc-800 p-1 rounded-xl border border-gray-100 dark:border-zinc-700">
+                    {(['all', 'unread'] as const).map(tab => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
+                          activeTab === tab
+                            ? 'bg-primary-600 text-white shadow-sm'
+                            : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200'
+                        }`}
+                      >
+                        {tab === 'all' ? 'Semua' : `Belum Dibaca${unreadCount > 0 ? ` (${unreadCount})` : ''}`}
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
 
-              {/* Footer */}
-              {notifications.length > 0 && (
-                <div className="border-t border-gray-100 dark:border-zinc-800 px-4 py-3">
-                  <p className="text-[9px] font-black text-center text-gray-300 dark:text-zinc-600 uppercase tracking-[0.2em]">
-                    Pembaruan setiap 30 detik • PentaDosen
-                  </p>
-                </div>
-              )}
+              {/* Divider */}
+              <div className="h-px bg-gray-200/70 dark:bg-zinc-700/60 mx-5" />
+
+              {/* ── List ──────────────────────────────────────────────────── */}
+              <div className="overflow-y-auto max-h-[min(440px,calc(100vh-180px))] custom-scrollbar px-3 py-3">
+                {displayed.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 flex items-center justify-center mb-4 shadow-sm">
+                      <BellOff className="w-7 h-7 text-gray-300 dark:text-zinc-600" />
+                    </div>
+                    <p className="text-sm font-semibold text-gray-500 dark:text-zinc-400">
+                      {activeTab === 'unread' ? 'Tidak ada notifikasi baru' : 'Tidak ada notifikasi'}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1 leading-relaxed">
+                      {activeTab === 'unread'
+                        ? 'Semua notifikasi sudah dibaca'
+                        : 'Notifikasi baru akan muncul di sini'}
+                    </p>
+                  </div>
+                ) : (
+                  <AnimatePresence initial={false}>
+                    {displayed.map(notif => (
+                      <NotificationCard
+                        key={notif.id}
+                        notif={notif}
+                        onClick={handleNotifClick}
+                        onDelete={deleteNotif}
+                      />
+                    ))}
+                  </AnimatePresence>
+                )}
+              </div>
+
+              {/* ── Footer ────────────────────────────────────────────────── */}
+              <div className="h-px bg-gray-200/70 dark:bg-zinc-700/60 mx-5" />
+              <div className="px-5 py-3 flex items-center justify-between">
+                <p className="text-[11px] text-gray-400 dark:text-zinc-500">
+                  Pembaruan otomatis setiap 30 detik
+                </p>
+                <span className="text-[11px] font-semibold text-gray-400 dark:text-zinc-500">
+                  PentaDosen
+                </span>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>,
