@@ -9,6 +9,7 @@ import { saveAs } from 'file-saver';
 import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
 import { formatToYYYYMMDD } from '../../../components/ui/DatePicker';
+import { uploadWithProgress } from '../../../lib/utils';
 
 import ResearchHeader from './components/ResearchHeader';
 import ResearchStats from './components/ResearchStats';
@@ -84,6 +85,9 @@ export default function Research({ user }: ResearchProps) {
   const [editFile, setEditFile] = useState<File | null>(null);
   const [isEditLoading, setIsEditLoading] = useState(false);
 
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [editUploadProgress, setEditUploadProgress] = useState<number | null>(null);
+
   // Delete states
   const [deleteDoc, setDeleteDoc] = useState<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -137,8 +141,8 @@ export default function Research({ user }: ResearchProps) {
 
   const handleUpload = async (e: FormEvent) => {
     e.preventDefault();
-    if (!file || !judulPenelitian || !danaDisetujui || !program || !skema || !fokus || !tahun) {
-      setMessage('Harap lengkapi semua field.');
+    if (!judulPenelitian || !danaDisetujui || !program || !skema || !fokus || !tahun || !file) {
+      setMessage('Harap isi semua data termasuk file PDF.');
       setMessageType('error');
       return;
     }
@@ -161,16 +165,12 @@ export default function Research({ user }: ResearchProps) {
 
     try {
       setLoading(true);
-      const res = await fetch('/api/penelitian', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-        body: formData,
-      });
-      const data = await res.json();
+      setUploadProgress(0);
+      const res = await uploadWithProgress('/api/penelitian', 'POST', formData, setUploadProgress);
+      
       if (res.ok) {
-        setMessage(data.message || 'Penelitian berhasil diunggah!');
+        await new Promise(r => setTimeout(r, 400));
+        setMessage(res.data?.message || 'Penelitian berhasil diunggah!');
         setMessageType('success');
         setJudulPenelitian('');
         setDanaDisetujui('');
@@ -185,9 +185,9 @@ export default function Research({ user }: ResearchProps) {
         setCurrentPage(1);
         setIsTableLoading(false);
       } else {
-        let errorMsg = data.message || 'Gagal mengunggah penelitian.';
-        if (data.errors && data.errors.judul_penelitian) {
-          errorMsg = data.errors.judul_penelitian[0];
+        let errorMsg = res.data?.message || 'Gagal mengunggah penelitian.';
+        if (res.data?.errors && res.data.errors.judul_penelitian) {
+          errorMsg = res.data.errors.judul_penelitian[0];
         }
         setMessage(errorMsg);
         setMessageType('error');
@@ -199,6 +199,7 @@ export default function Research({ user }: ResearchProps) {
       setTimeout(() => setMessage(''), 4500);
     } finally {
       setLoading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -388,6 +389,7 @@ export default function Research({ user }: ResearchProps) {
     }
     try {
       setIsEditLoading(true);
+      setEditUploadProgress(0);
       const formData = new FormData();
       formData.append('_method', 'PUT');
       formData.append('judul_penelitian', editJudul);
@@ -400,14 +402,10 @@ export default function Research({ user }: ResearchProps) {
         formData.append('file', editFile);
       }
 
-      const res = await fetch(`/api/penelitian/${editDoc.id}`, {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: formData,
-      });
-      const data = await res.json();
+      const res = await uploadWithProgress(`/api/penelitian/${editDoc.id}`, 'POST', formData, setEditUploadProgress);
       if (res.ok) {
-        setMessage(data.message || 'Penelitian berhasil diperbarui!');
+        await new Promise(r => setTimeout(r, 400));
+        setMessage(res.data?.message || 'Penelitian berhasil diperbarui!');
         setMessageType('success');
         setEditFile(null);
         setIsEditModalOpen(false);
@@ -415,16 +413,17 @@ export default function Research({ user }: ResearchProps) {
         await fetchResearch();
         setIsTableLoading(false);
       } else {
-        setMessage(data.message || 'Gagal memperbarui penelitian.');
+        setMessage(res.data?.message || 'Gagal memperbarui penelitian.');
         setMessageType('error');
       }
       setTimeout(() => setMessage(''), 4500);
     } catch (err) {
-      setMessage('Terjadi kesalahan.');
+      setMessage('Terjadi kesalahan saat memperbarui.');
       setMessageType('error');
       setTimeout(() => setMessage(''), 4500);
     } finally {
       setIsEditLoading(false);
+      setEditUploadProgress(null);
     }
   };
 
@@ -623,6 +622,7 @@ export default function Research({ user }: ResearchProps) {
         loading={loading}
         onSubmit={handleUpload}
         onErrorMsg={displayErrorMessage}
+        uploadProgress={uploadProgress}
       />
 
       {/* Edit Modal */}
@@ -646,6 +646,7 @@ export default function Research({ user }: ResearchProps) {
         setEditFile={setEditFile}
         isEditLoading={isEditLoading}
         onSubmit={handleUpdate}
+        uploadProgress={editUploadProgress}
       />
 
       {/* Delete Confirmation Modal */}

@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Upload, Sparkles, Archive, AlertCircle, Shield, 
-  CalendarDays, ChevronDown, CheckCircle, Zap 
+  CalendarDays, ChevronDown, CheckCircle, Zap, FileText, XCircle 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
 import { BUKU_CATEGORIES } from '../constants';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
+import { uploadWithProgress } from '../../../../lib/utils';
 
 interface BukuUploadModalProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export default function BukuUploadModal({
   
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const duplicateFound = useMemo(() => {
     if (!title || title.length < 5) return null;
@@ -96,13 +98,13 @@ export default function BukuUploadModal({
 
     try {
       setLoading(true);
-      const res = await fetch('/api/documents', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
+      setUploadProgress(0);
+      const res = await uploadWithProgress('/api/documents', 'POST', formData, setUploadProgress);
+      
       if (res.ok) {
-        onShowMessage(data.message || 'Buku berhasil diunggah!', 'success');
+        // Delay closing modal slightly so the user sees 100% completion
+        await new Promise(r => setTimeout(r, 400));
+        onShowMessage(res.data?.message || 'Buku berhasil diunggah!', 'success');
         setTitle('');
         setFile(null);
         setDate(new Date());
@@ -113,9 +115,9 @@ export default function BukuUploadModal({
         setCurrentPage(1); // Reset ke halaman 1 setelah upload
         setIsTableLoading(false);
       } else {
-        let errorMsg = data.message || 'Gagal mengunggah.';
-        if (data.errors && data.errors.title) {
-          errorMsg = data.errors.title[0];
+        let errorMsg = res.data?.message || 'Gagal mengunggah.';
+        if (res.data?.errors && res.data.errors.title) {
+          errorMsg = res.data.errors.title[0];
         }
         onShowMessage(errorMsg, 'error');
       }
@@ -123,6 +125,7 @@ export default function BukuUploadModal({
       onShowMessage('Terjadi kesalahan saat mengunggah.', 'error');
     } finally {
       setLoading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -234,47 +237,76 @@ export default function BukuUploadModal({
 
             <div className="space-y-2">
               <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">File Buku (PDF)</label>
-              <div 
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => document.getElementById('buku-file-input-modal')?.click()}
-                className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer ${
-                  isDragging 
-                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-8 ring-primary-500/10 scale-[1.01]' 
-                    : file 
-                      ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20' 
-                      : 'border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400'
-                }`}
-              >
-                <input
-                  id="buku-file-input-modal"
-                  type="file"
-                  accept=".pdf"
-                  className="sr-only"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                />
-                <div className="space-y-3 text-center">
-                  <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                    isDragging ? 'scale-110 bg-primary-600' : 
-                    file ? 'bg-emerald-100 dark:bg-emerald-900/40 shadow-sm' : 'bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5'
-                  }`}>
-                    {file ? (
-                      <CheckCircle className="h-6 w-6 text-emerald-600 animate-bounce" />
-                    ) : (
-                      <Upload className={`h-6 w-6 text-gray-400 group-hover:text-primary-600`} />
-                    )}
+              {file ? (
+                <div className="relative p-5 bg-gray-50/50 dark:bg-zinc-800/30 border border-gray-150 dark:border-zinc-800 rounded-2xl flex flex-col gap-4">
+                  <button 
+                    type="button"
+                    onClick={() => setFile(null)}
+                    disabled={loading}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors"
+                  >
+                    <XCircle className="w-5 h-5" />
+                  </button>
+
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-850 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                      <FileText className="w-6 h-6 text-gray-400 dark:text-zinc-500" />
+                    </div>
+                    
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-black text-gray-900 dark:text-zinc-100 truncate pr-6 uppercase tracking-tight">
+                        {file.name}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
+                        {(file.size / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1 px-4">
-                    <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
-                      {file ? 'Buku Terpilih!' : 'Drag & Drop PDF'}
-                    </p>
-                    <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate max-w-[250px]">
-                      {file ? file.name : 'Klik atau seret file buku ke sini'}
-                    </p>
+
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="flex-1 bg-gray-200 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="bg-gray-900 dark:bg-zinc-100 h-full rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${uploadProgress !== null ? uploadProgress : 100}%` }}
+                        transition={{ duration: 0.1 }}
+                      />
+                    </div>
+                    <span className="text-xs font-bold text-gray-600 dark:text-zinc-400 min-w-[30px] text-right">
+                      {uploadProgress !== null ? `${uploadProgress}%` : '100%'}
+                    </span>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div 
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('buku-file-input-modal')?.click()}
+                  className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400`}
+                >
+                  <input
+                    id="buku-file-input-modal"
+                    type="file"
+                    accept=".pdf"
+                    className="sr-only"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  />
+                  <div className="space-y-3 text-center">
+                    <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5`}>
+                      <Upload className={`h-6 w-6 text-gray-400 group-hover:text-primary-600`} />
+                    </div>
+                    <div className="flex flex-col gap-1 px-4">
+                      <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
+                        Drag & Drop PDF
+                      </p>
+                      <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate max-w-[250px]">
+                        Klik atau seret file buku ke sini
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-zinc-800">

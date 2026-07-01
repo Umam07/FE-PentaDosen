@@ -88,3 +88,45 @@ export async function downloadWithFilename(url: string, filename: string): Promi
     document.body.removeChild(a);
   }
 }
+
+/**
+ * Perform an HTTP request with upload progress tracking using XMLHttpRequest.
+ */
+export function uploadWithProgress(
+  url: string,
+  method: 'POST' | 'PUT',
+  body: FormData | null,
+  onProgress: (progress: number) => void
+): Promise<{ ok: boolean; status: number; data: any }> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    
+    xhr.responseType = 'json';
+    xhr.setRequestHeader('Accept', 'application/json');
+
+    if (xhr.upload) {
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          onProgress(percentComplete);
+        }
+      };
+    }
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve({ ok: true, status: xhr.status, data: xhr.response });
+      } else {
+        resolve({ ok: false, status: xhr.status, data: xhr.response || { message: 'Terjadi kesalahan.' } });
+      }
+    };
+
+    xhr.onerror = () => {
+      reject(new Error('Network error'));
+    };
+
+    xhr.send(body);
+  });
+}
+
