@@ -230,7 +230,7 @@ export default function Insights() {
                       <div className="h-9 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-md w-16 mt-2" />
                     ) : (
                       <p className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tighter">
-                        {((stats?.total_research || 0) + (stats?.total_docs || 0)).toLocaleString()}
+                        {((stats?.total_docs || 0) + (stats?.total_research || 0) + (stats?.total_scholar || 0) + (stats?.total_scopus || 0)).toLocaleString()}
                       </p>
                     )}
                   </div>

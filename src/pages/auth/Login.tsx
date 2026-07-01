@@ -47,7 +47,7 @@ export default function Login({ setUser }: { setUser: any }) {
         throw new Error('Failed to fetch stats');
       })
       .then((data) => {
-        const docCount = (data.total_docs || 0) + (data.total_research || 0);
+        const docCount = (data.total_docs || 0) + (data.total_research || 0) + (data.total_scholar || 0) + (data.total_scopus || 0);
         setTotalDocs(docCount);
         if (data.total_dosen !== undefined) setTotalDosen(data.total_dosen);
       })

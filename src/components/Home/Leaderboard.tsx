@@ -134,7 +134,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
 
           <div className="grid grid-cols-2 gap-4">
             {[
-              { label: 'Total Dokumen', val: (stats?.total_research || 0) + (stats?.total_docs || 0), icon: BookOpen, color: 'text-indigo-400 bg-indigo-500/10', colSpan: 'col-span-2' },
+              { label: 'Total Dokumen', val: (stats?.total_docs || 0) + (stats?.total_research || 0) + (stats?.total_scholar || 0) + (stats?.total_scopus || 0), icon: BookOpen, color: 'text-indigo-400 bg-indigo-500/10', colSpan: 'col-span-2' },
               { label: 'Total Sitasi', val: stats?.total_citations || 0, icon: FileText, color: 'text-emerald-400 bg-emerald-500/10' },
               { label: 'Dosen Aktif', val: stats?.total_dosen || 0, icon: Users, color: 'text-blue-400 bg-blue-500/10' }
             ].map((item, i) => (
