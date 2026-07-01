@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Download, ZoomIn, ZoomOut, RotateCw, FileText, AlertCircle, ExternalLink, Maximize2, Minimize2 } from 'lucide-react';
+import { X, Download, ZoomIn, ZoomOut, RotateCw, FileText, AlertCircle, ExternalLink, Maximize2, Minimize2, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { buildDownloadFilename, downloadWithFilename } from '../../lib/utils';
 
 interface PdfPreviewModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Normalize file URL — if it's a relative /storage/... path, resolve it against the current origin
   const resolvedUrl = fileUrl
@@ -22,6 +24,15 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
       ? fileUrl
       : `${window.location.origin}${fileUrl}`
     : null;
+
+  const handleDownload = async () => {
+    if (!resolvedUrl) return;
+    setIsDownloading(true);
+    const filename = buildDownloadFilename(title || 'dokumen', resolvedUrl);
+    await downloadWithFilename(resolvedUrl, filename);
+    setIsDownloading(false);
+  };
+
 
   // Reset error state when URL changes
   useEffect(() => {
@@ -97,16 +108,16 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
               <div className="flex items-center gap-2 flex-shrink-0">
                 {/* Download */}
                 {isValidFileUrl && (
-                  <a
-                    href={resolvedUrl!}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-900/30 transition-all shadow-sm"
+                  <button
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                    className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-900/30 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                     title="Unduh File"
                   >
-                    <Download className="w-4 h-4" />
-                  </a>
+                    {isDownloading
+                      ? <Loader2 className="w-4 h-4 animate-spin" />
+                      : <Download className="w-4 h-4" />}
+                  </button>
                 )}
 
                 {/* Open in new tab */}

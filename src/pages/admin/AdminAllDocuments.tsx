@@ -10,6 +10,7 @@ import { useOutletContext } from 'react-router-dom';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
+import { buildDownloadFilename, downloadWithFilename } from '../../lib/utils';
 
 export default function AdminAllDocuments() {
   const { user } = useOutletContext<{ user: any }>();
@@ -644,15 +645,19 @@ export default function AdminAllDocuments() {
                               <Eye className="w-4 h-4 mr-1.5" />
                               Preview
                             </button>
-                            <a 
-                              href={doc.file_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              onClick={async (e) => {
+                                const btn = e.currentTarget;
+                                btn.disabled = true;
+                                const filename = buildDownloadFilename(title || 'dokumen', doc.file_url);
+                                await downloadWithFilename(doc.file_url, filename);
+                                btn.disabled = false;
+                              }}
                               className="inline-flex items-center px-4 py-2.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 hover:border-primary-500 hover:text-primary-600 text-gray-600 dark:text-zinc-300 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 shadow-sm"
                             >
                               <Download className="w-4 h-4 mr-1.5" />
                               Unduh
-                            </a>
+                            </button>
                           </>
                         ) : (
                           <div className="inline-flex items-center px-4 py-2 bg-gray-50 dark:bg-zinc-800 text-gray-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-gray-100 dark:border-zinc-700 cursor-not-allowed italic">
@@ -751,16 +756,20 @@ export default function AdminAllDocuments() {
                                   <Eye className="w-3.5 h-3.5" />
                                   Preview
                                 </button>
-                                <a 
-                                  href={doc.file_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                <button 
+                                  onClick={async (e) => {
+                                    const btn = e.currentTarget;
+                                    btn.disabled = true;
+                                    const filename = buildDownloadFilename(title || 'dokumen', doc.file_url);
+                                    await downloadWithFilename(doc.file_url, filename);
+                                    btn.disabled = false;
+                                  }}
                                   className="inline-flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 hover:border-primary-500 hover:text-primary-600 text-gray-500 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
                                   title="Unduh File"
                                 >
                                   <Download className="w-3.5 h-3.5" />
                                   Unduh
-                                </a>
+                                </button>
                               </div>
                             ) : (
                               <div className="inline-flex items-center gap-2 px-4 py-2 text-gray-300 dark:text-zinc-700 text-[10px] font-black uppercase tracking-widest italic cursor-not-allowed">

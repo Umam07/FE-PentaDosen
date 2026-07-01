@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   XCircle, CheckCircle, Clock, AlertCircle, 
   CalendarDays, Sparkles, Archive, Link, 
-  Eye, Download, Upload 
+  Eye, Download, Upload, Loader2
 } from 'lucide-react';
+import { buildDownloadFilename, downloadWithFilename } from '../../lib/utils';
 
 export interface DocumentDetailDrawerProps {
   isOpen: boolean;
@@ -68,6 +69,16 @@ export function DocumentDetailDrawer({
   onPreviewClick,
   onUploadPdf,
 }: DocumentDetailDrawerProps) {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!fileUrl || fileUrl === '-') return;
+    setIsDownloading(true);
+    const filename = buildDownloadFilename(title, fileUrl);
+    await downloadWithFilename(fileUrl, filename);
+    setIsDownloading(false);
+  };
+
   const drawerContent = (
     <AnimatePresence>
       {isOpen && (
@@ -251,15 +262,16 @@ export function DocumentDetailDrawer({
                   >
                     <Eye className="w-4 h-4" /> Lihat Dokumen
                   </button>
-                  <a
-                    href={fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 p-3.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 hover:border-primary-500 text-gray-600 dark:text-zinc-300 hover:text-primary-600 rounded-xl transition-colors shadow-sm"
+                  <button
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                    className="inline-flex items-center justify-center gap-1.5 p-3.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 hover:border-primary-500 text-gray-600 dark:text-zinc-300 hover:text-primary-600 rounded-xl transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                     title="Download"
                   >
-                    <Download className="w-4 h-4" />
-                  </a>
+                    {isDownloading
+                      ? <Loader2 className="w-4 h-4 animate-spin" />
+                      : <Download className="w-4 h-4" />}
+                  </button>
                 </div>
               ) : (
                 <div>
