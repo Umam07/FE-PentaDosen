@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, ElementType, MouseEvent as ReactMouseEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell, CheckCheck, Trash2, X,
@@ -59,15 +59,14 @@ function timeAgo(dateStr: string): string {
 }
 
 // ─── Notification Card Sub-Component ────────────────────────────────────────
-function NotificationCard({
-  notif,
-  onClick,
-  onDelete,
-}: {
+interface NotificationCardProps {
+  key?: any;
   notif: NotificationItem;
-  onClick: (n: NotificationItem) => void;
-  onDelete: (id: number, e: ReactMouseEvent<HTMLButtonElement>) => void;
-}) {
+  onClick: (n: NotificationItem) => void | Promise<void>;
+  onDelete: (id: number, e: ReactMouseEvent<HTMLButtonElement>) => void | Promise<void>;
+}
+
+function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
   const cfg = getTypeConfig(notif.type);
   const Icon = cfg.icon;
 
