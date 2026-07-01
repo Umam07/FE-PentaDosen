@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, X, FileText, Eye } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+import FaqDeleteModal from './FaqDeleteModal';
 
 export default function FaqTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
   const [faqs, setFaqs] = useState<any[]>([]);
@@ -21,6 +22,9 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
   const [existingFileUrl, setExistingFileUrl] = useState<string | null>(null);
   const [removeFile, setRemoveFile] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
+
+  // Delete state
+  const [deleteFaq, setDeleteFaq] = useState<any | null>(null);
 
   const fetchFaqs = async () => {
     setLoading(true);
@@ -126,22 +130,7 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus panduan FAQ ini?')) return;
-    try {
-      const res = await fetch(`/api/cms/faqs/${id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        triggerMessage('Panduan FAQ berhasil dihapus.');
-        fetchFaqs();
-      } else {
-        triggerMessage('Gagal menghapus panduan.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -216,7 +205,7 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(f.id)}
+                        onClick={() => setDeleteFaq(f)}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800 rounded-lg transition-all"
                         title="Hapus Panduan"
                       >
@@ -397,6 +386,14 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
         fileUrl={previewDoc?.fileUrl ?? null}
         title={previewDoc?.title}
         category={previewDoc?.category}
+      />
+
+      <FaqDeleteModal
+        isOpen={!!deleteFaq}
+        onClose={() => setDeleteFaq(null)}
+        faq={deleteFaq}
+        onSuccess={fetchFaqs}
+        triggerMessage={triggerMessage}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import {
   Book, Beaker, BookOpen, Zap, FileSpreadsheet 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import KpiDeleteModal from './KpiDeleteModal';
 
 export default function KpiTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
   const [weights, setWeights] = useState<any[]>([]);
@@ -23,6 +24,9 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
   const [newCategory, setNewCategory] = useState('');
   const [newWeight, setNewWeight] = useState('');
   const [addingCategory, setAddingCategory] = useState(false);
+
+  // Delete category state
+  const [deleteCategory, setDeleteCategory] = useState<string | null>(null);
 
   const fetchKpiData = async () => {
     setLoading(true);
@@ -145,22 +149,7 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
     }
   };
 
-  const handleDeleteCategory = async (category: string) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus kategori "${category}"?`)) return;
-    try {
-      const res = await fetch(`/api/cms/weights/${encodeURIComponent(category)}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        triggerMessage('Kategori berhasil dihapus.');
-        fetchKpiData();
-      } else {
-        triggerMessage('Gagal menghapus kategori.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    }
-  };
+
 
   const filteredWeights = weights.filter(w => getGroupForCategory(w.category) === activeGroup);
 
@@ -274,7 +263,7 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
                           </td>
                           <td className="py-3.5 text-right">
                             <button
-                              onClick={() => handleDeleteCategory(w.category)}
+                              onClick={() => setDeleteCategory(w.category)}
                               className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -448,6 +437,13 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
           </div>
         </div>
       </div>
+      <KpiDeleteModal
+        isOpen={!!deleteCategory}
+        onClose={() => setDeleteCategory(null)}
+        category={deleteCategory}
+        onSuccess={fetchKpiData}
+        triggerMessage={triggerMessage}
+      />
     </div>
   );
 }

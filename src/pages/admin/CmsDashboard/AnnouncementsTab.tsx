@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Megaphone, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import AnnouncementDeleteModal from './AnnouncementDeleteModal';
 
 export default function AnnouncementsTab({ triggerMessage, user }: { triggerMessage: (text: string, type?: 'success' | 'error') => void, user: any }) {
   const [announcements, setAnnouncements] = useState<any[]>([]);
@@ -14,6 +15,9 @@ export default function AnnouncementsTab({ triggerMessage, user }: { triggerMess
   const [expiresAt, setExpiresAt] = useState('');
   const [saving, setSaving] = useState(false);
   const [isOpenForm, setIsOpenForm] = useState(false);
+
+  // Delete state
+  const [deleteAnnouncement, setDeleteAnnouncement] = useState<any | null>(null);
 
   const fetchAnnouncements = async () => {
     setLoading(true);
@@ -84,22 +88,7 @@ export default function AnnouncementsTab({ triggerMessage, user }: { triggerMess
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus pengumuman ini?')) return;
-    try {
-      const res = await fetch(`/api/cms/announcements/${id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        triggerMessage('Pengumuman berhasil dihapus.');
-        fetchAnnouncements();
-      } else {
-        triggerMessage('Gagal menghapus pengumuman.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -148,7 +137,7 @@ export default function AnnouncementsTab({ triggerMessage, user }: { triggerMess
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(a.id)}
+                  onClick={() => setDeleteAnnouncement(a)}
                   className="px-4 py-2 hover:bg-red-50 dark:hover:bg-red-950/20 text-gray-400 hover:text-red-600 rounded-xl text-[10px] font-black uppercase tracking-wider border border-gray-100 dark:border-zinc-800 transition-colors"
                 >
                   Hapus
@@ -261,6 +250,13 @@ export default function AnnouncementsTab({ triggerMessage, user }: { triggerMess
           </div>
         )}
       </AnimatePresence>
+      <AnnouncementDeleteModal
+        isOpen={!!deleteAnnouncement}
+        onClose={() => setDeleteAnnouncement(null)}
+        announcement={deleteAnnouncement}
+        onSuccess={fetchAnnouncements}
+        triggerMessage={triggerMessage}
+      />
     </div>
   );
 }
