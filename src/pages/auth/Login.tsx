@@ -164,17 +164,8 @@ export default function Login({ setUser }: { setUser: any }) {
           : 'left-0 border-r border-slate-200/80 dark:border-slate-800/80'
       }`}>
         
-        {/* Top: Logo */}
-        <div className="relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-primary-600 rounded-xl text-white">
-              <Hexagon className="w-6 h-6 fill-white/20" />
-            </div>
-            <span className="text-slate-900 dark:text-white font-extrabold text-xl tracking-tight uppercase">
-              Penta<span className="text-primary-600 dark:text-primary-400">Dosen</span>
-            </span>
-          </div>
-        </div>
+        {/* Top Placeholder (Keeps justify-between layout consistent) */}
+        <div className="h-6" />
 
         {/* Center: Hero copy */}
         <div className="relative z-10 space-y-8 my-auto">
