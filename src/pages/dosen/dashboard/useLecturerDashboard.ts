@@ -13,7 +13,7 @@ export default function useLecturerDashboard(user: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [categoryFilter, setCategoryFilter] = useState<string>('penelitian');
-  const [activeView, setActiveView] = useState<'all' | 'internal' | 'external'>('all');
+  const [activeView, setActiveView] = useState<'internal' | 'external'>('external');
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed' | 'metriks'>('scopus');
 
   const fetchData = async () => {
@@ -53,7 +53,6 @@ export default function useLecturerDashboard(user: any) {
         const data = await profileRes.json();
         setProfileData(data);
       }
-
 
     } catch (err) {
       console.error('Error fetching data:', err);
