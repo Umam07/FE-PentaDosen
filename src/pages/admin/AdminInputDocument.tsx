@@ -540,7 +540,7 @@ export default function AdminInputDocument() {
         </div>
       </div>
 
-      <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 overflow-hidden">
+      <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2.5rem] border border-gray-100 dark:border-zinc-800">
         <div className="p-8 lg:p-12 space-y-10">
             {/* Tab Selector at the top of card */}
             <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 rounded-2xl p-1 max-w-md">
