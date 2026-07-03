@@ -4,10 +4,11 @@ import {
   Check, X, FileText, ExternalLink, Award, Archive, 
   CalendarDays, ShieldAlert, CheckCircle2, Zap, 
   ChevronLeft, ChevronRight, Beaker, Landmark, Globe,
-  Filter, GraduationCap, ShieldCheck, Clock, Eye, Search, Mail
+  Filter, GraduationCap, ShieldCheck, Clock, Eye, Search, Mail, History
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
+import { DocumentHistoryModal } from '../../components/ui/document-history-modal';
 
 export default function AdminVerification() {
   const { user } = useOutletContext<{ user: any }>();
@@ -35,6 +36,13 @@ export default function AdminVerification() {
 
   // === State Preview Modal ===
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
+
+  // === State History Modal ===
+  const [historyModal, setHistoryModal] = useState<{ isOpen: boolean; docId: number | null; title: string }>({
+    isOpen: false,
+    docId: null,
+    title: ''
+  });
 
   // Pagination States
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -520,6 +528,20 @@ export default function AdminVerification() {
                               );
                             })()}
                             
+                            {/* Tombol History */}
+                            <button
+                              onClick={() => setHistoryModal({
+                                isOpen: true,
+                                docId: item.id,
+                                title: activeTab === 'penelitian' ? item.judul_penelitian : item.title
+                              })}
+                              className="inline-flex items-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-white rounded-xl border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                              title="Lihat Riwayat Dokumen"
+                            >
+                              <History className="h-3.5 w-3.5" />
+                              Riwayat
+                            </button>
+                            
                             {/* Approve */}
                             <button
                               onClick={() => handleVerify(item.id, 'Approved')}
@@ -728,6 +750,14 @@ export default function AdminVerification() {
         fileUrl={previewDoc?.fileUrl ?? null}
         title={previewDoc?.title}
         category={previewDoc?.category}
+      />
+
+      {/* History Modal */}
+      <DocumentHistoryModal
+        isOpen={historyModal.isOpen}
+        onClose={() => setHistoryModal({ ...historyModal, isOpen: false })}
+        docId={historyModal.docId}
+        title={historyModal.title}
       />
     </div>
   );

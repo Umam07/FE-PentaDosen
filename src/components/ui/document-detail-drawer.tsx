@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   XCircle, CheckCircle, Clock, AlertCircle, 
   CalendarDays, Sparkles, Archive, Link, 
-  Eye, Download, Upload, Loader2
+  Eye, Download, Upload, Loader2, History
 } from 'lucide-react';
 import { buildDownloadFilename, downloadWithFilename } from '../../lib/utils';
 
@@ -70,6 +70,23 @@ export function DocumentDetailDrawer({
   onUploadPdf,
 }: DocumentDetailDrawerProps) {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && docId) {
+      setLoadingHistory(true);
+      fetch(`/api/documents/${docId}/history`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setHistory(data.history || []);
+          }
+        })
+        .catch(err => console.error(err))
+        .finally(() => setLoadingHistory(false));
+    }
+  }, [isOpen, docId]);
 
   const handleDownload = async () => {
     if (!fileUrl || fileUrl === '-') return;
@@ -250,6 +267,41 @@ export function DocumentDetailDrawer({
                   )}
                 </div>
               )}
+
+              {/* Riwayat Dokumen (Timeline) */}
+              <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+                <h4 className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                  <History className="w-4 h-4" /> Riwayat Perjalanan Dokumen
+                </h4>
+                
+                {loadingHistory ? (
+                  <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-primary-500" /></div>
+                ) : history.length === 0 ? (
+                  <p className="text-[11px] text-gray-500 italic">Belum ada riwayat tercatat.</p>
+                ) : (
+                  <div className="relative pl-3 space-y-4 before:absolute before:inset-y-2 before:left-[15px] before:w-0.5 before:bg-gray-100 dark:before:bg-zinc-800">
+                    {history.map((item, idx) => (
+                      <div key={item.id} className="relative flex items-start gap-4">
+                        <div className="absolute -left-[5px] mt-1.5 w-2 h-2 rounded-full bg-primary-500 ring-4 ring-white dark:ring-zinc-900 z-10" />
+                        <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-xl p-3 flex-1 border border-gray-100 dark:border-zinc-800">
+                          <p className="text-xs font-bold text-gray-900 dark:text-zinc-100">{item.action}</p>
+                          <div className="flex justify-between items-center mt-1">
+                            <span className="text-[10px] text-gray-500 dark:text-zinc-400 font-medium">Oleh: {item.user?.name}</span>
+                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">
+                              {new Date(item.created_at).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          {item.notes && (
+                            <div className="mt-2 text-[10px] p-2 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-lg border border-red-100 dark:border-red-900/30">
+                              <span className="font-bold">Catatan:</span> {item.notes}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Footer Actions */}

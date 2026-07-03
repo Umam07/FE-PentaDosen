@@ -3,13 +3,14 @@ import {
   FileText, CheckCircle, XCircle, Clock, Download, 
   Search, FileDown, Award, Archive, CalendarDays, Filter,
   ChevronLeft, ChevronRight, Globe, User, GraduationCap, ShieldCheck, Zap, Eye,
-  Beaker, Landmark, Book
+  Beaker, Landmark, Book, History
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOutletContext } from 'react-router-dom';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
+import { DocumentHistoryModal } from '../../components/ui/document-history-modal';
 import { buildDownloadFilename, downloadWithFilename } from '../../lib/utils';
 
 export default function AdminAllDocuments() {
@@ -28,6 +29,13 @@ export default function AdminAllDocuments() {
 
   // === State Preview Modal ===
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
+
+  // === State History Modal ===
+  const [historyModal, setHistoryModal] = useState<{ isOpen: boolean; docId: number | null; title: string }>({
+    isOpen: false,
+    docId: null,
+    title: ''
+  });
 
   // Tab configurations: icons, descriptions, colors
   const tabDetails = {
@@ -685,6 +693,18 @@ export default function AdminAllDocuments() {
                             No File (Synced)
                           </div>
                         )}
+                        <button
+                          onClick={() => setHistoryModal({
+                            isOpen: true,
+                            docId: doc.id,
+                            title
+                          })}
+                          className="inline-flex items-center px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-white border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
+                          title="Lihat Riwayat Dokumen"
+                        >
+                          <History className="w-4 h-4 mr-1.5" />
+                          Riwayat
+                        </button>
                       </div>
                     </div>
                   );
@@ -790,6 +810,18 @@ export default function AdminAllDocuments() {
                                   <Download className="w-3.5 h-3.5" />
                                   Unduh
                                 </button>
+                                <button
+                                  onClick={() => setHistoryModal({
+                                    isOpen: true,
+                                    docId: doc.id,
+                                    title
+                                  })}
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-white rounded-xl border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
+                                  title="Lihat Riwayat Dokumen"
+                                >
+                                  <History className="w-3.5 h-3.5" />
+                                  Riwayat
+                                </button>
                               </div>
                             ) : (
                               <div className="inline-flex items-center gap-2 px-4 py-2 text-gray-300 dark:text-zinc-700 text-[10px] font-black uppercase tracking-widest italic cursor-not-allowed">
@@ -883,6 +915,14 @@ export default function AdminAllDocuments() {
         fileUrl={previewDoc?.fileUrl ?? null}
         title={previewDoc?.title}
         category={previewDoc?.category}
+      />
+
+      {/* History Modal */}
+      <DocumentHistoryModal
+        isOpen={historyModal.isOpen}
+        onClose={() => setHistoryModal({ ...historyModal, isOpen: false })}
+        docId={historyModal.docId}
+        title={historyModal.title}
       />
     </div>
   );
