@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { 
   Upload, FileText, CheckCircle, XCircle, Clock, CalendarDays, 
@@ -22,6 +22,9 @@ export default function AdminInputDocument() {
   const [selectedUserId, setSelectedUserId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
   
   const [title, setTitle] = useState('');
   const [mainCategory, setMainCategory] = useState('Penelitian');
@@ -55,6 +58,19 @@ export default function AdminInputDocument() {
   useEffect(() => {
     fetchUsers();
     fetchWeights();
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
+        setIsMainCategoryDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const fetchUsers = async () => {
@@ -576,7 +592,7 @@ export default function AdminInputDocument() {
                     </div>
                     <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Pilih Dosen</h3>
                   </div>
-                  <div className="relative">
+                  <div className="relative" ref={dropdownRef}>
                     <div 
                       className={`flex items-center gap-3 w-full px-6 py-4 bg-gray-50 dark:bg-zinc-800 border-2 rounded-2xl transition-all ${isDropdownOpen ? 'border-primary-500 ring-4 ring-primary-100 dark:ring-primary-900/20' : 'border-gray-200 dark:border-zinc-700'}`}
                     >
@@ -638,7 +654,6 @@ export default function AdminInputDocument() {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                    {isDropdownOpen && <div className="fixed inset-0 z-[40]" onClick={() => setIsDropdownOpen(false)} />}
                   </div>
                 </div>
 
@@ -661,7 +676,7 @@ export default function AdminInputDocument() {
                         </div>
 
                         <div className="space-y-4">
-                          <div className="space-y-2 relative">
+                          <div className="space-y-2 relative" ref={categoryDropdownRef}>
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Kategori Utama</label>
                             <button
                               type="button"
@@ -677,30 +692,27 @@ export default function AdminInputDocument() {
 
                             <AnimatePresence>
                               {isMainCategoryDropdownOpen && (
-                                <>
-                                  <div className="fixed inset-0 z-[45]" onClick={() => setIsMainCategoryDropdownOpen(false)} />
-                                  <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    className="absolute z-[50] left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden"
-                                  >
-                                    {mainCategories.map((cat) => (
-                                      <button
-                                        key={cat.id}
-                                        type="button"
-                                        onClick={() => {
-                                          setMainCategory(cat.id);
-                                          setIsMainCategoryDropdownOpen(false);
-                                        }}
-                                        className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors border-b border-gray-50 dark:border-zinc-800 last:border-none ${mainCategory === cat.id ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
-                                      >
-                                        <cat.icon className={`w-5 h-5 ${mainCategory === cat.id ? 'text-primary-600' : 'text-gray-400'}`} />
-                                        <span className={`text-sm font-black uppercase tracking-tight ${mainCategory === cat.id ? 'text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-zinc-400'}`}>{cat.label}</span>
-                                      </button>
-                                    ))}
-                                  </motion.div>
-                                </>
+                                <motion.div
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: 10 }}
+                                  className="absolute z-[50] left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden"
+                                >
+                                  {mainCategories.map((cat) => (
+                                    <button
+                                      key={cat.id}
+                                      type="button"
+                                      onClick={() => {
+                                        setMainCategory(cat.id);
+                                        setIsMainCategoryDropdownOpen(false);
+                                      }}
+                                      className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors border-b border-gray-50 dark:border-zinc-800 last:border-none ${mainCategory === cat.id ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
+                                    >
+                                      <cat.icon className={`w-5 h-5 ${mainCategory === cat.id ? 'text-primary-600' : 'text-gray-400'}`} />
+                                      <span className={`text-sm font-black uppercase tracking-tight ${mainCategory === cat.id ? 'text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-zinc-400'}`}>{cat.label}</span>
+                                    </button>
+                                  ))}
+                                </motion.div>
                               )}
                             </AnimatePresence>
                           </div>
