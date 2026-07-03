@@ -20,6 +20,7 @@ export default function AdminAllDocuments() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFakultas, setSelectedFakultas] = useState('');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   // State untuk Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -170,8 +171,13 @@ export default function AdminAllDocuments() {
   }, [activeTab, documents, research]);
 
   const filteredDocuments = useMemo(() => {
-    return getFilteredDataForTab(activeTab);
-  }, [activeTab, documents, research, searchTerm, selectedFakultas]);
+    const data = getFilteredDataForTab(activeTab);
+    return data.sort((a, b) => {
+      const dateA = new Date(activeTab === 'penelitian' ? a.tahun : a.published_at).getTime();
+      const dateB = new Date(activeTab === 'penelitian' ? b.tahun : b.published_at).getTime();
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+    });
+  }, [activeTab, documents, research, searchTerm, selectedFakultas, sortOrder]);
 
   // Hitungan untuk Pagination
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
@@ -535,6 +541,20 @@ export default function AdminAllDocuments() {
                   <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-300 pointer-events-none" />
                 </div>
               )}
+
+              {/* Sort Component */}
+              <div className="relative w-full sm:w-[180px]">
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
+                  className="appearance-none w-full px-5 py-3 pl-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm"
+                >
+                  <option value="desc">Terbaru</option>
+                  <option value="asc">Terlama</option>
+                </select>
+                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-300 pointer-events-none" />
+              </div>
             </div>
           </div>
         </div>

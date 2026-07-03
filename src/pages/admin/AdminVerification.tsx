@@ -24,8 +24,10 @@ export default function AdminVerification() {
   const [research, setResearch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [selectedFakultas, setSelectedFakultas] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFakultas, setSelectedFakultas] = useState('');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [currentPage, setCurrentPage] = useState(1);
 
   // === State Catatan Penolakan & Modal ===
   const [rejectingItem, setRejectingItem] = useState<{ id: string; title: string; type: 'documents' | 'research' } | null>(null);
@@ -35,7 +37,6 @@ export default function AdminVerification() {
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
   // Pagination States
-  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
@@ -120,20 +121,28 @@ export default function AdminVerification() {
   }, [activeTab, documents, research]);
 
   // Pagination Logic with Search
-  const activeItems = filteredDocsByTab.filter((item: any) => {
-    const titleText = activeTab === 'penelitian' ? item.judul_penelitian : item.title;
-    const authorText = activeTab === 'penelitian' ? item.user?.name : item.user_name;
-    const catText = activeTab === 'penelitian' ? item.program : item.category;
+  const activeItems = useMemo(() => {
+    const filtered = filteredDocsByTab.filter((item: any) => {
+      const titleText = activeTab === 'penelitian' ? item.judul_penelitian : item.title;
+      const authorText = activeTab === 'penelitian' ? item.user?.name : item.user_name;
+      const catText = activeTab === 'penelitian' ? item.program : item.category;
 
-    const matchSearch = (titleText || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (authorText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (catText || '').toLowerCase().includes(searchTerm.toLowerCase());
+      const matchSearch = (titleText || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+        (authorText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (catText || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-    const itemFakultas = activeTab === 'penelitian' ? item.user?.fakultas : item.fakultas;
-    const matchFakultas = selectedFakultas ? itemFakultas === selectedFakultas : true;
+      const itemFakultas = activeTab === 'penelitian' ? item.user?.fakultas : item.fakultas;
+      const matchFakultas = selectedFakultas ? itemFakultas === selectedFakultas : true;
 
-    return matchSearch && matchFakultas;
-  });
+      return matchSearch && matchFakultas;
+    });
+
+    return filtered.sort((a, b) => {
+      const dateA = new Date(activeTab === 'penelitian' ? a.tahun : a.published_at).getTime();
+      const dateB = new Date(activeTab === 'penelitian' ? b.tahun : b.published_at).getTime();
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+    });
+  }, [activeTab, filteredDocsByTab, searchTerm, selectedFakultas, sortOrder]);
 
   const totalPages = Math.ceil(activeItems.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -233,6 +242,20 @@ export default function AdminVerification() {
                     <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-300 pointer-events-none" />
                   </div>
                 )}
+
+                {/* Sort Component */}
+                <div className="relative w-full sm:w-[180px]">
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
+                    className="appearance-none w-full px-5 py-3 pl-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm"
+                  >
+                    <option value="desc">Terbaru</option>
+                    <option value="asc">Terlama</option>
+                  </select>
+                  <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-300 pointer-events-none" />
+                </div>
              </div>
           </div>
         </div>
