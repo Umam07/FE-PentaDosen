@@ -23,6 +23,8 @@ export default function AdminInputDocument() {
   const [mainCategory, setMainCategory] = useState('Penelitian');
   const [isMainCategoryDropdownOpen, setIsMainCategoryDropdownOpen] = useState(false);
   const [subCategory, setSubCategory] = useState('');
+  const [hkiType, setHkiType] = useState('');
+  const [inventorName, setInventorName] = useState('');
   const [dateVal, setDateVal] = useState<Date | undefined>(new Date());
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
@@ -168,6 +170,10 @@ export default function AdminInputDocument() {
     } else {
       formData.append('title', title);
       formData.append('category', subCategory);
+      if (mainCategory === 'HKI') {
+        formData.append('hki_type', hkiType);
+        formData.append('inventor_name', inventorName);
+      }
       formData.append('published_at', dateVal ? formatToYYYYMMDD(dateVal) : '');
       formData.append('doc_type', docType);
     }
@@ -185,6 +191,8 @@ export default function AdminInputDocument() {
         setTitle('');
         setFile(null);
         setDanaDisetujui('');
+        setHkiType('');
+        setInventorName('');
         setDateVal(new Date());
       } else {
         setMessage(data.message || 'Gagal menginput data.');
@@ -437,6 +445,31 @@ export default function AdminInputDocument() {
                       className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
                     />
                   </div>
+
+                  {mainCategory === 'HKI' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Kategori Spesifik</label>
+                        <input
+                          type="text"
+                          value={hkiType}
+                          onChange={(e) => setHkiType(e.target.value)}
+                          placeholder="Misal: Software..."
+                          className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Nama Inventor</label>
+                        <input
+                          type="text"
+                          value={inventorName}
+                          onChange={(e) => setInventorName(e.target.value)}
+                          placeholder="Nama inventor..."
+                          className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
+                        />
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-2 relative">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 flex items-center">

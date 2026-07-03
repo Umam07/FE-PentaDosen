@@ -26,6 +26,8 @@ export default function HKIEditModal({
 }: HKIEditModalProps) {
   const [editTitle, setEditTitle] = useState('');
   const [editCategory, setEditCategory] = useState('HKI Paten');
+  const [editHkiType, setEditHkiType] = useState('');
+  const [editInventorName, setEditInventorName] = useState('');
   const [editDate, setEditDate] = useState<Date | undefined>(undefined);
   const [editDocType, setEditDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
@@ -37,6 +39,8 @@ export default function HKIEditModal({
     if (editDoc && isOpen) {
       setEditTitle(editDoc.title || '');
       setEditCategory(editDoc.category || 'HKI Paten');
+      setEditHkiType(editDoc.hki_type || '');
+      setEditInventorName(editDoc.inventor_name || '');
       setEditDate(editDoc.published_at ? new Date(editDoc.published_at) : new Date());
       setEditDocType(editDoc.is_kpi_counted ? 'kpi' : 'arsip');
       setFile(null);
@@ -76,6 +80,8 @@ export default function HKIEditModal({
       formData.append('_method', 'PUT');
       formData.append('title', editTitle);
       formData.append('category', editCategory);
+      formData.append('hki_type', editHkiType);
+      formData.append('inventor_name', editInventorName);
       formData.append('published_at', editDate ? formatToYYYYMMDD(editDate) : '');
       formData.append('doc_type', editDocType);
       if (file) {
@@ -170,6 +176,36 @@ export default function HKIEditModal({
                   </div>
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="editHkiType" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                Kategori Spesifik (Opsional)
+              </label>
+              <input
+                type="text"
+                id="editHkiType"
+                value={editHkiType}
+                onChange={(e) => setEditHkiType(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+                placeholder="Misal: Software, Desain Industri..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="editInventorName" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                Nama Inventor (Opsional)
+              </label>
+              <input
+                type="text"
+                id="editInventorName"
+                value={editInventorName}
+                onChange={(e) => setEditInventorName(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+                placeholder="Masukkan nama inventor..."
+              />
             </div>
           </div>
 

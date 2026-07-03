@@ -455,6 +455,32 @@ export default function HKI({ user }: { user: any }) {
         points={activeDetailDoc?.awarded_points || 0}
         isKpiCounted={activeDetailDoc?.is_kpi_counted}
         hideKpiClassification={false}
+        customMetadata={
+          (activeDetailDoc?.hki_type || activeDetailDoc?.inventor_name) && (
+            <>
+              {activeDetailDoc.hki_type && (
+                <div>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-1">
+                    Kategori Spesifik
+                  </dt>
+                  <dd className="text-xs font-bold text-gray-800 dark:text-zinc-200">
+                    {activeDetailDoc.hki_type}
+                  </dd>
+                </div>
+              )}
+              {activeDetailDoc.inventor_name && (
+                <div>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-500 mb-1">
+                    Nama Inventor
+                  </dt>
+                  <dd className="text-xs font-bold text-gray-800 dark:text-zinc-200">
+                    {activeDetailDoc.inventor_name}
+                  </dd>
+                </div>
+              )}
+            </>
+          )
+        }
         showResearchLink={true}
         linkedResearch={activeDetailDoc?.penelitian}
         onChangeResearchClick={() => { setDocToLink(activeDetailDoc); setIsLinkingModalOpen(true); }}
