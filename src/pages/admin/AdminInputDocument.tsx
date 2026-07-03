@@ -85,8 +85,11 @@ export default function AdminInputDocument() {
     const refSheet = workbook.addWorksheet('Referensi');
     refSheet.state = 'hidden';
 
+    const samplePentaId = users.find(u => u.penta_id)?.penta_id || 'PNT0001';
+
     if (mainCategory === 'Penelitian') {
       sheet.columns = [
+        { header: 'Penta ID', key: 'penta_id', width: 15 },
         { header: 'Judul Penelitian', key: 'judul', width: 45 },
         { header: 'Dana Disetujui', key: 'dana', width: 20 },
         { header: 'Program', key: 'program', width: 25 },
@@ -96,6 +99,7 @@ export default function AdminInputDocument() {
       ];
 
       sheet.addRow({
+        penta_id: samplePentaId,
         judul: 'Analisis Sistem AI',
         dana: 10000000,
         program: 'hibah internal',
@@ -105,7 +109,7 @@ export default function AdminInputDocument() {
       });
 
       for (let i = 2; i <= 1000; i++) {
-        sheet.getCell(`C${i}`).dataValidation = {
+        sheet.getCell(`D${i}`).dataValidation = {
           type: 'list',
           allowBlank: true,
           formulae: ['"hibah internal,hibah dikti,hibah luar negeri"'],
@@ -114,7 +118,7 @@ export default function AdminInputDocument() {
           error: 'Silakan pilih program dari daftar dropdown.',
         };
 
-        sheet.getCell(`D${i}`).dataValidation = {
+        sheet.getCell(`E${i}`).dataValidation = {
           type: 'list',
           allowBlank: true,
           formulae: ['"kompetisi,pembinaan"'],
@@ -123,7 +127,7 @@ export default function AdminInputDocument() {
           error: 'Silakan pilih skema dari daftar dropdown.',
         };
 
-        sheet.getCell(`E${i}`).dataValidation = {
+        sheet.getCell(`F${i}`).dataValidation = {
           type: 'list',
           allowBlank: true,
           formulae: ['"kesehatan,ekonomi"'],
@@ -166,6 +170,7 @@ export default function AdminInputDocument() {
       });
 
       sheet.columns = [
+        { header: 'Penta ID', key: 'penta_id', width: 15 },
         { header: titleHeader, key: 'judul', width: 45 },
         { header: catHeader, key: 'kategori', width: 30 },
         { header: yearHeader, key: 'tahun', width: 15 },
@@ -173,6 +178,7 @@ export default function AdminInputDocument() {
       ];
 
       sheet.addRow({
+        penta_id: samplePentaId,
         judul: sampleTitle,
         kategori: sampleCat,
         tahun: new Date().getFullYear(),
@@ -181,7 +187,7 @@ export default function AdminInputDocument() {
 
       for (let i = 2; i <= 1000; i++) {
         if (validCategories.length > 0) {
-          sheet.getCell(`B${i}`).dataValidation = {
+          sheet.getCell(`C${i}`).dataValidation = {
             type: 'list',
             allowBlank: true,
             formulae: [`Referensi!$A$1:$A$${validCategories.length}`],
@@ -191,7 +197,7 @@ export default function AdminInputDocument() {
           };
         }
 
-        sheet.getCell(`D${i}`).dataValidation = {
+        sheet.getCell(`E${i}`).dataValidation = {
           type: 'list',
           allowBlank: true,
           formulae: ['"kpi,arsip"'],
@@ -212,11 +218,6 @@ export default function AdminInputDocument() {
   const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!selectedUserId) {
-      setMessage('Silakan pilih dosen terlebih dahulu.');
-      setMessageType('error');
-      return;
-    }
 
     setIsImporting(true);
     setImportResult(null);
@@ -251,16 +252,44 @@ export default function AdminInputDocument() {
           let titleVal = '';
           let endpoint = '';
           const formData = new FormData();
-          formData.append('user_id', selectedUserId);
+
+          const rowPentaId = (row['Penta ID'] || '').toString().trim();
+          
+          if (!rowPentaId) {
+            failCount++;
+            errorList.push({
+              row: rowNum,
+              title: row['Judul Penelitian'] || row['Judul Publikasi'] || row['Judul HKI'] || row['Judul Buku'] || `Baris ${rowNum}`,
+              reason: 'Penta ID kosong'
+            });
+            setImportProgress({ total: data.length, current: i + 1 });
+            continue;
+          }
+
+          const matchedUser = users.find(u => u.penta_id && u.penta_id.toLowerCase() === rowPentaId.toLowerCase());
+
+          if (!matchedUser) {
+            failCount++;
+            errorList.push({
+              row: rowNum,
+              title: row['Judul Penelitian'] || row['Judul Publikasi'] || row['Judul HKI'] || row['Judul Buku'] || `Baris ${rowNum}`,
+              reason: `Dosen dengan Penta ID "${rowPentaId}" tidak ditemukan`
+            });
+            setImportProgress({ total: data.length, current: i + 1 });
+            continue;
+          }
+
+          formData.append('user_id', matchedUser.id);
+          formData.append('status', 'Approved'); // Auto-approve admin import
 
           if (mainCategory === 'Penelitian') {
             titleVal = row['Judul Penelitian'] || '';
             formData.append('judul_penelitian', titleVal);
             formData.append('dana_disetujui', (row['Dana Disetujui'] || '').toString().replace(/\D/g, ''));
             formData.append('program', (row['Program'] || '').toLowerCase());
-            formData.append('skema', (row['Skema'] || '').toLowerCase());
-            formData.append('fokus', (row['Fokus'] || '').toLowerCase());
-            formData.append('tahun', (row['Tahun'] || '').toString());
+            formData.append('skema', (row['Skema'] || 'kompetisi').toLowerCase());
+            formData.append('fokus', (row['Fokus'] || 'kesehatan').toLowerCase());
+            formData.append('tahun', (row['Tahun'] || new Date().getFullYear()).toString());
             endpoint = '/api/penelitian';
           } else {
             let titleKey = 'Judul Publikasi';
@@ -497,377 +526,378 @@ export default function AdminInputDocument() {
 
       <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 overflow-hidden">
         <div className="p-8 lg:p-12 space-y-10">
-            {/* Step 1: Pilih Dosen */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600">
-                  <User className="w-5 h-5" />
-                </div>
-                <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Pilih Dosen</h3>
-              </div>
-              <div className="relative">
-                <div 
-                  className={`flex items-center gap-3 w-full px-6 py-4 bg-gray-50 dark:bg-zinc-800 border-2 rounded-2xl transition-all ${isDropdownOpen ? 'border-primary-500 ring-4 ring-primary-100 dark:ring-primary-900/20' : 'border-gray-200 dark:border-zinc-700'}`}
-                >
-                  <Search className="w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Ketik nama dosen atau fakultas..."
-                    value={searchTerm}
-                    onFocus={() => setIsDropdownOpen(true)}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setIsDropdownOpen(true);
-                      if (selectedUserId) setSelectedUserId('');
-                    }}
-                    className="w-full bg-transparent outline-none text-sm font-bold text-gray-700 dark:text-zinc-200"
-                  />
-                  {selectedUserId && (
-                    <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-100 text-[10px] font-black uppercase">
-                      Terpilih
-                    </div>
-                  )}
-                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                </div>
-
-                <AnimatePresence>
-                  {isDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute z-[50] left-0 right-0 mt-3 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-[2rem] shadow-2xl overflow-hidden max-h-[300px] overflow-y-auto scrollbar-hide"
-                    >
-                      {fetchingUsers ? (
-                         <div className="p-10 text-center text-gray-400">
-                           <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                           <p className="text-[10px] font-black uppercase tracking-widest">Loading Users...</p>
-                         </div>
-                      ) : filteredUsers.length > 0 ? (
-                        filteredUsers.map((u) => (
-                          <button
-                            key={u.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedUserId(u.id);
-                              setSearchTerm(u.name);
-                              setIsDropdownOpen(false);
-                            }}
-                            className="w-full px-6 py-4 flex flex-col items-start hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors border-b border-gray-50 dark:border-zinc-800 last:border-none"
-                          >
-                            <span className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{u.name}</span>
-                            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">{u.fakultas || 'No Faculty'} • {u.program_studi || 'No Prodi'}</span>
-                          </button>
-                        ))
-                      ) : (
-                        <div className="p-10 text-center text-gray-400">
-                          <p className="text-xs font-black uppercase tracking-widest">Dosen tidak ditemukan</p>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                {isDropdownOpen && <div className="fixed inset-0 z-[40]" onClick={() => setIsDropdownOpen(false)} />}
-              </div>
+            {/* Tab Selector at the top of card */}
+            <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 rounded-2xl p-1 max-w-md">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveInputTab('manual');
+                  setImportResult(null);
+                  setMessage('');
+                }}
+                className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
+                  activeInputTab === 'manual'
+                    ? 'bg-white dark:bg-zinc-800 shadow-sm border border-gray-100 dark:border-zinc-700 text-primary-600 dark:text-primary-400'
+                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+                }`}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  <FileText className="w-3.5 h-3.5" />
+                  Input Manual
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveInputTab('import');
+                  setImportResult(null);
+                  setMessage('');
+                }}
+                className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
+                  activeInputTab === 'import'
+                    ? 'bg-white dark:bg-zinc-800 shadow-sm border border-gray-100 dark:border-zinc-700 text-primary-600 dark:text-primary-400'
+                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+                }`}
+              >
+                <span className="flex items-center justify-center gap-2">
+                  <FileSpreadsheet className="w-3.5 h-3.5" />
+                  Import Excel Massal
+                </span>
+              </button>
             </div>
 
-            {/* Tab Selector */}
-            {selectedUserId && (
-              <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 rounded-2xl p-1 max-w-md">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveInputTab('manual');
-                    setImportResult(null);
-                    setMessage('');
-                  }}
-                  className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
-                    activeInputTab === 'manual'
-                      ? 'bg-white dark:bg-zinc-800 shadow-sm border border-gray-100 dark:border-zinc-700 text-primary-600 dark:text-primary-400'
-                      : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
-                  }`}
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    <FileText className="w-3.5 h-3.5" />
-                    Input Manual
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveInputTab('import');
-                    setMessage('');
-                  }}
-                  className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
-                    activeInputTab === 'import'
-                      ? 'bg-white dark:bg-zinc-800 shadow-sm border border-gray-100 dark:border-zinc-700 text-primary-600 dark:text-primary-400'
-                      : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
-                  }`}
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    <FileSpreadsheet className="w-3.5 h-3.5" />
-                    Import Excel Massal
-                  </span>
-                </button>
-              </div>
-            )}
-
-            {!selectedUserId && (
-              <div className="p-8 text-center bg-gray-50/50 dark:bg-zinc-800/20 border border-dashed border-gray-200 dark:border-zinc-800 rounded-3xl">
-                <p className="text-xs font-black uppercase tracking-wider text-gray-400">Silakan pilih dosen terlebih dahulu untuk melanjutkan penginputan.</p>
-              </div>
-            )}
-
-            {selectedUserId && activeInputTab === 'manual' && (
-              <form onSubmit={handleUpload} className="space-y-10">
-                {/* Step 2: Form Input */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-emerald-600">
-                        <FileText className="w-5 h-5" />
-                      </div>
-                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Detail Data</h3>
-                </div>
-
+            {activeInputTab === 'manual' && (
+              <div className="space-y-10">
+                {/* Step 1: Pilih Dosen */}
                 <div className="space-y-4">
-                  <div className="space-y-2 relative">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Kategori Utama</label>
-                    <button
-                      type="button"
-                      onClick={() => setIsMainCategoryDropdownOpen(!isMainCategoryDropdownOpen)}
-                      className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-2xl flex items-center justify-between transition-all hover:border-primary-500"
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Pilih Dosen</h3>
+                  </div>
+                  <div className="relative">
+                    <div 
+                      className={`flex items-center gap-3 w-full px-6 py-4 bg-gray-50 dark:bg-zinc-800 border-2 rounded-2xl transition-all ${isDropdownOpen ? 'border-primary-500 ring-4 ring-primary-100 dark:ring-primary-900/20' : 'border-gray-200 dark:border-zinc-700'}`}
                     >
-                      <div className="flex items-center gap-3">
-                        {selectedMainCategory?.icon && <selectedMainCategory.icon className="w-5 h-5 text-primary-500" />}
-                        <span className="text-sm font-black uppercase tracking-tight text-gray-700 dark:text-zinc-200">{selectedMainCategory?.label}</span>
-                      </div>
-                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isMainCategoryDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
+                      <Search className="w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Ketik nama dosen atau fakultas..."
+                        value={searchTerm}
+                        onFocus={() => setIsDropdownOpen(true)}
+                        onChange={(e) => {
+                          setSearchTerm(e.target.value);
+                          setIsDropdownOpen(true);
+                          if (selectedUserId) setSelectedUserId('');
+                        }}
+                        className="w-full bg-transparent outline-none text-sm font-bold text-gray-700 dark:text-zinc-200"
+                      />
+                      {selectedUserId && (
+                        <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-100 text-[10px] font-black uppercase">
+                          Terpilih
+                        </div>
+                      )}
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    </div>
 
                     <AnimatePresence>
-                      {isMainCategoryDropdownOpen && (
-                        <>
-                          <div className="fixed inset-0 z-[45]" onClick={() => setIsMainCategoryDropdownOpen(false)} />
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="absolute z-[50] left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden"
-                          >
-                            {mainCategories.map((cat) => (
+                      {isDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute z-[50] left-0 right-0 mt-3 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-[2rem] shadow-2xl overflow-hidden max-h-[300px] overflow-y-auto scrollbar-hide"
+                        >
+                          {fetchingUsers ? (
+                             <div className="p-10 text-center text-gray-400">
+                               <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                               <p className="text-[10px] font-black uppercase tracking-widest">Loading Users...</p>
+                             </div>
+                          ) : filteredUsers.length > 0 ? (
+                            filteredUsers.map((u) => (
                               <button
-                                key={cat.id}
+                                key={u.id}
                                 type="button"
                                 onClick={() => {
-                                  setMainCategory(cat.id);
-                                  setIsMainCategoryDropdownOpen(false);
+                                  setSelectedUserId(u.id);
+                                  setSearchTerm(u.name);
+                                  setIsDropdownOpen(false);
                                 }}
-                                className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors border-b border-gray-50 dark:border-zinc-800 last:border-none ${mainCategory === cat.id ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
+                                className="w-full px-6 py-4 flex flex-col items-start hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors border-b border-gray-50 dark:border-zinc-800 last:border-none"
                               >
-                                <cat.icon className={`w-5 h-5 ${mainCategory === cat.id ? 'text-primary-600' : 'text-gray-400'}`} />
-                                <span className={`text-sm font-black uppercase tracking-tight ${mainCategory === cat.id ? 'text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-zinc-400'}`}>{cat.label}</span>
+                                <span className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{u.name}</span>
+                                <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">{u.fakultas || 'No Faculty'} • {u.program_studi || 'No Prodi'}</span>
                               </button>
-                            ))}
-                          </motion.div>
-                        </>
+                            ))
+                          ) : (
+                            <div className="p-10 text-center text-gray-400">
+                              <p className="text-xs font-black uppercase tracking-widest">Dosen tidak ditemukan</p>
+                            </div>
+                          )}
+                        </motion.div>
                       )}
                     </AnimatePresence>
+                    {isDropdownOpen && <div className="fixed inset-0 z-[40]" onClick={() => setIsDropdownOpen(false)} />}
                   </div>
+                </div>
 
-                  {subCategoryOptions.length > 0 && (
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Jenis / Sub-Kategori</label>
-                      <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
-                        {subCategoryOptions.map((opt) => (
-                          <button
-                            key={opt.id}
-                            type="button"
-                            onClick={() => setSubCategory(opt.id)}
-                            className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${subCategory === opt.id ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-md' : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'}`}
-                          >
-                            <opt.icon className="w-5 h-5 mb-2" />
-                            <span className="text-[10px] font-black uppercase tracking-tight text-center">{opt.label}</span>
-                            <div className={`mt-2 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${subCategory === opt.id ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'}`}>
-                              +{opt.pts} PTS
+                {!selectedUserId && (
+                  <div className="p-8 text-center bg-gray-50/50 dark:bg-zinc-800/20 border border-dashed border-gray-200 dark:border-zinc-800 rounded-3xl">
+                    <p className="text-xs font-black uppercase tracking-wider text-gray-400">Silakan pilih dosen terlebih dahulu untuk melanjutkan penginputan.</p>
+                  </div>
+                )}
+
+                {selectedUserId && (
+                  <form onSubmit={handleUpload} className="space-y-10">
+                    {/* Step 2: Form Input */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-emerald-600">
+                            <FileText className="w-5 h-5" />
+                          </div>
+                          <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Detail Data</h3>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div className="space-y-2 relative">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Kategori Utama</label>
+                            <button
+                              type="button"
+                              onClick={() => setIsMainCategoryDropdownOpen(!isMainCategoryDropdownOpen)}
+                              className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-2xl flex items-center justify-between transition-all hover:border-primary-500"
+                            >
+                              <div className="flex items-center gap-3">
+                                {selectedMainCategory?.icon && <selectedMainCategory.icon className="w-5 h-5 text-primary-500" />}
+                                <span className="text-sm font-black uppercase tracking-tight text-gray-700 dark:text-zinc-200">{selectedMainCategory?.label}</span>
+                              </div>
+                              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isMainCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            <AnimatePresence>
+                              {isMainCategoryDropdownOpen && (
+                                <>
+                                  <div className="fixed inset-0 z-[45]" onClick={() => setIsMainCategoryDropdownOpen(false)} />
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    className="absolute z-[50] left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden"
+                                  >
+                                    {mainCategories.map((cat) => (
+                                      <button
+                                        key={cat.id}
+                                        type="button"
+                                        onClick={() => {
+                                          setMainCategory(cat.id);
+                                          setIsMainCategoryDropdownOpen(false);
+                                        }}
+                                        className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors border-b border-gray-50 dark:border-zinc-800 last:border-none ${mainCategory === cat.id ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
+                                      >
+                                        <cat.icon className={`w-5 h-5 ${mainCategory === cat.id ? 'text-primary-600' : 'text-gray-400'}`} />
+                                        <span className={`text-sm font-black uppercase tracking-tight ${mainCategory === cat.id ? 'text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-zinc-400'}`}>{cat.label}</span>
+                                      </button>
+                                    ))}
+                                  </motion.div>
+                                </>
+                              )}
+                            </AnimatePresence>
+                          </div>
+
+                          {subCategoryOptions.length > 0 && (
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Jenis / Sub-Kategori</label>
+                              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                                {subCategoryOptions.map((opt) => (
+                                  <button
+                                    key={opt.id}
+                                    type="button"
+                                    onClick={() => setSubCategory(opt.id)}
+                                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${subCategory === opt.id ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-md' : 'border-gray-100 bg-white text-gray-400 hover:border-gray-200'}`}
+                                  >
+                                    <opt.icon className="w-5 h-5 mb-2" />
+                                    <span className="text-[10px] font-black uppercase tracking-tight text-center">{opt.label}</span>
+                                    <div className={`mt-2 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${subCategory === opt.id ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                      +{opt.pts} PTS
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
                             </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                          )}
 
+                          {mainCategory === 'Penelitian' && (
+                            <>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Dana Disetujui (IDR)</label>
+                                <div className="relative group">
+                                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400 tracking-widest">RP</div>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={danaDisetujui}
+                                    onChange={(e) => {
+                                      const val = e.target.value.replace(/\D/g, '');
+                                      if (val === '') setDanaDisetujui('');
+                                      else setDanaDisetujui(new Intl.NumberFormat('id-ID').format(Number(val)));
+                                    }}
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
+                                    placeholder="Contoh: 10.000.000"
+                                  />
+                                </div>
+                              </div>
 
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Fokus</label>
+                                <select
+                                  value={fokus}
+                                  onChange={(e) => setFokus(e.target.value)}
+                                  className="w-full px-4 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none appearance-none"
+                                >
+                                  <option value="kesehatan">Kesehatan</option>
+                                  <option value="ekonomi">Ekonomi</option>
+                                </select>
+                              </div>
+                            </>
+                          )}
 
-                  {mainCategory === 'Penelitian' && (
-                    <>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Dana Disetujui (IDR)</label>
-                        <div className="relative group">
-                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400 tracking-widest">RP</div>
-                          <input
-                            type="text"
-                            required
-                            value={danaDisetujui}
-                            onChange={(e) => {
-                              const val = e.target.value.replace(/\D/g, '');
-                              if (val === '') setDanaDisetujui('');
-                              else setDanaDisetujui(new Intl.NumberFormat('id-ID').format(Number(val)));
-                            }}
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
-                            placeholder="Contoh: 10.000.000"
-                          />
+                          {mainCategory !== 'Penelitian' && (
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Tipe Pengajuan</label>
+                              <div className="grid grid-cols-2 gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => setDocType('kpi')}
+                                  className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${docType === 'kpi' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-100 bg-white text-gray-400'}`}
+                                >
+                                  <Sparkles className="w-4 h-4" />
+                                  <span className="text-[10px] font-black uppercase tracking-widest">Poin KPI</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setDocType('arsip')}
+                                  className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${docType === 'arsip' ? 'border-gray-400 bg-gray-50 text-gray-600' : 'border-gray-100 bg-white text-gray-400'}`}
+                                >
+                                  <Archive className="w-4 h-4" />
+                                  <span className="text-[10px] font-black uppercase tracking-widest">Arsip</span>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Judul {mainCategory === 'Penelitian' ? 'Penelitian' : 'Dokumen'}</label>
+                            <input
+                              type="text"
+                              required
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                              placeholder={mainCategory === 'Penelitian' ? "Masukkan judul penelitian..." : "Masukkan judul publikasi..."}
+                              className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
+                            />
+                          </div>
+
+                          {mainCategory === 'HKI' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Kategori Spesifik</label>
+                                <input
+                                  type="text"
+                                  value={hkiType}
+                                  onChange={(e) => setHkiType(e.target.value)}
+                                  placeholder="Misal: Software..."
+                                  className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Nama Inventor</label>
+                                <input
+                                  type="text"
+                                  value={inventorName}
+                                  onChange={(e) => setInventorName(e.target.value)}
+                                  placeholder="Nama inventor..."
+                                  className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="space-y-2 relative">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 flex items-center">
+                              <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
+                              Tanggal Terbit / Pelaksanaan
+                            </label>
+                            <DatePicker date={dateVal} onDateChange={setDateVal} placeholder="Pilih tanggal" />
+                          </div>
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Fokus</label>
-                        <select
-                          value={fokus}
-                          onChange={(e) => setFokus(e.target.value)}
-                          className="w-full px-4 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none appearance-none"
-                        >
-                          <option value="kesehatan">Kesehatan</option>
-                          <option value="ekonomi">Ekonomi</option>
-                        </select>
-                      </div>
-                    </>
-                  )}
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-blue-600">
+                            <Upload className="w-5 h-5" />
+                          </div>
+                          <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Upload File (PDF)</h3>
+                        </div>
 
-                  {mainCategory !== 'Penelitian' && (
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Tipe Pengajuan</label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setDocType('kpi')}
-                          className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${docType === 'kpi' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-100 bg-white text-gray-400'}`}
+                        <div 
+                          onClick={() => document.getElementById('admin-file-upload')?.click()}
+                          className={`relative h-full min-h-[300px] border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center p-8 transition-all cursor-pointer ${file ? 'border-emerald-500 bg-emerald-50/30' : 'border-gray-200 hover:border-primary-400 hover:bg-gray-55'}`}
                         >
-                          <Sparkles className="w-4 h-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Poin KPI</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDocType('arsip')}
-                          className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${docType === 'arsip' ? 'border-gray-400 bg-gray-50 text-gray-600' : 'border-gray-100 bg-white text-gray-400'}`}
-                        >
-                          <Archive className="w-4 h-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Arsip</span>
-                        </button>
+                          <input
+                            id="admin-file-upload"
+                            type="file"
+                            accept=".pdf"
+                            className="sr-only"
+                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                          />
+                          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${file ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                            {file ? <CheckCircle className="w-8 h-8" /> : <Upload className="w-8 h-8" />}
+                          </div>
+                          <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight text-center">
+                            {file ? file.name : 'Klik untuk pilih PDF'}
+                          </p>
+                          
+                          {scoringPreview && (
+                            <div className="mt-6 px-6 py-3 bg-white dark:bg-zinc-800 border-2 border-primary-100 dark:border-zinc-700 rounded-2xl shadow-xl">
+                               <p className="text-[10px] font-black text-primary-500 uppercase tracking-widest text-center mb-1">Result Preview</p>
+                               <p className="text-xs font-black text-gray-700 dark:text-zinc-200 text-center">{scoringPreview.message}</p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  )}
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Judul {mainCategory === 'Penelitian' ? 'Penelitian' : 'Dokumen'}</label>
-                    <input
-                      type="text"
-                      required
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder={mainCategory === 'Penelitian' ? "Masukkan judul penelitian..." : "Masukkan judul publikasi..."}
-                      className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
-                    />
-                  </div>
-
-                  {mainCategory === 'HKI' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Kategori Spesifik</label>
-                        <input
-                          type="text"
-                          value={hkiType}
-                          onChange={(e) => setHkiType(e.target.value)}
-                          placeholder="Misal: Software..."
-                          className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Nama Inventor</label>
-                        <input
-                          type="text"
-                          value={inventorName}
-                          onChange={(e) => setInventorName(e.target.value)}
-                          placeholder="Nama inventor..."
-                          className="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-100 transition-all"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="space-y-2 relative">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 flex items-center">
-                      <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
-                      Tanggal Terbit / Pelaksanaan
-                    </label>
-                    <DatePicker date={dateVal} onDateChange={setDateVal} placeholder="Pilih tanggal" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-blue-600">
-                    <Upload className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Upload File (PDF)</h3>
-                </div>
-
-                <div 
-                  onClick={() => document.getElementById('admin-file-upload')?.click()}
-                  className={`relative h-full min-h-[300px] border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center p-8 transition-all cursor-pointer ${file ? 'border-emerald-500 bg-emerald-50/30' : 'border-gray-200 hover:border-primary-400 hover:bg-gray-50'}`}
-                >
-                  <input
-                    id="admin-file-upload"
-                    type="file"
-                    accept=".pdf"
-                    className="sr-only"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  />
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${file ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
-                    {file ? <CheckCircle className="w-8 h-8" /> : <Upload className="w-8 h-8" />}
-                  </div>
-                  <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight text-center">
-                    {file ? file.name : 'Klik untuk pilih PDF'}
-                  </p>
-                  
-                  {scoringPreview && (
-                    <div className="mt-6 px-6 py-3 bg-white dark:bg-zinc-800 border-2 border-primary-100 dark:border-zinc-700 rounded-2xl shadow-xl">
-                       <p className="text-[10px] font-black text-primary-500 uppercase tracking-widest text-center mb-1">Result Preview</p>
-                       <p className="text-xs font-black text-gray-700 dark:text-zinc-200 text-center">{scoringPreview.message}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-                <div className="pt-10 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                  <AnimatePresence>
-                    {message && (
-                      <motion.div 
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest ${messageType === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'}`}
+                    <div className="pt-10 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+                      <AnimatePresence>
+                        {message && (
+                          <motion.div 
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest ${messageType === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'}`}
+                          >
+                            {messageType === 'success' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                            {message}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full sm:w-auto px-12 py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary-200 transition-all disabled:opacity-50 active:scale-95 flex items-center justify-center gap-3"
                       >
-                        {messageType === 'success' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                        {message}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full sm:w-auto px-12 py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary-200 transition-all disabled:opacity-50 active:scale-95 flex items-center justify-center gap-3"
-                  >
-                    {loading ? 'Processing...' : `Simpan ${mainCategory} Dosen`}
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </form>
+                        {loading ? 'Processing...' : `Simpan ${mainCategory} Dosen`}
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
             )}
 
-            {selectedUserId && activeInputTab === 'import' && (
+            {activeInputTab === 'import' && (
               <div className="space-y-8">
                 {/* Category Selector */}
                 <div className="space-y-4">
@@ -908,7 +938,7 @@ export default function AdminInputDocument() {
                       <h4 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-wider">Petunjuk Import Massal</h4>
                       <ul className="text-xs font-medium text-gray-500 space-y-2 list-disc list-inside">
                         <li>Gunakan template Excel resmi yang disediakan agar format data sesuai.</li>
-                        <li>Pilih kategori import yang dianuti sebelum mengunggah file.</li>
+                        <li>Pilih kategori import yang diinginkan sebelum mengunggah file.</li>
                         <li>Kolom bertanda khusus atau pilihan dropdown wajib diisi dengan benar.</li>
                         <li>Proses import akan memvalidasi data duplikat secara otomatis.</li>
                       </ul>
@@ -917,7 +947,7 @@ export default function AdminInputDocument() {
                     <button
                       type="button"
                       onClick={downloadTemplate}
-                      className="flex items-center justify-center gap-2 px-6 py-4 bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-zinc-300 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-primary-500 transition-all active:scale-95"
+                      className="flex items-center justify-center gap-2 px-6 py-4 bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-zinc-350 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-55 dark:hover:bg-zinc-800 hover:border-primary-500 transition-all active:scale-95"
                     >
                       <Download className="w-4 h-4 text-primary-500" />
                       Unduh Template {mainCategory}
@@ -1042,7 +1072,202 @@ export default function AdminInputDocument() {
                                   <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-zinc-850/50">
                                     <td className="px-6 py-4 text-xs font-black text-gray-700 dark:text-zinc-350 whitespace-nowrap">Baris {err.row}</td>
                                     <td className="px-6 py-4 text-xs font-bold text-gray-800 dark:text-zinc-200 max-w-xs truncate">{err.title}</td>
-                                    <td className="px-6 py-4 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50/20 dark:bg-red-950/5">{err.reason}</td>
+                                    <td className="px-6 py-4 text-xs font-semibold text-red-600 dark:text-red-450 bg-red-50/20 dark:bg-red-950/5">{err.reason}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-8 text-center text-gray-400 dark:text-zinc-500 flex flex-col items-center">
+                          <CheckCircle className="w-12 h-12 text-emerald-500 mb-3" />
+                          <p className="text-sm font-black uppercase tracking-wider text-gray-700 dark:text-zinc-300">Sempurna! Semua Data Berhasil Diimpor</p>
+                          <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">Tidak ada baris yang mengalami error.</p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            )}
+
+            {activeInputTab === 'import' && (
+              <div className="space-y-8">
+                {/* Category Selector */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600">
+                      <Beaker className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Pilih Kategori Import</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {mainCategories.map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => {
+                          setMainCategory(cat.id);
+                          setImportResult(null);
+                          setMessage('');
+                        }}
+                        className={`flex items-center gap-3 px-6 py-4 rounded-2xl border-2 transition-all ${
+                          mainCategory === cat.id
+                            ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-950/20 dark:text-primary-400 shadow-md'
+                            : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 hover:border-gray-200'
+                        }`}
+                      >
+                        <cat.icon className="w-5 h-5" />
+                        <span className="text-xs font-black uppercase tracking-tight">{cat.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Actions and Upload Area */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Column 1: Info and Template Download */}
+                  <div className="space-y-6 bg-gray-50/50 dark:bg-zinc-850 p-6 rounded-[2rem] border border-gray-100 dark:border-zinc-800 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-wider">Petunjuk Import Massal</h4>
+                      <ul className="text-xs font-medium text-gray-500 space-y-2 list-disc list-inside">
+                        <li>Gunakan template Excel resmi yang disediakan agar format data sesuai.</li>
+                        <li>Pilih kategori import yang diinginkan sebelum mengunggah file.</li>
+                        <li>Kolom bertanda khusus atau pilihan dropdown wajib diisi dengan benar.</li>
+                        <li>Proses import akan memvalidasi data duplikat secara otomatis.</li>
+                      </ul>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={downloadTemplate}
+                      className="flex items-center justify-center gap-2 px-6 py-4 bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-zinc-350 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-55 dark:hover:bg-zinc-800 hover:border-primary-500 transition-all active:scale-95"
+                    >
+                      <Download className="w-4 h-4 text-primary-500" />
+                      Unduh Template {mainCategory}
+                    </button>
+                  </div>
+
+                  {/* Column 2: File Upload Zone */}
+                  <div className="relative">
+                    <div
+                      onClick={() => !isImporting && document.getElementById('admin-excel-import-input')?.click()}
+                      className={`h-full min-h-[220px] border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center p-8 transition-all ${
+                        isImporting
+                          ? 'border-primary-400 bg-primary-50/10 cursor-not-allowed'
+                          : 'border-gray-200 hover:border-primary-400 hover:bg-gray-50/50 dark:border-zinc-800 dark:hover:bg-zinc-850 cursor-pointer'
+                      }`}
+                    >
+                      <input
+                        id="admin-excel-import-input"
+                        type="file"
+                        accept=".xlsx, .xls"
+                        className="sr-only"
+                        disabled={isImporting}
+                        onChange={handleImportExcel}
+                      />
+                      {isImporting ? (
+                        <div className="flex flex-col items-center">
+                          <RefreshCw className="w-12 h-12 text-primary-500 animate-spin mb-4" />
+                          <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight text-center">
+                            Mengimpor Data...
+                          </p>
+                          <div className="w-48 bg-gray-200 dark:bg-zinc-700 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div
+                              className="bg-primary-500 h-1.5 transition-all duration-300"
+                              style={{
+                                width: `${(importProgress.current / (importProgress.total || 1)) * 100}%`
+                              }}
+                            ></div>
+                          </div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">
+                            {importProgress.current} dari {importProgress.total} baris
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <div className="w-16 h-16 bg-primary-50 dark:bg-primary-900/20 rounded-2xl flex items-center justify-center mb-4 text-primary-600">
+                            <Upload className="w-8 h-8" />
+                          </div>
+                          <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight text-center">
+                            Klik untuk unggah file Excel
+                          </p>
+                          <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
+                            Format: .xlsx, .xls
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Message Feedback */}
+                <AnimatePresence>
+                  {message && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex items-center gap-3 px-6 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest ${
+                        messageType === 'success'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30'
+                          : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/30'
+                      }`}
+                    >
+                      {messageType === 'success' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                      {message}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Laporan Hasil Import */}
+                {importResult && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-[2rem] shadow-xl overflow-hidden"
+                  >
+                    {/* Report Header */}
+                    <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-850/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <h4 className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-wider">Laporan Hasil Import</h4>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Ringkasan Eksekusi File Excel</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="px-4 py-2 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-xl">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Sukses</span>
+                          <span className="text-xl font-black text-emerald-700 dark:text-emerald-400">{importResult.success}</span>
+                        </div>
+                        <div className="px-4 py-2 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Gagal</span>
+                          <span className="text-xl font-black text-red-700 dark:text-red-400">{importResult.failed}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Report Table for Failures */}
+                    <div className="p-6">
+                      {importResult.failed > 0 ? (
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500">
+                            <AlertCircle className="w-4 h-4" />
+                            <span className="text-xs font-black uppercase tracking-wider">Detail Kegagalan Data ({importResult.failed})</span>
+                          </div>
+                          <div className="overflow-x-auto rounded-xl border border-gray-100 dark:border-zinc-800">
+                            <table className="w-full text-left border-collapse">
+                              <thead>
+                                <tr className="bg-gray-50 dark:bg-zinc-850 border-b border-gray-100 dark:border-zinc-800">
+                                  <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-28">Baris Excel</th>
+                                  <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Nama / Judul Data</th>
+                                  <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-red-500">Alasan Gagal</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-50 dark:divide-zinc-800">
+                                {importResult.errors.map((err, idx) => (
+                                  <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-zinc-850/50">
+                                    <td className="px-6 py-4 text-xs font-black text-gray-700 dark:text-zinc-350 whitespace-nowrap">Baris {err.row}</td>
+                                    <td className="px-6 py-4 text-xs font-bold text-gray-800 dark:text-zinc-200 max-w-xs truncate">{err.title}</td>
+                                    <td className="px-6 py-4 text-xs font-semibold text-red-600 dark:text-red-450 bg-red-50/20 dark:bg-red-950/5">{err.reason}</td>
                                   </tr>
                                 ))}
                               </tbody>
