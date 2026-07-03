@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useOutletContext } from 'react-router-dom';
+import { DropdownSelect } from '../../components/ui/DropdownSelect';
 
 export default function AdminSync() {
   const { user } = useOutletContext<{ user: any }>();
@@ -1089,23 +1090,21 @@ export default function AdminSync() {
               </div>
               
               {user?.role === 'admin lppm' && (
-                <div className="relative w-full sm:w-[220px]">
-                  <select
-                    value={selectedFakultas}
-                    onChange={(e) => setSelectedFakultas(e.target.value)}
-                    className="appearance-none w-full px-5 py-3 pl-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm"
-                  >
-                    <option value="">Semua Fakultas</option>
-                    <option value="Fakultas Kedokteran">Kedokteran</option>
-                    <option value="Fakultas Kedokteran Gigi">Kedokteran Gigi</option>
-                    <option value="Fakultas Teknologi Informasi">Teknologi Informasi</option>
-                    <option value="Fakultas Ekonomi dan Bisnis">Ekonomi dan Bisnis</option>
-                    <option value="Fakultas Hukum">Hukum</option>
-                    <option value="Fakultas Psikologi">Psikologi</option>
-                  </select>
-                  <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-300 pointer-events-none" />
-                </div>
+                <DropdownSelect
+                  value={selectedFakultas}
+                  onChange={setSelectedFakultas}
+                  options={[
+                    { value: "", label: "Semua Fakultas" },
+                    { value: "Fakultas Kedokteran", label: "Kedokteran" },
+                    { value: "Fakultas Kedokteran Gigi", label: "Kedokteran Gigi" },
+                    { value: "Fakultas Teknologi Informasi", label: "Teknologi Informasi" },
+                    { value: "Fakultas Ekonomi dan Bisnis", label: "Ekonomi dan Bisnis" },
+                    { value: "Fakultas Hukum", label: "Hukum" },
+                    { value: "Fakultas Psikologi", label: "Psikologi" },
+                  ]}
+                  icon={<GraduationCap className="w-4 h-4" />}
+                  className="w-full sm:w-[220px]"
+                />
               )}
             </div>
           </div>
@@ -1248,15 +1247,18 @@ export default function AdminSync() {
               <div className="h-5 w-px bg-gray-200 dark:bg-zinc-800 hidden sm:block" />
               <div className="hidden sm:flex items-center gap-2">
                 <span className="text-[10px] font-black uppercase text-gray-300 dark:text-zinc-600 tracking-widest">Limit:</span>
-                <select 
-                  value={itemsPerPage} 
-                  onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                  className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold py-1 px-3 focus:ring-4 focus:ring-primary-100 outline-none cursor-pointer"
-                >
-                  {[10, 25, 50, 100].map(val => (
-                    <option key={val} value={val}>{val}</option>
-                  ))}
-                </select>
+                <DropdownSelect
+                  value={itemsPerPage}
+                  onChange={(val) => { setItemsPerPage(val); setCurrentPage(1); }}
+                  options={[
+                    { value: 10, label: "10" },
+                    { value: 25, label: "25" },
+                    { value: 50, label: "50" },
+                    { value: 100, label: "100" }
+                  ]}
+                  size="sm"
+                  className="w-[85px]"
+                />
               </div>
             </div>
 
