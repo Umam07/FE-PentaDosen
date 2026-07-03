@@ -64,6 +64,9 @@ export default function Buku({ user }: { user: any }) {
 
   const currentYear = new Date().getFullYear();
 
+  // Year filter
+  const [filterYear, setFilterYear] = useState<number | null>(new Date().getFullYear());
+
   useEffect(() => {
     const load = async () => {
       setIsTableLoading(true);
@@ -154,9 +157,22 @@ export default function Buku({ user }: { user: any }) {
   };
 
   const filteredDocuments = useMemo(() => {
-    if (!filterKategori) return documents;
-    return documents.filter(d => d.category === filterKategori);
-  }, [documents, filterKategori]);
+    let result = documents;
+    if (filterKategori) {
+      result = result.filter(d => d.category === filterKategori);
+    }
+    if (filterYear) {
+      result = result.filter((d: any) => {
+        const y = d.published_at ? new Date(d.published_at).getFullYear() : null;
+        return y === filterYear;
+      });
+    }
+    return result;
+  }, [documents, filterKategori, filterYear]);
+
+  const availableYears = useMemo(() => {
+    return [new Date().getFullYear()];
+  }, []);
 
   const stats = useMemo(() => {
     const cutoffYear = currentYear - 2;
@@ -334,7 +350,7 @@ export default function Buku({ user }: { user: any }) {
       <BukuTable 
         isTableLoading={isTableLoading}
         filterKategori={filterKategori}
-        setFilterKategori={setFilterKategori}
+        setFilterKategori={(k) => { setFilterKategori(k); setCurrentPage(1); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         itemsPerPage={itemsPerPage}
@@ -350,6 +366,9 @@ export default function Buku({ user }: { user: any }) {
         setIsDeleteModalOpen={setIsDeleteModalOpen}
         setDocToLink={setDocToLink}
         setIsLinkingModalOpen={setIsLinkingModalOpen}
+        availableYears={availableYears}
+        filterYear={filterYear}
+        onYearChange={(y) => { setFilterYear(y); setCurrentPage(1); }}
       />
 
       {/* Floating Toast Notification */}

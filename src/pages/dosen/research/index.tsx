@@ -97,6 +97,25 @@ export default function Research({ user }: ResearchProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // Year filter
+  const [filterYear, setFilterYear] = useState<number | null>(new Date().getFullYear());
+
+  const availableYears = useMemo(() => {
+    return [new Date().getFullYear()];
+  }, [researchList]);
+
+  const filteredResearchList = useMemo(() => {
+    if (!filterYear) return researchList;
+    return researchList.filter((r: any) => {
+      const raw = r.tahun;
+      if (!raw) return false;
+      const str = String(raw);
+      const y = str.length === 4 ? parseInt(str, 10) : new Date(str).getFullYear();
+      return y === filterYear;
+    });
+  }, [researchList, filterYear]);
+
+
   useEffect(() => {
     const loadResearch = async () => {
       setIsTableLoading(true);
@@ -512,8 +531,9 @@ export default function Research({ user }: ResearchProps) {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = researchList.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(researchList.length / itemsPerPage);
+  const currentItems = filteredResearchList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredResearchList.length / itemsPerPage);
+
 
   const displayErrorMessage = (msg: string) => {
     setMessage(msg);
@@ -539,7 +559,7 @@ export default function Research({ user }: ResearchProps) {
 
       {/* Research Table List */}
       <ResearchTable
-        researchList={researchList}
+        researchList={filteredResearchList}
         currentItems={currentItems}
         isTableLoading={isTableLoading}
         currentPage={currentPage}
@@ -558,6 +578,9 @@ export default function Research({ user }: ResearchProps) {
           setDeleteDoc(doc);
           setIsDeleteModalOpen(true);
         }}
+        availableYears={availableYears}
+        filterYear={filterYear}
+        onYearChange={(y) => { setFilterYear(y); setCurrentPage(1); }}
       />
 
       {/* Slide-over Detail Drawer */}

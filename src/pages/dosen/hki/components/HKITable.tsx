@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { HKI_CATEGORIES } from '../constants';
+import YearFilterBar from '../../../../components/ui/YearFilterBar';
 
 interface HKITableProps {
   isTableLoading: boolean;
@@ -22,6 +23,9 @@ interface HKITableProps {
   setIsDeleteModalOpen: (isOpen: boolean) => void;
   setDocToLink: (doc: any) => void;
   setIsLinkingModalOpen: (isOpen: boolean) => void;
+  availableYears: number[];
+  filterYear: number | null;
+  onYearChange: (year: number | null) => void;
 }
 
 export default function HKITable({
@@ -40,6 +44,9 @@ export default function HKITable({
   setIsDeleteModalOpen,
   setDocToLink,
   setIsLinkingModalOpen,
+  availableYears,
+  filterYear,
+  onYearChange,
 }: HKITableProps) {
   const isDocLocked = (doc: any) =>
     doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
@@ -53,7 +60,14 @@ export default function HKITable({
       <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
         <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Dokumen HKI</h3>
       </div>
-      
+
+      {/* Year Filter */}
+      <YearFilterBar
+        availableYears={availableYears}
+        selectedYear={filterYear}
+        onYearChange={onYearChange}
+      />
+
       <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
           <thead className="bg-gray-50/30 dark:bg-zinc-800/30">

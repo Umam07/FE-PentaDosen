@@ -4,6 +4,7 @@ import {
   Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import YearFilterBar from '../../../../components/ui/YearFilterBar';
 
 interface PublicationTableProps {
   isTableLoading: boolean;
@@ -20,6 +21,9 @@ interface PublicationTableProps {
   openEditModal: (doc: any) => void;
   setDeleteDoc: (doc: any) => void;
   setIsDeleteModalOpen: (isOpen: boolean) => void;
+  availableYears: number[];
+  filterYear: number | null;
+  onYearChange: (year: number | null) => void;
 }
 
 export default function PublicationTable({
@@ -36,7 +40,10 @@ export default function PublicationTable({
   handleUploadPdf,
   openEditModal,
   setDeleteDoc,
-  setIsDeleteModalOpen
+  setIsDeleteModalOpen,
+  availableYears,
+  filterYear,
+  onYearChange,
 }: PublicationTableProps) {
   const isDocLocked = (doc: any) =>
     doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
@@ -50,6 +57,13 @@ export default function PublicationTable({
       <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
         <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Publikasi</h3>
       </div>
+
+      {/* Year Filter */}
+      <YearFilterBar
+        availableYears={availableYears}
+        selectedYear={filterYear}
+        onYearChange={onYearChange}
+      />
       
       <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">

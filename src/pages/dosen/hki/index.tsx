@@ -177,11 +177,22 @@ export default function HKI({ user }: { user: any }) {
     setIsEditModalOpen(true);
   };
 
+  const [filterYear, setFilterYear] = useState<number | null>(new Date().getFullYear());
+
   const filteredDocuments = useMemo(() => {
-    return documents.filter((d: any) =>
+    const hkiDocs = documents.filter((d: any) =>
       (d.category || '').toLowerCase().includes('hki')
     );
-  }, [documents]);
+    if (!filterYear) return hkiDocs;
+    return hkiDocs.filter((d: any) => {
+      const y = d.published_at ? new Date(d.published_at).getFullYear() : null;
+      return y === filterYear;
+    });
+  }, [documents, filterYear]);
+
+  const availableYears = useMemo(() => {
+    return [new Date().getFullYear()];
+  }, []);
 
   const stats = useMemo(() => {
     const src = filteredDocuments;
@@ -341,6 +352,7 @@ export default function HKI({ user }: { user: any }) {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDocuments = filteredDocuments.slice(indexOfFirstItem, indexOfLastItem);
 
+
   return (
     <div className="max-w-none space-y-6 lg:space-y-10 pb-12">
       {/* Header Banner */}
@@ -413,6 +425,9 @@ export default function HKI({ user }: { user: any }) {
         setIsDeleteModalOpen={setIsDeleteModalOpen}
         setDocToLink={setDocToLink}
         setIsLinkingModalOpen={setIsLinkingModalOpen}
+        availableYears={availableYears}
+        filterYear={filterYear}
+        onYearChange={(y) => { setFilterYear(y); setCurrentPage(1); }}
       />
 
       {/* Linking Research Modal */}

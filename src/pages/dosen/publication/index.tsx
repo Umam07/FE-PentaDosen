@@ -72,6 +72,10 @@ export default function Publication({ user }: { user: any }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // Year filter
+  const [filterYear, setFilterYear] = useState<number | null>(new Date().getFullYear());
+
+
   useEffect(() => {
     fetchWeights();
     fetchApprovedResearch();
@@ -88,8 +92,11 @@ export default function Publication({ user }: { user: any }) {
   useEffect(() => {
     if (urlKategori) {
       setCategory(urlKategori);
+      setFilterYear(null); // reset year filter when category changes
+      setCurrentPage(1);
     }
   }, [urlKategori]);
+
 
   const fetchDocuments = async () => {
     try {
@@ -186,11 +193,24 @@ export default function Publication({ user }: { user: any }) {
   };
 
   const filteredDocuments = useMemo(() => {
-    if (!urlKategori) return documents;
-    return documents.filter((d: any) =>
-      (d.category || '').toLowerCase() === urlKategori.toLowerCase()
-    );
-  }, [documents, urlKategori]);
+    let result = documents;
+    if (urlKategori) {
+      result = result.filter((d: any) =>
+        (d.category || '').toLowerCase() === urlKategori.toLowerCase()
+      );
+    }
+    if (filterYear) {
+      result = result.filter((d: any) => {
+        const y = d.published_at ? new Date(d.published_at).getFullYear() : null;
+        return y === filterYear;
+      });
+    }
+    return result;
+  }, [documents, urlKategori, filterYear]);
+
+  const availableYears = useMemo(() => {
+    return [new Date().getFullYear()];
+  }, []);
 
   const stats = useMemo(() => {
     const src = filteredDocuments;
@@ -387,6 +407,9 @@ export default function Publication({ user }: { user: any }) {
         openEditModal={(doc) => { setEditDoc(doc); setIsEditModalOpen(true); }}
         setDeleteDoc={setDeleteDoc}
         setIsDeleteModalOpen={setIsDeleteModalOpen}
+        availableYears={availableYears}
+        filterYear={filterYear}
+        onYearChange={(y) => { setFilterYear(y); setCurrentPage(1); }}
       />
 
       {/* Floating Toast Notification */}

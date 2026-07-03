@@ -4,6 +4,7 @@ import {
   FileText, Upload, Info 
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import YearFilterBar from '../../../../components/ui/YearFilterBar';
 
 const formatDateVal = (dateStr: string | number) => {
   if (!dateStr) return '-';
@@ -37,6 +38,9 @@ interface ResearchTableProps {
   uploadingPdfId: number | null;
   onEditClick: (doc: any) => void;
   onDeleteClick: (doc: any) => void;
+  availableYears: number[];
+  filterYear: number | null;
+  onYearChange: (year: number | null) => void;
 }
 
 export default function ResearchTable({
@@ -56,6 +60,9 @@ export default function ResearchTable({
   uploadingPdfId,
   onEditClick,
   onDeleteClick,
+  availableYears,
+  filterYear,
+  onYearChange,
 }: ResearchTableProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -75,6 +82,13 @@ export default function ResearchTable({
           Riwayat Penelitian
         </h3>
       </div>
+
+      {/* Year Filter */}
+      <YearFilterBar
+        availableYears={availableYears}
+        selectedYear={filterYear}
+        onYearChange={onYearChange}
+      />
 
       <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800 text-sm">

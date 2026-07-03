@@ -35,8 +35,11 @@ export function DatePicker({
   React.useEffect(() => {
     if (date) {
       setCurrentMonth(new Date(date))
+    } else {
+      setCurrentMonth(new Date())
     }
   }, [date])
+
 
   const monthNames = [
     "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -94,12 +97,37 @@ export function DatePicker({
     setCurrentMonth(new Date(year, month + 1, 1))
   }
 
+  // When user changes the month dropdown, update view AND update selected date
+  const handleMonthChange = (newMonth: number) => {
+    const newView = new Date(year, newMonth, 1)
+    setCurrentMonth(newView)
+    if (onDateChange) {
+      const currentDay = date ? date.getDate() : 1
+      const maxDay = getDaysInMonth(year, newMonth)
+      const safeDay = Math.min(currentDay, maxDay)
+      onDateChange(new Date(year, newMonth, safeDay))
+    }
+  }
+
+  // When user changes the year dropdown, update view AND update selected date
+  const handleYearChange = (newYear: number) => {
+    const newView = new Date(newYear, month, 1)
+    setCurrentMonth(newView)
+    if (onDateChange) {
+      const currentDay = date ? date.getDate() : 1
+      const maxDay = getDaysInMonth(newYear, month)
+      const safeDay = Math.min(currentDay, maxDay)
+      onDateChange(new Date(newYear, month, safeDay))
+    }
+  }
+
   const handleDateSelect = (selectedDate: Date) => {
     if (onDateChange) {
       onDateChange(selectedDate)
     }
     setIsOpen(false)
   }
+
 
   const isToday = (d: Date) => {
     const today = new Date()
@@ -162,7 +190,7 @@ export function DatePicker({
               <div className="flex items-center gap-1">
                 <select
                   value={month}
-                  onChange={(e) => setCurrentMonth(new Date(year, parseInt(e.target.value), 1))}
+                  onChange={(e) => handleMonthChange(parseInt(e.target.value))}
                   className="bg-transparent text-sm font-extrabold text-gray-900 dark:text-zinc-100 outline-none cursor-pointer uppercase tracking-wider dark:bg-zinc-900 border-0 py-0.5 px-1 rounded hover:bg-gray-50 dark:hover:bg-zinc-800"
                 >
                   {monthNames.map((name, i) => (
@@ -171,10 +199,10 @@ export function DatePicker({
                 </select>
                 <select
                   value={year}
-                  onChange={(e) => setCurrentMonth(new Date(parseInt(e.target.value), month, 1))}
+                  onChange={(e) => handleYearChange(parseInt(e.target.value))}
                   className="bg-transparent text-sm font-extrabold text-gray-900 dark:text-zinc-100 outline-none cursor-pointer font-mono dark:bg-zinc-900 border-0 py-0.5 px-1 rounded hover:bg-gray-50 dark:hover:bg-zinc-800"
                 >
-                  {Array.from({ length: 40 }, (_, i) => new Date().getFullYear() - 30 + i).map((y) => (
+                  {Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - 35 + i).map((y) => (
                     <option key={y} value={y} className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 text-xs font-bold font-mono">{y}</option>
                   ))}
                 </select>

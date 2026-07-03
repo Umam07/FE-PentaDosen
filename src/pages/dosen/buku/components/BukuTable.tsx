@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { BUKU_CATEGORIES } from '../constants';
+import YearFilterBar from '../../../../components/ui/YearFilterBar';
 
 interface BukuTableProps {
   isTableLoading: boolean;
@@ -26,6 +27,9 @@ interface BukuTableProps {
   setIsDeleteModalOpen: (isOpen: boolean) => void;
   setDocToLink: (doc: any) => void;
   setIsLinkingModalOpen: (isOpen: boolean) => void;
+  availableYears: number[];
+  filterYear: number | null;
+  onYearChange: (year: number | null) => void;
 }
 
 export default function BukuTable({
@@ -46,7 +50,10 @@ export default function BukuTable({
   setDeleteDoc,
   setIsDeleteModalOpen,
   setDocToLink,
-  setIsLinkingModalOpen
+  setIsLinkingModalOpen,
+  availableYears,
+  filterYear,
+  onYearChange,
 }: BukuTableProps) {
   
   const isDocLocked = (doc: any) =>
@@ -91,6 +98,13 @@ export default function BukuTable({
           </button>
         ))}
       </div>
+
+      {/* Year Filter */}
+      <YearFilterBar
+        availableYears={availableYears}
+        selectedYear={filterYear}
+        onYearChange={onYearChange}
+      />
 
       <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">

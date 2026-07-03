@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { ProfileTrendChart } from './ProfileCharts';
 import { calculateScholarPoints } from '../pointsCalculator';
+import YearFilterBar from '../../../../components/ui/YearFilterBar';
 
 // === Sub-component: Scholar row with per-doc points + breakdown ===
 function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
@@ -894,13 +895,27 @@ export default function ExternalDocumentsView({
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
+  const currentYear = new Date().getFullYear();
+  const [filterYearExt, setFilterYearExt] = useState<number | null>(currentYear);
 
   // Reset page when switching tabs
   useEffect(() => {
     setCurrentPage(1);
+    setFilterYearExt(new Date().getFullYear()); // reset year filter when switching sub-tabs
   }, [publicationSubTab]);
 
-  const currentYear = new Date().getFullYear();
+
+
+
+  // ── Year filter for external tabs (Scopus / Scholar / Cross-Indexed) ──────
+
+  const availableYearsScopus = useMemo(() => {
+    return [currentYear];
+  }, [currentYear]);
+
+  const availableYearsScholar = useMemo(() => {
+    return [currentYear];
+  }, [currentYear]);
 
   const normalizeTitle = (title: string) => {
     return title?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
@@ -911,12 +926,21 @@ export default function ExternalDocumentsView({
     return (scopusPublications || []).some(scopusDoc => normalizeTitle(scopusDoc.title) === scholarTitle);
   });
 
+  const availableYearsCross = useMemo(() => {
+    return [currentYear];
+  }, [currentYear]);
+
   const scopusList = scopusPublications || [];
   const scholarList = publications || [];
   const crossIndexedDocs = baseCrossIndexedDocs;
 
   const filteredScopusList = useMemo(() => {
     let result = scopusList;
+
+    // Year filter
+    if (filterYearExt) {
+      result = result.filter((doc: any) => Number(doc.year) === filterYearExt);
+    }
 
     // Korespondensi Filter
     if (scopusFilter === 'unconfirmed') {
@@ -945,7 +969,17 @@ export default function ExternalDocumentsView({
     }
 
     return result;
-  }, [scopusList, scopusFilter, articleFilter]);
+  }, [scopusList, scopusFilter, articleFilter, filterYearExt]);
+
+  const filteredScholarList = useMemo(() => {
+    if (!filterYearExt) return scholarList;
+    return scholarList.filter((doc: any) => Number(doc.year) === filterYearExt);
+  }, [scholarList, filterYearExt]);
+
+  const filteredCrossIndexedDocs = useMemo(() => {
+    if (!filterYearExt) return crossIndexedDocs;
+    return crossIndexedDocs.filter((doc: any) => Number(doc.year) === filterYearExt);
+  }, [crossIndexedDocs, filterYearExt]);
 
   // Pagination Helper Component
   const Pagination = ({ totalItems, currentPage, onPageChange, itemsPerPage, setItemsPerPage }: {
@@ -1334,6 +1368,17 @@ export default function ExternalDocumentsView({
                         </div>
                       )}
 
+                      {/* Year Filter for Scopus */}
+                      {!isPublic && (
+                        <div className="mt-2">
+                          <YearFilterBar
+                            availableYears={availableYearsScopus}
+                            selectedYear={filterYearExt}
+                            onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                          />
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-1 gap-4">
                         {filteredScopusList.length > 0 ? (
                           (isPublic ? filteredScopusList.slice(0, 5) : filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc: any, idx: number) => {
@@ -1470,8 +1515,19 @@ export default function ExternalDocumentsView({
                         </div>
                       </div>
 
+                      {/* Year Filter for Scholar */}
+                      {!isPublic && (
+                        <div className="mt-0 mb-0">
+                          <YearFilterBar
+                            availableYears={availableYearsScholar}
+                            selectedYear={filterYearExt}
+                            onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                          />
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-1 gap-4">
-                        {scholarList && (isPublic ? scholarList.slice(0, 5) : scholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc: any, idx: number) => {
+                        {filteredScholarList && (isPublic ? filteredScholarList.slice(0, 5) : filteredScholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc: any, idx: number) => {
                           const docPoints = calculateScholarPoints(doc);
                           const scopusMatch = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                           const isAlsoScopus = !!scopusMatch;
@@ -1491,10 +1547,10 @@ export default function ExternalDocumentsView({
                       </div>
 
                       {isPublic ? (
-                        scholarList.length > 5 && (
+                        filteredScholarList.length > 5 && (
                           <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-850/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
                             <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
-                              + {scholarList.length - 5} Dokumen Google Scholar Lainnya Tersedia
+                              + {filteredScholarList.length - 5} Dokumen Google Scholar Lainnya Tersedia
                             </p>
                             <button
                               onClick={() => window.location.href = '/login'}
@@ -1507,7 +1563,7 @@ export default function ExternalDocumentsView({
                         )
                       ) : (
                         <Pagination
-                          totalItems={scholarList?.length || 0}
+                          totalItems={filteredScholarList?.length || 0}
                           currentPage={currentPage}
                           onPageChange={setCurrentPage}
                           itemsPerPage={itemsPerPage}
@@ -1552,7 +1608,7 @@ export default function ExternalDocumentsView({
                       </p>
                     </div>
                     <div className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
-                      {crossIndexedDocs?.length || 0} Total
+                      {filteredCrossIndexedDocs?.length || 0} Total
                     </div>
                   </div>
                 </div>
@@ -1565,10 +1621,19 @@ export default function ExternalDocumentsView({
                   <div>
                     <p className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Deduplikasi Otomatis — Poin Scopus Digunakan</p>
                     <p className="text-[10px] font-bold text-emerald-600/70 dark:text-emerald-400/70 mt-1">
-                      Ketika judul ada di Scopus & Scholar, sistem memakai poin Scopus (kalkulasi SINTA) karena lebih besar.
+                      Ketika judul ada di Scopus &amp; Scholar, sistem memakai poin Scopus (kalkulasi SINTA) karena lebih besar.
                     </p>
                   </div>
                 </div>
+
+                {/* Year Filter for Cross-Indexed */}
+                {!isPublic && (
+                  <YearFilterBar
+                    availableYears={availableYearsCross}
+                    selectedYear={filterYearExt}
+                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                  />
+                )}
 
                 {loading ? (
                   <div className="space-y-4">
@@ -1578,7 +1643,7 @@ export default function ExternalDocumentsView({
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
-                    {crossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                    {filteredCrossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
                       const scopusDoc = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                       return (
                         <CrossIndexedDocRow
@@ -1589,7 +1654,7 @@ export default function ExternalDocumentsView({
                         />
                       );
                     })}
-                    {crossIndexedDocs.length === 0 && (
+                    {filteredCrossIndexedDocs.length === 0 && (
                       <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">
                         <div className="text-center">
                           <p className="text-xs font-black uppercase tracking-widest text-slate-400">Belum Ada Publikasi Terindeks Ganda</p>
@@ -1599,7 +1664,7 @@ export default function ExternalDocumentsView({
                   </div>
                 )}
                 <Pagination
-                  totalItems={crossIndexedDocs?.length || 0}
+                  totalItems={filteredCrossIndexedDocs?.length || 0}
                   currentPage={currentPage}
                   onPageChange={setCurrentPage}
                   itemsPerPage={itemsPerPage}
