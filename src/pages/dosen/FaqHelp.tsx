@@ -13,22 +13,19 @@ const AnnouncementCard: React.FC<{ ann: any }> = ({ ann }) => {
   return (
     <motion.div
       layout
-      className="relative overflow-hidden rounded-[2rem] border border-amber-200/50 dark:border-slate-800 bg-gradient-to-br from-amber-500/[0.03] to-orange-500/[0.01] dark:from-amber-500/[0.02] dark:to-transparent hover:border-amber-500/30 dark:hover:border-amber-500/10 shadow-sm hover:shadow-md transition-all duration-300 p-6 pl-8"
+      className="relative overflow-hidden rounded-xl border border-amber-250 dark:border-amber-900/35 bg-amber-50/20 dark:bg-amber-950/10 hover:border-amber-300 dark:hover:border-amber-900/50 transition-all duration-200 p-5 pl-7"
     >
       {/* Left accent indicator line */}
-      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-r-full" />
-      
-      {/* Background glow highlights */}
-      <div className="pointer-events-none absolute -right-8 -bottom-8 w-28 h-28 bg-amber-500/[0.03] rounded-full blur-xl" />
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 dark:bg-amber-600 rounded-r-full" />
 
       <div className="flex items-start gap-4">
-        <div className="p-3 bg-amber-100/60 dark:bg-amber-950/20 border border-amber-200/20 dark:border-amber-900/10 rounded-2xl text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5 shadow-sm">
-          <Megaphone className="w-5 h-5" />
+        <div className="p-2.5 bg-amber-100/70 dark:bg-amber-950/30 border border-amber-200/30 dark:border-amber-900/20 rounded-xl text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5 shadow-sm">
+          <Megaphone className="w-4 h-4" />
         </div>
         
         <div className="flex-1 space-y-2 min-w-0">
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider bg-amber-100/50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full border border-amber-200/20 dark:border-amber-900/20">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wide bg-amber-100/60 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-200/30 dark:border-amber-900/30">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
@@ -36,23 +33,23 @@ const AnnouncementCard: React.FC<{ ann: any }> = ({ ann }) => {
               PENGUMUMAN
             </span>
             {ann.created_at && (
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
+              <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">
                 Diterbitkan: {new Date(ann.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
             )}
           </div>
           
-          <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight leading-snug">
+          <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
             {ann.title}
           </h4>
           
-          <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+          <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-350 leading-relaxed whitespace-pre-line">
             {isLongContent && !isExpanded ? (
               <>
                 {ann.content.slice(0, 180)}...
                 <button
                   onClick={() => setIsExpanded(true)}
-                  className="ml-1 text-xs font-black text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 uppercase tracking-widest cursor-pointer"
+                  className="ml-1 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
                 >
                   Selengkapnya
                 </button>
@@ -63,7 +60,7 @@ const AnnouncementCard: React.FC<{ ann: any }> = ({ ann }) => {
                 {isLongContent && (
                   <button
                     onClick={() => setIsExpanded(false)}
-                    className="block mt-2 text-xs font-black text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 uppercase tracking-widest cursor-pointer"
+                    className="block mt-2 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
                   >
                     Sembunyikan
                   </button>
@@ -163,18 +160,15 @@ export default function FaqHelp({ user }: { user: any }) {
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl border border-slate-200/60 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:border-slate-800 shadow-sm"
+        className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-900 dark:bg-slate-950 shadow-sm"
       >
-        <div className="absolute top-0 right-0 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-
         <div className="relative z-10 flex items-center gap-4 px-5 py-4 sm:px-7">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 border border-white/10">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800 dark:bg-slate-900 border border-slate-700 dark:border-slate-800">
             <HelpCircle className="w-5 h-5 text-primary-400" />
           </div>
           <div>
-            <p className="text-[8px] font-black text-primary-400 uppercase tracking-[0.2em] leading-none mb-0.5">Pusat Dukungan</p>
-            <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Bantuan &amp; FAQ</h2>
+            <p className="text-[9px] font-bold text-primary-400 uppercase tracking-widest leading-none mb-1">Pusat Dukungan</p>
+            <h2 className="text-base sm:text-lg font-semibold tracking-tight text-white leading-none">Bantuan &amp; FAQ</h2>
           </div>
         </div>
       </motion.div>
@@ -192,7 +186,7 @@ export default function FaqHelp({ user }: { user: any }) {
           placeholder="Cari panduan, kata kunci, atau pertanyaan..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:border-primary-500/50 transition-all text-slate-900 dark:text-white placeholder-slate-400 shadow-sm"
+          className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-xl text-sm font-medium outline-none focus:border-slate-400 dark:focus:border-slate-700 transition-all text-slate-900 dark:text-white placeholder-slate-400 shadow-sm"
         />
         {searchQuery && (
           <button
@@ -214,7 +208,7 @@ export default function FaqHelp({ user }: { user: any }) {
         >
           <div className="flex items-center gap-2 px-2">
             <Megaphone className="w-4 h-4 text-amber-500" />
-            <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-400">
               Pengumuman Terbaru ({announcements.length})
             </h3>
           </div>
@@ -227,10 +221,10 @@ export default function FaqHelp({ user }: { user: any }) {
       )}
 
       {/* 4. UNIFIED CARD: Tabs on top + FAQ Accordions below */}
-      <div className="overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         
         {/* Tab Header — flush inside the card */}
-        <div className="flex items-center gap-0 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/60 dark:border-slate-800 px-4 py-3 overflow-x-auto no-scrollbar">
+        <div className="flex border-b border-slate-200/60 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-800/10 overflow-x-auto no-scrollbar">
           {categories.map((cat) => {
             const theme = getCategoryTheme(cat);
             const IconComponent = theme.icon;
@@ -239,20 +233,14 @@ export default function FaqHelp({ user }: { user: any }) {
               <button
                 key={cat}
                 onClick={() => { setActiveCategory(cat); setExpandedFaqId(null); }}
-                className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap mr-1 ${
+                className={`px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] border-b-2 transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer select-none ${
                   isActive 
-                    ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-md' 
-                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-800/60'
+                    ? 'border-primary-600 text-primary-600 dark:text-primary-400 bg-white dark:bg-slate-900' 
+                    : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
-                <IconComponent className={`w-3.5 h-3.5 ${isActive ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+                <IconComponent className="w-4 h-4" />
                 {cat}
-                {isActive && (
-                  <motion.div
-                    layoutId="faq-active-tab"
-                    className="absolute inset-0 rounded-xl border border-primary-200 dark:border-primary-800/40 pointer-events-none"
-                  />
-                )}
               </button>
             );
           })}
@@ -264,10 +252,10 @@ export default function FaqHelp({ user }: { user: any }) {
             [1, 2, 3].map(i => (
               <div 
                 key={i} 
-                className="h-16 w-full bg-slate-50 dark:bg-slate-800/40 rounded-2xl animate-pulse flex items-center px-5 justify-between"
+                className="h-16 w-full bg-slate-50 dark:bg-slate-800/40 rounded-xl animate-pulse flex items-center px-5 justify-between"
               >
                 <div className="flex items-center gap-3 w-2/3">
-                  <div className="h-9 w-9 rounded-xl bg-slate-200 dark:bg-slate-700" />
+                  <div className="h-9 w-9 rounded-lg bg-slate-200 dark:bg-slate-700" />
                   <div className="h-3.5 bg-slate-200 dark:bg-slate-700 rounded w-4/5" />
                 </div>
                 <div className="h-4 w-4 bg-slate-200 dark:bg-slate-700 rounded-full" />
@@ -283,22 +271,22 @@ export default function FaqHelp({ user }: { user: any }) {
                 <motion.div
                   key={faq.id}
                   layout="position"
-                  className="rounded-2xl border border-slate-100 dark:border-slate-800/80 overflow-hidden hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-300 bg-slate-50/50 dark:bg-slate-800/20"
+                  className="rounded-xl border border-slate-100 dark:border-slate-800/80 overflow-hidden hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-300 bg-slate-50/50 dark:bg-slate-800/20"
                 >
                   <button
                     onClick={() => toggleExpand(faq.id)}
-                    className="w-full px-5 py-4 text-left flex justify-between items-center gap-4 focus:outline-none group"
+                    className="w-full px-5 py-4 text-left flex justify-between items-center gap-4 focus:outline-none group cursor-pointer"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${theme.classes} transition-transform duration-300 group-hover:scale-105`}>
+                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${theme.classes} transition-transform duration-300 group-hover:scale-105`}>
                         <ThemeIcon className="w-4 h-4" />
                       </div>
-                      <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                      <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                         {faq.question}
                       </span>
                     </div>
                     
-                    <div className={`p-1 rounded-lg text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-all flex-shrink-0 ${isExpanded ? 'text-primary-600 dark:text-primary-400' : ''}`}>
+                    <div className={`p-1 rounded-md text-slate-400 group-hover:text-slate-650 dark:group-hover:text-slate-300 transition-all flex-shrink-0 ${isExpanded ? 'text-slate-900 dark:text-white' : ''}`}>
                       <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                     </div>
                   </button>
@@ -321,10 +309,10 @@ export default function FaqHelp({ user }: { user: any }) {
                                   title: faq.question,
                                   category: faq.category
                                 })}
-                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900/30 text-primary-600 dark:text-primary-400 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-primary-100/50 dark:hover:bg-primary-900/40 transition-all active:scale-95 shadow-sm"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold transition-all duration-200 active:scale-95 cursor-pointer"
                               >
-                                <FileText className="w-4 h-4" />
-                                Lihat Panduan PDF
+                                <FileText className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                                <span>Lihat Panduan PDF</span>
                               </button>
                             </div>
                           )}
@@ -341,10 +329,10 @@ export default function FaqHelp({ user }: { user: any }) {
               animate={{ opacity: 1, scale: 1 }}
               className="py-16 text-center"
             >
-              <div className="w-14 h-14 bg-slate-100 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-200 dark:border-slate-700">
+              <div className="w-14 h-14 bg-slate-100 dark:bg-slate-800/50 rounded-lg flex items-center justify-center mx-auto mb-4 border border-slate-200 dark:border-slate-700">
                 <HelpCircle className="w-7 h-7 text-slate-400" />
               </div>
-              <h3 className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Panduan Tidak Ditemukan</h3>
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Panduan Tidak Ditemukan</h3>
               <p className="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">
                 Tidak ada panduan yang cocok. Silakan coba kata kunci atau kategori lain.
               </p>
