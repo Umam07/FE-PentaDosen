@@ -604,7 +604,6 @@ export default function Research({ user }: ResearchProps) {
                 Dana Disetujui
               </p>
               <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-800 dark:text-zinc-200">
-                <DollarSign className="w-3.5 h-3.5 text-gray-400" />
                 Rp {activeDetailDoc.dana_disetujui?.toLocaleString() || '-'}
               </div>
             </div>
