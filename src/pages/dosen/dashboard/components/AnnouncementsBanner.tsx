@@ -1,62 +1,138 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Megaphone } from 'lucide-react';
+import { BellRing, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
 
 interface Announcement {
   id: number;
   title: string;
   content: string;
+  created_at?: string;
 }
 
 interface AnnouncementsBannerProps {
   announcements: Announcement[];
 }
 
-export default function AnnouncementsBanner({ announcements }: AnnouncementsBannerProps) {
-  return (
-    <AnimatePresence>
-      {announcements.length > 0 && (
-        <div className="space-y-4">
-          {announcements.map((ann) => (
-            <motion.div
-              key={ann.id}
-              initial={{ opacity: 0, scale: 0.98, y: -10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98, y: -10 }}
-              whileHover={{ y: -2, transition: { duration: 0.2 } }}
-              className="p-6 bg-gradient-to-br from-amber-50/90 to-orange-50/50 dark:from-slate-900/80 dark:to-slate-900/40 border border-amber-200/50 dark:border-slate-800 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden pl-8"
-            >
-              {/* Left Accent Bar */}
-              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-r-full" />
-              
-              {/* Decorative Background Glows */}
-              <div className="pointer-events-none absolute -right-10 -bottom-10 w-32 h-32 bg-amber-300/10 dark:bg-amber-500/5 rounded-full blur-2xl" />
-              <div className="pointer-events-none absolute -left-10 -top-10 w-32 h-32 bg-orange-300/10 dark:bg-orange-500/5 rounded-full blur-2xl" />
+const AnnouncementItem: React.FC<{ ann: Announcement; index: number }> = ({ ann, index }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isLongContent = ann.content.length > 180;
 
-              <div className="relative z-10 flex items-start gap-4">
-                <div className="p-3 bg-amber-100/70 dark:bg-amber-950/40 rounded-2xl flex-shrink-0 mt-0.5 shadow-inner">
-                  <Megaphone className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.15em] bg-amber-100/60 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full border border-amber-200/30 dark:border-amber-900/20">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                      PENGUMUMAN AKADEMIK
-                    </span>
-                  </div>
-                  <h4 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight leading-snug">
-                    {ann.title}
-                  </h4>
-                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                    {ann.content}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -8, scale: 0.98 }}
+      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.06 }}
+      className="group relative overflow-hidden rounded-2xl border border-amber-100 dark:border-amber-900/30 bg-white dark:bg-slate-900/60 shadow-sm hover:shadow-md transition-shadow duration-300"
+    >
+      {/* Subtle gradient overlay top */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+
+      {/* Left glow accent */}
+      <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-amber-400 via-amber-500 to-amber-300 rounded-l-2xl" />
+
+      <div className="pl-5 pr-5 pt-4 pb-4">
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2.5">
+            {/* Icon bubble */}
+            <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-sm shadow-amber-200 dark:shadow-amber-900/40">
+              <BellRing className="w-4 h-4 text-white" strokeWidth={2.2} />
+            </div>
+
+            {/* Badge */}
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 px-2.5 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              Pengumuman
+            </span>
+          </div>
+
+          {/* Date */}
+          {ann.created_at && (
+            <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500 flex-shrink-0">
+              <Calendar className="w-3 h-3" />
+              <span>{formatDate(ann.created_at)}</span>
+            </div>
+          )}
         </div>
-      )}
-    </AnimatePresence>
+
+        {/* Title */}
+        <h4 className="text-sm sm:text-[15px] font-semibold text-slate-800 dark:text-slate-100 leading-snug mb-2 tracking-tight">
+          {ann.title}
+        </h4>
+
+        {/* Content */}
+        <div className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-line">
+          {isLongContent && !isExpanded ? (
+            <>
+              {ann.content.slice(0, 180)}
+              <span className="text-slate-400 dark:text-slate-500">...</span>
+            </>
+          ) : (
+            ann.content
+          )}
+        </div>
+
+        {/* Expand / Collapse button */}
+        {isLongContent && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="inline-flex items-center gap-1 mt-2.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors duration-200 cursor-pointer"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-3.5 h-3.5" />
+                Sembunyikan
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-3.5 h-3.5" />
+                Selengkapnya
+              </>
+            )}
+          </button>
+        )}
+      </div>
+
+      {/* Bottom shimmer on hover */}
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    </motion.div>
+  );
+};
+
+export default function AnnouncementsBanner({ announcements }: AnnouncementsBannerProps) {
+  if (announcements.length === 0) return null;
+
+  return (
+    <div className="space-y-3">
+      {/* Section header */}
+      <div className="flex items-center gap-2.5 px-0.5">
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200 tracking-tight">
+            Pengumuman Terbaru
+          </h3>
+          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40">
+            {announcements.length}
+          </span>
+        </div>
+      </div>
+
+      {/* Cards */}
+      <div className="grid grid-cols-1 gap-2.5">
+        <AnimatePresence>
+          {announcements.map((ann, i) => (
+            <AnnouncementItem key={ann.id} ann={ann} index={i} />
+          ))}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }
-
