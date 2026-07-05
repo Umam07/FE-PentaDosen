@@ -152,12 +152,12 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user && !isSessionExpired) {
       sessionStorage.setItem('pentadosen_user', JSON.stringify(user));
     } else {
       sessionStorage.removeItem('pentadosen_user');
     }
-  }, [user]);
+  }, [user, isSessionExpired]);
 
   // Automatic logout after 20 minutes of inactivity
   useEffect(() => {
@@ -165,7 +165,7 @@ export default function App() {
 
     const resetTimer = () => {
       if (timeoutId) clearTimeout(timeoutId);
-      if (user) {
+      if (user && !isSessionExpired) {
         // 20 minutes = 20 * 60 * 1000 ms
         timeoutId = setTimeout(() => {
           setIsSessionExpired(true); // Trigger the modal instead of immediate logout
@@ -179,7 +179,7 @@ export default function App() {
       'scroll', 'touchstart', 'click'
     ];
 
-    if (user) {
+    if (user && !isSessionExpired) {
       activityEvents.forEach(event => {
         window.addEventListener(event, resetTimer);
       });
@@ -193,7 +193,7 @@ export default function App() {
         window.removeEventListener(event, resetTimer);
       });
     };
-  }, [user, setUser]);
+  }, [user, isSessionExpired]);
   return (
     <Router>
       <ScrollToTop />
