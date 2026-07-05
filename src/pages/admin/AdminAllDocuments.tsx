@@ -502,7 +502,7 @@ export default function AdminAllDocuments() {
         </div>
 
         <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10 backdrop-blur-sm">
-          <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col xl:flex-row xl:flex-wrap items-center justify-between gap-6">
             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
               <div className={`hidden md:flex p-3 rounded-2xl shadow-sm border ${tabDetails[activeTab].colorClass}`}>
                  {React.createElement(tabDetails[activeTab].icon, { className: "h-6 w-6" })}
@@ -519,7 +519,7 @@ export default function AdminAllDocuments() {
 
             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
               {/* Search Bar */}
-              <div className="relative w-full xl:w-[400px]">
+              <div className="relative w-full xl:w-[320px]">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
@@ -545,7 +545,7 @@ export default function AdminAllDocuments() {
                     { value: "Fakultas Psikologi", label: "Psikologi" },
                   ]}
                   icon={<GraduationCap className="w-4 h-4" />}
-                  className="w-full sm:w-[220px]"
+                  className="w-full sm:w-[200px]"
                 />
               )}
 
@@ -558,7 +558,7 @@ export default function AdminAllDocuments() {
                   { value: "asc", label: "Terlama" },
                 ]}
                 icon={<Clock className="w-4 h-4" />}
-                className="w-full sm:w-[180px]"
+                className="w-full sm:w-[160px]"
               />
             </div>
           </div>
