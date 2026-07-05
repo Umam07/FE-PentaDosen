@@ -423,7 +423,7 @@ export default function AdminActivityLogs() {
       {/* Main Card */}
       <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 overflow-hidden">
         {/* Filter & Search Bar — matches AdminVerification.tsx layout */}
-        <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/5 backdrop-blur-sm">
+        <div className="relative z-20 p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/5 backdrop-blur-sm">
           <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
 
             {/* Left: Sub-header */}
@@ -695,7 +695,7 @@ export default function AdminActivityLogs() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="px-8 py-8 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
+            className="relative z-10 px-8 py-8 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
           >
             <div className="flex items-center gap-4">
               <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-[0.2em]">

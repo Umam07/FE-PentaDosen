@@ -501,7 +501,7 @@ export default function AdminAllDocuments() {
           })}
         </div>
 
-        <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10 backdrop-blur-sm">
+        <div className="relative z-20 p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10 backdrop-blur-sm">
           <div className="flex flex-col xl:flex-row xl:flex-wrap items-center justify-between gap-6">
             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
               <div className={`hidden md:flex p-3 rounded-2xl shadow-sm border ${tabDetails[activeTab].colorClass}`}>
@@ -838,7 +838,7 @@ export default function AdminAllDocuments() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="px-8 py-8 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
+            className="relative z-10 px-8 py-8 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
           >
             <div className="flex items-center gap-4">
               <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-[0.2em]">

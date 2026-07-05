@@ -205,7 +205,7 @@ export default function AdminVerification() {
           ))}
         </div>
 
-        <div className="p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/5 backdrop-blur-sm">
+        <div className="relative z-20 p-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/5 backdrop-blur-sm">
           <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
              <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
                <div className="hidden md:flex p-3 bg-primary-50 dark:bg-primary-900/20 rounded-2xl text-primary-600 dark:text-primary-400 shadow-sm border border-primary-100/50 dark:border-primary-900/30">
@@ -599,7 +599,7 @@ export default function AdminVerification() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="px-8 py-8 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
+            className="relative z-10 px-8 py-8 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
           >
             <div className="flex items-center gap-4">
               <span className="text-[11px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
