@@ -82,6 +82,7 @@ export default function Features() {
             style={{ opacity: 0 }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-none mb-6"
           >
@@ -93,6 +94,7 @@ export default function Features() {
             style={{ opacity: 0 }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-base md:text-lg font-bold text-gray-500 dark:text-gray-400 leading-relaxed"
           >

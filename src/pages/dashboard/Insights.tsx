@@ -526,6 +526,11 @@ export default function Insights() {
                         outerRadius={125}
                         dataKey="value"
                         onMouseEnter={onPieEnter}
+                        onClick={(entry: any) => {
+                          if (entry && entry.fullName) {
+                            navigate(`/departments?search=${encodeURIComponent(entry.fullName)}`);
+                          }
+                        }}
                         animationDuration={1500}
                         paddingAngle={5}
                         stroke="none"
@@ -565,6 +570,7 @@ export default function Insights() {
                       <motion.div 
                         key={f.fullName}
                         onMouseEnter={() => setActiveIndex(i)}
+                        onClick={() => navigate(`/departments?search=${encodeURIComponent(f.fullName)}`)}
                         className={`flex items-center gap-4 p-3 rounded-2xl transition-all border cursor-pointer ${isActive ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 shadow-xs' : 'border-transparent'}`}
                       >
                         <div 

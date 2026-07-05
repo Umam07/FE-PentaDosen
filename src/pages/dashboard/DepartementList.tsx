@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { 
   Search, Stethoscope, Cpu, Briefcase, 
@@ -92,7 +92,8 @@ const DEFAULT_NAMES = Object.keys(FAKULTAS_METADATA);
 
 export default function DepartementList() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [departments, setDepartments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -133,6 +134,13 @@ export default function DepartementList() {
 
     fetchStats();
   }, []);
+
+  useEffect(() => {
+    const searchVal = searchParams.get('search');
+    if (searchVal !== null) {
+      setSearch(searchVal);
+    }
+  }, [searchParams]);
 
   const filteredDepartments = departments.filter(d => 
     d.name.toLowerCase().includes(search.toLowerCase())
