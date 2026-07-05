@@ -1,18 +1,11 @@
 import { ScopusBreakdown } from '../external-documents.types';
 
-/**
- * Normalizes title string by lowercasing and removing non-alphanumeric characters.
- */
+// Normalisasi judul untuk pencocokan silang (cross-indexed) antara Scopus & Scholar
 export const normalizeTitle = (title: string): string => {
   return title?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 };
 
-/**
- * Detailed Scopus breakdown calculation (60/40 schema + quartile)
- * Quartile determines max base points:
- *   Q1 = 40 pts, Q2 = 38 pts, Q3 = 35 pts, Q4 = 33 pts, None = 33 pts
- * Then: Single = 100%, First = 60%, Member = 40% / (totalAuthors - 1)
- */
+// Hitung poin Scopus detail sesuai aturan KPI (skema co-author 60/40, quartile, corresponding status)
 export const calculateScopusBreakdown = (pub: any): ScopusBreakdown => {
   const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' 
     ? 'Member Author' 

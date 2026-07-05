@@ -13,7 +13,7 @@ export default function CrossIndexedDocRow({
   const bd = calculateScopusBreakdown(scopusDoc || doc);
   const citations = bd.citations || 0;
 
-  // Citation progress bar (reference max = 200)
+  // Batas perhitungan poin sitasi diset maksimal 200 di UI progress bar
   const citMax = 200;
   const citPct = Math.min(100, (citations / citMax) * 100);
 
@@ -24,11 +24,9 @@ export default function CrossIndexedDocRow({
       transition={{ delay: idx * 0.05 }}
       className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-emerald-400/40 hover:shadow-2xl hover:shadow-emerald-500/8 transition-all duration-300 overflow-hidden"
     >
-      {/* Brand accent stripe */}
       <div className="h-[3px] w-full bg-emerald-500 opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="flex items-start gap-5 p-5">
-        {/* Citation + Points Column */}
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
           <div className="w-[62px] h-[62px] rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 flex flex-col items-center justify-center group-hover:bg-emerald-100/60 dark:group-hover:bg-emerald-950/50 transition-colors">
             <span className="text-xl font-black text-emerald-700 dark:text-emerald-300 leading-none tabular-nums">{citations}</span>
@@ -39,37 +37,29 @@ export default function CrossIndexedDocRow({
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 min-w-0">
-          {/* Badge Row */}
           <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            {/* Brand badge */}
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
               Scopus &amp; Scholar
             </span>
-            {/* Source badge */}
             <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-orange-500/20">
               Poin Scopus Digunakan
             </span>
-            {/* Quartile badge */}
             {bd.q && bd.q !== 'None' && (
               <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${bd.q === 'Q1' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25' : bd.q === 'Q2' ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400 border-teal-500/25' : bd.q === 'Q3' ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/25' : 'bg-slate-400/10 text-slate-500 dark:text-slate-400 border-slate-300/30'} rounded-full text-[7px] font-black uppercase tracking-widest border`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${bd.q === 'Q1' ? 'bg-emerald-500' : bd.q === 'Q2' ? 'bg-teal-500' : bd.q === 'Q3' ? 'bg-blue-500' : 'bg-slate-400'} inline-block`} />
                 {bd.q}
               </span>
             )}
-            {/* Author role badge */}
             <span className={`px-2 py-0.5 ${bd.role === 'Single Author' ? 'bg-violet-500/10 text-violet-700 dark:text-violet-400' : bd.role === 'First Author' ? 'bg-orange-500/10 text-orange-700 dark:text-orange-400' : 'bg-slate-400/10 text-slate-600 dark:text-slate-400'} rounded-full text-[7px] font-black uppercase tracking-widest`}>
               {bd.role}
             </span>
-            {/* Year — pushed to the right */}
             <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">
               <Calendar className="w-3.5 h-3.5" /> {doc.year || '—'}
             </span>
           </div>
 
-          {/* Title */}
           <a
             href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
             target="_blank"
@@ -79,7 +69,6 @@ export default function CrossIndexedDocRow({
             {doc.title}
           </a>
 
-          {/* Metadata row */}
           <div className="flex flex-wrap items-center gap-3 mb-3">
             {(doc.journal || doc.source_name) && (
               <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 italic truncate max-w-[220px]">
@@ -104,7 +93,6 @@ export default function CrossIndexedDocRow({
             )}
           </div>
 
-          {/* Citation Progress Bar */}
           {citations > 0 && (
             <div className="mb-3.5">
               <div className="flex items-center justify-between mb-1">
@@ -122,7 +110,6 @@ export default function CrossIndexedDocRow({
             </div>
           )}
 
-          {/* Action Button */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
@@ -135,7 +122,6 @@ export default function CrossIndexedDocRow({
             </button>
           </div>
 
-          {/* Breakdown Panel */}
           {showBreakdown && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -147,7 +133,6 @@ export default function CrossIndexedDocRow({
                 <p className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Rincian Poin Scopus — Skema 60/40 + Quartile (Cross-Indexed)</p>
               </div>
               <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
-                {/* Quartile badge */}
                 <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Quartile Jurnal:</span>
                   {bd.q !== 'None' ? (
@@ -160,7 +145,6 @@ export default function CrossIndexedDocRow({
                     <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
                   )}
                 </div>
-                {/* Max Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
@@ -168,7 +152,6 @@ export default function CrossIndexedDocRow({
                   </div>
                   <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
                 </div>
-                {/* Role Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
@@ -191,7 +174,6 @@ export default function CrossIndexedDocRow({
           )}
         </div>
 
-        {/* External Link button */}
         <a
           href={doc.link || '#'}
           target="_blank"

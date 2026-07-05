@@ -13,7 +13,7 @@ export default function ScholarDocRow({
   const [showBreakdown, setShowBreakdown] = useState(false);
   const citations = doc.citations || 0;
 
-  // Citation progress bar (reference max = 200)
+  // Batas perhitungan poin sitasi diset maksimal 200 di UI progress bar
   const citMax = 200;
   const citPct = Math.min(100, (citations / citMax) * 100);
 
@@ -24,11 +24,9 @@ export default function ScholarDocRow({
       transition={{ delay: idx * 0.05 }}
       className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-blue-400/40 hover:shadow-2xl hover:shadow-blue-500/8 transition-all duration-300 overflow-hidden"
     >
-      {/* Brand accent stripe */}
       <div className="h-[3px] w-full bg-blue-500 opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="flex items-start gap-5 p-5">
-        {/* Citation + Points Column */}
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
           <div className="w-[62px] h-[62px] rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 flex flex-col items-center justify-center group-hover:bg-blue-100/60 dark:group-hover:bg-blue-950/50 transition-colors">
             <span className="text-xl font-black text-blue-700 dark:text-blue-300 leading-none tabular-nums">{citations}</span>
@@ -39,28 +37,22 @@ export default function ScholarDocRow({
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 min-w-0">
-          {/* Badge Row */}
           <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            {/* Scholar badge */}
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-blue-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
               Scholar
             </span>
-            {/* Also Scopus badge */}
             {isAlsoScopus && (
               <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">
                 ✓ Scopus {scopusQuartile && scopusQuartile !== 'None' ? `(${scopusQuartile})` : ''}
               </span>
             )}
-            {/* Year — pushed to the right */}
             <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">
               <Calendar className="w-3.5 h-3.5" /> {doc.year || '—'}
             </span>
           </div>
 
-          {/* Title */}
           <a
             href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
             target="_blank"
@@ -70,7 +62,6 @@ export default function ScholarDocRow({
             {doc.title}
           </a>
 
-          {/* Metadata row */}
           {doc.author && (
             <div className="flex flex-wrap items-center gap-3 mb-3">
               <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 italic truncate max-w-[320px]">
@@ -79,7 +70,6 @@ export default function ScholarDocRow({
             </div>
           )}
 
-          {/* Citation Progress Bar */}
           {citations > 0 && (
             <div className="mb-3.5">
               <div className="flex items-center justify-between mb-1">
@@ -97,7 +87,6 @@ export default function ScholarDocRow({
             </div>
           )}
 
-          {/* Action Button */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
@@ -110,7 +99,6 @@ export default function ScholarDocRow({
             </button>
           </div>
 
-          {/* Breakdown Panel */}
           {showBreakdown && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -159,7 +147,6 @@ export default function ScholarDocRow({
           )}
         </div>
 
-        {/* External Link button */}
         <a
           href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
           target="_blank"

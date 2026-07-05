@@ -39,7 +39,7 @@ export default function ScopusDocRow({
   const isHyper = bd.totalAuthors > 16;
   const showCorrespondingControls = bd.isArticle && bd.totalAuthors > 1;
 
-  // Citation progress bar (reference max = 200)
+  // Batas perhitungan poin sitasi diset maksimal 200 di UI progress bar
   const citMax = 200;
   const citPct = Math.min(100, (bd.citations / citMax) * 100);
 
@@ -69,11 +69,9 @@ export default function ScopusDocRow({
       transition={{ delay: idx * 0.04 }}
       className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-orange-400/40 hover:shadow-2xl hover:shadow-orange-500/8 transition-all duration-300 overflow-hidden"
     >
-      {/* Quartile accent stripe */}
       <div className={`h-[3px] w-full ${qConf.barColor} opacity-50 group-hover:opacity-100 transition-opacity duration-300`} />
 
       <div className="flex items-start gap-5 p-5">
-        {/* Citation + Points Column */}
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
           <div className="w-[62px] h-[62px] rounded-2xl bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/40 flex flex-col items-center justify-center group-hover:bg-orange-100/60 dark:group-hover:bg-orange-950/50 transition-colors">
             <span className="text-xl font-black text-orange-700 dark:text-orange-300 leading-none tabular-nums">{bd.citations}</span>
@@ -84,49 +82,39 @@ export default function ScopusDocRow({
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 min-w-0">
-          {/* Badge Row */}
           <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            {/* Scopus badge */}
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-orange-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-500 inline-block" />
               Scopus
             </span>
-            {/* Quartile badge */}
             {bd.q && bd.q !== 'None' && (
               <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${qConf.bg} ${qConf.text} rounded-full text-[7px] font-black uppercase tracking-widest border ${qConf.border}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${qConf.barColor} inline-block`} />
                 {bd.q}
               </span>
             )}
-            {/* Author role badge */}
             <span className={`px-2 py-0.5 ${rConf.bg} ${rConf.text} rounded-full text-[7px] font-black uppercase tracking-widest`}>
               {bd.role}
             </span>
-            {/* Subtype badge */}
             <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full text-[7px] font-bold uppercase tracking-wide">
               {subtypeLabel}
             </span>
-            {/* Hyperauthor warning */}
             {isHyper && (
               <span className="px-2 py-0.5 bg-red-500/10 text-red-600 dark:text-red-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-red-500/20">
                 Hyperauthor
               </span>
             )}
-            {/* Also Scholar badge */}
             {isAlsoScholar && (
               <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">
                 ✓ Scholar
               </span>
             )}
-            {/* Year — pushed to the right */}
             <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">
               <Calendar className="w-3 h-3" /> {doc.year || '—'}
             </span>
           </div>
 
-          {/* Title */}
           <a
             href={doc.link || `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`}
             target="_blank"
@@ -136,7 +124,6 @@ export default function ScopusDocRow({
             {doc.title}
           </a>
 
-          {/* Metadata row */}
           <div className="flex flex-wrap items-center gap-3 mb-3">
             {(doc.journal || doc.source_name) && (
               <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 italic truncate max-w-[220px]">
@@ -161,7 +148,7 @@ export default function ScopusDocRow({
             )}
           </div>
 
-          {/* Corresponding Author Toggle Section */}
+          {/* Konfirmasi status korespondensi untuk co-author. Skema poin KPI berbeda jika corresponding author */}
           {!isPublic && showCorrespondingControls && (
             <div className={`mt-3 mb-4 p-3 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner transition-colors duration-200 ${
               !bd.isCorrespondingConfirmed && !isEditingCorresponding
@@ -169,7 +156,6 @@ export default function ScopusDocRow({
                 : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800'
             }`}>
 
-              {/* ── Mode Statis: sudah dikonfirmasi & tidak sedang diedit ── */}
               {bd.isCorrespondingConfirmed && !isEditingCorresponding ? (
                 <>
                   <div className="flex flex-wrap items-center gap-2">
@@ -188,7 +174,6 @@ export default function ScopusDocRow({
                     </span>
                   </div>
 
-                  {/* Tombol Ubah */}
                   <button
                     onClick={() => setIsEditingCorresponding(true)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 hover:text-orange-600 hover:border-orange-400 dark:hover:border-orange-500/50 dark:hover:text-orange-400 transition-all whitespace-nowrap shadow-sm"
@@ -201,7 +186,6 @@ export default function ScopusDocRow({
                   </button>
                 </>
               ) : (
-                /* ── Mode Input: belum dikonfirmasi atau sedang diedit ── */
                 <>
                   <div className="flex flex-wrap items-center gap-2">
                     {isEditingCorresponding ? (
@@ -236,7 +220,6 @@ export default function ScopusDocRow({
                     {isUpdating ? (
                       <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
                     ) : isEditingCorresponding && (
-                      /* Tombol Batal — hanya muncul saat mode edit */
                       <button
                         onClick={() => setIsEditingCorresponding(false)}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -253,7 +236,6 @@ export default function ScopusDocRow({
             </div>
           )}
 
-          {/* Citation Progress Bar */}
           {bd.citations > 0 && (
             <div className="mb-3.5">
               <div className="flex items-center justify-between mb-1">
@@ -271,7 +253,6 @@ export default function ScopusDocRow({
             </div>
           )}
 
-          {/* Action Button */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
@@ -284,7 +265,6 @@ export default function ScopusDocRow({
             </button>
           </div>
 
-          {/* Breakdown Panel */}
           {showBreakdown && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -296,7 +276,6 @@ export default function ScopusDocRow({
                 <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Rincian Kalkulasi Poin SINTA (Skema Persentase + Quartile)</p>
               </div>
               <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
-                {/* Quartile badge */}
                 <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Quartile Jurnal:</span>
                   {bd.q !== 'None' ? (
@@ -309,7 +288,6 @@ export default function ScopusDocRow({
                     <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
                   )}
                 </div>
-                {/* Max Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
@@ -317,7 +295,6 @@ export default function ScopusDocRow({
                   </div>
                   <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
                 </div>
-                {/* Role Points row */}
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
@@ -340,7 +317,6 @@ export default function ScopusDocRow({
           )}
         </div>
 
-        {/* External Link button */}
         <a
           href={doc.link || `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`}
           target="_blank"

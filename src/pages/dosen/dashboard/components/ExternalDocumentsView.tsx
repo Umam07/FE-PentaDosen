@@ -105,7 +105,7 @@ export default function ExternalDocumentsView({
             </div>
           </div>
 
-          {/* ===== RINGKASAN POIN PUBLIKASI INTERNAL ===== */}
+          {/* Ringkasan kalkulasi poin dari seluruh publikasi eksternal (Scopus & Scholar) */}
           {(() => {
             const crossTitles = new Set(
               scholarList.filter(sd =>
@@ -209,7 +209,7 @@ export default function ExternalDocumentsView({
                       </div>
                     </div>
                     <div className="space-y-5">
-                      {/* === Unconfirmed Publications Banner === */}
+                      {/* Banner konfirmasi co-author / corresponding author */}
                       {!isPublic && (() => {
                         const unconfirmedScopusCount = scopusList.filter((doc) => {
                           const totalAuthors = Number(doc.total_authors) || 1;
@@ -246,7 +246,7 @@ export default function ExternalDocumentsView({
                         );
                       })()}
 
-                      {/* === Formula Info Banner === */}
+                      {/* Info skema SINTA Scopus */}
                       <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50/60 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
                         <div className="flex items-start gap-3 flex-1">
                           <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0 border border-orange-200/50 dark:border-orange-800/50">
@@ -261,7 +261,7 @@ export default function ExternalDocumentsView({
                         </div>
                       </div>
 
-                      {/* === Filter Bar === */}
+                      {/* Filter korespondensi & tipe dokumen Scopus */}
                       {!isPublic && (
                         <div className="flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
                           {/* Row 1: Filter Korespondensi */}
