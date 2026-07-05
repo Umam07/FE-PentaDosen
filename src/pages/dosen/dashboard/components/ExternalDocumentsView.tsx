@@ -897,13 +897,13 @@ export default function ExternalDocumentsView({
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
   const currentYear = new Date().getFullYear();
-  const [filterYearExt, setFilterYearExt] = useState<number | null>(currentYear);
+  const [filterYearExt, setFilterYearExt] = useState<number | null>(isPublic ? null : currentYear);
 
   // Reset page when switching tabs
   useEffect(() => {
     setCurrentPage(1);
-    setFilterYearExt(new Date().getFullYear()); // reset year filter when switching sub-tabs
-  }, [publicationSubTab]);
+    setFilterYearExt(isPublic ? null : new Date().getFullYear()); // reset year filter when switching sub-tabs
+  }, [publicationSubTab, isPublic]);
 
 
 
@@ -1647,7 +1647,7 @@ export default function ExternalDocumentsView({
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
-                    {filteredCrossIndexedDocs?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc: any, idx: number) => {
+                    {(isPublic ? filteredCrossIndexedDocs.slice(0, 5) : filteredCrossIndexedDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc: any, idx: number) => {
                       const scopusDoc = (scopusPublications || []).find((s: any) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                       return (
                         <CrossIndexedDocRow
@@ -1667,13 +1667,30 @@ export default function ExternalDocumentsView({
                     )}
                   </div>
                 )}
-                <Pagination
-                  totalItems={filteredCrossIndexedDocs?.length || 0}
-                  currentPage={currentPage}
-                  onPageChange={setCurrentPage}
-                  itemsPerPage={itemsPerPage}
-                  setItemsPerPage={setItemsPerPage}
-                />
+                {isPublic ? (
+                  filteredCrossIndexedDocs.length > 5 && (
+                    <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-850/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
+                      <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
+                        + {filteredCrossIndexedDocs.length - 5} Dokumen Terindeks Ganda Lainnya Tersedia
+                      </p>
+                      <button
+                        onClick={() => window.location.href = '/login'}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm"
+                      >
+                        <Lock className="w-3.5 h-3.5" />
+                        <span>Login untuk Lihat Semua</span>
+                      </button>
+                    </div>
+                  )
+                ) : (
+                  <Pagination
+                    totalItems={filteredCrossIndexedDocs?.length || 0}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                  />
+                )}
                 </motion.div>
               ) : publicationSubTab === 'metriks' ? (
                 <motion.div

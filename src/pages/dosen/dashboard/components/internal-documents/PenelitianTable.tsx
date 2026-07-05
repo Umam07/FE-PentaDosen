@@ -26,6 +26,7 @@ interface PenelitianTableProps {
   setItemsPerPage: (limit: number) => void;
   setSelectedDocForDetail: (doc: any) => void;
   setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
+  isPublic?: boolean;
 }
 
 export default function PenelitianTable({
@@ -36,6 +37,7 @@ export default function PenelitianTable({
   setItemsPerPage,
   setSelectedDocForDetail,
   setPreviewDoc,
+  isPublic = false,
 }: PenelitianTableProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -175,13 +177,15 @@ export default function PenelitianTable({
           </tbody>
         </table>
       </div>
-      <Pagination 
-        totalItems={filteredDocs.length} 
-        currentPage={currentPage} 
-        onPageChange={setCurrentPage}
-        itemsPerPage={itemsPerPage}
-        setItemsPerPage={setItemsPerPage}
-      />
+      {!isPublic && (
+        <Pagination 
+          totalItems={filteredDocs.length} 
+          currentPage={currentPage} 
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+        />
+      )}
     </div>
   );
 }

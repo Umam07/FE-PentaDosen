@@ -11,6 +11,7 @@ interface BukuTableProps {
   setItemsPerPage: (limit: number) => void;
   setSelectedDocForDetail: (doc: any) => void;
   setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
+  isPublic?: boolean;
 }
 
 export default function BukuTable({
@@ -21,6 +22,7 @@ export default function BukuTable({
   setItemsPerPage,
   setSelectedDocForDetail,
   setPreviewDoc,
+  isPublic = false,
 }: BukuTableProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
@@ -150,13 +152,15 @@ export default function BukuTable({
           </tbody>
         </table>
       </div>
-      <Pagination 
-        totalItems={filteredDocs.length} 
-        currentPage={currentPage} 
-        onPageChange={setCurrentPage}
-        itemsPerPage={itemsPerPage}
-        setItemsPerPage={setItemsPerPage}
-      />
+      {!isPublic && (
+        <Pagination 
+          totalItems={filteredDocs.length} 
+          currentPage={currentPage} 
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+        />
+      )}
     </div>
   );
 }

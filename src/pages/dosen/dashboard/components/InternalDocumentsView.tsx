@@ -60,6 +60,7 @@ export default function InternalDocumentsView({
       setCurrentPage,
       setSelectedDocForDetail,
       setPreviewDoc,
+      isPublic,
     };
 
     switch (categoryFilter) {

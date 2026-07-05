@@ -12,6 +12,7 @@ interface DefaultCardListProps {
   setItemsPerPage: (limit: number) => void;
   setSelectedDocForDetail: (doc: any) => void;
   setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
+  isPublic?: boolean;
 }
 
 const formatDateVal = (dateStr: string | number) => {
@@ -37,6 +38,7 @@ export default function DefaultCardList({
   setItemsPerPage,
   setSelectedDocForDetail,
   setPreviewDoc,
+  isPublic = false,
 }: DefaultCardListProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
@@ -107,13 +109,15 @@ export default function DefaultCardList({
           );
         })}
       </div>
-      <Pagination 
-        totalItems={filteredDocs.length} 
-        currentPage={currentPage} 
-        onPageChange={setCurrentPage}
-        itemsPerPage={itemsPerPage}
-        setItemsPerPage={setItemsPerPage}
-      />
+      {!isPublic && (
+        <Pagination 
+          totalItems={filteredDocs.length} 
+          currentPage={currentPage} 
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+        />
+      )}
     </div>
   );
 }
