@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FileText, Beaker, ShieldCheck, Book, Globe, BookMarked, Search, BarChart2, Lock
 } from 'lucide-react';
@@ -112,128 +112,145 @@ export default function InternalDocumentsView({
           ))}
         </div>
 
-        {/* ══════════ TAB: DOKUMEN ══════════ */}
-        {activeTab === 'dokumen' && (
-          <>
-            {/* Statistics Cards Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-              {docCategories.map((cat) => {
-                const catDocs = allInternalDocs.filter(
-                  (d) => d.category?.toLowerCase().includes(cat.id.toLowerCase())
-                );
-                const approvedCatDocs = catDocs.filter((d) => d.status === 'Approved');
-                const points = approvedCatDocs.reduce(
-                  (acc, d) => acc + (Number(d.awarded_points) || 0),
-                  0
-                );
-                const count = approvedCatDocs.length;
+        {/* Content Tabs with Smooth Transitions */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'dokumen' ? (
+            <motion.div
+              key="dokumen"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.15 }}
+              className="space-y-8"
+            >
+              {/* Statistics Cards Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+                {docCategories.map((cat) => {
+                  const catDocs = allInternalDocs.filter(
+                    (d) => d.category?.toLowerCase().includes(cat.id.toLowerCase())
+                  );
+                  const approvedCatDocs = catDocs.filter((d) => d.status === 'Approved');
+                  const points = approvedCatDocs.reduce(
+                    (acc, d) => acc + (Number(d.awarded_points) || 0),
+                    0
+                  );
+                  const count = approvedCatDocs.length;
 
-                return (
-                  <div
-                    key={cat.id}
-                    onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
-                    className={`p-5 rounded-3xl border cursor-pointer transition-all ${
-                      categoryFilter === cat.id
-                        ? 'bg-primary-50/30 dark:bg-primary-950/10 border-primary-200 dark:border-primary-800 shadow-md shadow-primary-500/5'
-                        : 'bg-slate-50/40 dark:bg-slate-950/20 border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 flex items-center justify-center">
-                        <cat.icon className={`w-4 h-4 ${
-                          categoryFilter === cat.id 
-                            ? 'text-primary-600 dark:text-primary-400' 
-                            : 'text-slate-400'
-                        }`} />
-                      </div>
-                      <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                        Poin
-                      </span>
-                    </div>
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
-                      {cat.label}
-                    </p>
-                    <h4 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight mt-1">
-                      +{points} <span className="text-xs font-black text-slate-400 dark:text-slate-500">PTS</span>
-                    </h4>
-                    <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 mt-1">
-                      {count} Dokumen Disetujui
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Category filter sub-tabs */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-              <div className="flex items-center gap-5 overflow-x-auto no-scrollbar">
-                {docCategories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
-                    className={`group/cat relative pb-2 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
-                      categoryFilter === cat.id
-                        ? 'text-primary-600 dark:text-primary-400'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
-                  >
-                    <cat.icon className="w-3 h-3" />
-                    {cat.label}
-                    {categoryFilter === cat.id && (
-                      <motion.div
-                        layoutId="internal-cat-indicator"
-                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary-600 dark:bg-primary-500 rounded-full"
-                      />
-                    )}
-                    {categoryFilter !== cat.id && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-slate-200 dark:bg-slate-700 rounded-full scale-x-0 group-hover/cat:scale-x-100 transition-transform duration-200 origin-left" />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {/* Doc count badge */}
-              <div className="flex-shrink-0 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                {filteredDocs.length} Dokumen
-              </div>
-            </div>
-
-            {/* Document list */}
-            {loading ? (
-              <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest animate-pulse">
-                Memuat data...
-              </div>
-            ) : filteredDocs.length > 0 ? (
-              <div className="space-y-4">
-                {renderActiveTable()}
-                {isPublic && filteredDocs.length > 5 && (
-                  <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
-                      + {filteredDocs.length - 5} Dokumen Internal Lainnya Tersedia
-                    </p>
-                    <button
-                      onClick={() => window.location.href = '/login'}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm"
+                  return (
+                    <div
+                      key={cat.id}
+                      onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
+                      className={`p-5 rounded-3xl border cursor-pointer transition-all ${
+                        categoryFilter === cat.id
+                          ? 'bg-primary-50/30 dark:bg-primary-950/10 border-primary-200 dark:border-primary-800 shadow-md shadow-primary-500/5'
+                          : 'bg-slate-50/40 dark:bg-slate-950/20 border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800'
+                      }`}
                     >
-                      <Lock className="w-3.5 h-3.5" />
-                      <span>Login untuk Lihat Semua</span>
-                    </button>
-                  </div>
-                )}
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 flex items-center justify-center">
+                          <cat.icon className={`w-4 h-4 ${
+                            categoryFilter === cat.id 
+                              ? 'text-primary-600 dark:text-primary-400' 
+                              : 'text-slate-400'
+                          }`} />
+                        </div>
+                        <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                          Poin
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
+                        {cat.label}
+                      </p>
+                      <h4 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight mt-1">
+                        +{points} <span className="text-xs font-black text-slate-400 dark:text-slate-500">PTS</span>
+                      </h4>
+                      <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 mt-1">
+                        {count} Dokumen Disetujui
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-            ) : (
-              <div className="py-24 text-center">
-                <Search className="w-12 h-12 mx-auto mb-4 text-slate-200" />
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                  Tidak ada data ditemukan
-                </p>
-              </div>
-            )}
-          </>
-        )}
 
-        {/* ══════════ TAB: METRIKS PENILAIAN ══════════ */}
-        {activeTab === 'metriks' && <MetricsGuide />}
+              {/* Category filter sub-tabs */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div className="flex items-center gap-5 overflow-x-auto no-scrollbar">
+                  {docCategories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
+                      className={`group/cat relative pb-2 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
+                        categoryFilter === cat.id
+                          ? 'text-primary-600 dark:text-primary-400'
+                          : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      <cat.icon className="w-3 h-3" />
+                      {cat.label}
+                      {categoryFilter === cat.id && (
+                        <motion.div
+                          layoutId="internal-cat-indicator"
+                          className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary-600 dark:bg-primary-500 rounded-full"
+                        />
+                      )}
+                      {categoryFilter !== cat.id && (
+                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-slate-200 dark:bg-slate-700 rounded-full scale-x-0 group-hover/cat:scale-x-100 transition-transform duration-200 origin-left" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Doc count badge */}
+                <div className="flex-shrink-0 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                  {filteredDocs.length} Dokumen
+                </div>
+              </div>
+
+              {/* Document list */}
+              {loading ? (
+                <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest animate-pulse">
+                  Memuat data...
+                </div>
+              ) : filteredDocs.length > 0 ? (
+                <div className="space-y-4">
+                  {renderActiveTable()}
+                  {isPublic && filteredDocs.length > 5 && (
+                    <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
+                      <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
+                        + {filteredDocs.length - 5} Dokumen Internal Lainnya Tersedia
+                      </p>
+                      <button
+                        onClick={() => window.location.href = '/login'}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm"
+                      >
+                        <Lock className="w-3.5 h-3.5" />
+                        <span>Login untuk Lihat Semua</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="py-24 text-center">
+                  <Search className="w-12 h-12 mx-auto mb-4 text-slate-200" />
+                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                    Tidak ada data ditemukan
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="metriks"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.15 }}
+              className="space-y-8"
+            >
+              <MetricsGuide />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <DocumentDetailDrawer

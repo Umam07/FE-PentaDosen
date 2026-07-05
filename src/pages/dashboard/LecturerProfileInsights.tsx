@@ -475,6 +475,7 @@ export default function LecturerProfileInsights() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
             categoryFilter={categoryFilter}
             setCategoryFilter={setCategoryFilter}
             isPublic={true}

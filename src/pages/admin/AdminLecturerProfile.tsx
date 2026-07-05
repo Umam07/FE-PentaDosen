@@ -611,6 +611,7 @@ export default function AdminLecturerProfile() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
             categoryFilter={categoryFilter}
             setCategoryFilter={setCategoryFilter}
           />
