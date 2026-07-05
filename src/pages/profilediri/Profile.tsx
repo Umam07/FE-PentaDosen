@@ -228,61 +228,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     ];
   }, [user, publications, scopusPublications, internalDocuments]);
 
-  const scholarChartData = useMemo(() => {
-    if (!publications || publications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
-    const chartDataMap = new Map();
-    publications.forEach((pub: any) => {
-      if (pub.year && pub.year !== 'Unknown') {
-        const yearKey = String(pub.year).trim();
-        if (!chartDataMap.has(yearKey)) {
-          chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
-        }
-        const current = chartDataMap.get(yearKey);
-        current.publications += 1;
-        current.citations += (Number(pub.citations) || 0);
-      }
-    });
-    const chartData = Array.from(chartDataMap.values()).sort((a: any, b: any) => parseInt(a.name) - parseInt(b.name));
-    const getNiceMax = (max: number) => {
-      if (!max || max <= 0) return 10;
-      const roughMax = max * 1.15;
-      const magnitude = Math.pow(10, Math.floor(Math.log10(roughMax)));
-      return Math.ceil(roughMax / magnitude) * magnitude;
-    };
-    return {
-      chartData,
-      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)),
-      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0))
-    };
-  }, [publications]);
 
-  const scopusChartData = useMemo(() => {
-    if (!scopusPublications || scopusPublications.length === 0) return { chartData: [], leftMax: 10, rightMax: 10 };
-    const chartDataMap = new Map();
-    scopusPublications.forEach((pub: any) => {
-      if (pub.year && pub.year !== 'Unknown') {
-        const yearKey = String(pub.year).trim();
-        if (!chartDataMap.has(yearKey)) {
-          chartDataMap.set(yearKey, { name: yearKey, publications: 0, citations: 0 });
-        }
-        const current = chartDataMap.get(yearKey);
-        current.publications += 1;
-        current.citations += (Number(pub.citations) || 0);
-      }
-    });
-    const chartData = Array.from(chartDataMap.values()).sort((a: any, b: any) => parseInt(a.name) - parseInt(b.name));
-    const getNiceMax = (max: number) => {
-      if (!max || max <= 0) return 10;
-      const roughMax = max * 1.15;
-      const magnitude = Math.pow(10, Math.floor(Math.log10(roughMax)));
-      return Math.ceil(roughMax / magnitude) * magnitude;
-    };
-    return {
-      chartData,
-      leftMax: getNiceMax(Math.max(...chartData.map(d => d.publications), 0)),
-      rightMax: getNiceMax(Math.max(...chartData.map(d => d.citations), 0))
-    };
-  }, [scopusPublications]);
 
   const handleCheckId = async () => {
     if (!scholarId) {
@@ -736,8 +682,6 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                 setCheckedScopusAuthor={setCheckedScopusAuthor}
                 message={message}
                 setMessage={setMessage}
-                scholarChartData={scholarChartData}
-                scopusChartData={scopusChartData}
                 handleCheckId={handleCheckId}
                 handleSaveScholarId={handleSaveScholarId}
                 handleCheckScopusId={handleCheckScopusId}

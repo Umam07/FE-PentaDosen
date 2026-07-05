@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
   Award,
-  BarChart3,
   BookOpen,
   CheckCircle,
   Globe,
@@ -16,7 +15,6 @@ import {
   User,
   Zap,
 } from 'lucide-react';
-import { ProfileTrendChart } from '../dosen/dashboard/components/ProfileCharts';
 
 interface KonfigurasiProps {
   user: any;
@@ -41,8 +39,6 @@ interface KonfigurasiProps {
   setCheckedScopusAuthor: (author: any) => void;
   message: { text: string; type: 'success' | 'error' | '' };
   setMessage: (msg: { text: string; type: 'success' | 'error' | '' }) => void;
-  scholarChartData: any;
-  scopusChartData: any;
   handleCheckId: () => Promise<void>;
   handleSaveScholarId: () => Promise<void>;
   handleCheckScopusId: () => Promise<void>;
@@ -63,18 +59,12 @@ const toneClasses = {
     iconBorder: 'border-blue-100 dark:border-blue-900/40',
     button: 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
     ring: 'focus:border-blue-500 focus:ring-blue-500/15',
-    chartBar: '#2563eb',
-    chartBarGradient: '#60a5fa',
-    chartLine: '#7c3aed',
   },
   scopus: {
     icon: 'bg-rose-50 text-rose-600 dark:bg-rose-950/20 dark:text-rose-300',
     iconBorder: 'border-rose-100 dark:border-rose-900/40',
     button: 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20',
     ring: 'focus:border-rose-500 focus:ring-rose-500/15',
-    chartBar: '#e11d48',
-    chartBarGradient: '#fb7185',
-    chartLine: '#0891b2',
   },
 };
 
@@ -129,7 +119,6 @@ function IntegrationCard({
   placeholder,
   data,
   checkedAuthor,
-  chartData,
   checking,
   loading,
   onChange,
@@ -147,7 +136,6 @@ function IntegrationCard({
   placeholder: string;
   data: any;
   checkedAuthor: any;
-  chartData: any;
   checking: boolean;
   loading: boolean;
   onChange: (value: string) => void;
@@ -158,7 +146,6 @@ function IntegrationCard({
 }) {
   const tone = toneClasses[type];
   const isSaved = Boolean(savedValue);
-  const hasChart = Array.isArray(chartData?.chartData) && chartData.chartData.length > 0;
   const saveDisabled = loading || !value || (value !== savedValue && !checkedAuthor);
   const metrics =
     type === 'scholar'
@@ -263,44 +250,6 @@ function IntegrationCard({
             <MetricTile key={metric.label} label={metric.label} value={metric.value} icon={metric.icon} />
           ))}
         </div>
-
-        {/* Chart */}
-        <div className="rounded-2xl border border-slate-100 bg-white p-4 dark:border-slate-800 dark:bg-slate-950/20">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                Tren Publikasi
-              </p>
-              <p className="mt-0.5 text-xs font-medium text-slate-400 dark:text-slate-500">
-                Publikasi dan sitasi per tahun
-              </p>
-            </div>
-            <BarChart3 className="h-5 w-5 text-slate-300 dark:text-slate-700" />
-          </div>
-          <div className="h-52">
-            {hasChart ? (
-              <ProfileTrendChart
-                chartData={chartData.chartData}
-                leftDomainMax={chartData.leftMax}
-                rightDomainMax={chartData.rightMax}
-                barColor={tone.chartBar}
-                barGradientColor={tone.chartBarGradient}
-                lineColor={tone.chartLine}
-                areaGradientColor={tone.chartLine}
-                gradientId={type}
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center rounded-xl bg-slate-50 text-center dark:bg-slate-900/60">
-                <div>
-                  <BarChart3 className="mx-auto h-8 w-8 text-slate-200 dark:text-slate-800" />
-                  <p className="mt-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">
-                    Data tren belum tersedia
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -321,8 +270,6 @@ export default function Konfigurasi({
   setCheckedAuthor,
   checkedScopusAuthor,
   setCheckedScopusAuthor,
-  scholarChartData,
-  scopusChartData,
   handleCheckId,
   handleSaveScholarId,
   handleCheckScopusId,
@@ -436,7 +383,6 @@ export default function Konfigurasi({
           placeholder="Contoh: xxxxxxxAAAAJ"
           data={scholarData}
           checkedAuthor={checkedAuthor}
-          chartData={scholarChartData}
           checking={checkingInfo}
           loading={loading}
           onChange={(nextValue) => {
@@ -459,7 +405,6 @@ export default function Konfigurasi({
           placeholder="Contoh: 57211234567"
           data={scopusData}
           checkedAuthor={checkedScopusAuthor}
-          chartData={scopusChartData}
           checking={checkingScopus}
           loading={loading}
           onChange={(nextValue) => {
