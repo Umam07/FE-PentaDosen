@@ -25,30 +25,30 @@ interface NotificationBellProps {
 }
 
 // ─── Styling helpers ────────────────────────────────────────────────────────
+// Reduced to a smaller, more disciplined semantic palette: primary (neutral/info),
+// emerald (success), red (rejected/failed), amber (pending). Everything else
+// falls back to primary so the dropdown doesn't read like a rainbow.
 const typeConfig: Record<string, {
   icon: ElementType;
   iconColor: string;
   bg: string;
-  dot: string;
   label: string;
-  labelColor: string;
-  labelBg: string;
 }> = {
-  doc_approved:              { icon: CheckCircle,  iconColor: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/40',   dot: 'bg-emerald-500', label: 'Disetujui',     labelColor: 'text-emerald-700 dark:text-emerald-400', labelBg: 'bg-emerald-100 dark:bg-emerald-900/50'   },
-  penelitian_approved:       { icon: CheckCircle,  iconColor: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/40',   dot: 'bg-emerald-500', label: 'Disetujui',     labelColor: 'text-emerald-700 dark:text-emerald-400', labelBg: 'bg-emerald-100 dark:bg-emerald-900/50'   },
-  doc_rejected:              { icon: XCircle,      iconColor: 'text-red-600',     bg: 'bg-red-50 dark:bg-red-950/40',           dot: 'bg-red-500',     label: 'Ditolak',       labelColor: 'text-red-700 dark:text-red-400',         labelBg: 'bg-red-100 dark:bg-red-900/50'           },
-  penelitian_rejected:       { icon: XCircle,      iconColor: 'text-red-600',     bg: 'bg-red-50 dark:bg-red-950/40',           dot: 'bg-red-500',     label: 'Ditolak',       labelColor: 'text-red-700 dark:text-red-400',         labelBg: 'bg-red-100 dark:bg-red-900/50'           },
-  doc_verified_prodi:        { icon: ShieldCheck,  iconColor: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-950/40',         dot: 'bg-blue-500',    label: 'Terverifikasi', labelColor: 'text-blue-700 dark:text-blue-400',       labelBg: 'bg-blue-100 dark:bg-blue-900/50'         },
-  penelitian_verified_prodi: { icon: ShieldCheck,  iconColor: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-950/40',         dot: 'bg-blue-500',    label: 'Terverifikasi', labelColor: 'text-blue-700 dark:text-blue-400',       labelBg: 'bg-blue-100 dark:bg-blue-900/50'         },
-  doc_pending_lppm:          { icon: Clock,        iconColor: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-950/40',       dot: 'bg-amber-500',   label: 'Menunggu',      labelColor: 'text-amber-700 dark:text-amber-400',     labelBg: 'bg-amber-100 dark:bg-amber-900/50'       },
-  penelitian_pending_lppm:   { icon: Clock,        iconColor: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-950/40',       dot: 'bg-amber-500',   label: 'Menunggu',      labelColor: 'text-amber-700 dark:text-amber-400',     labelBg: 'bg-amber-100 dark:bg-amber-900/50'       },
-  doc_submitted:             { icon: FileText,     iconColor: 'text-indigo-600',  bg: 'bg-indigo-50 dark:bg-indigo-950/40',     dot: 'bg-indigo-500',  label: 'Dikirim',       labelColor: 'text-indigo-700 dark:text-indigo-400',   labelBg: 'bg-indigo-100 dark:bg-indigo-900/50'     },
-  penelitian_submitted:      { icon: Beaker,       iconColor: 'text-violet-600',  bg: 'bg-violet-50 dark:bg-violet-950/40',     dot: 'bg-violet-500',  label: 'Dikirim',       labelColor: 'text-violet-700 dark:text-violet-400',   labelBg: 'bg-violet-100 dark:bg-violet-900/50'     },
-  announcement:              { icon: Megaphone,    iconColor: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-950/40',   dot: 'bg-primary-500', label: 'Pengumuman',    labelColor: 'text-primary-700 dark:text-primary-400', labelBg: 'bg-primary-100 dark:bg-primary-900/50'   },
+  doc_approved:              { icon: CheckCircle,  iconColor: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/40', label: 'Disetujui'     },
+  penelitian_approved:       { icon: CheckCircle,  iconColor: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/40', label: 'Disetujui'     },
+  doc_rejected:              { icon: XCircle,      iconColor: 'text-red-600 dark:text-red-400',         bg: 'bg-red-50 dark:bg-red-950/40',         label: 'Ditolak'       },
+  penelitian_rejected:       { icon: XCircle,      iconColor: 'text-red-600 dark:text-red-400',         bg: 'bg-red-50 dark:bg-red-950/40',         label: 'Ditolak'       },
+  doc_verified_prodi:        { icon: ShieldCheck,  iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Terverifikasi' },
+  penelitian_verified_prodi: { icon: ShieldCheck,  iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Terverifikasi' },
+  doc_pending_lppm:          { icon: Clock,        iconColor: 'text-amber-600 dark:text-amber-400',     bg: 'bg-amber-50 dark:bg-amber-950/40',     label: 'Menunggu'      },
+  penelitian_pending_lppm:   { icon: Clock,        iconColor: 'text-amber-600 dark:text-amber-400',     bg: 'bg-amber-50 dark:bg-amber-950/40',     label: 'Menunggu'      },
+  doc_submitted:             { icon: FileText,     iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Dikirim'       },
+  penelitian_submitted:      { icon: Beaker,       iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Dikirim'       },
+  announcement:              { icon: Megaphone,    iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Pengumuman'    },
 };
 
 const getTypeConfig = (type: string) =>
-  typeConfig[type] ?? { icon: Bell, iconColor: 'text-gray-500', bg: 'bg-gray-50 dark:bg-zinc-800', dot: 'bg-gray-400', label: 'Info', labelColor: 'text-gray-600 dark:text-gray-400', labelBg: 'bg-gray-100 dark:bg-zinc-700' };
+  typeConfig[type] ?? { icon: Bell, iconColor: 'text-gray-500 dark:text-zinc-400', bg: 'bg-gray-50 dark:bg-zinc-800', label: 'Info' };
 
 function timeAgo(dateStr: string): string {
   const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
@@ -56,6 +56,13 @@ function timeAgo(dateStr: string): string {
   if (diff < 3600) return `${Math.floor(diff / 60)} menit lalu`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} jam lalu`;
   return `${Math.floor(diff / 86400)} hari lalu`;
+}
+
+// Strips trailing decorative symbols (e.g. "✓", "!") that sometimes come
+// through in backend-generated titles, so the heading stays clean typography
+// instead of relying on a stray glyph to signal status.
+function cleanTitle(title: string): string {
+  return title.replace(/[\s✓✔!]+$/u, '').trim();
 }
 
 // ─── Notification Card Sub-Component ────────────────────────────────────────
@@ -80,33 +87,36 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
       onClick={() => onClick(notif)}
       className={`group relative flex gap-3.5 p-4 rounded-2xl mb-1.5 cursor-pointer transition-all duration-200 ${
         notif.is_read
-          ? 'bg-transparent hover:bg-gray-50/80 dark:hover:bg-zinc-800/50'
-          : 'bg-white dark:bg-zinc-800/80 shadow-sm shadow-black/5 hover:shadow-md hover:shadow-black/8'
+          ? 'bg-transparent border border-transparent hover:bg-gray-50/60 dark:hover:bg-zinc-800/40'
+          : 'bg-primary-50/30 dark:bg-primary-950/15 border border-gray-100 dark:border-zinc-800/60 border-l-4 border-l-primary-500 dark:border-l-primary-400 shadow-sm shadow-primary-500/5 hover:bg-primary-50/50 dark:hover:bg-primary-950/25 hover:border-gray-200 dark:hover:border-zinc-700'
       }`}
     >
-      {/* Unread indicator stripe */}
-      {!notif.is_read && (
-        <span className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-full ${cfg.dot}`} />
-      )}
-
-      {/* Icon */}
-      <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
+      {/* Icon — the single visual carrier of "what kind of notification this is" */}
+      <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0 transition-opacity duration-200 ${
+        notif.is_read ? 'opacity-60 dark:opacity-50' : 'opacity-100'
+      }`}>
         <Icon className={`w-[18px] h-[18px] ${cfg.iconColor}`} />
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0 pr-7">
-        {/* Title */}
-        <p className={`text-sm font-semibold leading-snug mb-1 ${
-          notif.is_read
-            ? 'text-gray-500 dark:text-zinc-400'
-            : 'text-gray-900 dark:text-zinc-100'
-        }`}>
-          {notif.title}
-        </p>
+      <div className="flex-1 min-w-0 pr-6">
+        <div className="flex items-start justify-between gap-2">
+          <p className={`text-sm leading-snug ${
+            notif.is_read
+              ? 'font-medium text-gray-500 dark:text-zinc-400'
+              : 'font-semibold text-gray-900 dark:text-zinc-100'
+          }`}>
+            {cleanTitle(notif.title)}
+          </p>
+          {!notif.is_read && (
+            <span className="relative flex h-2 w-2 mt-1.5 flex-shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+            </span>
+          )}
+        </div>
 
-        {/* Message */}
-        <p className={`text-xs leading-relaxed line-clamp-2 ${
+        <p className={`text-xs leading-relaxed line-clamp-2 mt-1 ${
           notif.is_read
             ? 'text-gray-400 dark:text-zinc-500'
             : 'text-gray-600 dark:text-zinc-300'
@@ -114,17 +124,22 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
           {notif.message}
         </p>
 
-        {/* Status badge + time */}
         <div className="flex items-center gap-2 mt-2">
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide ${cfg.labelColor} ${cfg.labelBg}`}>
+          <span className={`text-[11px] font-semibold transition-colors duration-200 ${
+            notif.is_read
+              ? 'text-gray-400 dark:text-zinc-500'
+              : cfg.iconColor
+          }`}>
             {cfg.label}
           </span>
-          <span className="text-[11px] text-gray-400 dark:text-zinc-500">
+          <span className="w-0.5 h-0.5 rounded-full bg-gray-300 dark:bg-zinc-600" />
+          <span className={`text-[11px] transition-colors duration-200 ${
+            notif.is_read
+              ? 'text-gray-400 dark:text-zinc-500'
+              : 'text-gray-500 dark:text-zinc-400 font-medium'
+          }`}>
             {timeAgo(notif.created_at)}
           </span>
-          {!notif.is_read && (
-            <span className={`ml-auto w-2 h-2 rounded-full ${cfg.dot} flex-shrink-0`} />
-          )}
         </div>
       </div>
 
@@ -165,7 +180,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
 
       const newCount = data.unread_count ?? 0;
       if (newCount > prevUnread.current) {
-        // Ring animation on new notification
         setBellAnim(true);
         setTimeout(() => setBellAnim(false), 1000);
       }
@@ -243,7 +257,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       return;
     }
 
-    // Get current user information from sessionStorage to check role
     const storedUserStr = sessionStorage.getItem('pentadosen_user');
     let currentUser: any = null;
     if (storedUserStr) {
@@ -263,7 +276,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
     const isAdmin = currentUser.role === 'admin lppm' || currentUser.role === 'admin fakultas';
     const isSuperAdmin = currentUser.role === 'super admin';
 
-    // 1. Check if it's a research (penelitian) notification
     const isResearch =
       notif.type.includes('penelitian') ||
       notif.message.toLowerCase().includes('penelitian') ||
@@ -280,11 +292,9 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       return;
     }
 
-    // 2. Otherwise, it is a document-related notification (Publication, Buku, HKI)
     const docId = notif.data?.doc_id;
     let category = '';
 
-    // Quick check based on message/title content as a primary filter or fallback
     const messageLower = notif.message.toLowerCase();
     const titleLower = notif.title.toLowerCase();
 
@@ -294,7 +304,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       category = 'HKI';
     }
 
-    // If we have a docId, query the actual document to find its exact category
     if (docId) {
       try {
         if (isDosen) {
@@ -321,7 +330,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       }
     }
 
-    // 3. Route based on the category and role
     const categoryLower = (category || '').toLowerCase();
 
     if (isAdmin) {
@@ -396,7 +404,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md shadow-red-500/30 leading-none"
+              className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full leading-none"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </motion.span>
@@ -421,15 +429,14 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                 right: isMobile ? '12px' : dropPos.right,
                 zIndex: 9998,
               }}
-              className="w-auto sm:w-[420px] bg-gray-50/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/15 border border-gray-200/80 dark:border-zinc-700/60 overflow-hidden flex flex-col"
+              className="w-auto sm:w-[420px] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl shadow-black/10 border border-gray-200 dark:border-zinc-700/60 overflow-hidden flex flex-col"
             >
               {/* ── Header ────────────────────────────────────────────────── */}
               <div className="px-5 pt-5 pb-4">
                 <div className="flex items-start justify-between">
-                  {/* Title + subtitle */}
                   <div>
                     <div className="flex items-center gap-2.5 mb-0.5">
-                      <div className="w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-lg bg-primary-50 dark:bg-primary-900/40 flex items-center justify-center">
                         <Bell className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                       </div>
                       <h3 className="text-base font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
@@ -445,11 +452,10 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     )}
                   </div>
 
-                  {/* Action buttons */}
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => { setLoading(true); fetchNotifications().finally(() => setLoading(false)); }}
-                      className="p-2 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                      className="p-2 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
                       title="Refresh"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -457,7 +463,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllRead}
-                        className="p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                        className="p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
                         title="Tandai semua dibaca"
                       >
                         <CheckCheck className="w-3.5 h-3.5" />
@@ -466,7 +472,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     {notifications.length > 0 && (
                       <button
                         onClick={clearAll}
-                        className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                        className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
                         title="Hapus semua"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -474,7 +480,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     )}
                     <button
                       onClick={() => setIsOpen(false)}
-                      className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                      className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -483,14 +489,14 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
 
                 {/* Tabs */}
                 {notifications.length > 0 && (
-                  <div className="flex gap-1 mt-4 bg-white dark:bg-zinc-800 p-1 rounded-xl border border-gray-100 dark:border-zinc-700">
+                  <div className="flex gap-1 mt-4 bg-gray-50 dark:bg-zinc-800 p-1 rounded-xl border border-gray-100 dark:border-zinc-700">
                     {(['all', 'unread'] as const).map(tab => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors duration-200 ${
                           activeTab === tab
-                            ? 'bg-primary-600 text-white shadow-sm'
+                            ? 'bg-primary-600 text-white'
                             : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200'
                         }`}
                       >
@@ -502,13 +508,13 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               </div>
 
               {/* Divider */}
-              <div className="h-px bg-gray-200/70 dark:bg-zinc-700/60 mx-5" />
+              <div className="h-px bg-gray-100 dark:bg-zinc-700/60 mx-5" />
 
               {/* ── List ──────────────────────────────────────────────────── */}
               <div className="overflow-y-auto max-h-[min(440px,calc(100vh-180px))] custom-scrollbar px-3 py-3">
                 {displayed.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 flex items-center justify-center mb-4 shadow-sm">
+                    <div className="w-16 h-16 rounded-2xl bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 flex items-center justify-center mb-4">
                       <BellOff className="w-7 h-7 text-gray-300 dark:text-zinc-600" />
                     </div>
                     <p className="text-sm font-semibold text-gray-500 dark:text-zinc-400">
@@ -535,7 +541,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               </div>
 
               {/* ── Footer ────────────────────────────────────────────────── */}
-              <div className="h-px bg-gray-200/70 dark:bg-zinc-700/60 mx-5" />
+              <div className="h-px bg-gray-100 dark:bg-zinc-700/60 mx-5" />
               <div className="px-5 py-3 flex items-center justify-between">
                 <p className="text-[11px] text-gray-400 dark:text-zinc-500">
                   Pembaruan otomatis setiap 30 detik
