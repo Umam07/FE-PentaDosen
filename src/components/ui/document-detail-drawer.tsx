@@ -45,6 +45,18 @@ export interface DocumentDetailDrawerProps {
   onUploadPdf?: (e: React.ChangeEvent<HTMLInputElement>, id: number) => void;
 }
 
+const formatDisplayYear = (val: string | number | undefined | null) => {
+  if (!val || val === '-') return '-';
+  const str = String(val);
+  if (str.includes('-') || str.includes('T')) {
+    const parsedDate = new Date(str);
+    if (!isNaN(parsedDate.getTime())) {
+      return parsedDate.getFullYear().toString();
+    }
+  }
+  return str;
+};
+
 export function DocumentDetailDrawer({
   isOpen,
   onClose,
@@ -76,7 +88,12 @@ export function DocumentDetailDrawer({
   useEffect(() => {
     if (isOpen && docId) {
       setLoadingHistory(true);
-      fetch(`/api/documents/${docId}/history`)
+      const isResearch = category?.toLowerCase().includes('hibah') || category?.toLowerCase() === 'penelitian';
+      const url = isResearch 
+        ? `/api/documents/${docId}/history?type=penelitian`
+        : `/api/documents/${docId}/history`;
+
+      fetch(url)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
@@ -86,7 +103,7 @@ export function DocumentDetailDrawer({
         .catch(err => console.error(err))
         .finally(() => setLoadingHistory(false));
     }
-  }, [isOpen, docId]);
+  }, [isOpen, docId, category]);
 
   const handleDownload = async () => {
     if (!fileUrl || fileUrl === '-') return;
@@ -199,7 +216,7 @@ export function DocumentDetailDrawer({
                   <p className="text-[9px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest leading-none mb-1.5">Tahun</p>
                   <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-800 dark:text-zinc-200">
                     <CalendarDays className="w-3.5 h-3.5 text-gray-400" />
-                    {year}
+                    {formatDisplayYear(year)}
                   </div>
                 </div>
                 <div>
@@ -243,7 +260,7 @@ export function DocumentDetailDrawer({
                           {linkedResearch.program}
                         </span>
                         <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500">
-                          Tahun {linkedResearch.tahun}
+                          Tahun {formatDisplayYear(linkedResearch.tahun)}
                         </span>
                       </div>
                       <button
