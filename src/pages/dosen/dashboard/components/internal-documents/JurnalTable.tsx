@@ -2,17 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Info } from 'lucide-react';
 import Pagination from '../Pagination';
-
-interface JurnalTableProps {
-  filteredDocs: any[];
-  currentPage: number;
-  itemsPerPage: number;
-  setCurrentPage: (page: number) => void;
-  setItemsPerPage: (limit: number) => void;
-  setSelectedDocForDetail: (doc: any) => void;
-  setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
-  isPublic?: boolean;
-}
+import type { DocTableBaseProps } from './internal-documents.types';
+import { formatTanggal } from './utils/formatting';
 
 export default function JurnalTable({
   filteredDocs,
@@ -23,7 +14,7 @@ export default function JurnalTable({
   setSelectedDocForDetail,
   setPreviewDoc,
   isPublic = false,
-}: JurnalTableProps) {
+}: DocTableBaseProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
       <div className="w-full overflow-x-auto">
@@ -40,8 +31,8 @@ export default function JurnalTable({
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {filteredDocs
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-              .map((doc: any, idx: number) => {
-                const docDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+              .map((doc, idx) => {
+                const docDate = formatTanggal(doc.published_at);
                 return (
                   <motion.tr
                     key={idx}
@@ -88,7 +79,7 @@ export default function JurnalTable({
                     <td className="px-6 py-4">
                       {doc.file_url && doc.file_url !== '-' ? (
                         <button
-                          onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                          onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
                           className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[10px] font-black uppercase tracking-widest transition-colors whitespace-nowrap"
                         >
                           <FileText className="w-3.5 h-3.5 mr-1" /> Lihat Dokumen
@@ -132,9 +123,9 @@ export default function JurnalTable({
         </table>
       </div>
       {!isPublic && (
-        <Pagination 
-          totalItems={filteredDocs.length} 
-          currentPage={currentPage} 
+        <Pagination
+          totalItems={filteredDocs.length}
+          currentPage={currentPage}
           onPageChange={setCurrentPage}
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}

@@ -2,32 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Beaker, FileText, Info } from 'lucide-react';
 import Pagination from '../Pagination';
-
-const formatDateVal = (dateStr: string | number) => {
-  if (!dateStr) return '-';
-  const str = String(dateStr);
-  if (str.length === 4 && !isNaN(Number(str))) {
-    return str;
-  }
-  try {
-    const d = new Date(str);
-    if (isNaN(d.getTime())) return str;
-    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-  } catch {
-    return str;
-  }
-};
-
-interface PenelitianTableProps {
-  filteredDocs: any[];
-  currentPage: number;
-  itemsPerPage: number;
-  setCurrentPage: (page: number) => void;
-  setItemsPerPage: (limit: number) => void;
-  setSelectedDocForDetail: (doc: any) => void;
-  setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
-  isPublic?: boolean;
-}
+import type { DocTableBaseProps } from './internal-documents.types';
+import { formatTanggal, formatRupiah } from './utils/formatting';
 
 export default function PenelitianTable({
   filteredDocs,
@@ -38,15 +14,7 @@ export default function PenelitianTable({
   setSelectedDocForDetail,
   setPreviewDoc,
   isPublic = false,
-}: PenelitianTableProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
+}: DocTableBaseProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
       <div className="w-full overflow-x-auto">
@@ -82,7 +50,7 @@ export default function PenelitianTable({
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {filteredDocs
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-              .map((doc: any, idx: number) => (
+              .map((doc, idx) => (
                 <motion.tr
                   key={idx}
                   initial={{ opacity: 0, y: 6 }}
@@ -100,7 +68,7 @@ export default function PenelitianTable({
                           {doc.title}
                         </p>
                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                          <span className="md:hidden">{formatDateVal(doc.tahun_pelaksanaan)} • </span>
+                          <span className="md:hidden">{formatTanggal(doc.tahun_pelaksanaan)} • </span>
                           ID: {doc.id_dokumen || ('RESEARCH-' + doc.id)}
                         </p>
                         {doc.status === 'Rejected' && doc.catatan && (
@@ -126,16 +94,16 @@ export default function PenelitianTable({
                   </td>
                   <td className="hidden md:table-cell px-6 py-4 text-center">
                     <span className="text-xs font-black text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg">
-                      {formatDateVal(doc.tahun_pelaksanaan)}
+                      {formatTanggal(doc.tahun_pelaksanaan)}
                     </span>
                   </td>
                   <td className="hidden sm:table-cell px-6 py-4 text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-                    {formatCurrency(doc.dana_disetujui || 0)}
+                    {formatRupiah(doc.dana_disetujui || 0)}
                   </td>
                   <td className="px-6 py-4">
                     {doc.file_url && doc.file_url !== '-' ? (
                       <button
-                        onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                        onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[10px] font-black uppercase tracking-widest transition-colors whitespace-nowrap"
                       >
                         <FileText className="w-3.5 h-3.5 mr-1" /> Lihat
@@ -178,9 +146,9 @@ export default function PenelitianTable({
         </table>
       </div>
       {!isPublic && (
-        <Pagination 
-          totalItems={filteredDocs.length} 
-          currentPage={currentPage} 
+        <Pagination
+          totalItems={filteredDocs.length}
+          currentPage={currentPage}
           onPageChange={setCurrentPage}
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}

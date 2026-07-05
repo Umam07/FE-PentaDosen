@@ -1,38 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   FileText, Beaker, ShieldCheck, Book, Globe, BookMarked, Search, BarChart2, Lock
 } from 'lucide-react';
 import { PdfPreviewModal } from '../../../../components/ui/pdf-preview-modal';
 import { DocumentDetailDrawer } from '../../../../components/ui/document-detail-drawer';
 
-// Import refactored sub-components
 import PenelitianTable from './internal-documents/PenelitianTable';
 import HKITable from './internal-documents/HKITable';
 import BukuTable from './internal-documents/BukuTable';
 import JurnalTable from './internal-documents/JurnalTable';
 import DefaultCardList from './internal-documents/DefaultCardList';
 import MetricsGuide from './internal-documents/MetricsGuide';
+import ScopusMetaBadges from './internal-documents/components/ScopusMetaBadges';
+import { useInternalDocuments } from './internal-documents/hooks/useInternalDocuments';
 
-interface InternalDocumentsViewProps {
-  filteredDocs: any[];
-  allInternalDocs?: any[];
-  loading: boolean;
-  currentPage: number;
-  setCurrentPage: (page: number) => void;
-  itemsPerPage: number;
-  setItemsPerPage: (limit: number) => void;
-  categoryFilter: string;
-  setCategoryFilter: (filter: string) => void;
-  isPublic?: boolean;
-}
+import type {
+  InternalDocumentsViewProps,
+  InternalDocument,
+  DocPreview,
+  DocCategory,
+  MainTab,
+} from './internal-documents/internal-documents.types';
 
-const docCategories = [
-  { id: 'penelitian',            label: 'Penelitian',      icon: Beaker     },
-  { id: 'hki',                   label: 'HKI',             icon: ShieldCheck},
-  { id: 'buku',                  label: 'Buku',            icon: Book       },
-  { id: 'jurnal internasional',  label: 'J. Internasional',icon: Globe      },
-  { id: 'jurnal nasional',       label: 'J. Nasional',     icon: BookMarked },
+const docCategories: DocCategory[] = [
+  { id: 'penelitian',           label: 'Penelitian',       icon: Beaker     },
+  { id: 'hki',                  label: 'HKI',              icon: ShieldCheck },
+  { id: 'buku',                 label: 'Buku',             icon: Book       },
+  { id: 'jurnal internasional', label: 'J. Internasional', icon: Globe      },
+  { id: 'jurnal nasional',      label: 'J. Nasional',      icon: BookMarked },
 ];
 
 export default function InternalDocumentsView({
@@ -45,11 +41,16 @@ export default function InternalDocumentsView({
   setItemsPerPage,
   categoryFilter,
   setCategoryFilter,
-  isPublic = false
+  isPublic = false,
 }: InternalDocumentsViewProps) {
-  const [activeTab, setActiveTab] = useState<'dokumen' | 'metriks'>('dokumen');
-  const [selectedDocForDetail, setSelectedDocForDetail] = useState<any>(null);
-  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
+  const {
+    activeTab,
+    setActiveTab,
+    selectedDocForDetail,
+    setSelectedDocForDetail,
+    previewDoc,
+    setPreviewDoc,
+  } = useInternalDocuments();
 
   const renderActiveTable = () => {
     const tableProps = {
@@ -64,17 +65,12 @@ export default function InternalDocumentsView({
     };
 
     switch (categoryFilter) {
-      case 'penelitian':
-        return <PenelitianTable {...tableProps} />;
-      case 'hki':
-        return <HKITable {...tableProps} />;
-      case 'buku':
-        return <BukuTable {...tableProps} />;
+      case 'penelitian':           return <PenelitianTable {...tableProps} />;
+      case 'hki':                  return <HKITable {...tableProps} />;
+      case 'buku':                 return <BukuTable {...tableProps} />;
       case 'jurnal internasional':
-      case 'jurnal nasional':
-        return <JurnalTable {...tableProps} />;
-      default:
-        return <DefaultCardList {...tableProps} />;
+      case 'jurnal nasional':      return <JurnalTable {...tableProps} />;
+      default:                     return <DefaultCardList {...tableProps} />;
     }
   };
 
@@ -85,13 +81,13 @@ export default function InternalDocumentsView({
 
         {/* ── Top Tab Bar: Dokumen | Metriks Penilaian ── */}
         <div className="flex items-center gap-8 pb-3 border-b border-slate-100 dark:border-slate-800 mb-8 overflow-x-auto no-scrollbar">
-          {[
-            { id: 'dokumen',  label: 'Dokumen Internal',  icon: FileText   },
-            { id: 'metriks',  label: 'Metriks Penilaian', icon: BarChart2  },
-          ].map((tab) => (
+          {([
+            { id: 'dokumen', label: 'Dokumen Internal', icon: FileText  },
+            { id: 'metriks', label: 'Metriks Penilaian', icon: BarChart2 },
+          ] as const).map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`group/tab relative pb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'text-primary-600 dark:text-primary-400'
@@ -150,8 +146,8 @@ export default function InternalDocumentsView({
                       <div className="flex items-center justify-between gap-3 mb-3">
                         <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 flex items-center justify-center">
                           <cat.icon className={`w-4 h-4 ${
-                            categoryFilter === cat.id 
-                              ? 'text-primary-600 dark:text-primary-400' 
+                            categoryFilter === cat.id
+                              ? 'text-primary-600 dark:text-primary-400'
                               : 'text-slate-400'
                           }`} />
                         </div>
@@ -264,8 +260,8 @@ export default function InternalDocumentsView({
         status={selectedDocForDetail?.status ?? ''}
         catatan={selectedDocForDetail?.catatan}
         year={
-          selectedDocForDetail?.published_at 
-            ? new Date(selectedDocForDetail.published_at).getFullYear() 
+          selectedDocForDetail?.published_at
+            ? new Date(selectedDocForDetail.published_at).getFullYear()
             : (selectedDocForDetail?.tahun_pelaksanaan ?? '-')
         }
         points={selectedDocForDetail?.awarded_points || 0}
@@ -280,41 +276,13 @@ export default function InternalDocumentsView({
             setPreviewDoc({
               fileUrl: selectedDocForDetail.file_url,
               title: selectedDocForDetail.title,
-              category: selectedDocForDetail.category
+              category: selectedDocForDetail.category,
             });
           }
         }}
         customMetadata={
-          selectedDocForDetail && (selectedDocForDetail.quartile || selectedDocForDetail.author_role || selectedDocForDetail.is_corresponding !== undefined) && (
-            <div className="col-span-2 pt-2 border-t border-gray-100 dark:border-zinc-800 space-y-2">
-              <p className="text-[9px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest leading-none mb-1">Detail Scopus (Metrik SINTA)</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedDocForDetail.quartile && (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded-md border border-orange-100 dark:border-orange-900/30">
-                    Quartile: {selectedDocForDetail.quartile}
-                  </span>
-                )}
-                {selectedDocForDetail.author_role && (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-md border border-indigo-100 dark:border-indigo-900/30">
-                    Peran: {selectedDocForDetail.author_role}
-                  </span>
-                )}
-                {selectedDocForDetail.is_hyperauthor ? (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-md border border-red-100 dark:border-red-900/30">
-                    Hyperauthor
-                  </span>
-                ) : null}
-                {selectedDocForDetail.is_corresponding !== undefined && (
-                  <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${
-                    selectedDocForDetail.is_corresponding
-                      ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-900/30'
-                      : 'text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800 border-gray-100 dark:border-zinc-700'
-                  }`}>
-                    Korespondensi: {selectedDocForDetail.is_corresponding ? 'Ya' : 'Tidak'}
-                  </span>
-                )}
-              </div>
-            </div>
+          selectedDocForDetail && (
+            <ScopusMetaBadges doc={selectedDocForDetail} />
           )
         }
       />

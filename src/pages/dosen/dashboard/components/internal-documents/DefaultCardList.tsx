@@ -3,32 +3,8 @@ import { motion } from 'framer-motion';
 import { Calendar, FileText, Info } from 'lucide-react';
 import { getCategoryTheme } from '../../utils';
 import Pagination from '../Pagination';
-
-interface DefaultCardListProps {
-  filteredDocs: any[];
-  currentPage: number;
-  itemsPerPage: number;
-  setCurrentPage: (page: number) => void;
-  setItemsPerPage: (limit: number) => void;
-  setSelectedDocForDetail: (doc: any) => void;
-  setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
-  isPublic?: boolean;
-}
-
-const formatDateVal = (dateStr: string | number) => {
-  if (!dateStr) return '-';
-  const str = String(dateStr);
-  if (str.length === 4 && !isNaN(Number(str))) {
-    return str;
-  }
-  try {
-    const d = new Date(str);
-    if (isNaN(d.getTime())) return str;
-    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-  } catch {
-    return str;
-  }
-};
+import type { DocTableBaseProps } from './internal-documents.types';
+import { formatTanggal } from './utils/formatting';
 
 export default function DefaultCardList({
   filteredDocs,
@@ -39,7 +15,7 @@ export default function DefaultCardList({
   setSelectedDocForDetail,
   setPreviewDoc,
   isPublic = false,
-}: DefaultCardListProps) {
+}: DocTableBaseProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
       <div className="p-6 grid grid-cols-1 gap-4">
@@ -68,11 +44,11 @@ export default function DefaultCardList({
                     {doc.category}
                   </span>
                   <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" /> 
-                    {formatDateVal(dateStr)}
+                    <Calendar className="w-3.5 h-3.5" />
+                    {formatTanggal(dateStr)}
                   </span>
                 </div>
-                <h3 
+                <h3
                   onClick={() => setSelectedDocForDetail(doc)}
                   className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug line-clamp-1 cursor-pointer hover:text-primary-600 transition-colors"
                 >
@@ -90,7 +66,7 @@ export default function DefaultCardList({
                 </div>
                 {doc.file_url && doc.file_url !== '-' ? (
                   <button
-                    onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                    onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
                     className="p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 transition-all flex items-center justify-center shadow-sm"
                     title="Lihat Dokumen"
                   >
@@ -110,9 +86,9 @@ export default function DefaultCardList({
         })}
       </div>
       {!isPublic && (
-        <Pagination 
-          totalItems={filteredDocs.length} 
-          currentPage={currentPage} 
+        <Pagination
+          totalItems={filteredDocs.length}
+          currentPage={currentPage}
           onPageChange={setCurrentPage}
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}
