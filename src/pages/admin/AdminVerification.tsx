@@ -386,11 +386,11 @@ export default function AdminVerification() {
                 <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800">
                   <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
                     <tr>
-                      {['Nama Dosen', 'Fakultas / Prodi', 'Informasi Detail', 'Program / Kategori', activeTab === 'penelitian' ? 'Dana' : 'Status Performa', 'Kendali'].map((h, i) => (
+                      {['Nama Dosen', 'Fakultas / Prodi', 'Informasi Detail', 'Program / Kategori', activeTab === 'penelitian' ? 'Dana' : 'Status Performa', 'Aksi'].map((h, i) => (
                         <th 
                           key={i} 
                           className={`px-6 py-5 text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em] ${
-                            ['Program / Kategori', 'Dana', 'Status Performa', 'Kendali'].includes(h) ? 'text-center' : 'text-left'
+                            ['Program / Kategori', 'Dana', 'Status Performa', 'Aksi'].includes(h) ? 'text-center' : 'text-left'
                           }`}
                         >
                           {h}
@@ -501,10 +501,11 @@ export default function AdminVerification() {
                           )}
                         </td>
                         
-                        {/* Desktop Verification Column - Side-by-Side Horizontal Buttons Layout */}
+                        {/* Desktop Aksi Column — Compact Icon Group */}
                         <td className="px-6 py-6 text-center align-top">
-                          <div className="flex items-center justify-center gap-2 w-full">
-                            {/* Tombol Preview File */}
+                          <div className="inline-flex items-center gap-0.5 p-1 bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100 dark:border-zinc-800">
+                            
+                            {/* Preview */}
                             {(() => {
                               const fileUrl = item.file_url;
                               const judul = activeTab === 'penelitian' ? item.judul_penelitian : item.title;
@@ -512,41 +513,49 @@ export default function AdminVerification() {
                               return fileUrl && fileUrl !== '-' && fileUrl !== '' ? (
                                 <button
                                   onClick={() => setPreviewDoc({ fileUrl, title: judul, category: kategori })}
-                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white rounded-xl border border-primary-100 dark:border-primary-900/30 hover:border-primary-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                                  title="Preview Dokumen"
+                                  className="p-2.5 rounded-xl text-gray-400 dark:text-zinc-500 hover:text-primary-600 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-sm transition-all active:scale-90"
                                 >
-                                  <Eye className="h-3.5 w-3.5" />
-                                  Preview
+                                  <Eye className="h-4 w-4" />
                                 </button>
                               ) : (
-                                <div className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 rounded-xl border border-gray-100 dark:border-zinc-700 text-[9px] font-black uppercase tracking-widest cursor-not-allowed italic whitespace-nowrap">
-                                  <FileText className="h-3.5 w-3.5" />
-                                  No File
+                                <div
+                                  title="Tidak ada file"
+                                  className="p-2.5 rounded-xl text-gray-200 dark:text-zinc-700 cursor-not-allowed"
+                                >
+                                  <FileText className="h-4 w-4" />
                                 </div>
                               );
                             })()}
-                            
-                            {/* Tombol History */}
+
+                            {/* Riwayat */}
                             <button
                               onClick={() => setHistoryModal({
                                 isOpen: true,
                                 docId: item.id,
                                 title: activeTab === 'penelitian' ? item.judul_penelitian : item.title
                               })}
-                              className="inline-flex items-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-white rounded-xl border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
-                              title="Lihat Riwayat Dokumen"
+                              title="Riwayat Dokumen"
+                              className="p-2.5 rounded-xl text-gray-400 dark:text-zinc-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-sm transition-all active:scale-90"
                             >
-                              <History className="h-3.5 w-3.5" />
-                              Riwayat
+                              <History className="h-4 w-4" />
                             </button>
-                            
+
+                            {/* Divider pemisah aksi "lihat" & aksi "keputusan" */}
+                            <div className="w-px h-5 bg-gray-200 dark:bg-zinc-700 mx-0.5" />
+
                             {/* Approve */}
                             <button
                               onClick={() => handleVerify(item.id, 'Approved')}
                               disabled={actionLoading === item.id}
-                              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 flex items-center gap-1.5 disabled:opacity-50 whitespace-nowrap font-sans font-black"
+                              title="Approve"
+                              className="p-2.5 rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white hover:shadow-sm transition-all active:scale-90 disabled:opacity-40"
                             >
-                              {actionLoading === item.id ? <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : <ShieldCheck className="h-4 w-4" />}
-                              Approve
+                              {actionLoading === item.id ? (
+                                <div className="w-4 h-4 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+                              ) : (
+                                <ShieldCheck className="h-4 w-4" />
+                              )}
                             </button>
 
                             {/* Reject */}
@@ -560,11 +569,12 @@ export default function AdminVerification() {
                                 setFeedbackText('');
                               }}
                               disabled={actionLoading === item.id}
-                              className="p-2 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 text-red-500 dark:text-red-400 hover:text-white rounded-xl transition-all border border-red-100 dark:border-red-900/30 hover:border-red-500 active:scale-95 disabled:opacity-50 shrink-0"
-                              title="Reject"
+                              title="Tolak"
+                              className="p-2.5 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white hover:shadow-sm transition-all active:scale-90 disabled:opacity-40"
                             >
-                              <X className="h-4.5 w-4.5" />
+                              <X className="h-4 w-4" />
                             </button>
+
                           </div>
                         </td>
                       </tr>
@@ -609,6 +619,7 @@ export default function AdminVerification() {
                   ]}
                   size="sm"
                   className="w-[85px]"
+                  position="top"
                 />
               </div>
             </div>

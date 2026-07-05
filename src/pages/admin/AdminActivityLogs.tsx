@@ -715,6 +715,7 @@ export default function AdminActivityLogs() {
                   ]}
                   size="sm"
                   className="w-[85px]"
+                  position="top"
                 />
               </div>
             </div>

@@ -14,6 +14,7 @@ export interface DropdownSelectProps<T extends string | number = string | number
   icon?: React.ReactNode;
   className?: string;
   size?: "sm" | "md";
+  position?: "top" | "bottom";
 }
 
 export function DropdownSelect<T extends string | number = string | number>({
@@ -22,7 +23,8 @@ export function DropdownSelect<T extends string | number = string | number>({
   options,
   icon,
   className = "",
-  size = "md"
+  size = "md",
+  position = "bottom"
 }: DropdownSelectProps<T>) {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -70,11 +72,13 @@ export function DropdownSelect<T extends string | number = string | number>({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+            initial={{ opacity: 0, y: position === "top" ? 8 : -8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.96 }}
+            exit={{ opacity: 0, y: position === "top" ? 8 : -8, scale: 0.96 }}
             transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-full left-0 right-0 z-50 mt-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden py-1.5 max-h-[250px] overflow-y-auto"
+            className={`absolute left-0 right-0 z-50 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden py-1.5 max-h-[250px] overflow-y-auto ${
+              position === "top" ? "bottom-full mb-2" : "top-full mt-2"
+            }`}
           >
             {options.map((opt) => {
               const isSelected = opt.value === value;

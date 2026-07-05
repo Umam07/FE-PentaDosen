@@ -1258,6 +1258,7 @@ export default function AdminSync() {
                   ]}
                   size="sm"
                   className="w-[85px]"
+                  position="top"
                 />
               </div>
             </div>

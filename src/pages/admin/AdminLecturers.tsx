@@ -428,6 +428,7 @@ export default function AdminLecturers() {
                   ]}
                   size="sm"
                   className="w-[85px]"
+                  position="top"
                 />
               </div>
             </div>

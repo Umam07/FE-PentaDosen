@@ -721,7 +721,7 @@ export default function AdminAllDocuments() {
                         {activeTab === 'penelitian' ? 'Dana' : 'Sumber'}
                       </th>
                       <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Poin</th>
-                      <th className="px-6 py-5 text-right text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Aksi</th>
+                      <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
@@ -782,16 +782,15 @@ export default function AdminAllDocuments() {
                                 {activeTab !== 'penelitian' && doc.is_kpi_counted && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">KPI Verified</span>}
                              </div>
                           </td>
-                          <td className="px-6 py-6 whitespace-nowrap text-right">
+                          <td className="px-6 py-6 whitespace-nowrap text-center">
                             {doc.file_url && doc.file_url !== '-' && doc.file_url !== '' ? (
-                              <div className="flex items-center justify-end gap-2">
+                              <div className="inline-flex items-center gap-0.5 p-1 bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100 dark:border-zinc-800">
                                 <button
                                   onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title, category })}
-                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white rounded-xl border border-primary-100 dark:border-primary-900/30 hover:border-primary-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                                   title="Preview Dokumen"
+                                  className="p-2.5 rounded-xl text-gray-400 dark:text-zinc-500 hover:text-primary-600 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-sm transition-all active:scale-95"
                                 >
-                                  <Eye className="w-3.5 h-3.5" />
-                                  Preview
+                                  <Eye className="h-4 w-4" />
                                 </button>
                                 <button 
                                   onClick={async (e) => {
@@ -801,23 +800,21 @@ export default function AdminAllDocuments() {
                                     await downloadWithFilename(doc.file_url, filename);
                                     btn.disabled = false;
                                   }}
-                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 hover:border-primary-500 hover:text-primary-600 text-gray-500 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95"
                                   title="Unduh File"
+                                  className="p-2.5 rounded-xl text-gray-400 dark:text-zinc-500 hover:text-primary-600 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-sm transition-all active:scale-95 disabled:opacity-40"
                                 >
-                                  <Download className="w-3.5 h-3.5" />
-                                  Unduh
+                                  <Download className="h-4 w-4" />
                                 </button>
-                                <button
+                                <button 
                                   onClick={() => setHistoryModal({
                                     isOpen: true,
                                     docId: doc.id,
                                     title
                                   })}
-                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 hover:text-white rounded-xl border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-600 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                                   title="Lihat Riwayat Dokumen"
+                                  className="p-2.5 rounded-xl text-gray-400 dark:text-zinc-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-sm transition-all active:scale-90"
                                 >
-                                  <History className="w-3.5 h-3.5" />
-                                  Riwayat
+                                  <History className="h-4 w-4" />
                                 </button>
                               </div>
                             ) : (
@@ -861,6 +858,7 @@ export default function AdminAllDocuments() {
                   ]}
                   size="sm"
                   className="w-[85px]"
+                  position="top"
                 />
               </div>
             </div>
