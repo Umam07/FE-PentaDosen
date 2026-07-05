@@ -7,6 +7,7 @@ import {
 import { ProfileTrendChart } from './ProfileCharts';
 import { calculateScholarPoints } from '../pointsCalculator';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 
 // === Sub-component: Scholar row with per-doc points + breakdown ===
 function ScholarDocRow({ doc, docPoints, isAlsoScopus, scopusQuartile, idx }: {
@@ -990,13 +991,13 @@ export default function ExternalDocumentsView({
     setItemsPerPage: (limit: number) => void
   }) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-    if (totalPages <= 1 && totalItems <= 10) return null;
+    if (totalItems === 0) return null;
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
     return (
-      <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="relative z-10 px-8 py-8 border-t border-slate-100 dark:border-slate-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6 mt-10">
         <div className="flex items-center gap-4">
           <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
             Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)} of {totalItems}
@@ -1004,16 +1005,19 @@ export default function ExternalDocumentsView({
           <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
           <div className="hidden sm:flex items-center gap-2">
             <span className="text-[10px] font-black uppercase text-slate-300 tracking-widest">Limit:</span>
-            <select
+            <DropdownSelect
               value={itemsPerPage}
-              onChange={(e) => { setItemsPerPage(Number(e.target.value)); onPageChange(1); }}
-              aria-label="Pilih batas jumlah data per halaman"
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[10px] font-black py-1 px-3 focus:ring-4 focus:ring-primary-100 outline-none cursor-pointer uppercase tracking-tighter"
-            >
-              {[10, 25, 50, 100].map(val => (
-                <option key={val} value={val}>{val}</option>
-              ))}
-            </select>
+              onChange={(val) => { setItemsPerPage(val); onPageChange(1); }}
+              options={[
+                { value: 10, label: "10" },
+                { value: 25, label: "25" },
+                { value: 50, label: "50" },
+                { value: 100, label: "100" }
+              ]}
+              size="sm"
+              className="w-[85px]"
+              position="top"
+            />
           </div>
         </div>
 
@@ -1038,8 +1042,8 @@ export default function ExternalDocumentsView({
                   <button
                     onClick={() => onPageChange(p)}
                     className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === p
-                        ? 'bg-primary-600 text-white shadow-xl shadow-primary-200 dark:shadow-primary-900/30 ring-4 ring-primary-100 dark:ring-primary-900/20'
-                        : 'bg-white dark:bg-slate-900 text-slate-500 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 hover:text-primary-600 shadow-sm'
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'bg-white dark:bg-zinc-900 text-slate-500 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 hover:text-primary-600 shadow-sm'
                       }`}
                   >
                     {p}

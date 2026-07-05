@@ -68,7 +68,7 @@ export default function HKI({ user }: { user: any }) {
   const [docToLink, setDocToLink] = useState<any>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     fetchWeights();
@@ -416,6 +416,7 @@ export default function HKI({ user }: { user: any }) {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
         setSelectedDocForDetail={setSelectedDocForDetail}
         setPreviewDoc={setPreviewDoc}
         uploadingPdfId={uploadingPdfId}

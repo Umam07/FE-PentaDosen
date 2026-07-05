@@ -6,6 +6,7 @@ import {
 import { motion } from 'motion/react';
 import { HKI_CATEGORIES } from '../constants';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import Pagination from '../../dashboard/components/Pagination';
 
 interface HKITableProps {
   isTableLoading: boolean;
@@ -14,6 +15,7 @@ interface HKITableProps {
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   itemsPerPage: number;
+  setItemsPerPage: (limit: number) => void;
   setSelectedDocForDetail: (doc: any) => void;
   setPreviewDoc: (doc: { fileUrl: string; title: string; category: string } | null) => void;
   uploadingPdfId: number | null;
@@ -35,6 +37,7 @@ export default function HKITable({
   currentPage,
   setCurrentPage,
   itemsPerPage,
+  setItemsPerPage,
   setSelectedDocForDetail,
   setPreviewDoc,
   uploadingPdfId,
@@ -277,58 +280,14 @@ export default function HKITable({
       </div>
 
       {/* Pagination */}
-      {!isTableLoading && filteredDocuments.length > 0 && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="px-6 py-5 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/10 flex flex-col sm:flex-row items-center justify-between gap-4"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-              Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredDocuments.length)} of {filteredDocuments.length} entries
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-                .map((p, index, array) => (
-                  <React.Fragment key={p}>
-                    {index > 0 && array[index - 1] !== p - 1 && (
-                      <span className="px-2 text-gray-300 dark:text-zinc-600 font-bold">...</span>
-                    )}
-                    <button
-                      onClick={() => setCurrentPage(p)}
-                      className={`min-w-[36px] h-9 flex items-center justify-center rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
-                        currentPage === p 
-                          ? 'bg-primary-600 text-white shadow-sm' 
-                          : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  </React.Fragment>
-                ))}
-            </div>
-
-            <button
-              disabled={currentPage === totalPages || totalPages === 0}
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="p-2 rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 dark:text-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </motion.div>
+      {!isTableLoading && (
+        <Pagination
+          totalItems={filteredDocuments.length}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+        />
       )}
     </section>
   );

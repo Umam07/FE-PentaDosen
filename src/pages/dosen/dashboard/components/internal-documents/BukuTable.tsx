@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Sparkles, Archive, Link, Info, FileText } from 'lucide-react';
+import { Book, Sparkles, Archive, Link, Info, FileText } from 'lucide-react';
 import Pagination from '../Pagination';
 
 interface BukuTableProps {
@@ -8,6 +8,7 @@ interface BukuTableProps {
   currentPage: number;
   itemsPerPage: number;
   setCurrentPage: (page: number) => void;
+  setItemsPerPage: (limit: number) => void;
   setSelectedDocForDetail: (doc: any) => void;
   setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
 }
@@ -17,12 +18,13 @@ export default function BukuTable({
   currentPage,
   itemsPerPage,
   setCurrentPage,
+  setItemsPerPage,
   setSelectedDocForDetail,
   setPreviewDoc,
 }: BukuTableProps) {
   return (
-    <>
-      <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
+      <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-100 dark:divide-slate-800 text-sm">
           <thead className="bg-slate-50/50 dark:bg-slate-800/30">
             <tr>
@@ -53,7 +55,7 @@ export default function BukuTable({
                     <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors flex-shrink-0">
-                          <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-primary-600" />
+                          <Book className="w-4 h-4 text-slate-400 group-hover:text-primary-600" />
                         </div>
                         <div className="min-w-0">
                           <p className="font-extrabold text-slate-900 dark:text-slate-100 uppercase tracking-tight truncate max-w-xs lg:max-w-sm" title={doc.title}>
@@ -153,7 +155,8 @@ export default function BukuTable({
         currentPage={currentPage} 
         onPageChange={setCurrentPage}
         itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
       />
-    </>
+    </div>
   );
 }

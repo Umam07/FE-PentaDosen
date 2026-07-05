@@ -9,6 +9,7 @@ interface DefaultCardListProps {
   currentPage: number;
   itemsPerPage: number;
   setCurrentPage: (page: number) => void;
+  setItemsPerPage: (limit: number) => void;
   setSelectedDocForDetail: (doc: any) => void;
   setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
 }
@@ -33,12 +34,13 @@ export default function DefaultCardList({
   currentPage,
   itemsPerPage,
   setCurrentPage,
+  setItemsPerPage,
   setSelectedDocForDetail,
   setPreviewDoc,
 }: DefaultCardListProps) {
   return (
-    <>
-      <div className="grid grid-cols-1 gap-4">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
+      <div className="p-6 grid grid-cols-1 gap-4">
         {filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc, idx) => {
           const theme = getCategoryTheme(doc.category);
           const dateStr = doc.published_at || doc.tahun_pelaksanaan;
@@ -110,7 +112,8 @@ export default function DefaultCardList({
         currentPage={currentPage} 
         onPageChange={setCurrentPage}
         itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
       />
-    </>
+    </div>
   );
 }

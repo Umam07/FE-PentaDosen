@@ -21,6 +21,7 @@ interface InternalDocumentsViewProps {
   currentPage: number;
   setCurrentPage: (page: number) => void;
   itemsPerPage: number;
+  setItemsPerPage: (limit: number) => void;
   categoryFilter: string;
   setCategoryFilter: (filter: string) => void;
   isPublic?: boolean;
@@ -41,6 +42,7 @@ export default function InternalDocumentsView({
   currentPage,
   setCurrentPage,
   itemsPerPage,
+  setItemsPerPage,
   categoryFilter,
   setCategoryFilter,
   isPublic = false
@@ -54,6 +56,7 @@ export default function InternalDocumentsView({
       filteredDocs: isPublic ? filteredDocs.slice(0, 5) : filteredDocs,
       currentPage,
       itemsPerPage,
+      setItemsPerPage,
       setCurrentPage,
       setSelectedDocForDetail,
       setPreviewDoc,

@@ -16,6 +16,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
     currentPage,
     setCurrentPage,
     itemsPerPage,
+    setItemsPerPage,
     categoryFilter,
     setCategoryFilter,
     activeView,
@@ -545,6 +546,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
             categoryFilter={categoryFilter}
             setCategoryFilter={setCategoryFilter}
           />

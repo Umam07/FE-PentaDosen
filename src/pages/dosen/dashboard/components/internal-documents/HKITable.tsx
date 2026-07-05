@@ -9,6 +9,7 @@ interface HKITableProps {
   currentPage: number;
   itemsPerPage: number;
   setCurrentPage: (page: number) => void;
+  setItemsPerPage: (limit: number) => void;
   setSelectedDocForDetail: (doc: any) => void;
   setPreviewDoc: (preview: { fileUrl: string; title: string; category: string } | null) => void;
 }
@@ -18,12 +19,13 @@ export default function HKITable({
   currentPage,
   itemsPerPage,
   setCurrentPage,
+  setItemsPerPage,
   setSelectedDocForDetail,
   setPreviewDoc,
 }: HKITableProps) {
   return (
-    <>
-      <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
+      <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-100 dark:divide-slate-800 text-sm">
           <thead className="bg-slate-50/50 dark:bg-slate-800/30">
             <tr>
@@ -156,7 +158,8 @@ export default function HKITable({
         currentPage={currentPage} 
         onPageChange={setCurrentPage}
         itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
       />
-    </>
+    </div>
   );
 }
