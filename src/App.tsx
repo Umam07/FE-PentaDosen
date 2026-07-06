@@ -18,7 +18,7 @@ const Insights = lazy(() => import('./pages/dashboard/Insights'));
 const Profile = lazy(() => import('./pages/profilediri/Profile'));
 const Publication = lazy(() => import('./pages/dosen/publication'));
 const AdminVerification = lazy(() => import('./pages/admin/Verification'));
-const AdminLecturers = lazy(() => import('./pages/admin/AdminLecturers'));
+const AdminLecturers = lazy(() => import('./pages/admin/Lecturers'));
 const AdminLecturerProfile = lazy(() => import('./pages/admin/AdminLecturerProfile'));
 const AdminInputDocument = lazy(() => import('./pages/admin/AdminInputDocument'));
 const AdminSync = lazy(() => import('./pages/admin/AdminSync'));
