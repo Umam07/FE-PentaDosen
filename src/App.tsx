@@ -23,7 +23,7 @@ const AdminLecturerProfile = lazy(() => import('./pages/admin/AdminLecturerProfi
 const AdminInputDocument = lazy(() => import('./pages/admin/AdminInputDocument'));
 const AdminSync = lazy(() => import('./pages/admin/AdminSync'));
 const AdminAllDocuments = lazy(() => import('./pages/admin/AdminAllDocuments'));
-const AdminActivityLogs = lazy(() => import('./pages/admin/AdminActivityLogs'));
+const AdminActivityLogs = lazy(() => import('./pages/admin/ActivityLogs'));
 const CmsDashboard = lazy(() => import('./pages/admin/CmsDashboard'));
 const Research = lazy(() => import('./pages/dosen/research'));
 const Buku = lazy(() => import('./pages/dosen/buku'));
