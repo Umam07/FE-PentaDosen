@@ -5,18 +5,28 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-import UsersTab from './UsersTab';
-import KpiTab from './KpiTab';
-import AnnouncementsTab from './AnnouncementsTab';
-import FaqTab from './FaqTab';
-import TemplatesTab from './TemplatesTab';
+// Import sub-komponen baru dari folder components
+import UsersTab from './components/UsersTab';
+import KpiTab from './components/KpiTab';
+import AnnouncementsTab from './components/AnnouncementsTab';
+import FaqTab from './components/FaqTab';
+import TemplatesTab from './components/TemplatesTab';
+import { User } from './types/cmsDashboard.types';
 
-export default function CmsDashboard({ user }: { user: any }) {
+interface CmsDashboardProps {
+  user: User;
+}
+
+/**
+ * Main Orchestrator untuk Halaman CMS Dashboard Admin.
+ * Mengelola navigasi tab utama dan notifikasi global.
+ */
+export default function CmsDashboard({ user }: CmsDashboardProps) {
   const [activeTab, setActiveTab] = useState<'users' | 'kpi' | 'announcements' | 'faq' | 'templates'>('users');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
 
-  // Trigger temporary notification message
+  // Trigger pesan notifikasi temporer (hilang setelah 4 detik)
   const triggerMessage = (text: string, type: 'success' | 'error' = 'success') => {
     setMessage(text);
     setMessageType(type);
@@ -63,7 +73,7 @@ export default function CmsDashboard({ user }: { user: any }) {
         )}
       </AnimatePresence>
 
-      {/* Navigation Tabs (Redesigned) */}
+      {/* Navigation Tabs */}
       <div className="bg-white dark:bg-zinc-900/80 backdrop-blur-md p-2 rounded-[2rem] border border-gray-100 dark:border-zinc-800/80 shadow-sm flex flex-wrap gap-1.5">
         {[
           { id: 'users', label: 'Hak Akses & Users', icon: Users },

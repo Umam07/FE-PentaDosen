@@ -1,40 +1,39 @@
 import React, { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Faq } from '../types/cmsDashboard.types';
+import { cmsDashboardService } from '../services/cmsDashboardService';
 
-interface AnnouncementDeleteModalProps {
+interface FaqDeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  announcement: any | null;
+  faq: Faq | null;
   onSuccess: () => void;
   triggerMessage: (msg: string, type?: 'success' | 'error') => void;
 }
 
-export default function AnnouncementDeleteModal({
+/**
+ * Komponen Modal Konfirmasi Hapus FAQ / Panduan.
+ */
+export default function FaqDeleteModal({
   isOpen,
   onClose,
-  announcement,
+  faq,
   onSuccess,
   triggerMessage
-}: AnnouncementDeleteModalProps) {
+}: FaqDeleteModalProps) {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const handleDeleteInternal = async () => {
-    if (!announcement) return;
+    if (!faq) return;
     try {
       setIsDeleteLoading(true);
-      const res = await fetch(`/api/cms/announcements/${announcement.id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        triggerMessage('Pengumuman berhasil dihapus.', 'success');
-        onClose();
-        onSuccess();
-      } else {
-        triggerMessage('Gagal menghapus pengumuman.', 'error');
-      }
+      await cmsDashboardService.deleteFaq(faq.id);
+      triggerMessage('Panduan FAQ berhasil dihapus.', 'success');
+      onClose();
+      onSuccess();
     } catch {
-      triggerMessage('Terjadi kesalahan.', 'error');
+      triggerMessage('Gagal menghapus panduan.', 'error');
     } finally {
       setIsDeleteLoading(false);
     }
@@ -42,7 +41,7 @@ export default function AnnouncementDeleteModal({
 
   return (
     <AnimatePresence>
-      {isOpen && announcement && (
+      {isOpen && faq && (
         <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
           <motion.div 
             initial={{ opacity: 0 }} 
@@ -63,11 +62,12 @@ export default function AnnouncementDeleteModal({
                 <Trash2 className="w-8 h-8 text-red-500" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Hapus Pengumuman?</h3>
+                <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Hapus Panduan / FAQ?</h3>
                 <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 mt-1">Tindakan ini tidak dapat dibatalkan.</p>
               </div>
-              <div className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-100 dark:border-zinc-700">
-                <p className="text-xs font-black text-gray-700 dark:text-zinc-300 uppercase tracking-tight line-clamp-2">{announcement.title}</p>
+              <div className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-100 dark:border-zinc-700 text-left">
+                <p className="text-xs font-black text-gray-700 dark:text-zinc-300 uppercase tracking-tight line-clamp-2">{faq.question}</p>
+                <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 mt-1 uppercase tracking-widest">{faq.category}</p>
               </div>
               <div className="flex gap-3 w-full mt-2">
                 <button 

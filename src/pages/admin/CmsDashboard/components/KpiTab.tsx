@@ -1,157 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   Trash2, Save, Plus, Calendar, Award, ShieldCheck, 
   Book, Beaker, BookOpen, Zap, FileSpreadsheet 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useKpiTab } from '../hooks/useKpiTab';
 import KpiDeleteModal from './KpiDeleteModal';
 
-export default function KpiTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
-  const [weights, setWeights] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [savingWeights, setSavingWeights] = useState(false);
+interface KpiTabProps {
+  triggerMessage: (text: string, type?: 'success' | 'error') => void;
+}
 
-  // Group selection state
-  const [activeGroup, setActiveGroup] = useState<'scopus' | 'hki' | 'buku' | 'lain'>('scopus');
-
-  // Period settings
-  const [periodStart, setPeriodStart] = useState('');
-  const [periodEnd, setPeriodEnd] = useState('');
-  const [periodLabel, setPeriodLabel] = useState('');
-  const [savingPeriod, setSavingPeriod] = useState(false);
-
-  // New category state
-  const [newCategory, setNewCategory] = useState('');
-  const [newWeight, setNewWeight] = useState('');
-  const [addingCategory, setAddingCategory] = useState(false);
-
-  // Delete category state
-  const [deleteCategory, setDeleteCategory] = useState<string | null>(null);
-
-  const fetchKpiData = async () => {
-    setLoading(true);
-    try {
-      const resW = await fetch('/api/cms/weights');
-      const dataW = await resW.json();
-      setWeights(dataW.weights || []);
-
-      const resP = await fetch('/api/cms/settings');
-      const dataP = await resP.json();
-      setPeriodStart(dataP.kpi_period_start || '');
-      setPeriodEnd(dataP.kpi_period_end || '');
-      setPeriodLabel(dataP.kpi_period_label || '');
-    } catch (e) {
-      triggerMessage('Gagal mengambil data master KPI.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchKpiData();
-  }, []);
-
-  const getGroupForCategory = (category: string): 'scopus' | 'hki' | 'buku' | 'lain' => {
-    const catLower = category.toLowerCase();
-    if (catLower.includes('scopus') || catLower.includes('sinta') || catLower.includes('quartile')) {
-      return 'scopus';
-    }
-    if (catLower.includes('hki') || catLower.includes('paten') || catLower.includes('cipta') || catLower.includes('merk') || catLower.includes('merek')) {
-      return 'hki';
-    }
-    if (catLower.includes('buku') || catLower.includes('monograf') || catLower.includes('ajar') || catLower.includes('referensi')) {
-      return 'buku';
-    }
-    return 'lain';
-  };
-
-  const handleWeightChangeByCategory = (category: string, val: number) => {
-    const updated = weights.map(w => {
-      if (w.category === category) {
-        return { ...w, weight_value: val };
-      }
-      return w;
-    });
-    setWeights(updated);
-  };
-
-  const handleSaveWeights = async () => {
-    setSavingWeights(true);
-    try {
-      const res = await fetch('/api/cms/weights', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ weights })
-      });
-      if (res.ok) {
-        triggerMessage('Bobot poin KPI berhasil disimpan!');
-      } else {
-        triggerMessage('Gagal menyimpan bobot poin.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    } finally {
-      setSavingWeights(false);
-    }
-  };
-
-  const handleSavePeriod = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSavingPeriod(true);
-    try {
-      const res = await fetch('/api/cms/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          kpi_period_start: periodStart,
-          kpi_period_end: periodEnd,
-          kpi_period_label: periodLabel
-        })
-      });
-      if (res.ok) {
-        triggerMessage('Periode akreditasi kpi berhasil diperbarui!');
-      } else {
-        triggerMessage('Gagal menyimpan periode akreditasi.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    } finally {
-      setSavingPeriod(false);
-    }
-  };
-
-  const handleAddCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCategory || !newWeight) return;
-    setAddingCategory(true);
-    try {
-      const res = await fetch('/api/cms/weights/new', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          category: newCategory,
-          weight_value: parseInt(newWeight)
-        })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        triggerMessage('Kategori KPI baru berhasil ditambahkan!');
-        setNewCategory('');
-        setNewWeight('');
-        fetchKpiData();
-      } else {
-        triggerMessage(data.message || 'Gagal menambahkan kategori.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    } finally {
-      setAddingCategory(false);
-    }
-  };
-
-
-
-  const filteredWeights = weights.filter(w => getGroupForCategory(w.category) === activeGroup);
+/**
+ * Tab Pengaturan Bobot Poin KPI & Periode Akreditasi.
+ */
+export default function KpiTab({ triggerMessage }: KpiTabProps) {
+  const {
+    loading,
+    savingWeights,
+    activeGroup,
+    setActiveGroup,
+    periodStart,
+    setPeriodStart,
+    periodEnd,
+    setPeriodEnd,
+    periodLabel,
+    setPeriodLabel,
+    savingPeriod,
+    newCategory,
+    setNewCategory,
+    newWeight,
+    setNewWeight,
+    addingCategory,
+    deleteCategory,
+    setDeleteCategory,
+    filteredWeights,
+    handleWeightChangeByCategory,
+    handleSaveWeights,
+    handleSavePeriod,
+    handleAddCategory,
+    fetchKpiData
+  } = useKpiTab(triggerMessage);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
@@ -343,6 +232,56 @@ export default function KpiTab({ triggerMessage }: { triggerMessage: (text: stri
             >
               <Save className="w-4 h-4" />
               {savingPeriod ? 'Menyimpan...' : 'Perbarui Periode'}
+            </button>
+          </form>
+        </div>
+
+        {/* Add New Category form (original part of KPI Tab) */}
+        <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 space-y-6 shadow-sm">
+          <div>
+            <h3 className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight flex items-center gap-2">
+              <Plus className="w-5 h-5 text-primary-500" />
+              Tambah Kategori KPI Baru
+            </h3>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+              Menambahkan kategori baru secara manual ke master data bobot.
+            </p>
+          </div>
+
+          <form onSubmit={handleAddCategory} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Nama Kategori</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Scopus Q1"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className="w-full px-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Bobot Poin</label>
+                <input
+                  type="number"
+                  required
+                  placeholder="Contoh: 40"
+                  value={newWeight}
+                  onChange={(e) => setNewWeight(e.target.value)}
+                  className="w-full px-4 py-3.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-2xl text-xs font-bold outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/30"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={addingCategory || loading}
+              className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-sm disabled:opacity-40 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+            >
+              <Plus className="w-4 h-4" />
+              {addingCategory ? 'Menambahkan...' : 'Tambah Kategori'}
             </button>
           </form>
         </div>

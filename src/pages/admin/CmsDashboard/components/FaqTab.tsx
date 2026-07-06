@@ -1,136 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Plus, Edit, Trash2, X, FileText, Eye } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+import { PdfPreviewModal } from '../../../../components/ui/pdf-preview-modal';
+import { useFaqTab } from '../hooks/useFaqTab';
 import FaqDeleteModal from './FaqDeleteModal';
 
-export default function FaqTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
-  const [faqs, setFaqs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+interface FaqTabProps {
+  triggerMessage: (text: string, type?: 'success' | 'error') => void;
+}
 
-  // Form states
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [category, setCategory] = useState('Umum');
-  const [orderIndex, setOrderIndex] = useState('0');
-  const [saving, setSaving] = useState(false);
-  const [isOpenForm, setIsOpenForm] = useState(false);
-
-  // PDF specific states
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [existingFileUrl, setExistingFileUrl] = useState<string | null>(null);
-  const [removeFile, setRemoveFile] = useState(false);
-  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
-
-  // Delete state
-  const [deleteFaq, setDeleteFaq] = useState<any | null>(null);
-
-  const fetchFaqs = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/cms/faqs');
-      const data = await res.json();
-      setFaqs(data.faqs || []);
-    } catch (e) {
-      triggerMessage('Gagal mengambil data FAQ.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchFaqs();
-  }, []);
-
-  const handleOpenCreate = () => {
-    setEditingId(null);
-    setQuestion('');
-    setAnswer('');
-    setCategory('Umum');
-    setOrderIndex('0');
-    setPdfFile(null);
-    setExistingFileUrl(null);
-    setRemoveFile(false);
-    setIsOpenForm(true);
-  };
-
-  const handleOpenEdit = (f: any) => {
-    setEditingId(f.id);
-    setQuestion(f.question);
-    setAnswer(f.answer);
-    setCategory(f.category);
-    setOrderIndex((f.order_index ?? 0).toString());
-    setPdfFile(null);
-    setExistingFileUrl(f.file_url || null);
-    setRemoveFile(false);
-    setIsOpenForm(true);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    if (file) {
-      if (file.type !== 'application/pdf') {
-        triggerMessage('File harus berformat PDF.', 'error');
-        e.target.value = '';
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        triggerMessage('Ukuran file maksimal 10MB.', 'error');
-        e.target.value = '';
-        return;
-      }
-      setPdfFile(file);
-      setRemoveFile(false);
-    }
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      const url = editingId ? `/api/cms/faqs/${editingId}` : '/api/cms/faqs';
-      
-      const formData = new FormData();
-      formData.append('question', question);
-      formData.append('answer', answer);
-      formData.append('category', category);
-      formData.append('order_index', (parseInt(orderIndex) || 0).toString());
-
-      if (pdfFile) {
-        formData.append('file', pdfFile);
-      }
-
-      if (editingId) {
-        formData.append('_method', 'PUT');
-        if (removeFile) {
-          formData.append('remove_file', 'true');
-        }
-      }
-
-      const res = await fetch(url, {
-        method: 'POST', // Use POST for multipart form submissions
-        headers: {
-          'Accept': 'application/json',
-        },
-        body: formData
-      });
-      const data = await res.json();
-      if (res.ok) {
-        triggerMessage(data.message || 'Panduan berhasil disimpan!');
-        setIsOpenForm(false);
-        fetchFaqs();
-      } else {
-        triggerMessage(data.message || 'Gagal menyimpan panduan.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-
+/**
+ * Tab Manajemen Tanya Jawab / Panduan PDF.
+ */
+export default function FaqTab({ triggerMessage }: FaqTabProps) {
+  const {
+    faqs,
+    loading,
+    editingId,
+    question,
+    setQuestion,
+    answer,
+    setAnswer,
+    category,
+    setCategory,
+    orderIndex,
+    setOrderIndex,
+    saving,
+    isOpenForm,
+    setIsOpenForm,
+    existingFileUrl,
+    removeFile,
+    setRemoveFile,
+    previewDoc,
+    setPreviewDoc,
+    deleteFaq,
+    setDeleteFaq,
+    handleOpenCreate,
+    handleOpenEdit,
+    handleFileChange,
+    handleSave,
+    fetchFaqs
+  } = useFaqTab(triggerMessage);
 
   return (
     <div className="space-y-6">
@@ -187,7 +97,7 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                       {f.file_url && (
                         <button
                           onClick={() => setPreviewDoc({
-                            fileUrl: f.file_url,
+                            fileUrl: f.file_url!,
                             title: f.question,
                             category: f.category
                           })}
@@ -279,7 +189,7 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                       required
                       value={orderIndex}
                       onChange={(e) => setOrderIndex(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
                     />
                   </div>
                 </div>
@@ -292,7 +202,7 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                     placeholder="Contoh: Bagaimana cara sinkronisasi data Scopus?"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
                   />
                 </div>
 
@@ -304,7 +214,7 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                     placeholder="Tuliskan isi panduan lengkap langkah demi langkah..."
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 resize-none"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 resize-none"
                   />
                 </div>
 
@@ -343,7 +253,7 @@ export default function FaqTab({ triggerMessage }: { triggerMessage: (text: stri
                         type="file"
                         accept="application/pdf"
                         onChange={handleFileChange}
-                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-xs text-gray-900 dark:text-zinc-100 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-primary-50 file:text-primary-600 dark:file:bg-primary-950/30 dark:file:text-primary-400 hover:file:bg-primary-100/50 cursor-pointer"
+                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-xs text-gray-900 dark:text-zinc-100 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-primary-50 file:text-primary-600 dark:file:bg-primary-950/30 dark:file:text-primary-400 hover:file:bg-primary-100/50 cursor-pointer"
                       />
                       <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">
                         Format file harus PDF, ukuran maksimal 10MB.

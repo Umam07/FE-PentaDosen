@@ -1,65 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FileSpreadsheet, Upload } from 'lucide-react';
+import { useTemplatesTab } from '../hooks/useTemplatesTab';
 
-export default function TemplatesTab({ triggerMessage }: { triggerMessage: (text: string, type?: 'success' | 'error') => void }) {
-  const [templates, setTemplates] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [uploadingType, setUploadingType] = useState<string | null>(null);
+interface TemplatesTabProps {
+  triggerMessage: (text: string, type?: 'success' | 'error') => void;
+}
 
-  const fetchTemplates = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/cms/templates');
-      const data = await res.json();
-      setTemplates(data.templates || []);
-    } catch (e) {
-      triggerMessage('Gagal mengambil data template.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-      triggerMessage('Hanya file Excel (.xlsx, .xls) yang diperbolehkan.', 'error');
-      return;
-    }
-
-    setUploadingType(type);
-    const formData = new FormData();
-    formData.append('type', type);
-    formData.append('file', file);
-
-    try {
-      const res = await fetch('/api/cms/templates/upload', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      if (res.ok) {
-        triggerMessage(data.message || 'Template berkas excel berhasil diunggah!');
-        fetchTemplates();
-      } else {
-        triggerMessage(data.message || 'Gagal mengunggah template.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    } finally {
-      setUploadingType(null);
-      if (e.target) e.target.value = '';
-    }
-  };
-
-  const getTemplateForType = (type: string) => {
-    return templates.find(t => t.type === type);
-  };
+/**
+ * Tab Pengunggahan Template Import Excel Kustom.
+ */
+export default function TemplatesTab({ triggerMessage }: TemplatesTabProps) {
+  const {
+    loading,
+    uploadingType,
+    handleFileUpload,
+    getTemplateForType
+  } = useTemplatesTab(triggerMessage);
 
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 space-y-6 shadow-sm">

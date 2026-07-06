@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { cmsDashboardService } from '../services/cmsDashboardService';
 
 interface KpiDeleteModalProps {
   isOpen: boolean;
@@ -10,6 +11,9 @@ interface KpiDeleteModalProps {
   triggerMessage: (msg: string, type?: 'success' | 'error') => void;
 }
 
+/**
+ * Komponen Modal Konfirmasi Hapus Kategori KPI.
+ */
 export default function KpiDeleteModal({
   isOpen,
   onClose,
@@ -23,16 +27,10 @@ export default function KpiDeleteModal({
     if (!category) return;
     try {
       setIsDeleteLoading(true);
-      const res = await fetch(`/api/cms/weights/${encodeURIComponent(category)}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        triggerMessage('Kategori berhasil dihapus.', 'success');
-        onClose();
-        onSuccess();
-      } else {
-        triggerMessage('Gagal menghapus kategori.', 'error');
-      }
+      await cmsDashboardService.deleteWeightCategory(category);
+      triggerMessage('Kategori berhasil dihapus.', 'success');
+      onClose();
+      onSuccess();
     } catch {
       triggerMessage('Terjadi kesalahan.', 'error');
     } finally {

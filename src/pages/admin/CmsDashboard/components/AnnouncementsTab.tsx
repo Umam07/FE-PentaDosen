@@ -1,94 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Plus, Megaphone, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAnnouncementsTab } from '../hooks/useAnnouncementsTab';
 import AnnouncementDeleteModal from './AnnouncementDeleteModal';
 
-export default function AnnouncementsTab({ triggerMessage, user }: { triggerMessage: (text: string, type?: 'success' | 'error') => void, user: any }) {
-  const [announcements, setAnnouncements] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+interface AnnouncementsTabProps {
+  triggerMessage: (text: string, type?: 'success' | 'error') => void;
+  user: { id: string | number };
+}
 
-  // Form states
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [isActive, setIsActive] = useState(true);
-  const [expiresAt, setExpiresAt] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [isOpenForm, setIsOpenForm] = useState(false);
-
-  // Delete state
-  const [deleteAnnouncement, setDeleteAnnouncement] = useState<any | null>(null);
-
-  const fetchAnnouncements = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/cms/announcements');
-      const data = await res.json();
-      setAnnouncements(data.announcements || []);
-    } catch (e) {
-      triggerMessage('Gagal mengambil data pengumuman.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAnnouncements();
-  }, []);
-
-  const handleOpenCreate = () => {
-    setEditingId(null);
-    setTitle('');
-    setContent('');
-    setIsActive(true);
-    setExpiresAt('');
-    setIsOpenForm(true);
-  };
-
-  const handleOpenEdit = (a: any) => {
-    setEditingId(a.id);
-    setTitle(a.title);
-    setContent(a.content);
-    setIsActive(a.is_active);
-    setExpiresAt(a.expires_at ? a.expires_at.substring(0, 10) : '');
-    setIsOpenForm(true);
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      const url = editingId ? `/api/cms/announcements/${editingId}` : '/api/cms/announcements';
-      const method = editingId ? 'PUT' : 'POST';
-      const payload = {
-        title,
-        content,
-        is_active: isActive,
-        expires_at: expiresAt || null,
-        created_by: user.id
-      };
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (res.ok) {
-        triggerMessage(data.message || 'Pengumuman berhasil disimpan!');
-        setIsOpenForm(false);
-        fetchAnnouncements();
-      } else {
-        triggerMessage(data.message || 'Gagal menyimpan pengumuman.', 'error');
-      }
-    } catch (e) {
-      triggerMessage('Terjadi kesalahan.', 'error');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-
+/**
+ * Tab Manajemen Pengumuman Aktif.
+ */
+export default function AnnouncementsTab({ triggerMessage, user }: AnnouncementsTabProps) {
+  const {
+    announcements,
+    loading,
+    editingId,
+    title,
+    setTitle,
+    content,
+    setContent,
+    isActive,
+    setIsActive,
+    expiresAt,
+    setExpiresAt,
+    saving,
+    isOpenForm,
+    setIsOpenForm,
+    deleteAnnouncement,
+    setDeleteAnnouncement,
+    handleOpenCreate,
+    handleOpenEdit,
+    handleSave,
+    fetchAnnouncements
+  } = useAnnouncementsTab(triggerMessage, user);
 
   return (
     <div className="space-y-6">
@@ -190,7 +136,7 @@ export default function AnnouncementsTab({ triggerMessage, user }: { triggerMess
                     placeholder="Judul info..."
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
                   />
                 </div>
 
@@ -202,7 +148,7 @@ export default function AnnouncementsTab({ triggerMessage, user }: { triggerMess
                     placeholder="Tuliskan detail pengumuman..."
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 resize-none"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 resize-none"
                   />
                 </div>
 
