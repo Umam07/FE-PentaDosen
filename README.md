@@ -1,7 +1,7 @@
 # 🚀 PentaDosen 2.0
 
 <p align="center">
-  <img src="public/pentadosen_banner.png" alt="PentaDosen 2.0 Banner" width="100%" />
+  <img src="public/PentaDosen-2-0-07-06-2026_05_02_PM.webp" alt="PentaDosen 2.0 Preview" width="100%" />
 </p>
 
 <p align="center">
@@ -67,24 +67,69 @@ Dasbor dirancang dengan fokus pada ketajaman informasi dan visual yang memikat:
 
 ## 📂 Struktur Folder Proyek
 
+Proyek ini mengikuti arsitektur **feature-based** yang terorganisir rapi, memisahkan setiap lapisan (UI, logika, dan routing) agar mudah dipelihara dan dikembangkan.
+
 ```text
 FE-PentaDosen/
-├── public/                # Aset media statis (Logo, Banner, dll.)
-└── src/
-    ├── components/        # Komponen UI global & Reusable
-    │   ├── Home/          # Komponen khusus halaman Landing
-    │   ├── layout/        # Komponen kerangka dashboard (Sidebar, Header, Shell)
-    │   └── ui/            # Komponen dasar atomik (Button, Dialog, Badge, Input)
-    ├── lib/               # Utility helper & helper konfigurasi client
-    ├── pages/             # Halaman-halaman utama (Views)
-    │   ├── admin/         # Modul halaman Administrator (Verification, Sync, Logs, dll.)
-    │   ├── auth/          # Alur otentikasi (Login, Register, Sandi)
-    │   ├── dosen/         # Modul halaman Dosen (Research, Publication, HKI, Buku)
-    │   ├── profilediri/   # Halaman pengaturan profil lengkap dosen
-    │   └── Home.tsx       # Landing Page utama
-    ├── App.tsx            # Peta rute (Routing) & State global
-    ├── index.css          # Pendaftaran CSS sistem desain & Tailwind directive
-    └── main.tsx           # Titik masuk (Entry point) React
+│
+├── public/                         # 🌐 Aset statis publik (tidak diproses Vite)
+│   ├── cubes.png                   #    Aset dekoratif latar belakang
+│   └── PentaDosen-2-0-*.webp       #    Screenshot / preview aplikasi
+│
+└── src/                            # 🧠 Inti kode sumber aplikasi
+    │
+    ├── components/                 # 🧩 Komponen UI global & reusable
+    │   ├── Home/                   #    Seksi-seksi Landing Page (Hero, Features, dll.)
+    │   ├── layout/                 #    Kerangka struktural dashboard
+    │   │   ├── Layout.tsx          #      Shell utama (Sidebar + Topbar + Outlet)
+    │   │   ├── Sidebar.tsx         #      Navigasi samping adaptif (dosen & admin)
+    │   │   ├── Topbar.tsx          #      Header atas (profil, notifikasi, tema)
+    │   │   ├── ThemeToggle.tsx     #      Tombol sakelar Light/Dark Mode
+    │   │   └── ScrollToTop.tsx     #      Otomatis scroll ke atas saat berpindah halaman
+    │   └── ui/                     #    Komponen atomik dasar (Button, Dialog, Badge, Input, dll.)
+    │
+    ├── lib/                        # 🔩 Utilitas & helper umum
+    │   └── utils.ts                #    Fungsi pembantu (cn, formatter, dll.)
+    │
+    ├── pages/                      # 📄 Halaman-halaman utama (Views / Screens)
+    │   │
+    │   ├── auth/                   # 🔒 Alur Otentikasi
+    │   │   ├── Login.tsx           #    Halaman masuk dosen via LDAP
+    │   │   └── AdminLogin.tsx      #    Halaman masuk khusus administrator
+    │   │
+    │   ├── dosen/                  # 👨‍🏫 Modul Portal Dosen
+    │   │   ├── dashboard/          #    Dashboard utama dosen (statistik angka kredit)
+    │   │   ├── research/           #    Manajemen dokumen Penelitian
+    │   │   ├── publication/        #    Manajemen dokumen Publikasi & Jurnal
+    │   │   ├── hki/                #    Manajemen dokumen HKI (Paten, Hak Cipta)
+    │   │   ├── buku/               #    Manajemen dokumen Buku & Monograf
+    │   │   └── FaqHelp.tsx         #    Pusat bantuan & pertanyaan umum
+    │   │
+    │   ├── admin/                  # 👑 Modul Portal Administrator
+    │   │   ├── CmsDashboard/       #    Dasbor ringkasan statistik seluruh sistem
+    │   │   ├── Verification/       #    Antrian verifikasi & tindakan approve/reject
+    │   │   ├── LecturerProfile/    #    Halaman profil lengkap dosen (dari sudut admin)
+    │   │   ├── Lecturers/          #    Direktori & daftar seluruh dosen
+    │   │   ├── ActivityLogs/       #    Audit log aktivitas administrasi sistem
+    │   │   ├── AdminAllDocuments.tsx  # Pusat kontrol seluruh dokumen dosen
+    │   │   ├── AdminInputDocument.tsx # Form input dokumen manual oleh admin
+    │   │   └── AdminSync.tsx       #    Modul sinkronisasi data eksternal
+    │   │
+    │   ├── dashboard/              # 📊 Modul Dashboard Analitik (shared/admin)
+    │   │   ├── Insights/           #    Halaman analitik & insight data dosen
+    │   │   ├── DepartementList/    #    Daftar & statistik per departemen/prodi
+    │   │   ├── LecturerList/       #    Tabel daftar dosen dengan filter & pencarian
+    │   │   └── LecturerProfileInsights/ # Detail insight kinerja per individu dosen
+    │   │
+    │   ├── profilediri/            # 👤 Halaman Profil Diri Dosen
+    │   │   ├── Profile.tsx         #    Tampilan & editor data profil utama
+    │   │   └── DetailInformasi.tsx #    Detail informasi akademik & kepangkatan
+    │   │
+    │   └── Home.tsx                # 🏠 Landing Page utama aplikasi
+    │
+    ├── App.tsx                     # 🗺️ Peta rute (Routing map) & konfigurasi global
+    ├── index.css                   # 🎨 Konfigurasi Tailwind, CSS variabel tema, & font
+    └── main.tsx                    # ⚡ Entry point React (render ke DOM)
 ```
 
 ---
