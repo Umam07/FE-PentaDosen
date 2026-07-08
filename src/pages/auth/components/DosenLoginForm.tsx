@@ -21,7 +21,6 @@ export function DosenLoginForm({ isAdmin, setUser, onToggleMode }: DosenLoginFor
     setShowPassword,
     loading,
     handleDosenLogin,
-    handleSelectDosenShortcut,
   } = useDosenLogin(setUser);
 
   return (
@@ -159,40 +158,6 @@ export function DosenLoginForm({ isAdmin, setUser, onToggleMode }: DosenLoginFor
           <ShieldCheck className="w-4 h-4 text-primary-600 dark:text-primary-400" />
           Portal Login Administrator
         </button>
-
-        {/* Dev shortcut section */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800/80">
-          <div className="flex items-center gap-2 mb-3">
-            <ShieldCheck className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-              Akun Dummy · Local DB
-            </span>
-          </div>
-          <div className="space-y-2.5">
-            {[
-              { username: 'dosen1@univ.edu', role: 'Dosen Access' },
-            ].map((acc, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => handleSelectDosenShortcut(acc.username)}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 hover:border-primary-500 dark:hover:border-primary-500 hover:bg-white dark:hover:bg-slate-950 transition-all duration-200 group cursor-pointer text-left"
-              >
-                <div>
-                  <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-wider">
-                    {acc.role}
-                  </p>
-                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                    {acc.username}
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-all duration-200 translate-x-0 group-hover:translate-x-1">
-                  Pilih →
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -21,14 +21,13 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
     setShowAdminPassword,
     adminLoading,
     handleAdminLogin,
-    handleSelectAdminShortcut,
   } = useAdminLogin(setUser);
 
   return (
     <div className={`absolute top-0 bottom-0 w-full lg:w-[56%] flex flex-col justify-center items-center px-5 py-10 sm:px-10 lg:px-16 transition-all duration-700 ease-in-out ${
       isAdmin 
         ? 'left-0 lg:left-0 opacity-100 z-10 pointer-events-auto' 
-        : 'left-[100%] opacity-0 z-0 pointer-events-none'
+        : 'left-[100%] lg:left-[56%] opacity-0 z-0 pointer-events-none'
     }`}>
       <div className="w-full max-w-[400px] mt-10 lg:mt-0">
         {/* Mobile-only brand */}
@@ -44,10 +43,10 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
         {/* Heading */}
         <div className="mb-8">
           <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
-            Secure Admin Login
+            Administrator Portal
           </h2>
           <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-            Gunakan kredensial Administrator Anda untuk melanjutkan.
+            Silakan masuk menggunakan kredensial admin sistem Anda.
           </p>
         </div>
 
@@ -57,7 +56,7 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
           {/* Username field */}
           <div className="space-y-2">
             <label htmlFor="adminUsername" className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Admin Username / Email
+              Email / Username
             </label>
             <div className="relative group flex items-center border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 focus-within:border-primary-600 dark:focus-within:border-primary-500 focus-within:bg-white dark:focus-within:bg-slate-950 transition-all duration-200">
               <div className="absolute left-3.5 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-500 transition-colors pointer-events-none">
@@ -70,7 +69,7 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
                 value={adminUsername}
                 onChange={(e) => setAdminUsername(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 outline-none border-none font-medium"
-                placeholder="username"
+                placeholder="admin@univ.edu"
               />
             </div>
           </div>
@@ -78,7 +77,7 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
           {/* Password field */}
           <div className="space-y-2">
             <label htmlFor="adminPassword" className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              LDAP Password
+              Password
             </label>
             <div className="relative group flex items-center border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 focus-within:border-primary-600 dark:focus-within:border-primary-500 focus-within:bg-white dark:focus-within:bg-slate-950 transition-all duration-200">
               <div className="absolute left-3.5 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-500 transition-colors pointer-events-none">
@@ -147,42 +146,6 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
           <UserIcon className="w-4 h-4 text-primary-600 dark:text-primary-400" />
           Portal Login Dosen
         </button>
-
-        {/* Dev shortcut section */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800/80">
-          <div className="flex items-center gap-2 mb-3">
-            <ShieldCheck className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-              Akun Dummy Admin · Local DB
-            </span>
-          </div>
-          <div className="space-y-2.5">
-            {[
-              { username: 'superadmin@univ.edu', role: 'Super Admin Access' },
-              { username: 'penelitian@univ.edu', role: 'Admin Penelitian Access' },
-              { username: 'fakultas@univ.edu', role: 'Admin Fakultas Access' }
-            ].map((acc, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => handleSelectAdminShortcut(acc.username)}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 hover:border-primary-500 dark:hover:border-primary-500 hover:bg-white dark:hover:bg-slate-950 transition-all duration-200 group cursor-pointer text-left"
-              >
-                <div>
-                  <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-wider">
-                    {acc.role}
-                  </p>
-                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                    {acc.username}
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-all duration-200 translate-x-0 group-hover:translate-x-1">
-                  Pilih →
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
