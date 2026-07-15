@@ -23,6 +23,14 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
     handleAdminLogin,
   } = useAdminLogin(setUser);
 
+  const [showDemo, setShowDemo] = React.useState(false);
+
+  const demoAdmins = [
+    { email: 'superadmin@univ.edu', password: 'P3nt4D0s3nSuper@2026!', label: 'Super Admin', role: 'Super Admin' },
+    { email: 'penelitian@univ.edu', password: 'password', label: 'Admin LPPM', role: 'LPPM' },
+    { email: 'fakultas@univ.edu', password: 'password', label: 'Admin Fakultas', role: 'Fakultas (FTI)' },
+  ];
+
   return (
     <div className={`absolute top-0 bottom-0 w-full lg:w-[56%] flex flex-col justify-center items-center px-5 py-10 sm:px-10 lg:px-16 transition-all duration-700 ease-in-out ${
       isAdmin 
@@ -129,6 +137,44 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
             {adminLoading ? 'Memproses...' : 'Admin Login'}
           </button>
         </form>
+
+        {/* Demo Accounts Quick-Fill */}
+        <div className="mt-4 pt-4 border-t border-dashed border-slate-200 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={() => setShowDemo(!showDemo)}
+            className="w-full flex items-center justify-between text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              Gunakan Akun Demo Admin
+            </span>
+            <span>{showDemo ? 'Sembunyikan' : 'Tampilkan'}</span>
+          </button>
+          
+          {showDemo && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 animate-fadeIn">
+              {demoAdmins.map((acc) => (
+                <button
+                  key={acc.email}
+                  type="button"
+                  onClick={() => {
+                    setAdminUsername(acc.email);
+                    setAdminPassword(acc.password);
+                  }}
+                  className="text-left p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-primary-500 dark:hover:border-primary-500 hover:bg-primary-50/50 dark:hover:bg-primary-950/20 transition-all cursor-pointer group"
+                >
+                  <p className="text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+                    {acc.label}
+                  </p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+                    {acc.role}
+                  </p>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Divider */}
         <div className="relative flex py-3 items-center my-4">
