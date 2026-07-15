@@ -30,6 +30,9 @@ export default function LecturerDashboard({ user }: { user: any }) {
     apiPoints,
     internalPoints,
     grandTotal,
+    apiPointsThisYear,
+    internalPointsThisYear,
+    grandTotalThisYear,
     filteredDocs,
     scholarChartData,
     scopusChartData
@@ -119,14 +122,14 @@ export default function LecturerDashboard({ user }: { user: any }) {
 
   const statsLocal = [
     { 
-      label: 'Total KPI', 
+      label: 'Total KPI Overall', 
       val: grandTotal.toLocaleString(), 
       icon: Award, 
       color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
     },
     { 
-      label: 'Poin (External)',
-      val: apiPoints.total.toLocaleString(),
+      label: 'Total KPI Tahun Ini',
+      val: grandTotalThisYear.toLocaleString(),
       icon: Globe, 
       color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
     },

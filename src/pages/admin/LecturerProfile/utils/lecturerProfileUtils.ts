@@ -18,7 +18,9 @@ export function calculateKPIStats(
 ): StatCard[] {
   const publications = profile?.publications || [];
   const scopusPublications = profile?.scopusPublications || [];
+  const currentYear = 2026; // Tahun KPI aktif saat ini
 
+  // --- 1. OVERALL CALCULATION ---
   const crossTitles = new Set(
     (publications || []).filter(sd => 
       (scopusPublications || []).some(s => normalizeTitle(s.title) === normalizeTitle(sd.title))
@@ -45,18 +47,46 @@ export function calculateKPIStats(
       .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
   );
 
-  const grandTotal = extTotal + internalTotal;
+  // --- 2. THIS YEAR (2026) CALCULATION ---
+  const publicationsThisYear = (publications || []).filter(p => Number(p.year) === currentYear);
+  const scopusThisYear = (scopusPublications || []).filter(s => Number(s.year) === currentYear);
+
+  const crossTitlesThisYear = new Set(
+    publicationsThisYear
+      .filter(sd => scopusThisYear.some(s => normalizeTitle(s.title) === normalizeTitle(sd.title)))
+      .map(d => normalizeTitle(d.title))
+  );
+
+  const extCrossThisYear = scopusThisYear
+    .filter(s => crossTitlesThisYear.has(normalizeTitle(s.title)))
+    .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+  const extScopusThisYear = scopusThisYear
+    .filter(s => !crossTitlesThisYear.has(normalizeTitle(s.title)))
+    .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+  const extScholarThisYear = publicationsThisYear
+    .filter(s => !crossTitlesThisYear.has(normalizeTitle(s.title)))
+    .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+
+  const apiThisYear = Math.round(extCrossThisYear + extScopusThisYear + extScholarThisYear);
+
+  const internalThisYear = Math.round(
+    (internalDocuments || [])
+      .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '' && new Date(d.published_at).getFullYear() === currentYear)
+      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
+  );
 
   return [
     { 
-      label: 'Total KPI', 
-      val: grandTotal.toLocaleString(), 
+      label: 'Total KPI Overall', 
+      val: (extTotal + internalTotal).toLocaleString(), 
       icon: Award, 
       color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
     },
     { 
-      label: 'Poin (External)',
-      val: extTotal.toLocaleString(),
+      label: 'Total KPI Tahun Ini',
+      val: (apiThisYear + internalThisYear).toLocaleString(),
       icon: Globe, 
       color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
     },

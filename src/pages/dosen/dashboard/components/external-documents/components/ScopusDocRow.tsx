@@ -300,7 +300,7 @@ export default function ScopusDocRow({
                     <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
                     <p className="text-[9px] font-bold text-orange-500">{bd.pctStr}</p>
                   </div>
-                  <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.basePoints.toFixed(2)}</span>
+                  <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{Math.round(bd.basePoints)}</span>
                 </div>
                 {bd.totalAuthors > 1 && (
                   <div className="flex justify-between items-center py-1 gap-2">

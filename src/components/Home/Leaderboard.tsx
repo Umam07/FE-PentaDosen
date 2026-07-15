@@ -51,7 +51,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3">
               <Trophy className="w-6 h-6 text-amber-500" />
-              <HeadingTag className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat</HeadingTag>
+              <HeadingTag className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat Tahun Ini</HeadingTag>
             </div>
             <button 
               onClick={() => navigate('/lecturers')}
@@ -203,7 +203,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
             transition={{ duration: 0.5 }}
             className="text-4xl md:text-6xl font-black text-gray-900 dark:text-white tracking-tight leading-none mb-6"
           >
-            Leaderboard <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400">Dosen Terbaik</span>
+            Leaderboard <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400">Dosen Terbaik Tahun Ini</span>
           </motion.h2>
           
           <motion.p
@@ -213,7 +213,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg md:text-xl font-medium text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed"
           >
-            Apresiasi performa dosen dengan poin KPI tertinggi dan kontribusi riset teraktif.
+            Apresiasi performa dosen dengan poin KPI tertinggi dan kontribusi riset teraktif pada tahun ini.
           </motion.p>
         </div>
 

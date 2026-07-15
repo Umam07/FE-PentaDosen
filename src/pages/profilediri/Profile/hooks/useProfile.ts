@@ -104,6 +104,9 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     if (!user) return null;
 
     const normalizeT = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const currentYear = 2026; // Tahun KPI aktif saat ini
+
+    // --- 1. OVERALL CALCULATION ---
     const crossTitles = new Set(
       (publications || [])
         .filter((sd) => (scopusPublications || []).some((s) => normalizeT(s.title) === normalizeT(sd.title)))
@@ -127,18 +130,46 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
         .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
     );
 
-    const grandTotal = extTotal + internalTotal;
+    // --- 2. THIS YEAR (2026) CALCULATION ---
+    const publicationsThisYear = (publications || []).filter(p => Number(p.year) === currentYear);
+    const scopusThisYear = (scopusPublications || []).filter(s => Number(s.year) === currentYear);
+
+    const crossTitlesThisYear = new Set(
+      publicationsThisYear
+        .filter(sd => scopusThisYear.some(s => normalizeT(s.title) === normalizeT(sd.title)))
+        .map(d => normalizeT(d.title))
+    );
+
+    const extCrossThisYear = scopusThisYear
+      .filter(s => crossTitlesThisYear.has(normalizeT(s.title)))
+      .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+    const extScopusThisYear = scopusThisYear
+      .filter(s => !crossTitlesThisYear.has(normalizeT(s.title)))
+      .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+    const extScholarThisYear = publicationsThisYear
+      .filter(s => !crossTitlesThisYear.has(normalizeT(s.title)))
+      .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+
+    const apiThisYear = Math.round(extCrossThisYear + extScopusThisYear + extScholarThisYear);
+
+    const internalThisYear = Math.round(
+      (internalDocuments || [])
+        .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '' && new Date(d.published_at).getFullYear() === currentYear)
+        .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
+    );
 
     return [
       {
-        label: 'Total KPI',
-        val: grandTotal.toLocaleString(),
+        label: 'Total KPI Overall',
+        val: (extTotal + internalTotal).toLocaleString(),
         icon: Award,
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
       },
       {
-        label: 'Poin (External)',
-        val: extTotal.toLocaleString(),
+        label: 'Total KPI Tahun Ini',
+        val: (apiThisYear + internalThisYear).toLocaleString(),
         icon: Globe,
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400',
       },

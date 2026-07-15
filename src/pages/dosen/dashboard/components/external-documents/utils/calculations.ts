@@ -115,7 +115,9 @@ export const calculateScopusBreakdown = (pub: any): ScopusBreakdown => {
     }
   }
 
-  const totalPoints = Math.round(awardedPoints * 100) / 100;
+  const totalPoints = pub.awarded_points !== undefined && pub.awarded_points !== null 
+    ? Number(pub.awarded_points) 
+    : Math.round(awardedPoints);
 
   return {
     basePoints: totalPoints,

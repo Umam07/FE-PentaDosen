@@ -73,6 +73,9 @@ export default function useLecturerDashboard(user: any) {
     return internalDocumentsOnly.filter(doc => doc.status === 'Approved');
   }, [internalDocumentsOnly]);
 
+  const currentYear = 2026;
+
+  // --- 1. OVERALL CALCULATION ---
   const apiPoints = useMemo(() => {
     if (!profileData) return { total: 0, scopus: 0, scholar: 0 };
     
@@ -100,6 +103,44 @@ export default function useLecturerDashboard(user: any) {
   }, [approvedDocs]);
 
   const grandTotal = apiPoints.total + internalPoints;
+
+  // --- 2. THIS YEAR (2026) CALCULATION ---
+  const apiPointsThisYear = useMemo(() => {
+    if (!profileData) return { total: 0, scopus: 0, scholar: 0 };
+    
+    const publications = (profileData.publications || []).filter((p: any) => Number(p.year) === currentYear);
+    const scopusPublications = (profileData.scopusPublications || []).filter((s: any) => Number(s.year) === currentYear);
+
+    const crossTitles = new Set(
+      (publications || []).filter((sd: any) => 
+        (scopusPublications || []).some((s: any) => normalizeTitle(s.title) === normalizeTitle(sd.title))
+      ).map((d: any) => normalizeTitle(d.title))
+    );
+    
+    const scopusPts = (scopusPublications || []).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const scholarPts = (publications || [])
+        .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)))
+        .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+    
+    return {
+      total: Math.round(scopusPts + scholarPts),
+      scopus: Math.round(scopusPts),
+      scholar: Math.round(scholarPts)
+    };
+  }, [profileData]);
+
+  const internalPointsThisYear = useMemo(() => {
+    return Math.round(
+      approvedDocs
+        .filter((doc) => {
+          const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : doc.tahun_pelaksanaan;
+          return Number(docYear) === currentYear;
+        })
+        .reduce((acc, doc) => acc + (Number(doc.awarded_points) || 0), 0)
+    );
+  }, [approvedDocs]);
+
+  const grandTotalThisYear = apiPointsThisYear.total + internalPointsThisYear;
 
   const filteredDocs = useMemo(() => {
     const base = internalDocumentsOnly;
@@ -210,6 +251,9 @@ export default function useLecturerDashboard(user: any) {
     apiPoints,
     internalPoints,
     grandTotal,
+    apiPointsThisYear,
+    internalPointsThisYear,
+    grandTotalThisYear,
     filteredDocs,
     stats,
     scholarChartData,

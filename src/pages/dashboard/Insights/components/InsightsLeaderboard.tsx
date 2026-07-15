@@ -27,7 +27,7 @@ export default function InsightsLeaderboard({
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <Trophy className="w-6 h-6 text-amber-500" />
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat Tahun Ini</h2>
           </div>
           <button 
             onClick={onViewAllClick}
