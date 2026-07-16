@@ -35,7 +35,7 @@ export default function VerificationFilter({
                 Queue Verifikasi {getTabText()}
               </h3>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-                {userRole === 'admin lppm' ? 'Penelitian' : 'Fakultas'} • Pending Approval
+                {userRole === 'admin penelitian' ? 'Penelitian' : 'Fakultas'} • Pending Approval
               </p>
            </div>
          </div>
@@ -53,7 +53,7 @@ export default function VerificationFilter({
               />
             </div>
 
-            {userRole === 'admin lppm' && (
+            {userRole === 'admin penelitian' && (
               <DropdownSelect
                 value={selectedFakultas}
                 onChange={onFakultasChange}

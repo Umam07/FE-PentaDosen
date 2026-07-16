@@ -29,7 +29,7 @@ export function useDosenLogin(setUser: (user: User) => void) {
     try {
       const data = await authService.login(username, password);
       const role = data.user.role;
-      const isAdminUser = ['super admin', 'admin lppm', 'admin fakultas', 'reviewer'].includes(role);
+      const isAdminUser = ['super admin', 'admin penelitian', 'admin fakultas', 'reviewer'].includes(role);
 
       if (isAdminUser) {
         // Melakukan logout paksa jika akun admin mencoba login melalui portal dosen

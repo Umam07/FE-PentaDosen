@@ -15,7 +15,7 @@ export default function AdminActivityLogs() {
   const { user } = useOutletContext<{ user: SessionUser }>();
 
   // Memastikan bahwa hanya admin LPPM atau admin Fakultas yang dapat mengakses halaman ini
-  if (user?.role !== 'admin lppm' && user?.role !== 'admin fakultas') {
+  if (user?.role !== 'admin penelitian' && user?.role !== 'admin fakultas') {
     return <AccessDenied />;
   }
 

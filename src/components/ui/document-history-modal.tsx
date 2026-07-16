@@ -61,7 +61,7 @@ function getStepConfig(action: string) {
       label: 'Admin Fakultas',
     };
   }
-  if (a.includes('disetujui') || a.includes('approved') || a.includes('lppm')) {
+  if (a.includes('disetujui') || a.includes('approved') || a.includes('lppm') || a.includes('penelitian')) {
     return {
       icon: ShieldCheck,
       bgGradient: 'from-emerald-500 to-emerald-600',
@@ -69,7 +69,7 @@ function getStepConfig(action: string) {
       cardBg: 'bg-emerald-50/60 dark:bg-emerald-950/20',
       cardBorder: 'border-emerald-100 dark:border-emerald-900/30',
       badgeBg: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
-      label: 'Admin LPPM',
+      label: 'Admin Penelitian',
     };
   }
   if (a.includes('ditolak') || a.includes('reject')) {
@@ -80,7 +80,7 @@ function getStepConfig(action: string) {
       cardBg: 'bg-red-50/60 dark:bg-red-950/20',
       cardBorder: 'border-red-100 dark:border-red-900/30',
       badgeBg: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
-      label: a.includes('lppm') ? 'Admin LPPM' : 'Admin Fakultas',
+      label: a.includes('lppm') || a.includes('penelitian') ? 'Admin Penelitian' : 'Admin Fakultas',
     };
   }
   return {
@@ -97,7 +97,7 @@ function getStepConfig(action: string) {
 function getRoleIcon(role?: string) {
   if (!role) return User;
   const r = role.toLowerCase();
-  if (r.includes('lppm')) return University;
+  if (r.includes('lppm') || r.includes('penelitian')) return University;
   if (r.includes('fakultas')) return Building2;
   return User;
 }

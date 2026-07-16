@@ -273,7 +273,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
     }
 
     const isDosen = currentUser.role === 'dosen';
-    const isAdmin = currentUser.role === 'admin lppm' || currentUser.role === 'admin fakultas';
+    const isAdmin = currentUser.role === 'admin penelitian' || currentUser.role === 'admin fakultas';
     const isSuperAdmin = currentUser.role === 'super admin';
 
     const isResearch =

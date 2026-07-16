@@ -531,7 +531,7 @@ export default function AdminAllDocuments() {
               </div>
 
               {/* Fakultas Filter Component */}
-              {user?.role === 'admin lppm' && (
+              {user?.role === 'admin penelitian' && (
                 <DropdownSelect
                   value={selectedFakultas}
                   onChange={setSelectedFakultas}

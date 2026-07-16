@@ -27,7 +27,7 @@ export function AdminLoginForm({ isAdmin, setUser, onToggleMode }: AdminLoginFor
 
   const demoAdmins = [
     { email: 'superadmin@univ.edu', password: 'P3nt4D0s3nSuper@2026!', label: 'Super Admin', role: 'Super Admin' },
-    { email: 'penelitian@univ.edu', password: 'password', label: 'Admin LPPM', role: 'LPPM' },
+    { email: 'penelitian@univ.edu', password: 'password', label: 'Admin Penelitian', role: 'Penelitian' },
     { email: 'fakultas@univ.edu', password: 'password', label: 'Admin Fakultas', role: 'Fakultas (FTI)' },
   ];
 

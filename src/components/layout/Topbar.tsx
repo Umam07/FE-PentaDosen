@@ -37,7 +37,7 @@ export default function Topbar({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user?.role === 'admin lppm' || user?.role === 'admin fakultas') {
+    if (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') {
       fetch('/api/admin/lecturers')
         .then(res => res.json())
         .then(data => setLecturers(data.lecturers || []))
@@ -66,7 +66,7 @@ export default function Topbar({
   const menuItems = user?.role === 'super admin' ? [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Panel CMS', path: '/admin/cms', icon: ShieldAlert, category: 'Menu' },
-  ] : (user?.role === 'admin lppm' || user?.role === 'admin fakultas') ? [
+  ] : (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') ? [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Verifikasi Dokumen', path: '/admin/verify', icon: BadgeCheck, category: 'Menu' },
     { title: 'Kelola Dosen', path: '/admin/lecturers', icon: Users, category: 'Menu' },
@@ -77,7 +77,7 @@ export default function Topbar({
     { title: 'Dokumen Saya', path: '/documents', icon: BookOpen, category: 'Menu' },
   ];
 
-  const dynamicItems = (user?.role === 'admin lppm' || user?.role === 'admin fakultas') 
+  const dynamicItems = (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') 
     ? lecturers.map((l: any) => ({
         title: l.name,
         path: `/admin/lecturers/${l.id}`,
@@ -170,7 +170,7 @@ export default function Topbar({
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
               <p className="text-[10px] font-bold text-slate-650 dark:text-slate-400 uppercase tracking-widest">
-                {user?.role === 'super admin' ? 'Super Admin' : user?.role === 'admin lppm' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
+                {user?.role === 'super admin' ? 'Super Admin' : user?.role === 'admin penelitian' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
               </p>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block`} />

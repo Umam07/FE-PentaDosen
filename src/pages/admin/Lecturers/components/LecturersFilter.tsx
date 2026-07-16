@@ -20,7 +20,7 @@ export default function LecturersFilter({
           </div>
           <div>
             <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Eksplorasi Profil</h3>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Daftar Dosen di Lingkungan {userRole === 'admin lppm' ? 'Universitas' : 'Fakultas'}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Daftar Dosen di Lingkungan {userRole === 'admin penelitian' ? 'Universitas' : 'Fakultas'}</p>
           </div>
         </div>
 
@@ -36,7 +36,7 @@ export default function LecturersFilter({
               disabled={loading}
             />
           </div>
-          {userRole === 'admin lppm' && (
+          {userRole === 'admin penelitian' && (
             <DropdownSelect
               value={selectedFakultas}
               onChange={onFakultasChange}

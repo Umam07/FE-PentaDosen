@@ -63,7 +63,7 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
     { label: "Buku", path: "/buku", icon: <Book className="h-4 w-4 text-pink-500" />, category: "Karya Ilmiah" },
     { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ],
-  "admin lppm": [
+  "admin penelitian": [
     { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
     { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4 text-emerald-500" />, category: "Persetujuan" },
     { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4 text-violet-500" />, category: "Dokumen" },
@@ -88,7 +88,7 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
 
 const roleLabels: Record<string, string> = {
   "dosen": "Dosen",
-  "admin lppm": "Admin LPPM",
+  "admin penelitian": "Admin Penelitian",
   "admin fakultas": "Admin Fak",
   "super admin": "Super Admin",
 };
@@ -191,8 +191,8 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", cl
             </CommandGroup>
           )}
 
-          {/* Lecturers search (hanya untuk admin LPPM / Fakultas) */}
-          {(resolvedRole === "admin lppm" || resolvedRole === "admin fakultas") && lecturerActions.length > 0 && (
+          {/* Lecturers search (hanya untuk admin Penelitian / Fakultas) */}
+          {(resolvedRole === "admin penelitian" || resolvedRole === "admin fakultas") && lecturerActions.length > 0 && (
             <CommandGroup heading="Daftar Dosen Terkait">
               {lecturerActions.map((act) => (
                 <CommandItem

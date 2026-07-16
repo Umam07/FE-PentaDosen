@@ -29,7 +29,7 @@ export function useAdminLogin(setUser: (user: User) => void) {
     try {
       const data = await authService.login(adminUsername, adminPassword);
       const role = data.user.role;
-      const isAdminUser = ['super admin', 'admin lppm', 'admin fakultas', 'reviewer'].includes(role);
+      const isAdminUser = ['super admin', 'admin penelitian', 'admin fakultas', 'reviewer'].includes(role);
 
       if (isAdminUser) {
         setUser(data.user);

@@ -67,7 +67,7 @@ export default function UsersTab({ triggerMessage }: UsersTabProps) {
             <option value="">Semua Role</option>
             <option value="dosen">Dosen</option>
             <option value="staf">Staf</option>
-            <option value="admin lppm">Admin Penelitian</option>
+            <option value="admin penelitian">Admin Penelitian</option>
             <option value="admin fakultas">Admin Fakultas</option>
             <option value="reviewer">Reviewer</option>
             <option value="super admin">Super Admin</option>
@@ -122,12 +122,12 @@ export default function UsersTab({ triggerMessage }: UsersTabProps) {
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
                       u.role === 'super admin' ? 'bg-red-50 text-red-700 border-red-100' :
-                      u.role === 'admin lppm' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                      u.role === 'admin penelitian' ? 'bg-blue-50 text-blue-700 border-blue-100' :
                       u.role === 'admin fakultas' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
                       u.role === 'reviewer' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                       'bg-gray-50 text-gray-600 border-gray-100'
                     }`}>
-                      {u.role === 'admin lppm' ? 'admin penelitian' : u.role}
+                      {u.role}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -260,7 +260,7 @@ export default function UsersTab({ triggerMessage }: UsersTabProps) {
                   >
                     <option value="dosen">Dosen</option>
                     <option value="staf">Staf</option>
-                    <option value="admin lppm">Admin Penelitian</option>
+                    <option value="admin penelitian">Admin Penelitian</option>
                     <option value="admin fakultas">Admin Fakultas</option>
                     <option value="reviewer">Reviewer</option>
                     <option value="super admin">Super Admin</option>

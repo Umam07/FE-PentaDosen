@@ -23,10 +23,10 @@ export function ActionSearchBarDemo() {
       role: "dosen",
       avatar: "",
     },
-    "admin lppm": {
+    "admin penelitian": {
       id: 2,
-      name: "Siti Rahma, S.Kom. (LPPM)",
-      role: "admin lppm",
+      name: "Siti Rahma, S.Kom. (Penelitian)",
+      role: "admin penelitian",
       avatar: "",
     },
     "admin fakultas": {

@@ -1089,7 +1089,7 @@ export default function AdminSync() {
                 />
               </div>
               
-              {user?.role === 'admin lppm' && (
+              {user?.role === 'admin penelitian' && (
                 <DropdownSelect
                   value={selectedFakultas}
                   onChange={setSelectedFakultas}

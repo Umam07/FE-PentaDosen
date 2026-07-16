@@ -96,22 +96,22 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       roles: ['dosen'] 
     },
     // === ADMIN / PRODI ===
-    { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin lppm', 'admin fakultas'] },
+    { name: 'Semua Dokumen', path: '/admin/documents/all', icon: FolderOpen, roles: ['admin penelitian', 'admin fakultas'] },
     { 
       name: 'Verifikasi', 
       path: '/admin/verify', 
       icon: CheckSquare, 
-      roles: ['admin lppm', 'admin fakultas'] 
+      roles: ['admin penelitian', 'admin fakultas'] 
     },
     { 
       name: 'Dosen Mandiri', 
       path: '/admin/input-document', 
       icon: PlusCircle, 
-      roles: ['admin lppm', 'admin fakultas'] 
+      roles: ['admin penelitian', 'admin fakultas'] 
     },
-    { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin lppm', 'admin fakultas'] },
-    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin lppm'] },
-    { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin lppm', 'admin fakultas'] },
+    { name: 'Daftar Dosen', path: '/admin/lecturers', icon: Users, roles: ['admin penelitian', 'admin fakultas'] },
+    { name: 'Sinkronisasi', path: '/admin/sync', icon: RefreshCw, roles: ['admin penelitian'] },
+    { name: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: ['admin penelitian', 'admin fakultas'] },
     // === SYSTEM / CMS & HELP ===
     { 
       name: 'Panel CMS', 
@@ -123,7 +123,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       name: 'Bantuan & FAQ', 
       path: '/help', 
       icon: HelpCircle, 
-      roles: ['dosen', 'admin lppm', 'admin fakultas', 'super admin', 'staf', 'reviewer'] 
+      roles: ['dosen', 'admin penelitian', 'admin fakultas', 'super admin', 'staf', 'reviewer'] 
     },
   ];
 

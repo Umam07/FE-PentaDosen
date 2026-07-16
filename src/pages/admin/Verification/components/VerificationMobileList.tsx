@@ -22,7 +22,7 @@ export default function VerificationMobileList({
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Dosen Pengaju</p>
-                {userRole === 'admin lppm' && (
+                {userRole === 'admin penelitian' && (
                   <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50">
                     FAKULTAS VERIFIED
                   </span>

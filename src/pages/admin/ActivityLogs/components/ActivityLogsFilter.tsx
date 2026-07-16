@@ -24,7 +24,7 @@ export default function ActivityLogsFilter({
               Riwayat Log Sistem
             </h3>
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-              {userRole === 'admin lppm' ? 'Penelitian' : 'Fakultas'} • Audit Trail
+              {userRole === 'admin penelitian' ? 'Penelitian' : 'Fakultas'} • Audit Trail
             </p>
           </div>
         </div>

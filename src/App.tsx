@@ -36,7 +36,7 @@ const DepartementList = lazy(() => import('./pages/dashboard/DepartementList'));
 
 function DashboardRedirect({ user }: { user: any }) {
   if (!user) return <Navigate to="/login" />;
-  if (user.role === 'admin lppm' || user.role === 'admin fakultas') {
+  if (user.role === 'admin penelitian' || user.role === 'admin fakultas') {
     return <Navigate to="/admin/verify" />;
   }
   if (user.role === 'super admin') {
@@ -65,7 +65,7 @@ function AdminRedirect({ user, setUser }: { user: any; setUser: any }) {
   if (user.role === 'super admin') {
     return <Navigate to="/admin/cms" />;
   }
-  if (user.role === 'admin lppm' || user.role === 'admin fakultas') {
+  if (user.role === 'admin penelitian' || user.role === 'admin fakultas') {
     return <Navigate to="/admin/verify" />;
   }
 
@@ -214,13 +214,13 @@ export default function App() {
             <Route path="/research" element={user?.role === 'dosen' ? <Research user={user} /> : <Navigate to="/dashboard" />} />
             <Route path="/buku" element={user?.role === 'dosen' ? <Buku user={user} /> : <Navigate to="/dashboard" />} />
             <Route path="/hki" element={user?.role === 'dosen' ? <HKI user={user} /> : <Navigate to="/dashboard" />} />
-            <Route path="/admin/documents/all" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-            <Route path="/admin/verify" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-            <Route path="/admin/lecturers" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-            <Route path="/admin/lecturers/:id" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-            <Route path="/admin/sync" element={user ? (user.role === 'admin lppm' ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-            <Route path="/admin/input-document" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
-            <Route path="/admin/activity-logs" element={user ? ((user.role === 'admin lppm' || user.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+             <Route path="/admin/documents/all" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminAllDocuments /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/verify" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminVerification /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/lecturers" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminLecturers /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/lecturers/:id" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminLecturerProfile /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/sync" element={user ? (user.role === 'admin penelitian' ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/input-document" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/activity-logs" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/cms" element={user ? (user.role === 'super admin' ? <CmsDashboard user={user} /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/help" element={<FaqHelp user={user} />} />
             <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />

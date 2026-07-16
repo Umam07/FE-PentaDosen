@@ -57,7 +57,7 @@ export default function VerificationTable({
                   <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1.5">
                     {(activeTab === 'penelitian' ? item.user?.fakultas : item.fakultas) || 'N/A'}
                   </span>
-                  {userRole === 'admin lppm' && (
+                  {userRole === 'admin penelitian' && (
                     <div className="mt-1.5">
                       <span className="inline-flex items-center text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50">
                         FAKULTAS VERIFIED
