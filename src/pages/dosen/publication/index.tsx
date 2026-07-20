@@ -73,7 +73,7 @@ export default function Publication({ user }: { user: any }) {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Year filter
-  const [filterYear, setFilterYear] = useState<number | null>(new Date().getFullYear());
+  const [filterYear, setFilterYear] = useState<number | null>(null);
 
 
   useEffect(() => {
@@ -209,8 +209,18 @@ export default function Publication({ user }: { user: any }) {
   }, [documents, urlKategori, filterYear]);
 
   const availableYears = useMemo(() => {
-    return [new Date().getFullYear()];
-  }, []);
+    const years = new Set<number>();
+    years.add(new Date().getFullYear());
+    documents.forEach((d: any) => {
+      if (d.published_at) {
+        const y = new Date(d.published_at).getFullYear();
+        if (!isNaN(y)) {
+          years.add(y);
+        }
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [documents]);
 
   const stats = useMemo(() => {
     const src = filteredDocuments;

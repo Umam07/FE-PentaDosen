@@ -201,7 +201,14 @@ export default function PublicationTable({
 
                   {/* Aksi */}
                   <td className="px-4 py-4 text-center align-middle">
-                    {isDocLocked(doc) ? (
+                    {doc.source ? (
+                      <div className="flex items-center justify-center gap-1">
+                        <button type="button" onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
+                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-gray-400 hover:text-red-600 transition-all" title="Hapus Publikasi">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : isDocLocked(doc) ? (
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 text-[9px] font-black uppercase tracking-widest cursor-not-allowed" title="Dokumen sudah diverifikasi — tidak dapat diubah">
                         <Lock className="w-3 h-3" /> Terkunci
                       </span>
