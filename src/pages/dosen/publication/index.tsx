@@ -82,7 +82,30 @@ export default function Publication({ user }: { user: any }) {
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
   const [quartileFilter, setQuartileFilter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None'>('all');
+  const [crossIndexedOnly, setCrossIndexedOnly] = useState(false);
 
+  const crossTitlesSet = useMemo(() => {
+    const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const scopusTitles = documents
+      .filter((d: any) => d.source === 'scopus' || (d.category || '').toLowerCase() === 'jurnal internasional')
+      .map((d: any) => norm(d.title));
+    const scholarTitles = documents
+      .filter((d: any) => d.source === 'scholar' || (d.category || '').toLowerCase() === 'jurnal nasional')
+      .map((d: any) => norm(d.title));
+
+    const set = new Set<string>();
+    scopusTitles.forEach((t: string) => {
+      if (t && scholarTitles.includes(t)) {
+        set.add(t);
+      }
+    });
+    return set;
+  }, [documents]);
+
+  const crossIndexedCount = useMemo(() => {
+    const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    return documents.filter((d: any) => d.is_cross_indexed || crossTitlesSet.has(norm(d.title))).length;
+  }, [documents, crossTitlesSet]);
 
   useEffect(() => {
     fetchWeights();
@@ -102,6 +125,7 @@ export default function Publication({ user }: { user: any }) {
       setCategory(urlKategori);
       setFilterYear(null); // reset year filter when category changes
       setQuartileFilter('all');
+      setCrossIndexedOnly(false);
       setCurrentPage(1);
     }
   }, [urlKategori]);
@@ -263,8 +287,14 @@ export default function Publication({ user }: { user: any }) {
       });
     }
 
+    // Cross Indexed Filter
+    if (crossIndexedOnly) {
+      const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      result = result.filter((d: any) => d.is_cross_indexed || crossTitlesSet.has(norm(d.title)));
+    }
+
     return result;
-  }, [documents, urlKategori, filterYear, scopusFilter, articleFilter, quartileFilter]);
+  }, [documents, urlKategori, filterYear, scopusFilter, articleFilter, quartileFilter, crossIndexedOnly, crossTitlesSet]);
 
   const availableYears = useMemo(() => {
     const years = new Set<number>();
@@ -487,7 +517,15 @@ export default function Publication({ user }: { user: any }) {
       />
 
       {/* Dashboard Summary Section */}
-      <PublicationStats stats={stats} isTableLoading={isTableLoading} />
+      <PublicationStats 
+        stats={{ ...stats, crossIndexed: crossIndexedCount }} 
+        isTableLoading={isTableLoading} 
+        isCrossIndexedActive={crossIndexedOnly}
+        onCrossIndexedClick={() => {
+          setCrossIndexedOnly(prev => !prev);
+          setCurrentPage(1);
+        }}
+      />
 
       {/* Upload Action Bar Section */}
       <PublicationActionBar 
@@ -531,6 +569,7 @@ export default function Publication({ user }: { user: any }) {
         filterYear={filterYear}
         onYearChange={(y) => { setFilterYear(y); setCurrentPage(1); }}
         handleToggleCorresponding={handleToggleCorresponding}
+        crossTitlesSet={crossTitlesSet}
       />
 
       {/* Floating Toast Notification */}

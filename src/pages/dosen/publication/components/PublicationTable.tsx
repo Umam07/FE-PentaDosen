@@ -26,6 +26,7 @@ interface PublicationTableProps {
   filterYear: number | null;
   onYearChange: (year: number | null) => void;
   handleToggleCorresponding?: (docId: string | number, isCorresponding: boolean) => Promise<void>;
+  crossTitlesSet?: Set<string>;
 }
 
 export default function PublicationTable({
@@ -47,6 +48,7 @@ export default function PublicationTable({
   filterYear,
   onYearChange,
   handleToggleCorresponding,
+  crossTitlesSet,
 }: PublicationTableProps) {
   const isDocLocked = (doc: any) =>
     doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
@@ -215,30 +217,41 @@ export default function PublicationTable({
                           <span>{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'} • </span>
                           {doc.category}
                         </p>
-                        {(doc.quartile || doc.author_role || doc.is_corresponding) && (
-                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                            {doc.quartile && (
-                              <span className="px-1.5 py-0.5 bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 text-[8px] font-black uppercase rounded border border-orange-100/50 dark:border-orange-900/20">
-                                {doc.quartile}
-                              </span>
-                            )}
-                            {doc.author_role && (
-                              <span className="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100/50 dark:border-indigo-900/20">
-                                {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
-                              </span>
-                            )}
-                            {doc.is_hyperauthor && (
-                              <span className="px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-[8px] font-black uppercase rounded border border-red-100/50 dark:border-red-900/20">
-                                Hyper
-                              </span>
-                            )}
-                            {doc.is_corresponding && (
-                              <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100/50 dark:border-emerald-900/20">
-                                Corresponding
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        {(() => {
+                          const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                          const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
+                          return (
+                            (doc.quartile || doc.author_role || doc.is_corresponding || isCrossIndexed) && (
+                              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                                {isCrossIndexed && (
+                                  <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-500/20 shadow-sm flex items-center gap-1">
+                                    🔗 Cross-Indexed
+                                  </span>
+                                )}
+                                {doc.quartile && (
+                                  <span className="px-1.5 py-0.5 bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 text-[8px] font-black uppercase rounded border border-orange-100/50 dark:border-orange-900/20">
+                                    {doc.quartile}
+                                  </span>
+                                )}
+                                {doc.author_role && (
+                                  <span className="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100/50 dark:border-indigo-900/20">
+                                    {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
+                                  </span>
+                                )}
+                                {doc.is_hyperauthor && (
+                                  <span className="px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-[8px] font-black uppercase rounded border border-red-100/50 dark:border-red-900/20">
+                                    Hyper
+                                  </span>
+                                )}
+                                {doc.is_corresponding && (
+                                  <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100/50 dark:border-emerald-900/20">
+                                    Corresponding
+                                  </span>
+                                )}
+                              </div>
+                            )
+                          );
+                        })()}
 
                         {/* Correspondence & Breakdown Controls */}
                         {(() => {
@@ -387,6 +400,22 @@ export default function PublicationTable({
                                         </p>
                                       </div>
                                       <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                                        {(() => {
+                                          const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                                          const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
+                                          if (!isCrossIndexed) return null;
+                                          return (
+                                            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-xl flex flex-wrap items-center justify-between gap-2 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 mb-2">
+                                              <span className="flex items-center gap-1.5">
+                                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                                                🔗 Irisan Publikasi Scopus & Google Scholar
+                                              </span>
+                                              <span className="font-black text-[8px] bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-md">
+                                                Skema Scopus Digunakan (No Double-Count)
+                                              </span>
+                                            </div>
+                                          );
+                                        })()}
                                         <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
                                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                             QUARTILE JURNAL:
