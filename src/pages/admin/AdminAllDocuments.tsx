@@ -38,6 +38,29 @@ export default function AdminAllDocuments() {
     title: ''
   });
 
+  // Helper untuk menentukan sumber dokumen (Scopus, Scholar, Manual)
+  const getDocSource = (doc: any): 'Scopus' | 'Scholar' | 'Manual' => {
+    const src = (doc?.source || '').toLowerCase();
+    const idStr = String(doc?.id || '').toLowerCase();
+    
+    if (src === 'scopus' || idStr.startsWith('scopus_')) {
+      return 'Scopus';
+    }
+    if (src === 'scholar' || src === 'google_scholar' || idStr.startsWith('scholar_')) {
+      return 'Scholar';
+    }
+    return 'Manual';
+  };
+
+  // Helper untuk menentukan kategori dokumen (jika Scopus -> Jurnal Internasional, jika Scholar -> Jurnal Nasional)
+  const getDocCategory = (doc: any, tab: string): string => {
+    if (tab === 'penelitian') return doc?.program || '';
+    const src = getDocSource(doc);
+    if (src === 'Scopus') return 'Jurnal Internasional';
+    if (src === 'Scholar') return 'Jurnal Nasional';
+    return doc?.category || '';
+  };
+
   // Tab configurations: icons, descriptions, colors
   const tabDetails = {
     publikasi: {
@@ -135,24 +158,26 @@ export default function AdminAllDocuments() {
     if (tab === 'penelitian') {
       baseData = research;
     } else if (tab === 'hki') {
-      baseData = documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('hki'));
+      baseData = documents.filter((doc: any) => getDocCategory(doc, tab).toLowerCase().includes('hki'));
     } else if (tab === 'buku') {
-      baseData = documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('buku'));
+      baseData = documents.filter((doc: any) => getDocCategory(doc, tab).toLowerCase().includes('buku'));
     } else { // publikasi
-      baseData = documents.filter((doc: any) => 
-        !(doc.category || '').toLowerCase().includes('hki') && 
-        !(doc.category || '').toLowerCase().includes('buku')
-      );
+      baseData = documents.filter((doc: any) => {
+        const cat = getDocCategory(doc, tab).toLowerCase();
+        return !cat.includes('hki') && !cat.includes('buku');
+      });
     }
 
     return baseData.filter(doc => {
+      const src = tab === 'penelitian' ? 'Manual' : getDocSource(doc);
       const titleText = tab === 'penelitian' ? doc.judul_penelitian : doc.title;
       const authorText = tab === 'penelitian' ? doc.user?.name : doc.user_name;
-      const catText = tab === 'penelitian' ? doc.program : doc.category;
+      const catText = getDocCategory(doc, tab);
 
       const matchSearch = (titleText || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
         (authorText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (catText || '').toLowerCase().includes(searchTerm.toLowerCase());
+        (catText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (src || '').toLowerCase().includes(searchTerm.toLowerCase());
             
       const itemFakultas = tab === 'penelitian' ? doc.user?.fakultas : doc.fakultas;
       const matchFakultas = selectedFakultas ? itemFakultas === selectedFakultas : true;
@@ -165,16 +190,16 @@ export default function AdminAllDocuments() {
   const filteredDocsByTab = useMemo(() => {
     if (activeTab === 'penelitian') return research;
     if (activeTab === 'hki') {
-      return documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('hki'));
+      return documents.filter((doc: any) => getDocCategory(doc, activeTab).toLowerCase().includes('hki'));
     }
     if (activeTab === 'buku') {
-      return documents.filter((doc: any) => (doc.category || '').toLowerCase().includes('buku'));
+      return documents.filter((doc: any) => getDocCategory(doc, activeTab).toLowerCase().includes('buku'));
     }
     if (activeTab === 'publikasi') {
-      return documents.filter((doc: any) => 
-        !(doc.category || '').toLowerCase().includes('hki') && 
-        !(doc.category || '').toLowerCase().includes('buku')
-      );
+      return documents.filter((doc: any) => {
+        const cat = getDocCategory(doc, activeTab).toLowerCase();
+        return !cat.includes('hki') && !cat.includes('buku');
+      });
     }
     return documents;
   }, [activeTab, documents, research]);
@@ -327,18 +352,19 @@ export default function AdminAllDocuments() {
         } else {
           const author = item.user_name || '';
           const publishedAt = item.published_at ? new Date(item.published_at) : null;
-          const source = item.file_url ? 'Manual' : 'Synced';
+          const docSource = getDocSource(item);
+          const category = getDocCategory(item, tab);
           const kpiStatus = item.is_kpi_counted ? 'KPI Aktif' : 'Arsip';
           rowValues = [
             num,
             item.id,
             item.title || '',
-            item.category || '',
+            category,
             author,
             item.fakultas || '',
             item.status || 'Pending',
             publishedAt,
-            source,
+            docSource,
             kpiStatus,
             Math.round(item.awarded_points || 0),
             createdAt
@@ -534,7 +560,7 @@ export default function AdminAllDocuments() {
               {user?.role === 'admin penelitian' && (
                 <DropdownSelect
                   value={selectedFakultas}
-                  onChange={setSelectedFakultas}
+                  onChange={(val) => setSelectedFakultas(String(val))}
                   options={[
                     { value: "", label: "Semua Fakultas" },
                     { value: "Fakultas Kedokteran", label: "Kedokteran" },
@@ -552,7 +578,7 @@ export default function AdminAllDocuments() {
               {/* Sort Component */}
               <DropdownSelect
                 value={sortOrder}
-                onChange={setSortOrder}
+                onChange={(val) => setSortOrder(val as 'desc' | 'asc')}
                 options={[
                   { value: "desc", label: "Terbaru" },
                   { value: "asc", label: "Terlama" },
@@ -584,7 +610,8 @@ export default function AdminAllDocuments() {
                 {currentItems.map((doc) => {
                   const title = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
                   const author = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
-                  const category = activeTab === 'penelitian' ? doc.program : doc.category;
+                  const category = getDocCategory(doc, activeTab);
+                  const docSource = activeTab === 'penelitian' ? 'Manual' : getDocSource(doc);
                   const dateVal = activeTab === 'penelitian' ? doc.tahun : doc.published_at;
 
                   return (
@@ -598,9 +625,15 @@ export default function AdminAllDocuments() {
                              <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-primary-50 dark:bg-primary-900/20 text-primary-600 uppercase tracking-tight border border-primary-100/50">
                                 {category}
                              </span>
-                             {activeTab !== 'penelitian' && !doc.file_url && (
-                               <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 uppercase tracking-tight border border-orange-100/50 flex items-center gap-1">
-                                  <Globe className="w-2.5 h-2.5" /> Synced
+                             {activeTab !== 'penelitian' && (
+                               <span className={`text-[9px] font-black px-2 py-0.5 rounded-lg uppercase tracking-tight border flex items-center gap-1 ${
+                                 docSource === 'Scopus' 
+                                   ? 'bg-sky-50 dark:bg-sky-900/20 text-sky-600 border-sky-100/50' 
+                                   : docSource === 'Scholar' 
+                                   ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border-emerald-100/50'
+                                   : 'bg-gray-50 dark:bg-zinc-800 text-gray-500 border-gray-200'
+                               }`}>
+                                  {docSource === 'Manual' ? <User className="w-2.5 h-2.5" /> : <Globe className="w-2.5 h-2.5" />} {docSource}
                                </span>
                              )}
                           </div>
@@ -728,7 +761,8 @@ export default function AdminAllDocuments() {
                     {currentItems.map((doc) => {
                       const title = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
                       const author = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
-                      const category = activeTab === 'penelitian' ? doc.program : doc.category;
+                      const category = getDocCategory(doc, activeTab);
+                      const docSource = activeTab === 'penelitian' ? 'Manual' : getDocSource(doc);
                       const dateVal = activeTab === 'penelitian' ? doc.tahun : doc.published_at;
 
                       return (
@@ -766,13 +800,17 @@ export default function AdminAllDocuments() {
                               <span className="text-xs font-black text-emerald-600 tabular-nums">
                                 {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(doc.dana_disetujui || 0)}
                               </span>
-                            ) : doc.file_url ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest bg-gray-100 dark:bg-zinc-800 px-2.5 py-1 rounded-lg">
-                                 <User className="w-3 h-3" /> Manual
+                            ) : docSource === 'Scopus' ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/20 px-2.5 py-1 rounded-lg border border-sky-100 dark:border-sky-900/30">
+                                 <Globe className="w-3 h-3" /> Scopus
+                              </span>
+                            ) : docSource === 'Scholar' ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-1 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
+                                 <Globe className="w-3 h-3" /> Scholar
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/20 px-2.5 py-1 rounded-lg border border-orange-100 dark:border-orange-900/30">
-                                 <Globe className="w-3 h-3" /> Synced
+                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest bg-gray-100 dark:bg-zinc-800 px-2.5 py-1 rounded-lg">
+                                 <User className="w-3 h-3" /> Manual
                               </span>
                             )}
                           </td>
