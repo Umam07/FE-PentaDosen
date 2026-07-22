@@ -126,11 +126,13 @@ export default function ResearchTable({
           </thead>
           <tbody className="divide-y divide-gray-50 dark:divide-zinc-800">
             {isTableLoading ? (
-              [1, 2, 3].map((i) => (
-                <tr key={i} className="animate-pulse">
-                  <td colSpan={9} className="px-6 py-4 bg-gray-50/50 h-16"></td>
-                </tr>
-              ))
+              <phantom-ui loading={true} animation="shimmer" className="contents">
+                {[1, 2, 3].map((i) => (
+                  <tr key={i}>
+                    <td colSpan={9} className="px-6 py-4 bg-gray-50/50 h-16"></td>
+                  </tr>
+                ))}
+              </phantom-ui>
             ) : currentItems.length > 0 ? (
               currentItems.map((res: any) => (
                 <tr key={res.id} className="hover:bg-primary-50/20 transition-colors group">

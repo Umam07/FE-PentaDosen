@@ -40,11 +40,9 @@ export default function PublicationStats({ stats, isTableLoading }: PublicationS
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
-            {isTableLoading ? (
-              <div className="h-6 w-12 bg-gray-100 dark:bg-zinc-800 animate-pulse rounded mt-1"></div>
-            ) : (
+            <phantom-ui loading={isTableLoading} animation="shimmer" className="block mt-1">
               <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100 mt-0.5">{item.value}</p>
-            )}
+            </phantom-ui>
           </div>
         </motion.div>
       ))}

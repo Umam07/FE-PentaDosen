@@ -5,7 +5,7 @@ export default function ProfileInsightsSkeleton() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500 font-mono">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-6 animate-pulse">
+      <phantom-ui loading={true} animation="shimmer" className="block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-6">
         {/* Back button skeleton */}
         <div className="h-5 w-48 bg-slate-200 dark:bg-slate-800 rounded-lg mb-10"></div>
 
@@ -45,7 +45,7 @@ export default function ProfileInsightsSkeleton() {
         {/* Switcher Tab & Content Area */}
         <div className="h-14 w-96 bg-slate-200 dark:bg-slate-800 rounded-3xl mt-8"></div>
         <div className="h-96 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 mt-6"></div>
-      </div>
+      </phantom-ui>
       <Footer />
     </div>
   );

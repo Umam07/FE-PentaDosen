@@ -55,13 +55,11 @@ export default function InsightsHero({ stats, loading }: InsightsHeroProps) {
                   <Zap className="w-5.5 h-5.5 text-primary-500" />
                 </div>
                 <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1">Total Dokumen</p>
-                {loading ? (
-                  <div className="h-9 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-md w-16 mt-2" />
-                ) : (
+                <phantom-ui loading={loading} animation="shimmer" className="block mt-2">
                   <p className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tighter">
                     {totalDocs.toLocaleString()}
                   </p>
-                )}
+                </phantom-ui>
               </div>
 
               <div className="group bg-primary-600 p-6 rounded-3xl text-white shadow-lg shadow-primary-600/20 transition-all hover:-translate-y-1.5">
@@ -69,13 +67,11 @@ export default function InsightsHero({ stats, loading }: InsightsHeroProps) {
                   <Sparkles className="w-5.5 h-5.5 text-white" />
                 </div>
                 <p className="text-[10px] font-bold text-primary-100 uppercase tracking-widest mb-1">Total Sitasi</p>
-                {loading ? (
-                  <div className="h-9 bg-white/20 animate-pulse rounded-md w-16 mt-2" />
-                ) : (
+                <phantom-ui loading={loading} animation="shimmer" className="block mt-2">
                   <p className="text-3xl font-extrabold tracking-tighter text-white">
                     {(stats?.total_citations || 0).toLocaleString()}
                   </p>
-                )}
+                </phantom-ui>
               </div>
             </motion.div>
             
@@ -90,13 +86,11 @@ export default function InsightsHero({ stats, loading }: InsightsHeroProps) {
                   <Trophy className="w-5.5 h-5.5 text-white dark:text-slate-800" />
                 </div>
                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Rerata KPI</p>
-                {loading ? (
-                  <div className="h-9 bg-white/10 dark:bg-slate-200 animate-pulse rounded-md w-16 mt-2" />
-                ) : (
+                <phantom-ui loading={loading} animation="shimmer" className="block mt-2">
                   <p className="text-3xl font-extrabold tracking-tighter">
                     {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
                   </p>
-                )}
+                </phantom-ui>
               </div>
 
               <div className="group bg-emerald-600 p-6 rounded-3xl text-white shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-1.5">

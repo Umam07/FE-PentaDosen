@@ -41,7 +41,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
 
 
   if (loading) return (
-    <div className="space-y-6 max-w-none pb-12 animate-pulse">
+    <phantom-ui loading={true} animation="shimmer" className="block space-y-6 max-w-none pb-12">
       {/* Profile Card Shell */}
       <div className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-sm">
         {/* Cover Banner */}
@@ -104,7 +104,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
       {/* Switcher Tab & Content Area */}
       <div className="h-14 w-96 bg-slate-200 dark:bg-slate-800 rounded-3xl mt-8"></div>
       <div className="h-96 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 mt-6"></div>
-    </div>
+    </phantom-ui>
   );
 
   const activeUser = profileData?.user || user;

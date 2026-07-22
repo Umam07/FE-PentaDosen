@@ -180,24 +180,26 @@ export default function PublicationTable({
           </thead>
           <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
             {isTableLoading ? (
-              [1, 2, 3].map((i) => (
-                <tr key={`skeleton-${i}`} className="animate-pulse bg-white dark:bg-zinc-900 border-b border-gray-50 dark:border-zinc-800 last:border-0">
-                  <td className="px-4 lg:px-8 py-4 lg:py-5">
-                    <div className="flex items-center gap-3 lg:gap-4">
-                      <div className="h-8 w-8 lg:h-9 lg:w-9 bg-gray-100 dark:bg-zinc-800 rounded-lg shrink-0"></div>
-                      <div className="space-y-2 w-full max-w-[120px] sm:max-w-[200px]">
-                        <div className="h-3 lg:h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded"></div>
-                        <div className="h-2 lg:h-3 w-2/3 bg-gray-100 dark:bg-zinc-800 rounded"></div>
+              <phantom-ui loading={true} animation="shimmer" className="contents">
+                {[1, 2, 3].map((i) => (
+                  <tr key={`skeleton-${i}`} className="bg-white dark:bg-zinc-900 border-b border-gray-50 dark:border-zinc-800 last:border-0">
+                    <td className="px-4 lg:px-8 py-4 lg:py-5">
+                      <div className="flex items-center gap-3 lg:gap-4">
+                        <div className="h-8 w-8 lg:h-9 lg:w-9 bg-gray-100 dark:bg-zinc-800 rounded-lg shrink-0"></div>
+                        <div className="space-y-2 w-full max-w-[120px] sm:max-w-[200px]">
+                          <div className="h-3 lg:h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded"></div>
+                          <div className="h-2 lg:h-3 w-2/3 bg-gray-100 dark:bg-zinc-800 rounded"></div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
-                  <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
-                  <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
-                  <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
-                  <td className="px-4 py-4 w-16"><div className="h-4 w-10 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
-                </tr>
-              ))
+                    </td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
+                    <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
+                    <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
+                    <td className="px-4 py-4 w-16"><div className="h-4 w-10 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
+                  </tr>
+                ))}
+              </phantom-ui>
             ) : currentDocuments.length > 0 ? (
               currentDocuments.map((doc: any) => (
                 <tr key={doc.id} className="hover:bg-primary-50/10 dark:hover:bg-primary-900/5 transition-colors group border-b border-gray-50 dark:border-zinc-800 last:border-0">

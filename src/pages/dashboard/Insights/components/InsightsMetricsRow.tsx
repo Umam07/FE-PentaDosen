@@ -33,11 +33,9 @@ export default function InsightsMetricsRow({
             <Users className="w-7 h-7" />
           </div>
           <div>
-            {loading ? (
-              <div className="h-9 bg-slate-100 dark:bg-slate-800 animate-pulse rounded w-12 mx-auto" />
-            ) : (
+            <phantom-ui loading={loading} animation="shimmer" className="block">
               <p className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tighter">{stats?.total_dosen || 0}</p>
-            )}
+            </phantom-ui>
             <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Dosen Aktif</p>
           </div>
         </button>
@@ -73,22 +71,13 @@ export default function InsightsMetricsRow({
             </div>
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-500">Performa Terbaik Utama</span>
           </div>
-          <div className="space-y-2">
-            {loading ? (
-              <div className="space-y-2">
-                <div className="h-7 bg-white/10 dark:bg-slate-800 animate-pulse rounded w-48" />
-                <div className="h-5 bg-white/10 dark:bg-slate-800 animate-pulse rounded w-32" />
-              </div>
-            ) : (
-              <>
-                <p className="text-3xl lg:text-4xl font-extrabold tracking-tight group-hover:text-amber-400 transition-colors duration-500">{stats?.top_performer?.name || 'N/A'}</p>
-                <div className="flex items-center justify-center sm:justify-start gap-3">
-                  <p className="text-slate-400 font-semibold text-sm tracking-tight">Akumulasi:</p>
-                  <p className="text-white font-extrabold text-xl">{Math.round(stats?.top_performer?.total_kpi_points || 0).toLocaleString()} <span className="text-[11px] uppercase text-slate-500 tracking-widest ml-1 font-bold">Poin KPI</span></p>
-                </div>
-              </>
-            )}
-          </div>
+          <phantom-ui loading={loading} animation="shimmer" className="block space-y-2">
+            <p className="text-3xl lg:text-4xl font-extrabold tracking-tight group-hover:text-amber-400 transition-colors duration-500">{stats?.top_performer?.name || 'N/A'}</p>
+            <div className="flex items-center justify-center sm:justify-start gap-3">
+              <p className="text-slate-400 font-semibold text-sm tracking-tight">Akumulasi:</p>
+              <p className="text-white font-extrabold text-xl">{Math.round(stats?.top_performer?.total_kpi_points || 0).toLocaleString()} <span className="text-[11px] uppercase text-slate-500 tracking-widest ml-1 font-bold">Poin KPI</span></p>
+            </div>
+          </phantom-ui>
         </div>
         
         <div className="mt-6 sm:mt-0 relative z-10 bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-2xl flex flex-col items-center gap-3 group-hover:border-amber-500/40 transition-all duration-700 shadow-xl">
