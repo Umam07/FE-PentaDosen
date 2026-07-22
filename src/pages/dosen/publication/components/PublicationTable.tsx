@@ -220,36 +220,44 @@ export default function PublicationTable({
                         {(() => {
                           const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
                           const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
+                          const isExternal = doc.source === 'scopus' || doc.source === 'scholar';
                           return (
-                            (doc.quartile || doc.author_role || doc.is_corresponding || isCrossIndexed) && (
-                              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                                {isCrossIndexed && (
-                                  <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-500/20 shadow-sm flex items-center gap-1">
-                                    🔗 Cross-Indexed
-                                  </span>
-                                )}
-                                {doc.quartile && (
-                                  <span className="px-1.5 py-0.5 bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 text-[8px] font-black uppercase rounded border border-orange-100/50 dark:border-orange-900/20">
-                                    {doc.quartile}
-                                  </span>
-                                )}
-                                {doc.author_role && (
-                                  <span className="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100/50 dark:border-indigo-900/20">
-                                    {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
-                                  </span>
-                                )}
-                                {doc.is_hyperauthor && (
-                                  <span className="px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-[8px] font-black uppercase rounded border border-red-100/50 dark:border-red-900/20">
-                                    Hyper
-                                  </span>
-                                )}
-                                {doc.is_corresponding && (
-                                  <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100/50 dark:border-emerald-900/20">
-                                    Corresponding
-                                  </span>
-                                )}
-                              </div>
-                            )
+                            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                              {isExternal ? (
+                                <span className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[8px] font-black uppercase rounded border border-blue-100 dark:border-blue-900/40 flex items-center gap-1">
+                                  🌐 API {doc.source === 'scopus' ? 'Scopus' : 'Scholar'}
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded border border-slate-200 dark:border-zinc-700 flex items-center gap-1">
+                                  ✍️ Input Manual
+                                </span>
+                              )}
+                              {isCrossIndexed && (
+                                <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-500/20 shadow-sm flex items-center gap-1">
+                                  🔗 Cross-Indexed
+                                </span>
+                              )}
+                              {doc.quartile && (
+                                <span className="px-1.5 py-0.5 bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 text-[8px] font-black uppercase rounded border border-orange-100/50 dark:border-orange-900/20">
+                                  {doc.quartile}
+                                </span>
+                              )}
+                              {doc.author_role && (
+                                <span className="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100/50 dark:border-indigo-900/20">
+                                  {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
+                                </span>
+                              )}
+                              {doc.is_hyperauthor && (
+                                <span className="px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-[8px] font-black uppercase rounded border border-red-100/50 dark:border-red-900/20">
+                                  Hyper
+                                </span>
+                              )}
+                              {doc.is_corresponding && (
+                                <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100/50 dark:border-emerald-900/20">
+                                  Corresponding
+                                </span>
+                              )}
+                            </div>
                           );
                         })()}
 

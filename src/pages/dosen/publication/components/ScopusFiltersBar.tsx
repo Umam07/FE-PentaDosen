@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
-import { MailCheck, FileText, Award, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import { MailCheck, FileText, Award, RotateCcw, SlidersHorizontal, Globe, Database } from 'lucide-react';
 
 export type ScopusFilterType = 'all' | 'unconfirmed' | 'confirmed';
 export type ArticleFilterType = 'all' | 'article' | 'non-article';
 export type QuartileFilterType = 'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None';
+export type SourceFilterType = 'all' | 'external' | 'manual';
 
 interface ScopusFiltersBarProps {
   documents: any[];
@@ -13,6 +14,8 @@ interface ScopusFiltersBarProps {
   setArticleFilter: (val: ArticleFilterType) => void;
   quartileFilter: QuartileFilterType;
   setQuartileFilter: (val: QuartileFilterType) => void;
+  sourceFilter: SourceFilterType;
+  setSourceFilter: (val: SourceFilterType) => void;
   onResetPage: () => void;
 }
 
@@ -24,6 +27,8 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
   setArticleFilter,
   quartileFilter,
   setQuartileFilter,
+  sourceFilter,
+  setSourceFilter,
   onResetPage,
 }) => {
   // Filter only Jurnal Internasional documents for counter accuracy
@@ -103,15 +108,34 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return { total, Q1: q1, Q2: q2, Q3: q3, Q4: q4, None: none };
   }, [jiDocs]);
 
+  // Source Counts
+  const sourceCounts = useMemo(() => {
+    const total = jiDocs.length;
+    let external = 0;
+    let manual = 0;
+
+    jiDocs.forEach((d: any) => {
+      if (d.source === 'scopus' || d.source === 'scholar') {
+        external++;
+      } else {
+        manual++;
+      }
+    });
+
+    return { total, external, manual };
+  }, [jiDocs]);
+
   const activeFiltersCount =
     (scopusFilter !== 'all' ? 1 : 0) +
     (articleFilter !== 'all' ? 1 : 0) +
-    (quartileFilter !== 'all' ? 1 : 0);
+    (quartileFilter !== 'all' ? 1 : 0) +
+    (sourceFilter !== 'all' ? 1 : 0);
 
   const handleResetAll = () => {
     setScopusFilter('all');
     setArticleFilter('all');
     setQuartileFilter('all');
+    setSourceFilter('all');
     onResetPage();
   };
 
@@ -126,7 +150,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-wider">
-                Filter Jurnal Internasional
+                Filter Jurnal & Sumber Data
               </h3>
               {activeFiltersCount > 0 && (
                 <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
@@ -135,7 +159,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
               )}
             </div>
             <p className="text-[11px] text-slate-500 dark:text-zinc-400">
-              Saring daftar publikasi berdasarkan status korespondensi, tipe artikel, dan quartile.
+              Saring daftar publikasi berdasarkan sumber data (API vs Manual), status korespondensi, tipe artikel, dan quartile.
             </p>
           </div>
         </div>
@@ -151,8 +175,8 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
         )}
       </div>
 
-      {/* Filter Rows: 3 Horizontal Section Columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      {/* Filter Rows: 4 Horizontal Section Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* 1. Status Korespondensi */}
         <div className="space-y-2">
@@ -280,6 +304,49 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
                       ? opt.activeClass
                       : opt.badgeStyle
                       ? `${opt.badgeStyle} hover:opacity-90`
+                      : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
+                  }`}
+                >
+                  <span>{opt.label}</span>
+                  <span
+                    className={`px-1.5 py-0.5 rounded-md text-[11px] font-bold ${
+                      isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+                    }`}
+                  >
+                    {opt.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 4. Sumber Data (API External vs Input Manual) */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
+            <Globe className="w-4 h-4 text-emerald-500" />
+            <span className="text-xs font-bold uppercase tracking-wider">Sumber Data</span>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              { id: 'all', label: 'Semua', count: sourceCounts.total },
+              { id: 'external', label: '🌐 API External', count: sourceCounts.external },
+              { id: 'manual', label: '✍️ Input Manual', count: sourceCounts.manual },
+            ].map((opt) => {
+              const isActive = sourceFilter === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => {
+                    setSourceFilter(opt.id as SourceFilterType);
+                    onResetPage();
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
+                    isActive
+                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs'
                       : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
                   }`}
                 >

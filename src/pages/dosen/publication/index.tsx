@@ -82,6 +82,7 @@ export default function Publication({ user }: { user: any }) {
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
   const [quartileFilter, setQuartileFilter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None'>('all');
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'external' | 'manual'>('all');
   const [crossIndexedOnly, setCrossIndexedOnly] = useState(false);
 
   const crossTitlesSet = useMemo(() => {
@@ -125,6 +126,7 @@ export default function Publication({ user }: { user: any }) {
       setCategory(urlKategori);
       setFilterYear(null); // reset year filter when category changes
       setQuartileFilter('all');
+      setSourceFilter('all');
       setCrossIndexedOnly(false);
       setCurrentPage(1);
     }
@@ -293,8 +295,15 @@ export default function Publication({ user }: { user: any }) {
       result = result.filter((d: any) => d.is_cross_indexed || crossTitlesSet.has(norm(d.title)));
     }
 
+    // Source Filter (API External vs Input Manual)
+    if (sourceFilter === 'external') {
+      result = result.filter((d: any) => d.source === 'scopus' || d.source === 'scholar');
+    } else if (sourceFilter === 'manual') {
+      result = result.filter((d: any) => d.source !== 'scopus' && d.source !== 'scholar');
+    }
+
     return result;
-  }, [documents, urlKategori, filterYear, scopusFilter, articleFilter, quartileFilter, crossIndexedOnly, crossTitlesSet]);
+  }, [documents, urlKategori, filterYear, scopusFilter, articleFilter, quartileFilter, sourceFilter, crossIndexedOnly, crossTitlesSet]);
 
   const availableYears = useMemo(() => {
     const years = new Set<number>();
@@ -536,7 +545,7 @@ export default function Publication({ user }: { user: any }) {
         onOpenMetricsModal={() => setIsMetricsModalOpen(true)}
       />
 
-      {urlKategori === 'Jurnal Internasional' && (
+      {(urlKategori === 'Jurnal Internasional' || urlKategori === 'Jurnal Nasional') && (
         <ScopusFiltersBar
           documents={documents}
           scopusFilter={scopusFilter}
@@ -545,6 +554,8 @@ export default function Publication({ user }: { user: any }) {
           setArticleFilter={setArticleFilter}
           quartileFilter={quartileFilter}
           setQuartileFilter={setQuartileFilter}
+          sourceFilter={sourceFilter}
+          setSourceFilter={setSourceFilter}
           onResetPage={() => setCurrentPage(1)}
         />
       )}
