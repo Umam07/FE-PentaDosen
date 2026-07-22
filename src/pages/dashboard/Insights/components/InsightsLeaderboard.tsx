@@ -40,20 +40,22 @@ export default function InsightsLeaderboard({
 
         <div className="space-y-4">
           {loading ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 rounded-2xl border border-transparent animate-pulse">
-                <div className="w-6 h-4 bg-slate-200 dark:bg-slate-850 rounded" />
-                <div className="w-12 h-12 bg-slate-200 dark:bg-slate-850 rounded-xl shrink-0" />
-                <div className="flex-1 space-y-2 text-left">
-                  <div className="h-4 bg-slate-200 dark:bg-slate-850 rounded w-3/4" />
-                  <div className="h-3 bg-slate-200 dark:bg-slate-850 rounded w-1/2" />
+            <phantom-ui loading={true} animation="shimmer" className="block space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 p-4 rounded-2xl border border-transparent">
+                  <div className="w-6 h-4 bg-slate-200 dark:bg-slate-800 rounded" />
+                  <div className="w-12 h-12 bg-slate-200 dark:bg-slate-800 rounded-xl shrink-0" />
+                  <div className="flex-1 space-y-2 text-left">
+                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
+                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2" />
+                  </div>
+                  <div className="space-y-1.5 text-right">
+                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-10 ml-auto" />
+                    <div className="h-2.5 bg-slate-200 dark:bg-slate-800 rounded w-8 ml-auto" />
+                  </div>
                 </div>
-                <div className="space-y-1.5 text-right">
-                  <div className="h-4 bg-slate-200 dark:bg-slate-850 rounded w-10 ml-auto" />
-                  <div className="h-2.5 bg-slate-200 dark:bg-slate-850 rounded w-8 ml-auto" />
-                </div>
-              </div>
-            ))
+              ))}
+            </phantom-ui>
           ) : leaderboard.length > 0 ? (
             leaderboard.slice(0, 5).map((user, index) => (
               <button 

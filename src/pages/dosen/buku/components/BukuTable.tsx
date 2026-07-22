@@ -125,28 +125,30 @@ export default function BukuTable({
           </thead>
           <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
             {isTableLoading ? (
-              [1, 2, 3].map((i) => (
-                <tr key={`skeleton-${i}`} className="animate-pulse">
-                  <td className="px-4 lg:px-8 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 bg-gray-100 dark:bg-zinc-800 rounded-lg shrink-0" />
-                      <div className="space-y-2 w-full max-w-[200px]">
-                        <div className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
-                        <div className="h-3 w-2/3 bg-gray-100 dark:bg-zinc-800 rounded" />
+              <phantom-ui loading={true} animation="shimmer" className="contents">
+                {[1, 2, 3].map((i) => (
+                  <tr key={`skeleton-${i}`}>
+                    <td className="px-4 lg:px-8 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 bg-gray-100 dark:bg-zinc-800 rounded-lg shrink-0" />
+                        <div className="space-y-2 w-full max-w-[200px]">
+                          <div className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
+                          <div className="h-3 w-2/3 bg-gray-100 dark:bg-zinc-800 rounded" />
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="hidden lg:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
-                  <td className="hidden md:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-20 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
-                  <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
-                  <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
-                  <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-16 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
-                  <td className="px-4 lg:px-8 py-4"><div className="h-6 w-12 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
-                  <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
-                  <td className="px-4 py-4"><div className="h-6 w-6 bg-gray-200 dark:bg-zinc-700 rounded-lg mx-auto" /></td>
-                  <td className="px-4 py-4"><div className="h-6 w-12 bg-gray-200 dark:bg-zinc-700 rounded-lg mx-auto" /></td>
-                </tr>
-              ))
+                    </td>
+                    <td className="hidden lg:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
+                    <td className="hidden md:table-cell px-4 lg:px-8 py-4"><div className="h-4 w-20 bg-gray-200 dark:bg-zinc-700 rounded" /></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
+                    <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-16 bg-gray-200 dark:bg-zinc-700 rounded-xl" /></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-12 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
+                    <td className="hidden sm:table-cell px-4 lg:px-8 py-4"><div className="h-6 w-20 bg-gray-200 dark:bg-zinc-700 rounded-lg" /></td>
+                    <td className="px-4 py-4"><div className="h-6 w-6 bg-gray-200 dark:bg-zinc-700 rounded-lg mx-auto" /></td>
+                    <td className="px-4 py-4"><div className="h-6 w-12 bg-gray-200 dark:bg-zinc-700 rounded-lg mx-auto" /></td>
+                  </tr>
+                ))}
+              </phantom-ui>
             ) : paginatedDocs.length > 0 ? (
               paginatedDocs.map((doc: any) => {
                 const docDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';

@@ -141,18 +141,20 @@ export default function FaqHelp({ user }: { user: any }) {
         {/* Accordion body */}
         <div className="p-4 sm:p-5 space-y-2.5">
           {loading ? (
-            [1, 2, 3].map(i => (
-              <div
-                key={i}
-                className="h-16 w-full bg-slate-50 dark:bg-slate-800/40 rounded-xl animate-pulse flex items-center px-5 justify-between"
-              >
-                <div className="flex items-center gap-3 w-2/3">
-                  <div className="h-9 w-9 rounded-lg bg-slate-200 dark:bg-slate-700" />
-                  <div className="h-3.5 bg-slate-200 dark:bg-slate-700 rounded w-4/5" />
+            <phantom-ui loading={true} animation="shimmer" className="block space-y-2.5">
+              {[1, 2, 3].map(i => (
+                <div
+                  key={i}
+                  className="h-16 w-full bg-slate-50 dark:bg-slate-800/40 rounded-xl flex items-center px-5 justify-between"
+                >
+                  <div className="flex items-center gap-3 w-2/3">
+                    <div className="h-9 w-9 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                    <div className="h-3.5 bg-slate-200 dark:bg-slate-700 rounded w-4/5" />
+                  </div>
+                  <div className="h-4 w-4 bg-slate-200 dark:bg-slate-700 rounded-full" />
                 </div>
-                <div className="h-4 w-4 bg-slate-200 dark:bg-slate-700 rounded-full" />
-              </div>
-            ))
+              ))}
+            </phantom-ui>
           ) : filteredFaqs.length > 0 ? (
             filteredFaqs.map((faq) => {
               const isExpanded = expandedFaqId === faq.id;

@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function LecturerSkeleton() {
   return (
-    <>
+    <phantom-ui loading={true} animation="shimmer" count={8} className="contents">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-slate-100 dark:border-slate-800/80 h-[480px] animate-pulse space-y-6">
+        <div key={i} className="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-slate-100 dark:border-slate-800/80 h-[480px] space-y-6">
           <div className="flex justify-between items-start">
             <div className="w-14 h-14 bg-slate-200 dark:bg-slate-800 rounded-2xl" />
             <div className="w-24 h-6 bg-slate-200 dark:bg-slate-800 rounded-lg" />
@@ -23,6 +23,7 @@ export default function LecturerSkeleton() {
           </div>
         </div>
       ))}
-    </>
+    </phantom-ui>
   );
 }
+

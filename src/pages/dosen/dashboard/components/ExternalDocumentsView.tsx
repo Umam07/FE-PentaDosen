@@ -162,14 +162,14 @@ export default function ExternalDocumentsView({
                   className="space-y-10"
                 >
                 {loading ? (
-                  <div className="space-y-6">
-                    <div className="h-64 bg-slate-50 dark:bg-slate-900/50 animate-pulse rounded-[3rem] border border-slate-200/60 dark:border-slate-800" />
+                  <phantom-ui loading={true} animation="shimmer" className="block space-y-6">
+                    <div className="h-64 bg-slate-50 dark:bg-slate-900/50 rounded-[3rem] border border-slate-200/60 dark:border-slate-800" />
                     <div className="space-y-4">
                       {[1, 2, 3].map(i => (
-                        <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 animate-pulse rounded-[1.75rem]" />
+                        <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-[1.75rem]" />
                       ))}
                     </div>
-                  </div>
+                  </phantom-ui>
                 ) : scopusChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
@@ -447,14 +447,14 @@ export default function ExternalDocumentsView({
                   className="space-y-10"
                 >
                 {loading ? (
-                  <div className="space-y-6">
-                    <div className="h-64 bg-slate-50 dark:bg-slate-900/50 animate-pulse rounded-[3rem] border border-slate-200/60 dark:border-slate-800" />
+                  <phantom-ui loading={true} animation="shimmer" className="block space-y-6">
+                    <div className="h-64 bg-slate-50 dark:bg-slate-900/50 rounded-[3rem] border border-slate-200/60 dark:border-slate-800" />
                     <div className="space-y-4">
                       {[1, 2, 3].map(i => (
-                        <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 animate-pulse rounded-[1.75rem]" />
+                        <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-[1.75rem]" />
                       ))}
                     </div>
-                  </div>
+                  </phantom-ui>
                 ) : scholarChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
@@ -630,11 +630,11 @@ export default function ExternalDocumentsView({
                 )}
 
                 {loading ? (
-                  <div className="space-y-4">
+                  <phantom-ui loading={true} animation="shimmer" className="block space-y-4">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 animate-pulse rounded-[1.75rem]" />
+                      <div key={i} className="h-28 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-[1.75rem]" />
                     ))}
-                  </div>
+                  </phantom-ui>
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
                     {(isPublic ? filteredCrossIndexedDocs.slice(0, 5) : filteredCrossIndexedDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc, idx) => {
