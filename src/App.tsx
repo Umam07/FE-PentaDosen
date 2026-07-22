@@ -109,9 +109,26 @@ export default function App() {
         const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
         const isLoginRequest = url.includes('/api/login');
 
+        // Check if rate limit modal should be suppressed (e.g. background mass sync)
+        const init = args[1] as RequestInit | undefined;
+        let suppressRateLimitModal = false;
+        if (init?.headers) {
+          if (init.headers instanceof Headers) {
+            suppressRateLimitModal = init.headers.get('x-suppress-rate-limit-modal') === 'true';
+          } else if (Array.isArray(init.headers)) {
+            suppressRateLimitModal = init.headers.some(([k, v]) => k.toLowerCase() === 'x-suppress-rate-limit-modal' && v === 'true');
+          } else if (typeof init.headers === 'object') {
+            const keys = Object.keys(init.headers);
+            const targetKey = keys.find(k => k.toLowerCase() === 'x-suppress-rate-limit-modal');
+            if (targetKey && (init.headers as Record<string, string>)[targetKey] === 'true') {
+              suppressRateLimitModal = true;
+            }
+          }
+        }
+
         if ((response.status === 401 || response.status === 419) && !isLoginRequest) {
           setIsSessionExpired(true);
-        } else if (response.status === 429) {
+        } else if (response.status === 429 && !suppressRateLimitModal) {
           setIsRateLimited(true);
         }
         return response;

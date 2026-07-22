@@ -205,7 +205,10 @@ export default function AdminSync() {
     // Helper to perform fetch with retry logic
     const fetchWithRetry = async (url: string, sourceName: string, retriesLeft = 2): Promise<boolean> => {
       try {
-        const res = await fetch(url, { method: 'POST' });
+        const res = await fetch(url, { 
+          method: 'POST',
+          headers: { 'X-Suppress-Rate-Limit-Modal': 'true' }
+        });
         
         if (res.ok) {
           return true;
