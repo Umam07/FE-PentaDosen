@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   FileText, Upload, CheckCircle, XCircle, Clock, 
   Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock
@@ -25,6 +25,7 @@ interface PublicationTableProps {
   availableYears: number[];
   filterYear: number | null;
   onYearChange: (year: number | null) => void;
+  handleToggleCorresponding?: (docId: string | number, isCorresponding: boolean) => Promise<void>;
 }
 
 export default function PublicationTable({
@@ -45,9 +46,108 @@ export default function PublicationTable({
   availableYears,
   filterYear,
   onYearChange,
+  handleToggleCorresponding,
 }: PublicationTableProps) {
   const isDocLocked = (doc: any) =>
     doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
+
+  const [expandedPoints, setExpandedPoints] = useState<Record<string | number, boolean>>({});
+  const [updatingCorrespondingId, setUpdatingCorrespondingId] = useState<string | number | null>(null);
+  const [isEditingCorrespondingMap, setIsEditingCorrespondingMap] = useState<Record<string | number, boolean>>({});
+
+  const getBreakdown = (doc: any) => {
+    const isJI = doc.category === 'Jurnal Internasional';
+    const isJN = doc.category === 'Jurnal Nasional';
+    if (!isJI && !isJN) return null;
+
+    const role = doc.author_role === 'Member Author' || doc.author_role === 'Co-Author' 
+      ? 'Member Author' 
+      : (doc.author_role || 'Member Author');
+    const totalAuthors = Number(doc.total_authors) || 1;
+    const authorOrder = Number(doc.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
+    const isCorresponding = !!doc.is_corresponding;
+    const isHyper = !!doc.is_hyperauthor || totalAuthors > 16;
+    
+    let q = 'None';
+    let basePoints = 20; // Default for JN
+    let docType = 'Jurnal Nasional';
+
+    if (isJI) {
+      q = doc.quartile && ['Q1', 'Q2', 'Q3', 'Q4'].includes(doc.quartile) ? doc.quartile : 'None';
+      const basePointsMap: Record<string, number> = { Q1: 40, Q2: 38, Q3: 35, Q4: 33, None: 33 };
+      basePoints = basePointsMap[q] ?? 33;
+      docType = `Jurnal Internasional ${q !== 'None' ? q : '(Tanpa Quartile)'}`;
+    }
+
+    let awardedPoints = 0;
+    let detailStr = '';
+    let pctStr = '';
+
+    if (totalAuthors === 1 || (authorOrder === 1 && totalAuthors === 1)) {
+      awardedPoints = basePoints;
+      detailStr = `${docType} (Single Author)`;
+      pctStr = `100% dari ${basePoints} pts`;
+    } else if (totalAuthors === 2) {
+      if (authorOrder === 1) {
+        if (isCorresponding) {
+          awardedPoints = 0.6 * basePoints;
+          detailStr = `${docType} (First & Corresponding Author)`;
+          pctStr = `Skenario 1: 60% dari ${basePoints} pts`;
+        } else {
+          awardedPoints = 0.5 * basePoints;
+          detailStr = `${docType} (First Author)`;
+          pctStr = `Skenario 2: 50% dari ${basePoints} pts`;
+        }
+      } else {
+        if (isCorresponding) {
+          awardedPoints = 0.5 * basePoints;
+          detailStr = `${docType} (2nd Author + Corresponding)`;
+          pctStr = `Skenario 2: 50% dari ${basePoints} pts`;
+        } else {
+          awardedPoints = 0.4 * basePoints;
+          detailStr = `${docType} (2nd Author)`;
+          pctStr = `Skenario 1: 40% dari ${basePoints} pts`;
+        }
+      }
+    } else {
+      if (authorOrder === 1) {
+        if (isCorresponding) {
+          awardedPoints = 0.6 * basePoints;
+          detailStr = `${docType} (First & Corresponding Author)`;
+          pctStr = `Skenario 1: 60% dari ${basePoints} pts`;
+        } else {
+          awardedPoints = 0.4 * basePoints;
+          detailStr = `${docType} (First Author)`;
+          pctStr = `Skenario 2: 40% dari ${basePoints} pts`;
+        }
+      } else {
+        if (isCorresponding) {
+          awardedPoints = 0.4 * basePoints;
+          detailStr = `${docType} (Member Author + Corresponding)`;
+          pctStr = `Skenario 2: 40% dari ${basePoints} pts`;
+        } else {
+          awardedPoints = (0.4 * basePoints) / (totalAuthors - 1);
+          detailStr = `${docType} (Member Author)`;
+          pctStr = `Skenario 1 (Default): 40% dari ${basePoints} pts ÷ ${totalAuthors - 1} anggota`;
+        }
+      }
+    }
+
+    const finalPoints = Math.round(awardedPoints);
+
+    return {
+      q,
+      maxPoints: basePoints,
+      detailStr,
+      pctStr,
+      totalAuthors,
+      authorOrder,
+      role,
+      isCorresponding,
+      isCorrespondingConfirmed: !!doc.is_corresponding_confirmed,
+      totalPoints: finalPoints
+    };
+  };
   
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -137,6 +237,205 @@ export default function PublicationTable({
                             )}
                           </div>
                         )}
+
+                        {/* Correspondence & Breakdown Controls */}
+                        {(() => {
+                          const isJI = doc.category === 'Jurnal Internasional';
+                          const isJN = doc.category === 'Jurnal Nasional';
+                          if (!isJI && !isJN) return null;
+
+                          const totalAuthors = Number(doc.total_authors) || 1;
+                          const showCorrespondingControls = doc.author_role !== 'Single Author' && totalAuthors > 1;
+                          const bd = getBreakdown(doc);
+                          const isExpanded = !!expandedPoints[doc.id];
+                          const isEditing = !!isEditingCorrespondingMap[doc.id];
+
+                          return (
+                            <div className="mt-3 space-y-3 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                              {/* Konfirmasi status korespondensi untuk co-author. Skema poin KPI berbeda jika corresponding author */}
+                              {showCorrespondingControls && (
+                                <div className={`p-3 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner transition-colors duration-200 ${
+                                  !doc.is_corresponding_confirmed && !isEditing
+                                    ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30'
+                                    : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800'
+                                }`}>
+
+                                  {doc.is_corresponding_confirmed && !isEditing ? (
+                                    <>
+                                      <div className="flex flex-wrap items-center gap-2">
+                                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-emerald-500/20 shadow-sm">
+                                          ✓ Dikonfirmasi
+                                        </span>
+                                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                                          Penulis korespondensi:
+                                        </span>
+                                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[8px] font-black uppercase tracking-wider border shadow-sm ${
+                                          doc.is_corresponding
+                                            ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
+                                            : 'bg-slate-200/60 dark:bg-slate-700/40 text-slate-500 dark:text-slate-400 border-slate-300/40 dark:border-slate-600/40'
+                                        }`}>
+                                          {doc.is_corresponding ? '✓ YA' : '✗ TIDAK'}
+                                        </span>
+                                      </div>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: true }))}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 hover:text-orange-600 hover:border-orange-400 dark:hover:border-orange-500/50 dark:hover:text-orange-400 transition-all whitespace-nowrap shadow-sm ml-auto"
+                                      >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                        Ubah
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="flex flex-wrap items-center gap-2">
+                                        {isEditing ? (
+                                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-blue-500/20 shadow-sm">
+                                            ✏️ Ubah Pilihan
+                                          </span>
+                                        ) : (
+                                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-amber-500/20 animate-pulse shadow-sm">
+                                            ⚠️ Perlu Konfirmasi
+                                          </span>
+                                        )}
+                                        <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                                          Apakah Anda penulis korespondensi?
+                                        </span>
+                                      </div>
+
+                                      <div className="flex items-center gap-2 ml-auto">
+                                        <button
+                                          type="button"
+                                          disabled={updatingCorrespondingId === doc.id}
+                                          onClick={async () => {
+                                            setUpdatingCorrespondingId(doc.id);
+                                            if (handleToggleCorresponding) {
+                                              await handleToggleCorresponding(doc.id, true);
+                                            }
+                                            setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: false }));
+                                            setUpdatingCorrespondingId(null);
+                                          }}
+                                          className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-orange-600 border-orange-600 text-white hover:bg-orange-700 active:scale-95 shadow-md shadow-orange-500/20 disabled:opacity-50"
+                                        >
+                                          Ya
+                                        </button>
+                                        <button
+                                          type="button"
+                                          disabled={updatingCorrespondingId === doc.id}
+                                          onClick={async () => {
+                                            setUpdatingCorrespondingId(doc.id);
+                                            if (handleToggleCorresponding) {
+                                              await handleToggleCorresponding(doc.id, false);
+                                            }
+                                            setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: false }));
+                                            setUpdatingCorrespondingId(null);
+                                          }}
+                                          className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 active:scale-95 disabled:opacity-50"
+                                        >
+                                          Tidak
+                                        </button>
+                                        {updatingCorrespondingId === doc.id ? (
+                                          <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                                        ) : isEditing && (
+                                          <button
+                                            type="button"
+                                            onClick={() => setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: false }))}
+                                            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                            title="Batal"
+                                          >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                            </svg>
+                                          </button>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+
+                              {bd && (
+                                <div className="flex flex-col items-start gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setExpandedPoints(prev => ({ ...prev, [doc.id]: !prev[doc.id] }))}
+                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
+                                      isExpanded
+                                        ? 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 border-orange-200 dark:border-orange-900/50'
+                                        : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-orange-600 hover:border-orange-200 hover:bg-orange-50/60 dark:hover:bg-orange-950/20'
+                                    }`}
+                                  >
+                                    {isExpanded ? '▲ Sembunyikan' : '▼ Rincian Poin'}
+                                  </button>
+
+                                  {isExpanded && (
+                                    <motion.div
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: 'auto' }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      className="mt-3 rounded-2xl border border-orange-100 dark:border-orange-900/30 overflow-hidden w-full max-w-xl"
+                                    >
+                                      <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900/30">
+                                        <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">
+                                          RINCIAN KALKULASI POIN SINTA (SKEMA PERSENTASE + QUARTILE)
+                                        </p>
+                                      </div>
+                                      <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                                        <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
+                                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                            QUARTILE JURNAL:
+                                          </span>
+                                          {bd.q !== 'None' ? (
+                                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
+                                              bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                              bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                                              bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                                              'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                            }`}>{bd.q}</span>
+                                          ) : (
+                                            <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
+                                          )}
+                                        </div>
+
+                                        <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                                          <div>
+                                            <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
+                                            <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=38, Q3=35, Q4/None=33 pts</p>
+                                          </div>
+                                          <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
+                                        </div>
+
+                                        <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                                          <div>
+                                            <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
+                                            <p className="text-[9px] font-bold text-orange-500">{bd.pctStr}</p>
+                                          </div>
+                                          <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.totalPoints}</span>
+                                        </div>
+
+                                        {bd.totalAuthors > 1 && (
+                                          <div className="flex justify-between items-center py-1 gap-2 border-b border-slate-100 dark:border-slate-800">
+                                            <p className="text-[9px] font-medium text-slate-400">Total penulis terdeteksi</p>
+                                            <span className="text-[9px] font-black text-slate-500">{bd.totalAuthors} penulis</span>
+                                          </div>
+                                        )}
+
+                                        <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
+                                          <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">TOTAL POIN</span>
+                                          <span className="text-base font-black text-orange-600">{bd.totalPoints} pts</span>
+                                        </div>
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   </td>

@@ -78,6 +78,7 @@ export default function Publication({ user }: { user: any }) {
   // Scopus Specific Filters
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
+  const [quartileFilter, setQuartileFilter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None'>('all');
 
 
   useEffect(() => {
@@ -97,6 +98,7 @@ export default function Publication({ user }: { user: any }) {
     if (urlKategori) {
       setCategory(urlKategori);
       setFilterYear(null); // reset year filter when category changes
+      setQuartileFilter('all');
       setCurrentPage(1);
     }
   }, [urlKategori]);
@@ -250,8 +252,16 @@ export default function Publication({ user }: { user: any }) {
       }
     }
 
+    // Quartile Filter
+    if (quartileFilter !== 'all') {
+      result = result.filter((d: any) => {
+        const q = d.quartile && ['Q1', 'Q2', 'Q3', 'Q4'].includes(d.quartile) ? d.quartile : 'None';
+        return q === quartileFilter;
+      });
+    }
+
     return result;
-  }, [documents, urlKategori, filterYear, scopusFilter, articleFilter]);
+  }, [documents, urlKategori, filterYear, scopusFilter, articleFilter, quartileFilter]);
 
   const availableYears = useMemo(() => {
     const years = new Set<number>();
@@ -424,6 +434,41 @@ export default function Publication({ user }: { user: any }) {
     reader.readAsBinaryString(file);
   };
 
+  const handleToggleCorresponding = async (docId: string | number, isCorresponding: boolean) => {
+    try {
+      let url = '';
+      if (typeof docId === 'string' && docId.startsWith('scopus_')) {
+        const id = docId.replace('scopus_', '');
+        url = `/api/scopus-publications/${id}/corresponding`;
+      } else if (typeof docId === 'string' && docId.startsWith('scholar_')) {
+        const id = docId.replace('scholar_', '');
+        url = `/api/scholar-publications/${id}/corresponding`;
+      } else {
+        url = `/api/documents/${docId}/corresponding`;
+      }
+
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ is_corresponding: isCorresponding })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showMessage('Status korespondensi berhasil diperbarui!', 'success');
+        await fetchDocuments();
+      } else {
+        showMessage(data.message || 'Gagal memperbarui status korespondensi.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage('Terjadi kesalahan saat memperbarui status.', 'error');
+    }
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDocuments = useMemo(() => {
@@ -501,6 +546,36 @@ export default function Publication({ user }: { user: any }) {
               ))}
             </div>
           </div>
+
+          {/* Filter 3: Quartile */}
+          <div className="flex-1 space-y-2.5">
+            <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest block">Filter Quartile</span>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: 'all', label: 'Semua' },
+                { id: 'Q1', label: 'Q1' },
+                { id: 'Q2', label: 'Q2' },
+                { id: 'Q3', label: 'Q3' },
+                { id: 'Q4', label: 'Q4' },
+                { id: 'None', label: 'Non-Q' }
+              ].map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => {
+                    setQuartileFilter(opt.id as any);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
+                    quartileFilter === opt.id
+                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
+                      : 'bg-white dark:bg-zinc-800 border-gray-150 dark:border-zinc-700 text-gray-500 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-300'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -523,6 +598,7 @@ export default function Publication({ user }: { user: any }) {
         availableYears={availableYears}
         filterYear={filterYear}
         onYearChange={(y) => { setFilterYear(y); setCurrentPage(1); }}
+        handleToggleCorresponding={handleToggleCorresponding}
       />
 
       {/* Floating Toast Notification */}
