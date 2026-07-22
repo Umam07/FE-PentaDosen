@@ -17,6 +17,7 @@ import PublicationUploadModal from './components/PublicationUploadModal';
 import PublicationLinkingModal from './components/PublicationLinkingModal';
 import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
+import ScopusFiltersBar from './components/ScopusFiltersBar';
 
 export default function Publication({ user }: { user: any }) {
   const location = useLocation();
@@ -492,91 +493,16 @@ export default function Publication({ user }: { user: any }) {
       />
 
       {urlKategori === 'Jurnal Internasional' && (
-        <div className="flex flex-col md:flex-row gap-6 bg-slate-50/50 dark:bg-zinc-900/50 p-6 rounded-3xl border border-gray-100 dark:border-zinc-800/80 shadow-sm">
-          {/* Filter 1: Korespondensi */}
-          <div className="flex-1 space-y-2.5">
-            <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest block">Filter Status Korespondensi (Scopus)</span>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { id: 'all', label: 'Semua Dokumen' },
-                { id: 'unconfirmed', label: 'Perlu Konfirmasi' },
-                { id: 'confirmed', label: 'Terkonfirmasi / Selesai' }
-              ].map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setScopusFilter(opt.id as any);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                    scopusFilter === opt.id
-                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                      : 'bg-white dark:bg-zinc-800 border-gray-150 dark:border-zinc-700 text-gray-500 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-300'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Filter 2: Tipe Dokumen */}
-          <div className="flex-1 space-y-2.5">
-            <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest block">Filter Tipe Artikel (Scopus)</span>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { id: 'all', label: 'Semua Tipe' },
-                { id: 'article', label: 'Article / Journal' },
-                { id: 'non-article', label: 'Non-Article / Proceeding' }
-              ].map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setArticleFilter(opt.id as any);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                    articleFilter === opt.id
-                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                      : 'bg-white dark:bg-zinc-800 border-gray-150 dark:border-zinc-700 text-gray-500 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-300'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Filter 3: Quartile */}
-          <div className="flex-1 space-y-2.5">
-            <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest block">Filter Quartile</span>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { id: 'all', label: 'Semua' },
-                { id: 'Q1', label: 'Q1' },
-                { id: 'Q2', label: 'Q2' },
-                { id: 'Q3', label: 'Q3' },
-                { id: 'Q4', label: 'Q4' },
-                { id: 'None', label: 'Non-Q' }
-              ].map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setQuartileFilter(opt.id as any);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                    quartileFilter === opt.id
-                      ? 'bg-orange-600 border-orange-600 text-white shadow-md shadow-orange-500/20'
-                      : 'bg-white dark:bg-zinc-800 border-gray-150 dark:border-zinc-700 text-gray-500 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-300'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <ScopusFiltersBar
+          documents={documents}
+          scopusFilter={scopusFilter}
+          setScopusFilter={setScopusFilter}
+          articleFilter={articleFilter}
+          setArticleFilter={setArticleFilter}
+          quartileFilter={quartileFilter}
+          setQuartileFilter={setQuartileFilter}
+          onResetPage={() => setCurrentPage(1)}
+        />
       )}
 
       {/* Document History Table */}
