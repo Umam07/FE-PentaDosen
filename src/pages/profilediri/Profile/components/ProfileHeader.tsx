@@ -32,6 +32,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
                 <img
                   src={user.avatar}
                   alt={user.name}
+                  referrerPolicy="no-referrer"
                   className="h-full w-full rounded-2xl object-cover"
                 />
               ) : (
