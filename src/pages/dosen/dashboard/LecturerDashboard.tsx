@@ -145,7 +145,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
     <div className="max-w-[1600px] mx-auto space-y-8 pb-20">
 
       {/* Information Notice — minimalist inline */}
-      <div className="flex items-start gap-2.5 px-4 py-3 bg-indigo-50 dark:bg-indigo-955/40 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl">
+      <div className="flex items-start gap-2.5 px-4 py-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl">
         <Info className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 mt-0.5 flex-shrink-0" />
         <p className="text-[11px] font-medium text-indigo-700 dark:text-indigo-300 leading-relaxed">
           <span className="font-bold">Informasi:</span> Poin berasal dari dokumen yang telah diverifikasi (<em>Approved</em>) oleh Admin. Bobot poin setiap kategori mengacu pada pedoman SINTA.
@@ -157,7 +157,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
         className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
       >
         {/* Header Cover Banner */}
-        <div className="h-28 sm:h-32 w-full bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-955 relative overflow-hidden border-b border-slate-200/40 dark:border-slate-800/50">
+        <div className="h-28 sm:h-32 w-full bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 relative overflow-hidden border-b border-slate-200/40 dark:border-slate-800/50">
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/5 dark:bg-primary-500/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-10 w-96 h-96 bg-emerald-500/5 dark:bg-emerald-500/5 rounded-full blur-3xl" />
         </div>

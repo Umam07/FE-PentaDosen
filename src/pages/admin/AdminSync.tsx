@@ -600,7 +600,7 @@ export default function AdminSync() {
               <p className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Scholar Connected</p>
               <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">{lecturers.filter(l => l.scholar_id).length}</p>
            </div>
-           <div className="p-4 bg-blue-50 dark:bg-blue-955/30 rounded-2xl text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
+           <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-2xl text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
               <BookOpen className="h-6 w-6" />
            </div>
         </div>
@@ -610,7 +610,7 @@ export default function AdminSync() {
               <p className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Scopus Connected</p>
               <p className="text-3xl font-black text-orange-600 dark:text-orange-400 mt-1">{lecturers.filter(l => l.scopus_id).length}</p>
            </div>
-           <div className="p-4 bg-orange-50 dark:bg-orange-955/30 rounded-2xl text-orange-600 dark:text-orange-400 border border-orange-100/50 dark:border-orange-900/20">
+           <div className="p-4 bg-orange-50 dark:bg-orange-950/30 rounded-2xl text-orange-600 dark:text-orange-400 border border-orange-100/50 dark:border-orange-900/20">
               <Globe className="h-6 w-6" />
            </div>
         </div>
@@ -863,18 +863,17 @@ export default function AdminSync() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              
-              {/* GOOGLE SCHOLAR INTEGRATION CARD */}
-              <div className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2rem] border border-blue-100/50 dark:border-blue-955/20 overflow-hidden hover:shadow-md transition-shadow">
-                <div className="px-8 py-6 border-b border-blue-50 dark:border-blue-955/30 bg-blue-50/20 dark:bg-blue-955/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                       {/* GOOGLE SCHOLAR INTEGRATION CARD */}
+              <div className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2rem] border border-blue-100/50 dark:border-blue-950/20 overflow-hidden hover:shadow-md transition-shadow">
+                <div className="px-8 py-6 border-b border-blue-50 dark:border-blue-950/30 bg-blue-50/20 dark:bg-blue-950/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div className="flex items-center">
                     <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-xl mr-4 shadow-sm">
                       <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <h3 className="text-lg font-black text-blue-955 dark:text-zinc-100 uppercase tracking-tight">Id Scholar</h3>
+                    <h3 className="text-lg font-black text-blue-950 dark:text-zinc-100 uppercase tracking-tight">Id Scholar</h3>
                   </div>
                   {messageScholar && (
-                    <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 flex items-center bg-emerald-50 dark:bg-emerald-955/20 px-4 py-2 rounded-xl uppercase tracking-widest border border-emerald-100/20">
+                    <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 flex items-center bg-emerald-50 dark:bg-emerald-950/20 px-4 py-2 rounded-xl uppercase tracking-widest border border-emerald-100/20">
                       <CheckCircle2 className="w-3.5 h-3.5 mr-2 shrink-0" />
                       {messageScholar}
                     </motion.span>
@@ -910,11 +909,11 @@ export default function AdminSync() {
                     
                     {/* Verification Result */}
                     {checkedAuthorScholar && (
-                      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mt-4 p-5 bg-gradient-to-br from-blue-50/20 to-white dark:from-blue-955/10 dark:to-zinc-900/50 rounded-2xl border border-blue-100/30 dark:border-blue-900/20 flex items-center gap-5 shadow-sm">
+                      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mt-4 p-5 bg-gradient-to-br from-blue-50/20 to-white dark:from-blue-950/10 dark:to-zinc-900/50 rounded-2xl border border-blue-100/30 dark:border-blue-900/20 flex items-center gap-5 shadow-sm">
                         {checkedAuthorScholar.thumbnail ? (
                           <img src={checkedAuthorScholar.thumbnail} className="h-16 w-16 rounded-2xl object-cover shadow-md border-2 border-white dark:border-zinc-800" />
                         ) : (
-                          <div className="h-14 w-14 rounded-2xl bg-blue-100 dark:bg-blue-955/20 flex items-center justify-center"><User className="w-6 h-6 text-blue-400" /></div>
+                          <div className="h-14 w-14 rounded-2xl bg-blue-100 dark:bg-blue-950/20 flex items-center justify-center"><User className="w-6 h-6 text-blue-400" /></div>
                         )}
                         <div className="flex-1">
                             <h4 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{checkedAuthorScholar.name}</h4>
@@ -944,9 +943,9 @@ export default function AdminSync() {
                     {scholarData ? (
                       <div className="grid grid-cols-3 gap-4">
                         {[
-                          { label: 'Citations', val: scholarData.total_citations, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50/30 dark:bg-blue-955/10' },
-                          { label: 'H-Index', val: scholarData.h_index, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50/30 dark:bg-emerald-955/10' },
-                          { label: 'i10-Index', val: scholarData.i10_index, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50/30 dark:bg-purple-955/10' },
+                          { label: 'Citations', val: scholarData.total_citations, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50/30 dark:bg-blue-950/10' },
+                          { label: 'H-Index', val: scholarData.h_index, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50/30 dark:bg-emerald-950/10' },
+                          { label: 'i10-Index', val: scholarData.i10_index, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50/30 dark:bg-purple-950/10' },
                         ].map((s, i) => (
                           <div key={i} className={`${s.bg} p-4 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/50 text-center shadow-sm`}>
                             <p className="text-[8px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-1.5">{s.label}</p>
@@ -965,16 +964,16 @@ export default function AdminSync() {
               </div>
 
               {/* SCOPUS INTEGRATION CARD */}
-              <div className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2rem] border border-orange-100/50 dark:border-orange-955/20 overflow-hidden hover:shadow-md transition-shadow">
-                <div className="px-8 py-6 border-b border-orange-50 dark:border-orange-955/30 bg-orange-50/20 dark:bg-orange-955/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2rem] border border-orange-100/50 dark:border-orange-950/20 overflow-hidden hover:shadow-md transition-shadow">
+                <div className="px-8 py-6 border-b border-orange-50 dark:border-orange-950/30 bg-orange-50/20 dark:bg-orange-950/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div className="flex items-center">
                     <div className="p-2.5 bg-orange-100 dark:bg-orange-900/30 rounded-xl mr-4 shadow-sm">
                       <Globe className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                     </div>
-                    <h3 className="text-lg font-black text-orange-955 dark:text-zinc-100 uppercase tracking-tight">Id Scopus</h3>
+                    <h3 className="text-lg font-black text-orange-950 dark:text-zinc-100 uppercase tracking-tight">Id Scopus</h3>
                   </div>
                   {messageScopus && (
-                    <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 flex items-center bg-emerald-50 dark:bg-emerald-955/20 px-4 py-2 rounded-xl uppercase tracking-widest border border-emerald-100/20">
+                    <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 flex items-center bg-emerald-50 dark:bg-emerald-950/20 px-4 py-2 rounded-xl uppercase tracking-widest border border-emerald-100/20">
                       <CheckCircle2 className="w-3.5 h-3.5 mr-2 shrink-0" />
                       {messageScopus}
                     </motion.span>
@@ -1010,7 +1009,7 @@ export default function AdminSync() {
                     
                     {/* Verification Result */}
                     {checkedAuthorScopus && (
-                      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mt-4 p-5 bg-gradient-to-br from-orange-50/20 to-white dark:from-orange-955/10 dark:to-zinc-900/50 rounded-2xl border border-orange-100/30 dark:border-orange-900/20 flex flex-col gap-2 shadow-sm">
+                      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mt-4 p-5 bg-gradient-to-br from-orange-50/20 to-white dark:from-orange-950/10 dark:to-zinc-900/50 rounded-2xl border border-orange-100/30 dark:border-orange-900/20 flex flex-col gap-2 shadow-sm">
                         <h4 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{checkedAuthorScopus.name}</h4>
                         <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase leading-relaxed">{checkedAuthorScopus.affiliations}</p>
                         <button onClick={handleSaveScopusId} className="mt-2 text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-[0.15em] hover:text-orange-700 dark:hover:text-orange-300 underline flex items-center gap-1.5 w-fit">
@@ -1037,9 +1036,9 @@ export default function AdminSync() {
                     {scopusData ? (
                       <div className="grid grid-cols-3 gap-4">
                         {[
-                          { label: 'Documents', val: scopusData.document_count, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50/30 dark:bg-orange-955/10' },
-                          { label: 'Citations', val: scopusData.total_citations, color: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-50/30 dark:bg-sky-955/10' },
-                          { label: 'H-Index', val: scopusData.h_index, color: 'text-teal-600 dark:text-teal-400', bg: 'bg-teal-50/30 dark:bg-teal-955/10' },
+                          { label: 'Documents', val: scopusData.document_count, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50/30 dark:bg-orange-950/10' },
+                          { label: 'Citations', val: scopusData.total_citations, color: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-50/30 dark:bg-sky-950/10' },
+                          { label: 'H-Index', val: scopusData.h_index, color: 'text-teal-600 dark:text-teal-400', bg: 'bg-teal-50/30 dark:bg-teal-950/10' },
                         ].map((s, i) => (
                           <div key={i} className={`${s.bg} p-4 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/50 text-center shadow-sm`}>
                             <p className="text-[8px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-1.5">{s.label}</p>
@@ -1075,7 +1074,7 @@ export default function AdminSync() {
                  <Users className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-gray-955 dark:text-zinc-100 uppercase tracking-tight">Tracker Kesiapan Data</h3>
+                <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Tracker Kesiapan Data</h3>
                 <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Status integrasi sistem eksternal per individu</p>
               </div>
             </div>
@@ -1095,7 +1094,7 @@ export default function AdminSync() {
               {user?.role === 'admin penelitian' && (
                 <DropdownSelect
                   value={selectedFakultas}
-                  onChange={setSelectedFakultas}
+                  onChange={(val) => setSelectedFakultas(val)}
                   options={[
                     { value: "", label: "Semua Fakultas" },
                     { value: "Fakultas Kedokteran", label: "Kedokteran" },
