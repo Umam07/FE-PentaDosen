@@ -45,6 +45,11 @@
     color: var(--text-primary);
   }
 
+  .dark option {
+    background-color: #18181b !important;
+    color: #f4f4f5 !important;
+  }
+
   .dark .bg-white {
     background-color: var(--bg-surface) !important;
   }

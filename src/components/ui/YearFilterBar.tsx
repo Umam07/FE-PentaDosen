@@ -43,11 +43,13 @@ export default function YearFilterBar({
           const val = e.target.value;
           onYearChange(val === '' ? null : parseInt(val));
         }}
-        className="px-3.5 py-2 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-150 border border-slate-200 dark:border-zinc-700 rounded-xl text-[11px] font-black uppercase tracking-wider outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all cursor-pointer min-w-[140px]"
+        className="px-3.5 py-2 bg-white dark:bg-zinc-800 text-slate-800 dark:text-zinc-100 border border-slate-200 dark:border-zinc-700 rounded-xl text-[11px] font-black uppercase tracking-wider outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all cursor-pointer min-w-[140px]"
       >
-        <option value="">Semua Tahun</option>
+        <option value="" className="bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 py-1">
+          Semua Tahun
+        </option>
         {sorted.map((year) => (
-          <option key={year} value={year}>
+          <option key={year} value={year} className="bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 py-1">
             Tahun {year}
           </option>
         ))}
