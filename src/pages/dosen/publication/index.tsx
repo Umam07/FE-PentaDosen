@@ -18,6 +18,7 @@ import PublicationLinkingModal from './components/PublicationLinkingModal';
 import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
 import ScopusFiltersBar from './components/ScopusFiltersBar';
+import MetricsGuideModal from './components/MetricsGuideModal';
 
 export default function Publication({ user }: { user: any }) {
   const location = useLocation();
@@ -56,6 +57,7 @@ export default function Publication({ user }: { user: any }) {
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [isImporting, setIsImporting] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
   const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
 
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
@@ -479,7 +481,10 @@ export default function Publication({ user }: { user: any }) {
   return (
     <div className="max-w-none space-y-6 lg:space-y-10 pb-12">
       {/* Filter Banner */}
-      <PublicationHeader urlKategori={urlKategori} />
+      <PublicationHeader 
+        urlKategori={urlKategori} 
+        onOpenMetricsModal={() => setIsMetricsModalOpen(true)} 
+      />
 
       {/* Dashboard Summary Section */}
       <PublicationStats stats={stats} isTableLoading={isTableLoading} />
@@ -490,6 +495,7 @@ export default function Publication({ user }: { user: any }) {
         onDownloadTemplate={handleDownloadTemplate}
         onImportExcel={handleImportExcel}
         isImporting={isImporting}
+        onOpenMetricsModal={() => setIsMetricsModalOpen(true)}
       />
 
       {urlKategori === 'Jurnal Internasional' && (
@@ -666,6 +672,13 @@ export default function Publication({ user }: { user: any }) {
         fileUrl={previewDoc?.fileUrl ?? null}
         title={previewDoc?.title}
         category={previewDoc?.category}
+      />
+
+      {/* Metriks Penilaian Modal */}
+      <MetricsGuideModal
+        isOpen={isMetricsModalOpen}
+        onClose={() => setIsMetricsModalOpen(false)}
+        category={urlKategori}
       />
     </div>
   );
