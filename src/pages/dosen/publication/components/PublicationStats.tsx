@@ -64,12 +64,10 @@ export default function PublicationStats({
             <item.icon className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between gap-1">
-              <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest truncate">{item.label}</p>
-            </div>
-            {isTableLoading ? (
-              <div className="h-6 w-12 bg-gray-200 dark:bg-zinc-700 animate-pulse rounded mt-1" />
-            ) : (
+            <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-1">
+              <div className="flex items-center justify-between gap-1">
+                <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest truncate">{item.label}</p>
+              </div>
               <div className="flex items-baseline justify-between gap-2 mt-0.5">
                 <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">{item.value}</p>
                 {item.isClickable && (
@@ -83,7 +81,7 @@ export default function PublicationStats({
                   </span>
                 )}
               </div>
-            )}
+            </phantom-ui>
           </div>
         </motion.div>
       ))}

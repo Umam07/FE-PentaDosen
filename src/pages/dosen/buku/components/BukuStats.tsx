@@ -39,9 +39,9 @@ export default function BukuStats({ stats, isTableLoading }: BukuStatsProps) {
             <item.icon className="h-6 w-6" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
-            <phantom-ui loading={isTableLoading} animation="shimmer" className="block mt-1">
-              <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100 mt-0.5">{item.value}</p>
+            <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-1">
+              <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
+              <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">{item.value}</p>
             </phantom-ui>
           </div>
         </motion.div>

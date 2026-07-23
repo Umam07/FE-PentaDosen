@@ -63,7 +63,15 @@ export default function Topbar({
     return () => window.removeEventListener("penta-logout", performLogout);
   }, [handleLogout]);
 
-  const menuItems = user?.role === 'super admin' ? [
+  interface TopbarSearchItem {
+    title: string;
+    path: string;
+    icon: any;
+    category: string;
+    subtext?: string;
+  }
+
+  const menuItems: TopbarSearchItem[] = user?.role === 'super admin' ? [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Panel CMS', path: '/admin/cms', icon: ShieldAlert, category: 'Menu' },
   ] : (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') ? [
@@ -77,7 +85,7 @@ export default function Topbar({
     { title: 'Dokumen Saya', path: '/documents', icon: BookOpen, category: 'Menu' },
   ];
 
-  const dynamicItems = (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') 
+  const dynamicItems: TopbarSearchItem[] = (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') 
     ? lecturers.map((l: any) => ({
         title: l.name,
         path: `/admin/lecturers/${l.id}`,

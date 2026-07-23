@@ -17,7 +17,7 @@ export default function HKIStats({ stats, isTableLoading }: HKIStatsProps) {
     { label: 'Total HKI', value: stats.total, icon: Award, color: 'blue' },
     { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
     { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
-    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'indigo' },
+    { label: 'Poin HKI', value: stats.points, icon: Sparkles, color: 'indigo' },
   ];
 
   return (
@@ -39,9 +39,9 @@ export default function HKIStats({ stats, isTableLoading }: HKIStatsProps) {
             <item.icon className="h-6 w-6" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
-            <phantom-ui loading={isTableLoading} animation="shimmer" className="block mt-1">
-              <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100 mt-0.5">{item.value}</p>
+            <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-1">
+              <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
+              <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">{item.value}</p>
             </phantom-ui>
           </div>
         </motion.div>
