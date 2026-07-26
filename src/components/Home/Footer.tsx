@@ -42,11 +42,11 @@ export default function Footer() {
               <img 
                 src="/YARSI-KOTAK-e1739161183276.png" 
                 alt="Universitas YARSI" 
-                className="h-8 w-auto object-contain transition-transform group-hover:scale-105"
+                className="h-8 w-auto object-contain"
               />
               <div className="h-6 w-[1px] bg-gray-800" />
               <div className="flex items-center gap-2">
-                <PentaDosenLogo className="w-9 h-9 group-hover:scale-110 transition-transform duration-300" />
+                <PentaDosenLogo className="w-9 h-9" />
                 <span className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase">
                   Penta<span className="text-primary-400 bg-clip-text bg-gradient-to-r from-primary-400 to-primary-300">Dosen</span>
                 </span>
@@ -57,7 +57,15 @@ export default function Footer() {
             </p>
             <div className="pt-4 text-xs font-bold text-gray-500 leading-relaxed">
               <p>© {new Date().getFullYear()} PentaDosen.</p>
-              <p className="mt-0.5">Developed by <span className="text-gray-400 hover:text-primary-400 transition-colors">DUK Team</span></p>
+              <p className="mt-0.5">
+                Developed by{' '}
+                <Link
+                  to="/developers"
+                  className="text-gray-300 hover:text-primary-400 font-extrabold transition-all duration-300 hover:underline decoration-primary-400 decoration-2 underline-offset-4"
+                >
+                  DUK Team
+                </Link>
+              </p>
             </div>
           </div>
 

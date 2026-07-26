@@ -83,11 +83,11 @@ export default function Navbar() {
               <img 
                 src="/YARSI-KOTAK-e1739161183276.png" 
                 alt="Universitas YARSI" 
-                className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105"
+                className="h-8 sm:h-9 w-auto object-contain"
               />
               <div className="h-6 sm:h-7 w-[1px] bg-gray-300 dark:bg-gray-700/80" />
               <div className="flex items-center gap-2">
-                <PentaDosenLogo className="w-8.5 h-8.5 sm:w-10 sm:h-10 group-hover:scale-110 transition-transform duration-300" />
+                <PentaDosenLogo className="w-8.5 h-8.5 sm:w-10 sm:h-10" />
                 <h1 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase">
                   Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
                 </h1>

@@ -33,6 +33,8 @@ const FaqHelp = lazy(() => import('./pages/dosen/FaqHelp'));
 const LecturerList = lazy(() => import('./pages/dashboard/LecturerList'));
 const LecturerProfileInsights = lazy(() => import('./pages/dashboard/LecturerProfileInsights'));
 const DepartementList = lazy(() => import('./pages/dashboard/DepartementList'));
+const Developers = lazy(() => import('./pages/Developers'));
+
 
 function DashboardRedirect({ user }: { user: any }) {
   if (!user) return <Navigate to="/login" />;
@@ -221,6 +223,7 @@ export default function App() {
           <Route path="/departments" element={<DepartementList />} />
           <Route path="/lecturers" element={<LecturerList />} />
           <Route path="/lecturer/:id" element={<LecturerProfileInsights />} />
+          <Route path="/developers" element={<Developers />} />
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
           <Route path="/admin" element={<AdminRedirect user={user} setUser={setUser} />} />
 

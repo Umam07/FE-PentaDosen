@@ -116,11 +116,11 @@ export default function Sidebar({
               <img 
                 src="/YARSI-KOTAK-e1739161183276.png" 
                 alt="Universitas YARSI" 
-                className="h-7 lg:h-8 w-auto object-contain flex-shrink-0 transition-transform group-hover:scale-105"
+                className="h-7 lg:h-8 w-auto object-contain flex-shrink-0"
               />
               <div className="h-6 w-[1px] bg-gray-200 dark:bg-zinc-700/80 flex-shrink-0" />
               <div className="flex items-center gap-2 min-w-0">
-                <PentaDosenLogo className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0 group-hover:scale-105 transition-transform duration-300" />
+                <PentaDosenLogo className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0" />
                 <motion.h1 
                   initial={{ opacity: 0, x: -5 }}
                   animate={{ opacity: 1, x: 0 }}
