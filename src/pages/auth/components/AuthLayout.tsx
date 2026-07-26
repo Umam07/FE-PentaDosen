@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Hexagon, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
+import PentaDosenLogo from '../../../components/ui/PentaDosenLogo';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -38,9 +39,17 @@ export default function AuthLayout({
           <motion.div 
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="p-4 bg-gradient-to-br from-primary-500 to-primary-700 rounded-3xl shadow-2xl shadow-primary-200 dark:shadow-primary-900/30 mb-6"
+            className="flex items-center gap-4 mb-4"
           >
-            <Hexagon className="w-10 h-10 text-white fill-white/20" />
+            <img 
+              src="/YARSI-KOTAK-e1739161183276.png" 
+              alt="Universitas YARSI" 
+              className="h-10 w-auto object-contain"
+            />
+            <div className="h-7 w-[1px] bg-slate-300 dark:bg-gray-700" />
+            <div className="flex items-center gap-2">
+              <PentaDosenLogo className="w-10 h-10" />
+            </div>
           </motion.div>
           <motion.h1 
             initial={{ y: 10, opacity: 0 }}

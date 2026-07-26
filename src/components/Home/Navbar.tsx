@@ -1,8 +1,9 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Hexagon, Menu, X, ArrowRight, Home, Trophy, Sparkles, Settings, LogIn, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ArrowRight, Home, Trophy, Sparkles, Settings, LogIn, LayoutDashboard } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from '../layout/ThemeToggle';
+import PentaDosenLogo from '../ui/PentaDosenLogo';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -77,14 +78,20 @@ export default function Navbar() {
       >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="p-2.5 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <Hexagon className="w-6 h-6 text-white fill-white/20" />
+            {/* Logo Co-Branding YARSI + PentaDosen */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <img 
+                src="/YARSI-KOTAK-e1739161183276.png" 
+                alt="Universitas YARSI" 
+                className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105"
+              />
+              <div className="h-6 sm:h-7 w-[1px] bg-gray-300 dark:bg-gray-700/80" />
+              <div className="flex items-center gap-2">
+                <PentaDosenLogo className="w-8.5 h-8.5 sm:w-10 sm:h-10 group-hover:scale-110 transition-transform duration-300" />
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase">
+                  Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
+                </h1>
               </div>
-              <h1 className="text-xl font-black text-gray-900 dark:text-white tracking-tighter uppercase">
-                Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
-              </h1>
             </Link>
 
             {/* Desktop Navigation */}
@@ -171,13 +178,19 @@ export default function Navbar() {
             >
               {/* Header inside drawer */}
               <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
-                <Link to="/" className="flex items-center gap-2 group" onClick={() => setIsMenuOpen(false)}>
-                  <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex-shrink-0">
-                    <Hexagon className="w-5 h-5 text-white fill-white/15" />
+                <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setIsMenuOpen(false)}>
+                  <img 
+                    src="/YARSI-KOTAK-e1739161183276.png" 
+                    alt="Universitas YARSI" 
+                    className="h-7 w-auto object-contain"
+                  />
+                  <div className="h-5 w-[1px] bg-gray-300 dark:bg-gray-700" />
+                  <div className="flex items-center gap-2">
+                    <PentaDosenLogo className="w-7 h-7" />
+                    <span className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                      Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
+                    </span>
                   </div>
-                  <span className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                    Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
-                  </span>
                 </Link>
                 <button
                   onClick={() => setIsMenuOpen(false)}

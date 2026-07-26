@@ -1,6 +1,7 @@
 import { MouseEvent } from 'react';
-import { MapPin, Mail, Phone, Hexagon, ArrowRight, ShieldCheck, FileText, Database, Cpu, Lock, Share2, Users, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { MapPin, Mail, Phone, ArrowRight, ShieldCheck, FileText, Database, Cpu, Lock, Share2, Users, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PentaDosenLogo from '../ui/PentaDosenLogo';
 import {
   Dialog,
   DialogClose,
@@ -38,12 +39,18 @@ export default function Footer() {
           {/* Logo & About */}
           <div className="lg:col-span-4 space-y-6">
             <Link to="/" className="flex items-center gap-3 group w-fit">
-              <div className="p-2.5 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl shadow-xl shadow-primary-500/10 group-hover:scale-105 transition-all duration-300">
-                <Hexagon className="w-6 h-6 text-white fill-white/10 group-hover:rotate-12 transition-transform duration-500" />
+              <img 
+                src="/YARSI-KOTAK-e1739161183276.png" 
+                alt="Universitas YARSI" 
+                className="h-8 w-auto object-contain transition-transform group-hover:scale-105"
+              />
+              <div className="h-6 w-[1px] bg-gray-800" />
+              <div className="flex items-center gap-2">
+                <PentaDosenLogo className="w-9 h-9 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase">
+                  Penta<span className="text-primary-400 bg-clip-text bg-gradient-to-r from-primary-400 to-primary-300">Dosen</span>
+                </span>
               </div>
-              <span className="text-2xl font-black text-white tracking-tighter uppercase">
-                Penta<span className="text-primary-400 bg-clip-text bg-gradient-to-r from-primary-400 to-primary-300">Dosen</span>
-              </span>
             </Link>
             <p className="text-sm font-medium text-gray-400 leading-relaxed max-w-sm">
               Sistem terintegrasi untuk pendataan publikasi, sitasi, serta administrasi dokumen dosen secara aman, modern, dan dinamis.

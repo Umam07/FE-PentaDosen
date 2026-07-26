@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Hexagon, PanelLeftOpen, PanelLeftClose, X, ChevronDown } from 'lucide-react';
+import { PanelLeftOpen, PanelLeftClose, X, ChevronDown } from 'lucide-react';
+import PentaDosenLogo from '../ui/PentaDosenLogo';
 
 interface NavChild {
   name: string;
@@ -105,47 +106,65 @@ export default function Sidebar({
       animate={isMobile ? (isMobileMenuOpen ? "mobileOpen" : "mobileClosed") : (isCollapsed ? "collapsed" : "expanded")}
       variants={sidebarVariants}
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-      className="bg-white dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800 flex flex-col fixed top-0 left-0 h-screen z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-hidden lg:z-30"
+      className={`bg-white dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800 flex flex-col fixed top-0 left-0 h-screen z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] lg:z-30 ${isCollapsed && !isMobile ? 'overflow-visible' : 'overflow-hidden'}`}
     >
       {/* Brand & Toggle Button */}
-      <div className="h-20 lg:h-24 flex items-center justify-between px-6 flex-shrink-0">
-        <div className="flex items-center gap-3 group overflow-hidden whitespace-nowrap">
-          <div className="p-2.5 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-lg shadow-primary-200 flex-shrink-0">
-            <Hexagon className="w-6 h-6 text-white fill-white/20" />
-          </div>
-          {showLabels && (
-            <motion.h1 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tighter uppercase"
-            >
-              Penta<span className="text-primary-600">Dosen</span>
-            </motion.h1>
-          )}
-        </div>
-        
-        {!isMobile ? (
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className={`p-2 rounded-xl transition-all duration-300 hover:bg-primary-50 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-primary-600 flex-shrink-0 ${isCollapsed ? 'mx-auto' : ''}`}
-          >
-            {isCollapsed ? (
-              <PanelLeftOpen className="w-6 h-6 animate-pulse" />
+      <div className={`h-16 lg:h-20 flex items-center flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? 'justify-center px-2' : 'justify-between px-3.5 sm:px-4'}`}>
+        {!isCollapsed || isMobile ? (
+          <>
+            <Link to="/dashboard" className="flex items-center gap-2.5 group whitespace-nowrap min-w-0" aria-label="Dashboard PentaDosen">
+              <img 
+                src="/YARSI-KOTAK-e1739161183276.png" 
+                alt="Universitas YARSI" 
+                className="h-7 lg:h-8 w-auto object-contain flex-shrink-0 transition-transform group-hover:scale-105"
+              />
+              <div className="h-6 w-[1px] bg-gray-200 dark:bg-zinc-700/80 flex-shrink-0" />
+              <div className="flex items-center gap-2 min-w-0">
+                <PentaDosenLogo className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0 group-hover:scale-105 transition-transform duration-300" />
+                <motion.h1 
+                  initial={{ opacity: 0, x: -5 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-base lg:text-[17px] font-black text-gray-900 dark:text-zinc-100 tracking-tighter uppercase"
+                >
+                  Penta<span className="text-primary-600 dark:text-primary-400">Dosen</span>
+                </motion.h1>
+              </div>
+            </Link>
+            
+            {!isMobile ? (
+              <button
+                onClick={() => setIsCollapsed(true)}
+                aria-label="Collapse sidebar"
+                title="Kecilkan Sidebar"
+                className="p-1.5 rounded-xl transition-all duration-300 hover:bg-primary-50 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-primary-600 flex-shrink-0"
+              >
+                <PanelLeftClose className="w-5 h-5" />
+              </button>
             ) : (
-              <PanelLeftClose className="w-6 h-6" />
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 lg:hidden flex-shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
             )}
-          </button>
+          </>
         ) : (
-          <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden p-2 text-gray-400">
-             <X className="w-6 h-6" />
+          /* Ultra-clean Collapsed Header: Only single centered toggle button */
+          <button
+            onClick={() => setIsCollapsed(false)}
+            aria-label="Expand sidebar"
+            title="Perluas Sidebar"
+            className="p-2 rounded-xl transition-all duration-300 hover:bg-primary-50 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 hover:text-primary-600 flex-shrink-0 mx-auto"
+          >
+            <PanelLeftOpen className="w-5 h-5" />
           </button>
         )}
       </div>
       
       {/* Nav Area */}
-      <div className={`mb-4 flex-1 overflow-y-auto overflow-x-hidden ${isCollapsed && !isMobile ? 'px-2' : 'px-4'}`}>
-        <div className={`bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100/50 dark:border-zinc-700 ${isCollapsed && !isMobile ? 'p-1' : 'p-2'}`}>
+      <div className={`mb-4 flex-1 overflow-y-auto ${isCollapsed && !isMobile ? 'overflow-x-visible px-2' : 'overflow-x-hidden px-4'}`}>
+        <div className={`bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100/50 dark:border-zinc-700 ${isCollapsed && !isMobile ? 'p-1 overflow-visible' : 'p-2'}`}>
           {showLabels && (
             <motion.p 
               initial={{ opacity: 0 }}
@@ -165,7 +184,7 @@ export default function Sidebar({
               // === ITEM WITH CHILDREN (dropdown group) ===
               if (hasChildren) {
                 return (
-                  <div key={item.name}>
+                  <div key={item.name} className="relative">
                     {/* Parent Button */}
                     <button
                       onClick={() => {
@@ -203,10 +222,10 @@ export default function Sidebar({
                           </motion.div>
                         </>
                       ) : (
-                        // Tooltip when collapsed
-                        <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-[10px] font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl pointer-events-none">
+                        // Modern Tooltip when collapsed
+                        <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-xl pointer-events-none border border-zinc-800 dark:border-zinc-200 flex items-center">
                           {item.name}
-                          <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45" />
+                          <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-900 dark:bg-zinc-100 rotate-45" />
                         </div>
                       )}
                     </button>
@@ -282,9 +301,10 @@ export default function Sidebar({
                       {item.name}
                     </motion.span>
                   ) : (
-                    <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-[10px] font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl pointer-events-none">
+                    // Modern Tooltip when collapsed
+                    <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-xl pointer-events-none border border-zinc-800 dark:border-zinc-200 flex items-center">
                       {item.name}
-                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45" />
+                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-900 dark:bg-zinc-100 rotate-45" />
                     </div>
                   )}
                 </Link>
