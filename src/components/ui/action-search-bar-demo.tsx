@@ -133,7 +133,7 @@ export function ActionSearchBarDemo() {
         <ActionSearchBar
           actions={mockLecturerActions}
           onSelect={handleActionSelect}
-          placeholder="Cari menu, aksi, atau dosen..."
+          placeholder="Cari menu/dosen..."
           user={mockUsers[selectedRole]}
         />
       </div>

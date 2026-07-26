@@ -93,7 +93,7 @@ const roleLabels: Record<string, string> = {
   "super admin": "Super Admin",
 };
 
-function ActionSearchBar({ actions = [], onSelect, placeholder = "Search...", className, user }: ActionSearchBarProps) {
+function ActionSearchBar({ actions = [], onSelect, placeholder = "Cari menu/dosen...", className, user }: ActionSearchBarProps) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 

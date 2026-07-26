@@ -137,7 +137,7 @@ export default function Topbar({
           <ActionSearchBar 
             actions={searchActions} 
             onSelect={handleActionSelect}
-            placeholder="Search commands or lecturers..."
+            placeholder="Cari menu/dosen..."
             user={user}
           />
         </div>
@@ -255,7 +255,7 @@ export default function Topbar({
                    <ActionSearchBar 
                     actions={searchActions} 
                     onSelect={handleActionSelect}
-                    placeholder="Apa yang Anda cari?"
+                    placeholder="Cari menu/dosen..."
                     className="max-w-full"
                     user={user}
                   />
