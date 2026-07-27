@@ -6,6 +6,7 @@ import {
 import { motion } from 'motion/react';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
+import { calculateScholarPoints } from '../../dashboard/pointsCalculator';
 
 interface PublicationTableProps {
   isTableLoading: boolean;
@@ -61,6 +62,23 @@ export default function PublicationTable({
     const isJI = doc.category === 'Jurnal Internasional';
     const isJN = doc.category === 'Jurnal Nasional';
     if (!isJI && !isJN) return null;
+
+    if (doc.source === 'scholar') {
+      const citations = Number(doc.citations) || 0;
+      const docPoints = 0.5;
+      const citationBonus = citations > 0 ? 0.5 : 0;
+      const citationPoints = Math.min(citations, 500) * 0.25;
+      const totalPoints = calculateScholarPoints(doc);
+
+      return {
+        type: 'scholar',
+        citations,
+        docPoints,
+        citationBonus,
+        citationPoints,
+        totalPoints,
+      };
+    }
 
     const role = doc.author_role === 'Member Author' || doc.author_role === 'Co-Author' 
       ? 'Member Author' 
@@ -138,6 +156,7 @@ export default function PublicationTable({
     const finalPoints = Math.round(awardedPoints);
 
     return {
+      type: 'scopus',
       q,
       maxPoints: basePoints,
       detailStr,
@@ -232,6 +251,11 @@ export default function PublicationTable({
                                   ✍️ Input Manual
                                 </span>
                               )}
+                              {doc.source === 'scholar' && (
+                                <span className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[8px] font-black uppercase rounded border border-blue-100 dark:border-blue-900/40 flex items-center gap-1">
+                                  📊 {doc.citations || 0} Sitasi
+                                </span>
+                              )}
                               {isCrossIndexed && (
                                 <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-500/20 shadow-sm flex items-center gap-1">
                                   🔗 Cross-Indexed
@@ -268,7 +292,7 @@ export default function PublicationTable({
                           if (!isJI && !isJN) return null;
 
                           const totalAuthors = Number(doc.total_authors) || 1;
-                          const showCorrespondingControls = doc.author_role !== 'Single Author' && totalAuthors > 1;
+                          const showCorrespondingControls = doc.author_role !== 'Single Author' && totalAuthors > 1 && doc.source !== 'scholar';
                           const bd = getBreakdown(doc);
                           const isExpanded = !!expandedPoints[doc.id];
                           const isEditing = !!isEditingCorrespondingMap[doc.id];
@@ -396,79 +420,131 @@ export default function PublicationTable({
                                   </button>
 
                                   {isExpanded && (
-                                    <motion.div
-                                      initial={{ opacity: 0, height: 0 }}
-                                      animate={{ opacity: 1, height: 'auto' }}
-                                      exit={{ opacity: 0, height: 0 }}
-                                      className="mt-3 rounded-2xl border border-orange-100 dark:border-orange-900/30 overflow-hidden w-full max-w-xl"
-                                    >
-                                      <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900/30">
-                                        <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">
-                                          RINCIAN KALKULASI POIN SINTA (SKEMA PERSENTASE + QUARTILE)
-                                        </p>
-                                      </div>
-                                      <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
-                                        {(() => {
-                                          const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                                          const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
-                                          if (!isCrossIndexed) return null;
-                                          return (
-                                            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-xl flex flex-wrap items-center justify-between gap-2 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 mb-2">
-                                              <span className="flex items-center gap-1.5">
-                                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                                                🔗 Irisan Publikasi Scopus & Google Scholar
-                                              </span>
-                                              <span className="font-black text-[8px] bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-md">
-                                                Skema Scopus Digunakan (No Double-Count)
-                                              </span>
+                                    bd.type === 'scholar' ? (
+                                      <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="mt-3 rounded-2xl border border-blue-100 dark:border-blue-900/30 overflow-hidden w-full max-w-xl"
+                                      >
+                                        <div className="px-4 py-2.5 bg-blue-50 dark:bg-blue-950/30 border-b border-blue-100 dark:border-blue-900/30">
+                                          <p className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+                                            RINCIAN PERHITUNGAN POIN (SINTA GS)
+                                          </p>
+                                        </div>
+                                        <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                                          <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                                            <div>
+                                              <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Dokumen GS</p>
+                                              <p className="text-[9px] font-medium text-slate-400">Poin flat per publikasi Google Scholar</p>
                                             </div>
-                                          );
-                                        })()}
-                                        <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
-                                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                            QUARTILE JURNAL:
-                                          </span>
-                                          {bd.q !== 'None' ? (
-                                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
-                                              bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                              bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
-                                              bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
-                                              'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                                            }`}>{bd.q}</span>
-                                          ) : (
-                                            <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
+                                            <span className="text-[11px] font-black text-blue-600 flex-shrink-0">+0.50</span>
+                                          </div>
+
+                                          <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                                            <div>
+                                              <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Dokumen Tersitasi</p>
+                                              <p className="text-[9px] font-medium text-slate-400">Poin tambahan flat jika sitasi &gt; 0</p>
+                                            </div>
+                                            <span className="text-[11px] font-black text-blue-600 flex-shrink-0">
+                                              +{bd.citationBonus.toFixed(2)}
+                                            </span>
+                                          </div>
+
+                                          <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                                            <div>
+                                              <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">
+                                                Sitasi (×{Math.min(bd.citations, 500)} × 0.25)
+                                                {bd.citations > 500 && ' (Cut-off 500)'}
+                                              </p>
+                                              <p className="text-[9px] font-medium text-slate-400">Nilai bobot per sitasi yang didapat</p>
+                                            </div>
+                                            <span className="text-[11px] font-black text-blue-600 flex-shrink-0">
+                                              +{bd.citationPoints.toFixed(2)}
+                                            </span>
+                                          </div>
+
+                                          <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
+                                            <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">TOTAL POIN</span>
+                                            <span className="text-base font-black text-blue-600">{bd.totalPoints} pts</span>
+                                          </div>
+                                        </div>
+                                      </motion.div>
+                                    ) : (
+                                      <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="mt-3 rounded-2xl border border-orange-100 dark:border-orange-900/30 overflow-hidden w-full max-w-xl"
+                                      >
+                                        <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900/30">
+                                          <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">
+                                            RINCIAN KALKULASI POIN SINTA (SKEMA PERSENTASE + QUARTILE)
+                                          </p>
+                                        </div>
+                                        <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+                                          {(() => {
+                                            const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                                            const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
+                                            if (!isCrossIndexed) return null;
+                                            return (
+                                              <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-xl flex flex-wrap items-center justify-between gap-2 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 mb-2">
+                                                <span className="flex items-center gap-1.5">
+                                                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                                                  🔗 Irisan Publikasi Scopus & Google Scholar
+                                                </span>
+                                                <span className="font-black text-[8px] bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-md">
+                                                  Skema Scopus Digunakan (No Double-Count)
+                                                </span>
+                                              </div>
+                                            );
+                                          })()}
+                                          <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                              QUARTILE JURNAL:
+                                            </span>
+                                            {bd.q !== 'None' ? (
+                                              <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
+                                                bd.q === 'Q1' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                                bd.q === 'Q2' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' :
+                                                bd.q === 'Q3' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                                                'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                              }`}>{bd.q}</span>
+                                            ) : (
+                                              <span className="px-2 py-0.5 rounded-md text-[9px] font-black bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">Tidak terdeteksi</span>
+                                            )}
+                                          </div>
+
+                                          <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                                            <div>
+                                              <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
+                                              <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=38, Q3=35, Q4/None=33 pts</p>
+                                            </div>
+                                            <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
+                                          </div>
+
+                                          <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
+                                            <div>
+                                              <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
+                                              <p className="text-[9px] font-bold text-orange-500">{bd.pctStr}</p>
+                                            </div>
+                                            <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.totalPoints}</span>
+                                          </div>
+
+                                          {bd.totalAuthors > 1 && (
+                                            <div className="flex justify-between items-center py-1 gap-2 border-b border-slate-100 dark:border-slate-800">
+                                              <p className="text-[9px] font-medium text-slate-400">Total penulis terdeteksi</p>
+                                              <span className="text-[9px] font-black text-slate-500">{bd.totalAuthors} penulis</span>
+                                            </div>
                                           )}
-                                        </div>
 
-                                        <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
-                                          <div>
-                                            <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q !== 'None' ? bd.q : 'Tanpa Quartile'}</p>
-                                            <p className="text-[9px] font-medium text-slate-400">Q1=40, Q2=38, Q3=35, Q4/None=33 pts</p>
+                                          <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
+                                            <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">TOTAL POIN</span>
+                                            <span className="text-base font-black text-orange-600">{bd.totalPoints} pts</span>
                                           </div>
-                                          <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
                                         </div>
-
-                                        <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
-                                          <div>
-                                            <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
-                                            <p className="text-[9px] font-bold text-orange-500">{bd.pctStr}</p>
-                                          </div>
-                                          <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.totalPoints}</span>
-                                        </div>
-
-                                        {bd.totalAuthors > 1 && (
-                                          <div className="flex justify-between items-center py-1 gap-2 border-b border-slate-100 dark:border-slate-800">
-                                            <p className="text-[9px] font-medium text-slate-400">Total penulis terdeteksi</p>
-                                            <span className="text-[9px] font-black text-slate-500">{bd.totalAuthors} penulis</span>
-                                          </div>
-                                        )}
-
-                                        <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-                                          <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">TOTAL POIN</span>
-                                          <span className="text-base font-black text-orange-600">{bd.totalPoints} pts</span>
-                                        </div>
-                                      </div>
-                                    </motion.div>
+                                      </motion.div>
+                                    )
                                   )}
                                 </div>
                               )}
@@ -521,7 +597,7 @@ export default function PublicationTable({
                   {/* Poin */}
                   <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
                     <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter whitespace-nowrap">
-                      +{Math.round(doc.awarded_points)} PTS
+                      +{Math.round(doc.source === 'scholar' ? calculateScholarPoints(doc) : (doc.awarded_points ?? 0))} PTS
                     </span>
                   </td>
 
