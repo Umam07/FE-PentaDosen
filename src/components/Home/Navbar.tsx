@@ -72,23 +72,23 @@ export default function Navbar() {
         }}
         className={`fixed left-0 right-0 z-50 transition-all duration-700 mx-auto ${
           isScrolled 
-            ? 'top-4 w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-7xl py-3 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 dark:border-gray-800/50 rounded-2xl' 
+            ? 'top-4 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-7xl py-3 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 dark:border-gray-800/50 rounded-2xl' 
             : 'top-0 w-full max-w-full py-6 bg-transparent border-transparent rounded-none'
         }`}
       >
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+        <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-2 min-w-0">
             {/* Logo Co-Branding YARSI + PentaDosen */}
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/" className="flex items-center gap-1.5 xs:gap-2 sm:gap-3 group shrink min-w-0">
               <img 
                 src="/YARSI-KOTAK-e1739161183276.png" 
                 alt="Universitas YARSI" 
-                className="h-8 sm:h-9 w-auto object-contain"
+                className="h-7 sm:h-9 w-auto object-contain shrink-0"
               />
-              <div className="h-6 sm:h-7 w-[1px] bg-gray-300 dark:bg-gray-700/80" />
-              <div className="flex items-center gap-2">
-                <PentaDosenLogo className="w-8.5 h-8.5 sm:w-10 sm:h-10" />
-                <h1 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase">
+              <div className="h-5 sm:h-7 w-[1px] bg-gray-300 dark:bg-gray-700/80 shrink-0" />
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink min-w-0">
+                <PentaDosenLogo className="w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
+                <h1 className="text-sm xs:text-base sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase truncate">
                   Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
                 </h1>
               </div>
@@ -140,14 +140,14 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Actions */}
-            <div className="flex items-center gap-2 md:hidden">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:hidden shrink-0">
               <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
               <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
+                className="p-1.5 sm:p-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
                 aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
               >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
               </button>
             </div>
           </div>

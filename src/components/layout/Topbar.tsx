@@ -114,24 +114,24 @@ export default function Topbar({
   };
 
   return (
-    <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-6 lg:px-10 sticky top-0 z-20 shadow-sm">
-      <div className="flex items-center gap-4">
+    <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6 lg:px-10 sticky top-0 z-20 shadow-sm">
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
            {isMobile && (
              <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2.5 bg-primary-50 text-primary-600 rounded-xl lg:hidden"
+              className="p-2 sm:p-2.5 bg-primary-50 text-primary-600 rounded-xl lg:hidden shrink-0"
              >
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
              </button>
            )}
-           <div className="hidden sm:block">
-              <h2 className="text-base lg:text-lg font-black text-gray-900 dark:text-zinc-100 tracking-tight flex items-center gap-2">
+           <div className="hidden sm:block min-w-0 truncate">
+              <h2 className="text-base lg:text-lg font-black text-gray-900 dark:text-zinc-100 tracking-tight flex items-center gap-2 truncate">
                 {currentPageName || 'PentaV2'}
               </h2>
            </div>
       </div>
 
-      <div className="flex items-center gap-3 xs:gap-4 lg:gap-5">
+      <div className="flex items-center gap-2 xs:gap-4 lg:gap-5 shrink-0">
         {/* Interactive Search Bar dengan Dropdown */}
         <div className="hidden sm:block w-48 lg:w-72" ref={searchRef}>
           <ActionSearchBar 
