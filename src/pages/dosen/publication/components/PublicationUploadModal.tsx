@@ -397,6 +397,14 @@ export default function PublicationUploadModal({
                   .filter((w: any) => {
                     const catLower = (w.category || '').toLowerCase();
                     return !catLower.includes('hki') && 
+                           !catLower.includes('paten') && 
+                           !catLower.includes('cipta') && 
+                           !catLower.includes('merk') && 
+                           !catLower.includes('merek') && 
+                           !catLower.includes('buku') && 
+                           !catLower.includes('monograf') && 
+                           !catLower.includes('ajar') && 
+                           !catLower.includes('referensi') && 
                            !catLower.includes('laporan') && 
                            !catLower.includes('proposal');
                   })

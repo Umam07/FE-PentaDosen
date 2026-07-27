@@ -158,7 +158,25 @@ export default function Publication({ user }: { user: any }) {
       if (urlKategori) {
         setCategory(urlKategori);
       } else if (data.weights && data.weights.length > 0) {
-        setCategory(data.weights[0].category);
+        const pubWeights = data.weights.filter((w: any) => {
+          const catLower = (w.category || '').toLowerCase();
+          return !catLower.includes('hki') && 
+                 !catLower.includes('paten') && 
+                 !catLower.includes('cipta') && 
+                 !catLower.includes('merk') && 
+                 !catLower.includes('merek') && 
+                 !catLower.includes('buku') && 
+                 !catLower.includes('monograf') && 
+                 !catLower.includes('ajar') && 
+                 !catLower.includes('referensi') && 
+                 !catLower.includes('laporan') && 
+                 !catLower.includes('proposal');
+        });
+        if (pubWeights.length > 0) {
+          setCategory(pubWeights[0].category);
+        } else {
+          setCategory(data.weights[0].category);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -353,8 +371,35 @@ export default function Publication({ user }: { user: any }) {
     const refSheet = workbook.addWorksheet('Referensi');
     refSheet.state = 'hidden';
 
-    const validCategories = weights.map((w: any) => w.category);
-    validCategories.forEach((cat, idx) => {
+    const validCategories = weights
+      .map((w: any) => w.category)
+      .filter((cat: string) => {
+        const catLower = (cat || '').toLowerCase();
+        return !catLower.includes('hki') && 
+               !catLower.includes('paten') && 
+               !catLower.includes('cipta') && 
+               !catLower.includes('merk') && 
+               !catLower.includes('merek') && 
+               !catLower.includes('buku') && 
+               !catLower.includes('monograf') && 
+               !catLower.includes('ajar') && 
+               !catLower.includes('referensi') && 
+               !catLower.includes('laporan') && 
+               !catLower.includes('proposal');
+      });
+
+    const fallbackCategories = [
+      'Jurnal Internasional Bereputasi',
+      'Jurnal Internasional',
+      'Jurnal Nasional Terakreditasi',
+      'Jurnal Nasional Tidak Terakreditasi',
+      'Prosiding Internasional',
+      'Prosiding Nasional'
+    ];
+
+    const categoriesForTemplate = validCategories.length > 0 ? validCategories : fallbackCategories;
+
+    categoriesForTemplate.forEach((cat, idx) => {
       refSheet.getCell(`A${idx + 1}`).value = cat;
     });
 
@@ -367,17 +412,17 @@ export default function Publication({ user }: { user: any }) {
 
     sheet.addRow({
       judul: 'Implementasi AI dalam Pendidikan',
-      kategori: validCategories[0] || 'Jurnal Internasional',
+      kategori: categoriesForTemplate[0] || 'Jurnal Internasional',
       tahun: new Date().getFullYear(),
       tipe: 'kpi'
     });
 
     for (let i = 2; i <= 1000; i++) {
-      if (validCategories.length > 0) {
+      if (categoriesForTemplate.length > 0) {
         sheet.getCell(`B${i}`).dataValidation = {
           type: 'list',
           allowBlank: true,
-          formulae: [`Referensi!$A$1:$A$${validCategories.length}`],
+          formulae: [`Referensi!$A$1:$A$${categoriesForTemplate.length}`],
           showErrorMessage: true,
           errorTitle: 'Input Tidak Valid',
           error: 'Silakan pilih kategori dari daftar dropdown.'
