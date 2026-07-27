@@ -16,6 +16,7 @@ import HKIUploadModal from './components/HKIUploadModal';
 import HKIEditModal from './components/HKIEditModal';
 import HKILinkingModal from './components/HKILinkingModal';
 import HKIDeleteModal from './components/HKIDeleteModal';
+import HKIMetricsGuideModal from './components/HKIMetricsGuideModal';
 
 import { HKI_CATEGORIES } from './constants';
 
@@ -50,6 +51,7 @@ export default function HKI({ user }: { user: any }) {
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [isImporting, setIsImporting] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
   const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
 
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
@@ -356,7 +358,7 @@ export default function HKI({ user }: { user: any }) {
   return (
     <div className="max-w-none space-y-6 lg:space-y-10 pb-12">
       {/* Header Banner */}
-      <HKIHeader />
+      <HKIHeader onOpenMetricsModal={() => setIsMetricsModalOpen(true)} />
 
       {/* Dashboard Summary Section */}
       <HKIStats stats={stats} isTableLoading={isTableLoading} />
@@ -528,6 +530,12 @@ export default function HKI({ user }: { user: any }) {
         setIsTableLoading={setIsTableLoading}
         setCurrentPage={setCurrentPage}
         onShowMessage={showMessage}
+      />
+
+      {/* ===== METRICS GUIDE MODAL ===== */}
+      <HKIMetricsGuideModal
+        isOpen={isMetricsModalOpen}
+        onClose={() => setIsMetricsModalOpen(false)}
       />
     </div>
   );

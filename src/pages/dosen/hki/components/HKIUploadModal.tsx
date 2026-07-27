@@ -445,7 +445,12 @@ export default function HKIUploadModal({
                   const pts = matchedWeight ? matchedWeight.weight_value : w.pts;
                   return (
                     <div key={w.id} className="flex justify-between items-center bg-white dark:bg-zinc-900 p-2.5 rounded-xl border border-gray-50 dark:border-zinc-800">
-                      <span className="text-[9px] font-bold text-gray-600 dark:text-zinc-300 uppercase tracking-wide">{w.label}</span>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-bold text-gray-600 dark:text-zinc-300 uppercase tracking-wide">{w.label}</span>
+                        {w.id === 'HKI Hak Cipta' && (
+                          <span className="text-[8px] font-bold text-red-500 dark:text-red-400">Maks 2 / Tahun</span>
+                        )}
+                      </div>
                       <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-0.5 rounded border border-emerald-100">+{pts} PTS</span>
                     </div>
                   );
