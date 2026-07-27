@@ -77,7 +77,7 @@ export default function PublicationStats({
                       : 'bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-300 border-teal-200/60 dark:border-teal-800/40 group-hover:bg-teal-500 group-hover:border-teal-500 group-hover:text-white'
                   }`}>
                     <Filter className="w-2.5 h-2.5" />
-                    {item.isActive ? 'Aktif' : 'Klik Filter'}
+                    {item.isActive ? 'Filter Clean (Bebas Irisan)' : 'Klik Filter'}
                   </span>
                 )}
               </div>

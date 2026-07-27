@@ -308,10 +308,10 @@ export default function Publication({ user }: { user: any }) {
       });
     }
 
-    // Cross Indexed Filter
+    // Cross Indexed Filter (Filters out overlapping documents to display clean non-colliding list)
     if (crossIndexedOnly) {
       const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-      result = result.filter((d: any) => d.is_cross_indexed || crossTitlesSet.has(norm(d.title)));
+      result = result.filter((d: any) => !d.is_cross_indexed && !crossTitlesSet.has(norm(d.title)));
     }
 
     // Source Filter (API External vs Input Manual)
@@ -604,6 +604,8 @@ export default function Publication({ user }: { user: any }) {
           setQuartileFilter={setQuartileFilter}
           sourceFilter={sourceFilter}
           setSourceFilter={setSourceFilter}
+          crossIndexedOnly={crossIndexedOnly}
+          setCrossIndexedOnly={setCrossIndexedOnly}
           onResetPage={() => setCurrentPage(1)}
         />
       )}

@@ -898,7 +898,7 @@ export default function AdminInputDocument() {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="w-full sm:w-auto px-12 py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary-200 transition-all disabled:opacity-50 active:scale-95 flex items-center justify-center gap-3"
+                        className="w-full sm:w-auto px-12 py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] shadow-sm transition-all disabled:opacity-50 active:scale-95 flex items-center justify-center gap-3"
                       >
                         {loading ? 'Processing...' : `Simpan ${mainCategory} Dosen`}
                         <ArrowRight className="w-4 h-4" />

@@ -16,6 +16,8 @@ interface ScopusFiltersBarProps {
   setQuartileFilter: (val: QuartileFilterType) => void;
   sourceFilter: SourceFilterType;
   setSourceFilter: (val: SourceFilterType) => void;
+  crossIndexedOnly?: boolean;
+  setCrossIndexedOnly?: (val: boolean | ((prev: boolean) => boolean)) => void;
   onResetPage: () => void;
 }
 
@@ -29,6 +31,8 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
   setQuartileFilter,
   sourceFilter,
   setSourceFilter,
+  crossIndexedOnly = false,
+  setCrossIndexedOnly,
   onResetPage,
 }) => {
   // Filter only Jurnal Internasional documents for counter accuracy
@@ -129,13 +133,15 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     (scopusFilter !== 'all' ? 1 : 0) +
     (articleFilter !== 'all' ? 1 : 0) +
     (quartileFilter !== 'all' ? 1 : 0) +
-    (sourceFilter !== 'all' ? 1 : 0);
+    (sourceFilter !== 'all' ? 1 : 0) +
+    (crossIndexedOnly ? 1 : 0);
 
   const handleResetAll = () => {
     setScopusFilter('all');
     setArticleFilter('all');
     setQuartileFilter('all');
     setSourceFilter('all');
+    if (setCrossIndexedOnly) setCrossIndexedOnly(false);
     onResetPage();
   };
 
