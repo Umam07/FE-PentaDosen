@@ -285,7 +285,7 @@ export default function App() {
                 <div className="space-y-4">
                   <button
                     onClick={handleSessionExpiredAction}
-                    className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary-200 dark:shadow-primary-900/20 transition-all flex items-center justify-center group"
+                    className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center group"
                   >
                     Login Kembali
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

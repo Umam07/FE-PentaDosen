@@ -18,6 +18,7 @@ import ResearchTable from './components/ResearchTable';
 import ResearchUploadModal from './components/ResearchUploadModal';
 import ResearchEditModal from './components/ResearchEditModal';
 import ResearchDeleteModal from './components/ResearchDeleteModal';
+import ResearchMetricsGuideModal from './components/ResearchMetricsGuideModal';
 
 interface ResearchProps {
   user: {
@@ -69,6 +70,7 @@ export default function Research({ user }: ResearchProps) {
   const [isImporting, setIsImporting] = useState(false);
   const [uploadingPdfId, setUploadingPdfId] = useState<number | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
 
   // Preview Modal
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
@@ -544,7 +546,7 @@ export default function Research({ user }: ResearchProps) {
   return (
     <div className="max-w-none space-y-6 lg:space-y-10 pb-12">
       {/* Header Banner */}
-      <ResearchHeader />
+      <ResearchHeader onOpenMetricsModal={() => setIsMetricsModalOpen(true)} />
 
       {/* Dashboard Stats Cards */}
       <ResearchStats stats={stats} isTableLoading={isTableLoading} />
@@ -713,6 +715,12 @@ export default function Research({ user }: ResearchProps) {
           )}
         </AnimatePresence>
       </div>
+
+      {/* ===== METRICS GUIDE MODAL ===== */}
+      <ResearchMetricsGuideModal
+        isOpen={isMetricsModalOpen}
+        onClose={() => setIsMetricsModalOpen(false)}
+      />
     </div>
   );
 }

@@ -352,18 +352,14 @@ export default function BukuUploadModal({
               <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-zinc-200">Panduan Poin Buku</h4>
             </div>
             <div className="flex flex-col gap-3">
-              {[
-                { label: 'Buku Referensi', pts: '40 PTS', desc: 'Buku kajian mendalam bidang ilmu' },
-                { label: 'Buku Ajar', pts: '20 PTS', desc: 'Buku pegangan proses belajar mengajar' },
-                { label: 'Buku Monograf', pts: '20 PTS', desc: 'Buku hasil penelitian tunggal / spesifik' },
-              ].map((bc) => (
+              {BUKU_CATEGORIES.map((bc) => (
                 <div key={bc.label} className="p-3 bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 rounded-2xl flex items-center justify-between gap-3 shadow-sm hover:scale-[1.02] transition-transform duration-300">
                   <div>
                     <span className="block text-[10px] font-black text-gray-800 dark:text-zinc-200 uppercase tracking-wide">{bc.label}</span>
                     <span className="block text-[9px] font-bold text-gray-400 mt-0.5">{bc.desc}</span>
                   </div>
                   <span className="text-[10px] font-black text-primary-600 dark:text-primary-400 bg-white dark:bg-zinc-900 px-2.5 py-1.5 rounded-xl border border-primary-100 dark:border-primary-800/50 shrink-0 shadow-sm">
-                    +{bc.pts}
+                    +{bc.points} PTS
                   </span>
                 </div>
               ))}

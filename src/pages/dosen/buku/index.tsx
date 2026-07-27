@@ -17,6 +17,7 @@ import BukuUploadModal from './components/BukuUploadModal';
 import BukuEditModal from './components/BukuEditModal';
 import BukuLinkingModal from './components/BukuLinkingModal';
 import BukuDeleteModal from './components/BukuDeleteModal';
+import BukuMetricsGuideModal from './components/BukuMetricsGuideModal';
 
 import { BUKU_CATEGORIES } from './constants';
 
@@ -61,6 +62,7 @@ export default function Buku({ user }: { user: any }) {
 
   const [deleteDoc, setDeleteDoc] = useState<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
 
   const currentYear = new Date().getFullYear();
 
@@ -333,7 +335,7 @@ export default function Buku({ user }: { user: any }) {
   return (
     <div className="max-w-none space-y-6 lg:space-y-10 pb-12">
       {/* Header Banner */}
-      <BukuHeader />
+      <BukuHeader onOpenMetricsModal={() => setIsMetricsModalOpen(true)} />
 
       {/* Dashboard Summary Section */}
       <BukuStats stats={stats} isTableLoading={isTableLoading} />
@@ -479,6 +481,12 @@ export default function Buku({ user }: { user: any }) {
         setIsTableLoading={setIsTableLoading}
         setCurrentPage={setCurrentPage}
         onShowMessage={showMessage}
+      />
+
+      {/* ===== METRICS GUIDE MODAL ===== */}
+      <BukuMetricsGuideModal
+        isOpen={isMetricsModalOpen}
+        onClose={() => setIsMetricsModalOpen(false)}
       />
     </div>
   );
