@@ -106,8 +106,12 @@ export default function Publication({ user }: { user: any }) {
 
   const crossIndexedCount = useMemo(() => {
     const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    return documents.filter((d: any) => d.is_cross_indexed || crossTitlesSet.has(norm(d.title))).length;
-  }, [documents, crossTitlesSet]);
+    if (urlKategori) {
+      const categoryDocs = documents.filter((d: any) => (d.category || '').toLowerCase() === urlKategori.toLowerCase());
+      return categoryDocs.filter((d: any) => d.is_cross_indexed || crossTitlesSet.has(norm(d.title))).length;
+    }
+    return crossTitlesSet.size;
+  }, [documents, urlKategori, crossTitlesSet]);
 
   useEffect(() => {
     fetchWeights();
