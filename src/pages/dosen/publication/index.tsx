@@ -546,7 +546,6 @@ export default function Publication({ user }: { user: any }) {
         onDownloadTemplate={handleDownloadTemplate}
         onImportExcel={handleImportExcel}
         isImporting={isImporting}
-        onOpenMetricsModal={() => setIsMetricsModalOpen(true)}
       />
 
       {(urlKategori === 'Jurnal Internasional' || urlKategori === 'Jurnal Nasional') && (

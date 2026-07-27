@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Zap, Download, FileSpreadsheet, BarChart2 } from 'lucide-react';
+import { Upload, Zap, Download, FileSpreadsheet } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface PublicationActionBarProps {
@@ -7,15 +7,13 @@ interface PublicationActionBarProps {
   onDownloadTemplate: () => void;
   onImportExcel: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isImporting: boolean;
-  onOpenMetricsModal?: () => void;
 }
 
 export default function PublicationActionBar({
   onUploadClick,
   onDownloadTemplate,
   onImportExcel,
-  isImporting,
-  onOpenMetricsModal
+  isImporting
 }: PublicationActionBarProps) {
   return (
     <motion.div
@@ -34,16 +32,6 @@ export default function PublicationActionBar({
       </div>
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto justify-end flex-wrap">
-        {onOpenMetricsModal && (
-          <button
-            type="button"
-            onClick={onOpenMetricsModal}
-            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/40 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-950/50 transition-colors text-indigo-700 dark:text-indigo-300 shadow-sm uppercase tracking-wider gap-2"
-          >
-            <BarChart2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            Metriks Penilaian
-          </button>
-        )}
         <button
           onClick={onUploadClick}
           className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95"
