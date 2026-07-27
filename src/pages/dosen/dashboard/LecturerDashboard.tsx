@@ -102,7 +102,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
       </div>
 
       {/* Switcher Tab & Content Area */}
-      <div className="h-14 w-96 bg-slate-200 dark:bg-slate-800 rounded-3xl mt-8"></div>
+      <div className="h-14 w-full sm:w-96 bg-slate-200 dark:bg-slate-800 rounded-3xl mt-8"></div>
       <div className="h-96 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 mt-6"></div>
     </phantom-ui>
   );
@@ -431,7 +431,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
                   Perbandingan sumber poin Anda
                 </p>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm shadow-amber-500/50" />
                   <span className="text-[8px] font-black text-slate-505 dark:text-slate-400 uppercase tracking-widest">
@@ -487,8 +487,8 @@ export default function LecturerDashboard({ user }: { user: any }) {
       </div>
 
       {/* View Switcher Tabs & Refresh Button Row */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 mt-8">
-        <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800 rounded-3xl border border-slate-200/60 dark:border-slate-700 shadow-inner overflow-x-auto no-scrollbar max-w-full">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-8">
+        <div className="flex w-full sm:w-auto p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl sm:rounded-3xl border border-slate-200/60 dark:border-slate-700 shadow-inner overflow-x-auto no-scrollbar max-w-full">
           {[
             { id: 'external', label: 'Dokumen Eksternal (API)', icon: Globe },
             { id: 'internal', label: 'Dokumen Internal', icon: FileText },
@@ -496,29 +496,27 @@ export default function LecturerDashboard({ user }: { user: any }) {
             <button
               key={view.id}
               onClick={() => { setActiveView(view.id as any); setCurrentPage(1); }}
-              className={`flex items-center gap-3 px-6 lg:px-8 py-3.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 whitespace-nowrap ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 rounded-xl sm:rounded-full text-[9px] min-[380px]:text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
                 activeView === view.id 
-                  ? 'bg-white dark:bg-slate-900 text-primary-600 shadow-xl shadow-primary-500/10' 
+                  ? 'bg-white dark:bg-slate-900 text-primary-600 shadow-md sm:shadow-xl shadow-primary-500/10' 
                   : 'text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
               }`}
             >
-              <view.icon className={`w-4 h-4 ${activeView === view.id ? 'text-primary-600' : 'text-slate-400'}`} />
-              {view.label}
+              <view.icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${activeView === view.id ? 'text-primary-600' : 'text-slate-400'}`} />
+              <span className="whitespace-nowrap">{view.label}</span>
             </button>
           ))}
         </div>
 
         {/* Refresh Button */}
-        <div className="flex items-center gap-4 px-6 py-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm flex-shrink-0">
-          <button
-            onClick={fetchData}
-            disabled={loading}
-            className="px-6 py-3.5 bg-white dark:bg-slate-900 text-slate-500 hover:text-primary-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200/60 dark:border-slate-700 shadow-sm transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            {loading ? 'Refreshing...' : 'Refresh Dokumen'}
-          </button>
-        </div>
+        <button
+          onClick={fetchData}
+          disabled={loading}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 sm:py-3.5 bg-white dark:bg-slate-900 text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400 rounded-2xl sm:rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200/60 dark:border-slate-700 shadow-sm transition-all active:scale-95 disabled:opacity-50 shrink-0"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          {loading ? 'Refreshing...' : 'Refresh Dokumen'}
+        </button>
       </div>
 
       {/* Tab content view rendering */}
