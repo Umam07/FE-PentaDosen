@@ -26,12 +26,10 @@ export function DosenLoginForm({ isAdmin, setUser, onToggleMode }: DosenLoginFor
   const [showDemo, setShowDemo] = React.useState(false);
 
   const demoAccounts = [
-    { email: 'dosen1@univ.edu', name: 'Chandra Prasetyo Utomo', shortName: 'Chandra' },
-    { email: 'dosen2@univ.edu', name: 'Kholis Ernawati', shortName: 'Kholis (FK)' },
-    { email: 'kiki@univ.edu', name: 'Kiki Aimar Wicaksana', shortName: 'Kiki (FEB)' },
-    { email: 'danis@univ.edu', name: 'Rafi Danis', shortName: 'Danis (FH)' },
-    { email: 'umam@univ.edu', name: 'Umamz', shortName: 'Umamz (FPsi)' },
-    { email: 'dosen_fkg@univ.edu', name: 'Anton Rahardjo', shortName: 'Anton (FKG)' },
+    { email: 'dosen1@univ.edu', name: 'Chandra Prasetyo Utomo', shortName: 'Chandra (FTI)' },
+    { email: 'nurul.huda@univ.edu', name: 'Nurul Huda', shortName: 'Nurul Huda (FEB)' },
+    { email: 'kholis.ernawati@univ.edu', name: 'Kholis Ernawati', shortName: 'Kholis (FK)' },
+    { email: 'endang.purwaningsih@univ.edu', name: 'Endang Purwaningsih', shortName: 'Endang (FH)' },
   ];
 
   return (
