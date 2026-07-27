@@ -78,15 +78,15 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       ]
     },
     { 
-      name: 'HKI', 
-      path: '/hki', 
-      icon: Award, 
-      roles: ['dosen'] 
-    },
-    { 
       name: 'Penelitian', 
       path: '/research', 
       icon: Beaker, 
+      roles: ['dosen'] 
+    },
+    { 
+      name: 'HKI', 
+      path: '/hki', 
+      icon: Award, 
       roles: ['dosen'] 
     },
     { 
