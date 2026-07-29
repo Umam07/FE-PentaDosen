@@ -62,7 +62,7 @@ export default function UnconfirmedCorrespondenceBanner({
           ) : (
             <>
               <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-              Set Semua: Bukan Corresponding
+              SET {count} PUBLIKASI: BUKAN CORRESPONDING
             </>
           )}
         </button>
@@ -73,7 +73,7 @@ export default function UnconfirmedCorrespondenceBanner({
           className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white dark:bg-zinc-800 hover:bg-amber-100/60 dark:hover:bg-zinc-700 text-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-700 rounded-xl text-[11px] font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap"
         >
           <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-          Konfirmasi Masal ({count})
+          KONFIRMASI MASAL ({count})
         </button>
       </div>
     </motion.div>
