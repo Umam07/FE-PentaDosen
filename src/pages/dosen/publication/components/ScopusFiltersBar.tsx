@@ -146,25 +146,25 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
   };
 
   return (
-    <div className="bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-2xl border border-slate-200/80 dark:border-zinc-800 shadow-sm p-4 sm:p-5 transition-all space-y-4">
+    <div className="bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-2xl border border-slate-200/80 dark:border-zinc-800 shadow-sm p-3.5 sm:p-5 transition-all space-y-4">
       {/* Compact Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-zinc-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-zinc-800/80">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400">
+          <div className="p-2 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 shrink-0">
             <SlidersHorizontal className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-wider">
                 Filter Jurnal & Sumber Data
               </h3>
               {activeFiltersCount > 0 && (
-                <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
                   {activeFiltersCount} Filter Aktif
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-400 leading-tight mt-0.5">
               Saring daftar publikasi berdasarkan sumber data (API vs Manual), status korespondensi, tipe artikel, dan quartile.
             </p>
           </div>
@@ -173,7 +173,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
         {activeFiltersCount > 0 && (
           <button
             onClick={handleResetAll}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-zinc-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-zinc-800 transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-zinc-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-zinc-800 transition-colors whitespace-nowrap self-start sm:self-auto shrink-0"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Hapus Semua Filter</span>
@@ -182,12 +182,12 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
       </div>
 
       {/* Filter Rows: 4 Horizontal Section Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
         
         {/* 1. Status Korespondensi */}
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <MailCheck className="w-4 h-4 text-blue-500" />
+            <MailCheck className="w-4 h-4 text-blue-500 shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider">Status Korespondensi</span>
           </div>
 
@@ -210,7 +210,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
                     setScopusFilter(opt.id as ScopusFilterType);
                     onResetPage();
                   }}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
                     isActive
                       ? opt.id === 'unconfirmed'
                         ? 'bg-amber-500 border-amber-500 text-white shadow-xs'
@@ -220,9 +220,9 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
                       : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
                   }`}
                 >
-                  <span>{opt.label}</span>
+                  <span className="whitespace-nowrap">{opt.label}</span>
                   <span
-                    className={`px-1.5 py-0.5 rounded-md text-[11px] font-bold ${
+                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
                       isActive
                         ? 'bg-white/20 text-white'
                         : opt.highlight
@@ -241,7 +241,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
         {/* 2. Tipe Artikel */}
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <FileText className="w-4 h-4 text-purple-500" />
+            <FileText className="w-4 h-4 text-purple-500 shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider">Tipe Artikel</span>
           </div>
 
@@ -259,15 +259,15 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
                     setArticleFilter(opt.id as ArticleFilterType);
                     onResetPage();
                   }}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
                     isActive
                       ? 'bg-orange-600 border-orange-600 text-white shadow-xs'
                       : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
                   }`}
                 >
-                  <span>{opt.label}</span>
+                  <span className="whitespace-nowrap">{opt.label}</span>
                   <span
-                    className={`px-1.5 py-0.5 rounded-md text-[11px] font-bold ${
+                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
                       isActive
                         ? 'bg-white/20 text-white'
                         : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
@@ -284,7 +284,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
         {/* 3. Quartile Jurnal */}
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <Award className="w-4 h-4 text-amber-500" />
+            <Award className="w-4 h-4 text-amber-500 shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider">Quartile Jurnal</span>
           </div>
 
@@ -305,7 +305,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
                     setQuartileFilter(opt.id as QuartileFilterType);
                     onResetPage();
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
+                  className={`flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
                     isActive
                       ? opt.activeClass
                       : opt.badgeStyle
@@ -313,9 +313,9 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
                       : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
                   }`}
                 >
-                  <span>{opt.label}</span>
+                  <span className="whitespace-nowrap">{opt.label}</span>
                   <span
-                    className={`px-1.5 py-0.5 rounded-md text-[11px] font-bold ${
+                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
                       isActive
                         ? 'bg-white/20 text-white'
                         : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
@@ -332,7 +332,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
         {/* 4. Sumber Data (API External vs Input Manual) */}
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <Globe className="w-4 h-4 text-emerald-500" />
+            <Globe className="w-4 h-4 text-emerald-500 shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider">Sumber Data</span>
           </div>
 
@@ -350,15 +350,15 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
                     setSourceFilter(opt.id as SourceFilterType);
                     onResetPage();
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
                     isActive
                       ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs'
                       : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
                   }`}
                 >
-                  <span>{opt.label}</span>
+                  <span className="whitespace-nowrap">{opt.label}</span>
                   <span
-                    className={`px-1.5 py-0.5 rounded-md text-[11px] font-bold ${
+                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
                       isActive
                         ? 'bg-white/20 text-white'
                         : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
