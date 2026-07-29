@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { MailCheck, FileText, Award, RotateCcw, SlidersHorizontal, Globe, Database } from 'lucide-react';
+import { MailCheck, FileText, Award, RotateCcw, Globe, Upload, Zap, Download, FileSpreadsheet } from 'lucide-react';
 
 export type ScopusFilterType = 'all' | 'unconfirmed' | 'confirmed';
 export type ArticleFilterType = 'all' | 'article' | 'non-article';
@@ -19,6 +19,12 @@ interface ScopusFiltersBarProps {
   crossIndexedOnly?: boolean;
   setCrossIndexedOnly?: (val: boolean | ((prev: boolean) => boolean)) => void;
   onResetPage: () => void;
+  // Props aksi toolbar publikasi (penggabungan section aksi dan filter)
+  onUploadClick: () => void;
+  onDownloadTemplate: () => void;
+  onImportExcel: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isImporting: boolean;
+  showFilters?: boolean;
 }
 
 export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
@@ -34,15 +40,23 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
   crossIndexedOnly = false,
   setCrossIndexedOnly,
   onResetPage,
+  onUploadClick,
+  onDownloadTemplate,
+  onImportExcel,
+  isImporting,
+  showFilters = true,
 }) => {
-  // Filter only Jurnal Internasional documents for counter accuracy
+  // Filter hanya dokumen Jurnal Internasional/Nasional untuk penghitungan indikator filter
   const jiDocs = useMemo(() => {
     return documents.filter(
-      (d: any) => (d.category || '').toLowerCase() === 'jurnal internasional'
+      (d: any) =>
+        (d.category || '').toLowerCase() === 'jurnal internasional' ||
+        (d.category || '').toLowerCase() === 'jurnal nasional' ||
+        d.source === 'scopus'
     );
   }, [documents]);
 
-  // Correspondence Counts
+  // Penghitungan status korespondensi
   const correspondenceCounts = useMemo(() => {
     const total = jiDocs.length;
     let unconfirmed = 0;
@@ -69,7 +83,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return { total, unconfirmed, confirmed };
   }, [jiDocs]);
 
-  // Article Type Counts
+  // Penghitungan tipe artikel
   const typeCounts = useMemo(() => {
     const total = jiDocs.length;
     let article = 0;
@@ -91,7 +105,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return { total, article, nonArticle };
   }, [jiDocs]);
 
-  // Quartile Counts
+  // Penghitungan Quartile
   const quartileCounts = useMemo(() => {
     const total = jiDocs.length;
     let q1 = 0;
@@ -101,7 +115,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     let none = 0;
 
     jiDocs.forEach((d: any) => {
-      const q = d.quartile && ['Q1', 'Q2', 'Q3', 'Q4'].includes(d.quartile) ? d.quartile : 'None';
+      const q = (d.quartile || '').toUpperCase();
       if (q === 'Q1') q1++;
       else if (q === 'Q2') q2++;
       else if (q === 'Q3') q3++;
@@ -112,7 +126,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return { total, Q1: q1, Q2: q2, Q3: q3, Q4: q4, None: none };
   }, [jiDocs]);
 
-  // Source Counts
+  // Penghitungan Sumber Data
   const sourceCounts = useMemo(() => {
     const total = jiDocs.length;
     let external = 0;
@@ -129,12 +143,16 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return { total, external, manual };
   }, [jiDocs]);
 
-  const activeFiltersCount =
-    (scopusFilter !== 'all' ? 1 : 0) +
-    (articleFilter !== 'all' ? 1 : 0) +
-    (quartileFilter !== 'all' ? 1 : 0) +
-    (sourceFilter !== 'all' ? 1 : 0) +
-    (crossIndexedOnly ? 1 : 0);
+  // Hitung jumlah filter yang sedang aktif
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (scopusFilter !== 'all') count++;
+    if (articleFilter !== 'all') count++;
+    if (quartileFilter !== 'all') count++;
+    if (sourceFilter !== 'all') count++;
+    if (crossIndexedOnly) count++;
+    return count;
+  }, [scopusFilter, articleFilter, quartileFilter, sourceFilter, crossIndexedOnly]);
 
   const handleResetAll = () => {
     setScopusFilter('all');
@@ -145,234 +163,255 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     onResetPage();
   };
 
+  // Class warna netral untuk chip filter yang aktif (sesuai ketentuan Poin 4)
+  const neutralActiveChipClass =
+    'bg-slate-900 border-slate-900 text-white dark:bg-zinc-100 dark:border-zinc-100 dark:text-zinc-900 shadow-xs';
+  const inactiveChipClass =
+    'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300';
+
   return (
-    <div className="bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-2xl border border-slate-200/80 dark:border-zinc-800 shadow-sm p-3.5 sm:p-5 transition-all space-y-4">
-      {/* Compact Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-zinc-800/80">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 shrink-0">
-            <SlidersHorizontal className="w-4 h-4" />
+    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl lg:rounded-3xl p-4 sm:p-6 space-y-5 shadow-xs">
+      {/* Baris Atas: Judul Singkat & 3 Tombol Aksi Rata Kanan */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-zinc-800/80">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shrink-0">
+            <Upload className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-wider">
-                Filter Jurnal & Sumber Data
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-zinc-100 uppercase tracking-tight">
+                Kelola & Filter Publikasi
               </h3>
               {activeFiltersCount > 0 && (
-                <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                <span className="px-2 py-0.5 text-[9px] font-bold rounded-full bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700">
                   {activeFiltersCount} Filter Aktif
                 </span>
               )}
             </div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-400 leading-tight mt-0.5">
-              Saring daftar publikasi berdasarkan sumber data (API vs Manual), status korespondensi, tipe artikel, dan quartile.
+            <p className="text-[10px] sm:text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mt-0.5">
+              Registrasi publikasi baru, impor masal, atau saring data
             </p>
           </div>
         </div>
 
-        {activeFiltersCount > 0 && (
+        {/* 3 Tombol Aksi Rata Kanan */}
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full lg:w-auto shrink-0">
           <button
-            onClick={handleResetAll}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-zinc-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-zinc-800 transition-colors whitespace-nowrap self-start sm:self-auto shrink-0"
+            type="button"
+            onClick={onUploadClick}
+            className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Hapus Semua Filter</span>
+            Unggah Publikasi Baru
+            <Zap className="w-3.5 h-3.5 ml-1.5 fill-white shrink-0" />
           </button>
-        )}
+          <button 
+            type="button"
+            onClick={onDownloadTemplate}
+            className="flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl hover:bg-slate-50 dark:hover:bg-zinc-700 transition-colors text-slate-700 dark:text-zinc-300 shadow-xs uppercase tracking-wider whitespace-nowrap"
+          >
+            <Download className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+            Template
+          </button>
+          <label className={`flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-xs cursor-pointer uppercase tracking-wider whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+            <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+            {isImporting ? 'Importing...' : 'Import Excel'}
+            <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={onImportExcel} disabled={isImporting} />
+          </label>
+          {activeFiltersCount > 0 && (
+            <button
+              type="button"
+              onClick={handleResetAll}
+              className="inline-flex items-center justify-center p-2.5 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-zinc-800 transition-colors shrink-0"
+              title="Hapus Semua Filter"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Filter Rows: 4 Horizontal Section Columns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
-        
-        {/* 1. Status Korespondensi */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <MailCheck className="w-4 h-4 text-blue-500 shrink-0" />
-            <span className="text-xs font-bold uppercase tracking-wider">Status Korespondensi</span>
-          </div>
+      {/* Baris Bawah: Filter Chips per Grup (tanpa heading besar) */}
+      {showFilters && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 pt-1">
+          {/* 1. Status Korespondensi */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
+              <MailCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+              <span className="text-[11px] font-bold uppercase tracking-wider">Status Korespondensi</span>
+            </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            {[
-              { id: 'all', label: 'Semua', count: correspondenceCounts.total },
-              {
-                id: 'unconfirmed',
-                label: 'Perlu Konfirmasi',
-                count: correspondenceCounts.unconfirmed,
-                highlight: correspondenceCounts.unconfirmed > 0,
-              },
-              { id: 'confirmed', label: 'Terkonfirmasi', count: correspondenceCounts.confirmed },
-            ].map((opt) => {
-              const isActive = scopusFilter === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setScopusFilter(opt.id as ScopusFilterType);
-                    onResetPage();
-                  }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
-                    isActive
-                      ? opt.id === 'unconfirmed'
-                        ? 'bg-amber-500 border-amber-500 text-white shadow-xs'
-                        : 'bg-orange-600 border-orange-600 text-white shadow-xs'
-                      : opt.highlight
-                      ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 hover:bg-amber-100'
-                      : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
-                  }`}
-                >
-                  <span className="whitespace-nowrap">{opt.label}</span>
-                  <span
-                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { id: 'all', label: 'Semua', count: correspondenceCounts.total },
+                {
+                  id: 'unconfirmed',
+                  label: 'Perlu Konfirmasi',
+                  count: correspondenceCounts.unconfirmed,
+                  highlight: correspondenceCounts.unconfirmed > 0,
+                },
+                { id: 'confirmed', label: 'Terkonfirmasi', count: correspondenceCounts.confirmed },
+              ].map((opt) => {
+                const isActive = scopusFilter === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setScopusFilter(opt.id as ScopusFilterType);
+                      onResetPage();
+                    }}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
                       isActive
-                        ? 'bg-white/20 text-white'
+                        ? neutralActiveChipClass
                         : opt.highlight
-                        ? 'bg-amber-200/90 text-amber-900 dark:bg-amber-900 dark:text-amber-100'
-                        : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+                        ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 hover:bg-amber-100'
+                        : inactiveChipClass
                     }`}
                   >
-                    {opt.count}
-                  </span>
-                </button>
-              );
-            })}
+                    <span className="whitespace-nowrap">{opt.label}</span>
+                    <span
+                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
+                        isActive
+                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
+                          : opt.highlight
+                          ? 'bg-amber-200/90 text-amber-900 dark:bg-amber-900 dark:text-amber-100'
+                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+                      }`}
+                    >
+                      {opt.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* 2. Tipe Artikel */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <FileText className="w-4 h-4 text-purple-500 shrink-0" />
-            <span className="text-xs font-bold uppercase tracking-wider">Tipe Artikel</span>
-          </div>
+          {/* 2. Tipe Artikel */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
+              <FileText className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+              <span className="text-[11px] font-bold uppercase tracking-wider">Tipe Artikel</span>
+            </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            {[
-              { id: 'all', label: 'Semua Tipe', count: typeCounts.total },
-              { id: 'article', label: 'Article / Journal', count: typeCounts.article },
-              { id: 'non-article', label: 'Non-Article', count: typeCounts.nonArticle },
-            ].map((opt) => {
-              const isActive = articleFilter === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setArticleFilter(opt.id as ArticleFilterType);
-                    onResetPage();
-                  }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
-                    isActive
-                      ? 'bg-orange-600 border-orange-600 text-white shadow-xs'
-                      : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
-                  }`}
-                >
-                  <span className="whitespace-nowrap">{opt.label}</span>
-                  <span
-                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
-                      isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { id: 'all', label: 'Semua Tipe', count: typeCounts.total },
+                { id: 'article', label: 'Article / Journal', count: typeCounts.article },
+                { id: 'non-article', label: 'Non-Article', count: typeCounts.nonArticle },
+              ].map((opt) => {
+                const isActive = articleFilter === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setArticleFilter(opt.id as ArticleFilterType);
+                      onResetPage();
+                    }}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
+                      isActive ? neutralActiveChipClass : inactiveChipClass
                     }`}
                   >
-                    {opt.count}
-                  </span>
-                </button>
-              );
-            })}
+                    <span className="whitespace-nowrap">{opt.label}</span>
+                    <span
+                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
+                        isActive
+                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
+                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+                      }`}
+                    >
+                      {opt.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* 3. Quartile Jurnal */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <Award className="w-4 h-4 text-amber-500 shrink-0" />
-            <span className="text-xs font-bold uppercase tracking-wider">Quartile Jurnal</span>
-          </div>
+          {/* 3. Quartile Jurnal */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
+              <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="text-[11px] font-bold uppercase tracking-wider">Quartile Jurnal</span>
+            </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            {[
-              { id: 'all', label: 'Semua', count: quartileCounts.total, activeClass: 'bg-orange-600 border-orange-600 text-white shadow-xs' },
-              { id: 'Q1', label: 'Q1', count: quartileCounts.Q1, activeClass: 'bg-emerald-600 border-emerald-600 text-white shadow-xs shadow-emerald-500/20', badgeStyle: 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800' },
-              { id: 'Q2', label: 'Q2', count: quartileCounts.Q2, activeClass: 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/20', badgeStyle: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800' },
-              { id: 'Q3', label: 'Q3', count: quartileCounts.Q3, activeClass: 'bg-amber-600 border-amber-600 text-white shadow-xs shadow-amber-500/20', badgeStyle: 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800' },
-              { id: 'Q4', label: 'Q4', count: quartileCounts.Q4, activeClass: 'bg-purple-600 border-purple-600 text-white shadow-xs shadow-purple-500/20', badgeStyle: 'bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800' },
-              { id: 'None', label: 'Non-Q', count: quartileCounts.None, activeClass: 'bg-slate-700 border-slate-700 text-white shadow-xs', badgeStyle: 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700' },
-            ].map((opt) => {
-              const isActive = quartileFilter === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setQuartileFilter(opt.id as QuartileFilterType);
-                    onResetPage();
-                  }}
-                  className={`flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
-                    isActive
-                      ? opt.activeClass
-                      : opt.badgeStyle
-                      ? `${opt.badgeStyle} hover:opacity-90`
-                      : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
-                  }`}
-                >
-                  <span className="whitespace-nowrap">{opt.label}</span>
-                  <span
-                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
-                      isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { id: 'all', label: 'Semua', count: quartileCounts.total },
+                { id: 'Q1', label: 'Q1', count: quartileCounts.Q1 },
+                { id: 'Q2', label: 'Q2', count: quartileCounts.Q2 },
+                { id: 'Q3', label: 'Q3', count: quartileCounts.Q3 },
+                { id: 'Q4', label: 'Q4', count: quartileCounts.Q4 },
+                { id: 'None', label: 'Non-Q', count: quartileCounts.None },
+              ].map((opt) => {
+                const isActive = quartileFilter === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setQuartileFilter(opt.id as QuartileFilterType);
+                      onResetPage();
+                    }}
+                    className={`flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
+                      isActive ? neutralActiveChipClass : inactiveChipClass
                     }`}
                   >
-                    {opt.count}
-                  </span>
-                </button>
-              );
-            })}
+                    <span className="whitespace-nowrap">{opt.label}</span>
+                    <span
+                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
+                        isActive
+                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
+                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+                      }`}
+                    >
+                      {opt.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* 4. Sumber Data (API External vs Input Manual) */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-            <Globe className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span className="text-xs font-bold uppercase tracking-wider">Sumber Data</span>
-          </div>
+          {/* 4. Sumber Data */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
+              <Globe className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span className="text-[11px] font-bold uppercase tracking-wider">Sumber Data</span>
+            </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            {[
-              { id: 'all', label: 'Semua', count: sourceCounts.total },
-              { id: 'external', label: '🌐 API External', count: sourceCounts.external },
-              { id: 'manual', label: '✍️ Input Manual', count: sourceCounts.manual },
-            ].map((opt) => {
-              const isActive = sourceFilter === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setSourceFilter(opt.id as SourceFilterType);
-                    onResetPage();
-                  }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all border ${
-                    isActive
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300'
-                  }`}
-                >
-                  <span className="whitespace-nowrap">{opt.label}</span>
-                  <span
-                    className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
-                      isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { id: 'all', label: 'Semua', count: sourceCounts.total },
+                { id: 'external', label: '🌐 External API', count: sourceCounts.external },
+                { id: 'manual', label: '✍️ Input Manual', count: sourceCounts.manual },
+              ].map((opt) => {
+                const isActive = sourceFilter === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setSourceFilter(opt.id as SourceFilterType);
+                      onResetPage();
+                    }}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
+                      isActive ? neutralActiveChipClass : inactiveChipClass
                     }`}
                   >
-                    {opt.count}
-                  </span>
-                </button>
-              );
-            })}
+                    <span className="whitespace-nowrap">{opt.label}</span>
+                    <span
+                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
+                        isActive
+                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
+                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
+                      }`}
+                    >
+                      {opt.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 };

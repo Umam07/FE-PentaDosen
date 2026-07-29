@@ -276,16 +276,26 @@ export default function PublicationTable({
                                   Hyper
                                 </span>
                               )}
-                              {doc.is_corresponding && (
+                              {doc.is_corresponding && doc.is_corresponding_confirmed && (
                                 <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100/50 dark:border-emerald-900/20">
-                                  Corresponding
+                                  ✓ Corresponding
+                                </span>
+                              )}
+                              {!doc.is_corresponding && doc.is_corresponding_confirmed && (
+                                <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 text-[8px] font-black uppercase rounded border border-slate-200 dark:border-zinc-700">
+                                  Non-Corresponding
+                                </span>
+                              )}
+                              {!doc.is_corresponding_confirmed && (doc.category === 'Jurnal Internasional' || doc.category === 'Jurnal Nasional') && Number(doc.total_authors || 1) > 1 && doc.source !== 'scholar' && (
+                                <span className="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[8px] font-black uppercase rounded border border-amber-200/80 dark:border-amber-800/40">
+                                  ⚠️ Perlu Konfirmasi
                                 </span>
                               )}
                             </div>
                           );
                         })()}
 
-                        {/* Correspondence & Breakdown Controls */}
+                        {/* Breakdown Controls (Individual Toggle di dalam Rincian Poin) */}
                         {(() => {
                           const isJI = doc.category === 'Jurnal Internasional';
                           const isJN = doc.category === 'Jurnal Nasional';
@@ -295,125 +305,18 @@ export default function PublicationTable({
                           const showCorrespondingControls = doc.author_role !== 'Single Author' && totalAuthors > 1 && doc.source !== 'scholar';
                           const bd = getBreakdown(doc);
                           const isExpanded = !!expandedPoints[doc.id];
-                          const isEditing = !!isEditingCorrespondingMap[doc.id];
 
                           return (
-                            <div className="mt-3 space-y-3 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-                              {/* Konfirmasi status korespondensi untuk co-author. Skema poin KPI berbeda jika corresponding author */}
-                              {showCorrespondingControls && (
-                                <div className={`p-3 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner transition-colors duration-200 ${
-                                  !doc.is_corresponding_confirmed && !isEditing
-                                    ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30'
-                                    : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800'
-                                }`}>
-
-                                  {doc.is_corresponding_confirmed && !isEditing ? (
-                                    <>
-                                      <div className="flex flex-wrap items-center gap-2">
-                                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-emerald-500/20 shadow-sm">
-                                          ✓ Dikonfirmasi
-                                        </span>
-                                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                                          Penulis korespondensi:
-                                        </span>
-                                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[8px] font-black uppercase tracking-wider border shadow-sm ${
-                                          doc.is_corresponding
-                                            ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
-                                            : 'bg-slate-200/60 dark:bg-slate-700/40 text-slate-500 dark:text-slate-400 border-slate-300/40 dark:border-slate-600/40'
-                                        }`}>
-                                          {doc.is_corresponding ? '✓ YA' : '✗ TIDAK'}
-                                        </span>
-                                      </div>
-
-                                      <button
-                                        type="button"
-                                        onClick={() => setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: true }))}
-                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 hover:text-orange-600 hover:border-orange-400 dark:hover:border-orange-500/50 dark:hover:text-orange-400 transition-all whitespace-nowrap shadow-sm ml-auto"
-                                      >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                        </svg>
-                                        Ubah
-                                      </button>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="flex flex-wrap items-center gap-2">
-                                        {isEditing ? (
-                                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-blue-500/20 shadow-sm">
-                                            ✏️ Ubah Pilihan
-                                          </span>
-                                        ) : (
-                                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-amber-500/20 animate-pulse shadow-sm">
-                                            ⚠️ Perlu Konfirmasi
-                                          </span>
-                                        )}
-                                        <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">
-                                          Apakah Anda penulis korespondensi?
-                                        </span>
-                                      </div>
-
-                                      <div className="flex items-center gap-2 ml-auto">
-                                        <button
-                                          type="button"
-                                          disabled={updatingCorrespondingId === doc.id}
-                                          onClick={async () => {
-                                            setUpdatingCorrespondingId(doc.id);
-                                            if (handleToggleCorresponding) {
-                                              await handleToggleCorresponding(doc.id, true);
-                                            }
-                                            setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: false }));
-                                            setUpdatingCorrespondingId(null);
-                                          }}
-                                          className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-orange-600 border-orange-600 text-white hover:bg-orange-700 active:scale-95 shadow-md shadow-orange-500/20 disabled:opacity-50"
-                                        >
-                                          Ya
-                                        </button>
-                                        <button
-                                          type="button"
-                                          disabled={updatingCorrespondingId === doc.id}
-                                          onClick={async () => {
-                                            setUpdatingCorrespondingId(doc.id);
-                                            if (handleToggleCorresponding) {
-                                              await handleToggleCorresponding(doc.id, false);
-                                            }
-                                            setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: false }));
-                                            setUpdatingCorrespondingId(null);
-                                          }}
-                                          className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 active:scale-95 disabled:opacity-50"
-                                        >
-                                          Tidak
-                                        </button>
-                                        {updatingCorrespondingId === doc.id ? (
-                                          <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                                        ) : isEditing && (
-                                          <button
-                                            type="button"
-                                            onClick={() => setIsEditingCorrespondingMap(prev => ({ ...prev, [doc.id]: false }))}
-                                            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                            title="Batal"
-                                          >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                            </svg>
-                                          </button>
-                                        )}
-                                      </div>
-                                    </>
-                                  )}
-                                </div>
-                              )}
-
+                            <div className="mt-2 space-y-2 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
                               {bd && (
                                 <div className="flex flex-col items-start gap-2">
                                   <button
                                     type="button"
                                     onClick={() => setExpandedPoints(prev => ({ ...prev, [doc.id]: !prev[doc.id] }))}
-                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
+                                    className={`px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border ${
                                       isExpanded
-                                        ? 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 border-orange-200 dark:border-orange-900/50'
-                                        : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-orange-600 hover:border-orange-200 hover:bg-orange-50/60 dark:hover:bg-orange-950/20'
+                                        ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 border-primary-200 dark:border-primary-900/50'
+                                        : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50/60 dark:hover:bg-primary-950/20'
                                     }`}
                                   >
                                     {isExpanded ? '▲ Sembunyikan' : '▼ Rincian Poin'}
@@ -475,10 +378,10 @@ export default function PublicationTable({
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
-                                        className="mt-3 rounded-2xl border border-orange-100 dark:border-orange-900/30 overflow-hidden w-full max-w-xl"
+                                        className="mt-3 rounded-2xl border border-primary-100 dark:border-primary-900/30 overflow-hidden w-full max-w-xl"
                                       >
-                                        <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900/30">
-                                          <p className="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">
+                                        <div className="px-4 py-2.5 bg-primary-50 dark:bg-primary-950/30 border-b border-primary-100 dark:border-primary-900/30">
+                                          <p className="text-[9px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-widest">
                                             RINCIAN KALKULASI POIN SINTA (SKEMA PERSENTASE + QUARTILE)
                                           </p>
                                         </div>
@@ -499,6 +402,63 @@ export default function PublicationTable({
                                               </div>
                                             );
                                           })()}
+
+                                          {/* Kontrol Individual Status Korespondensi (Dalam Detail Rincian Poin) */}
+                                          {showCorrespondingControls && (
+                                            <div className="p-3 bg-slate-50 dark:bg-zinc-800/60 rounded-xl border border-slate-200/80 dark:border-zinc-700/60 flex flex-wrap items-center justify-between gap-2 text-[9px] font-bold text-slate-700 dark:text-zinc-300 mb-2">
+                                              <div className="flex items-center gap-2">
+                                                <span>Status Korespondensi:</span>
+                                                <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                                                  !doc.is_corresponding_confirmed
+                                                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                                                    : doc.is_corresponding
+                                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                                    : 'bg-slate-200 text-slate-700 dark:bg-zinc-700 dark:text-zinc-300'
+                                                }`}>
+                                                  {!doc.is_corresponding_confirmed ? '⚠️ Belum Dikonfirmasi' : doc.is_corresponding ? '✓ YA (Corresponding)' : 'TIDAK'}
+                                                </span>
+                                              </div>
+
+                                              <div className="flex items-center gap-1.5 ml-auto">
+                                                <button
+                                                  type="button"
+                                                  disabled={updatingCorrespondingId === doc.id}
+                                                  onClick={async () => {
+                                                    setUpdatingCorrespondingId(doc.id);
+                                                    if (handleToggleCorresponding) await handleToggleCorresponding(doc.id, true);
+                                                    setUpdatingCorrespondingId(null);
+                                                  }}
+                                                  className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase transition-all ${
+                                                    doc.is_corresponding_confirmed && doc.is_corresponding
+                                                      ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                                                      : 'bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 hover:bg-slate-100'
+                                                  }`}
+                                                >
+                                                  Set YA
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  disabled={updatingCorrespondingId === doc.id}
+                                                  onClick={async () => {
+                                                    setUpdatingCorrespondingId(doc.id);
+                                                    if (handleToggleCorresponding) await handleToggleCorresponding(doc.id, false);
+                                                    setUpdatingCorrespondingId(null);
+                                                  }}
+                                                  className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase transition-all ${
+                                                    doc.is_corresponding_confirmed && !doc.is_corresponding
+                                                      ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                                                      : 'bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 hover:bg-slate-100'
+                                                  }`}
+                                                >
+                                                  Set TIDAK
+                                                </button>
+                                                {updatingCorrespondingId === doc.id && (
+                                                  <div className="w-3 h-3 border-2 border-primary-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                                                )}
+                                              </div>
+                                            </div>
+                                          )}
+
                                           <div className="flex items-center gap-2 pb-2 mb-1 border-b border-slate-100 dark:border-slate-800">
                                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                               QUARTILE JURNAL:
@@ -526,9 +486,9 @@ export default function PublicationTable({
                                           <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                                             <div>
                                               <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">{bd.detailStr}</p>
-                                              <p className="text-[9px] font-bold text-orange-500">{bd.pctStr}</p>
+                                              <p className="text-[9px] font-bold text-primary-600 dark:text-primary-400">{bd.pctStr}</p>
                                             </div>
-                                            <span className="text-[11px] font-black text-orange-600 flex-shrink-0">+{bd.totalPoints}</span>
+                                            <span className="text-[11px] font-black text-primary-600 dark:text-primary-400 flex-shrink-0">+{bd.totalPoints}</span>
                                           </div>
 
                                           {bd.totalAuthors > 1 && (
@@ -540,7 +500,7 @@ export default function PublicationTable({
 
                                           <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
                                             <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">TOTAL POIN</span>
-                                            <span className="text-base font-black text-orange-600">{bd.totalPoints} pts</span>
+                                            <span className="text-base font-black text-primary-600 dark:text-primary-400">{bd.totalPoints} pts</span>
                                           </div>
                                         </div>
                                       </motion.div>
@@ -580,18 +540,27 @@ export default function PublicationTable({
 
                   {/* Status */}
                   <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
-                    <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest whitespace-nowrap ${
-                      doc.status === 'Approved' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 shadow-sm border border-emerald-100 dark:border-emerald-900/30' :
-                      doc.status === 'Rejected' ? 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 shadow-sm border border-red-100 dark:border-red-900/30' :
-                      doc.status === 'Verified by Fakultas' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 shadow-sm border border-blue-100 dark:border-blue-900/30' :
-                      'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 shadow-sm border border-amber-100 dark:border-amber-900/30'
-                    }`}>
-                      {doc.status === 'Approved' && <CheckCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5" />}
-                      {doc.status === 'Rejected' && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5" />}
-                      {(doc.status === 'Pending' || doc.status === 'Verified by Fakultas') && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5" />}
-                      <span className="hidden sm:inline">{doc.status === 'Verified by Fakultas' ? 'Verified (Fakultas)' : doc.status}</span>
-                      <span className="sm:hidden">{doc.status === 'Approved' ? 'OK' : doc.status === 'Rejected' ? 'NO' : doc.status === 'Verified by Fakultas' ? 'V-FAK' : 'Wait'}</span>
-                    </div>
+                    {(() => {
+                      const st = (doc.status || '').toLowerCase();
+                      const isApproved = st === 'approved';
+                      const isRejected = st === 'rejected';
+                      const isVerified = st.includes('verified') || st.includes('fakultas');
+
+                      return (
+                        <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest whitespace-nowrap ${
+                          isApproved ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30' :
+                          isRejected ? 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/30' :
+                          isVerified ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30' :
+                          'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30'
+                        }`}>
+                          {isApproved && <CheckCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5 text-emerald-600 dark:text-emerald-400" />}
+                          {isRejected && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5 text-red-600 dark:text-red-400" />}
+                          {(!isApproved && !isRejected) && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5" />}
+                          <span className="hidden sm:inline">{isVerified ? 'Verified (Fakultas)' : isApproved ? 'Approved' : isRejected ? 'Rejected' : doc.status || 'Pending'}</span>
+                          <span className="sm:hidden">{isApproved ? 'OK' : isRejected ? 'NO' : isVerified ? 'V-FAK' : 'Wait'}</span>
+                        </div>
+                      );
+                    })()}
                   </td>
 
                   {/* Poin */}

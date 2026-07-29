@@ -19,6 +19,8 @@ import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
 import ScopusFiltersBar from './components/ScopusFiltersBar';
 import MetricsGuideModal from './components/MetricsGuideModal';
+import UnconfirmedCorrespondenceBanner from './components/UnconfirmedCorrespondenceBanner';
+import BulkCorrespondenceModal from './components/BulkCorrespondenceModal';
 import { calculateScholarPoints } from '../dashboard/pointsCalculator';
 
 export default function Publication({ user }: { user: any }) {
@@ -85,6 +87,21 @@ export default function Publication({ user }: { user: any }) {
   const [quartileFilter, setQuartileFilter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None'>('all');
   const [sourceFilter, setSourceFilter] = useState<'all' | 'external' | 'manual'>('all');
   const [crossIndexedOnly, setCrossIndexedOnly] = useState(false);
+  const [isBulkCorrespondenceModalOpen, setIsBulkCorrespondenceModalOpen] = useState(false);
+
+  const unconfirmedCorrespondenceDocs = useMemo(() => {
+    return documents.filter((d: any) => {
+      const isJI = (d.category || '').toLowerCase() === 'jurnal internasional' || d.source === 'scopus';
+      const isJN = (d.category || '').toLowerCase() === 'jurnal nasional';
+      if (!isJI && !isJN) return false;
+
+      const isArticle = !d.subtype || d.subtype.toLowerCase() === 'ar' || d.subtype.toLowerCase() === 'article';
+      const totalAuthors = Number(d.total_authors) || 1;
+      const showCorrespondingControls = d.author_role !== 'Single Author' && totalAuthors > 1 && d.source !== 'scholar';
+
+      return isArticle && showCorrespondingControls && !d.is_corresponding_confirmed;
+    });
+  }, [documents]);
 
   const crossTitlesSet = useMemo(() => {
     const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -564,6 +581,76 @@ export default function Publication({ user }: { user: any }) {
     }
   };
 
+  const handleBulkConfirmAllNotCorresponding = async () => {
+    if (!unconfirmedCorrespondenceDocs.length) return;
+    try {
+      setIsTableLoading(true);
+      await Promise.all(
+        unconfirmedCorrespondenceDocs.map((doc) => {
+          let url = '';
+          if (typeof doc.id === 'string' && doc.id.startsWith('scopus_')) {
+            url = `/api/scopus-publications/${doc.id.replace('scopus_', '')}/corresponding`;
+          } else if (typeof doc.id === 'string' && doc.id.startsWith('scholar_')) {
+            url = `/api/scholar-publications/${doc.id.replace('scholar_', '')}/corresponding`;
+          } else {
+            url = `/api/documents/${doc.id}/corresponding`;
+          }
+          return fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify({ is_corresponding: false }),
+          });
+        })
+      );
+      showMessage(`${unconfirmedCorrespondenceDocs.length} publikasi berhasil dikonfirmasi sebagai bukan Penulis Korespondensi!`, 'success');
+      await fetchDocuments();
+    } catch (err) {
+      console.error(err);
+      showMessage('Terjadi kesalahan saat memproses konfirmasi masal.', 'error');
+    } finally {
+      setIsTableLoading(false);
+    }
+  };
+
+  const handleSaveBulkCorrespondence = async (selections: Record<string | number, boolean>) => {
+    const docIds = Object.keys(selections);
+    if (!docIds.length) return;
+    try {
+      setIsTableLoading(true);
+      await Promise.all(
+        docIds.map((docId) => {
+          const isCorr = selections[docId];
+          let url = '';
+          if (typeof docId === 'string' && docId.startsWith('scopus_')) {
+            url = `/api/scopus-publications/${docId.replace('scopus_', '')}/corresponding`;
+          } else if (typeof docId === 'string' && docId.startsWith('scholar_')) {
+            url = `/api/scholar-publications/${docId.replace('scholar_', '')}/corresponding`;
+          } else {
+            url = `/api/documents/${docId}/corresponding`;
+          }
+          return fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify({ is_corresponding: isCorr }),
+          });
+        })
+      );
+      showMessage(`${docIds.length} status korespondensi publikasi berhasil diperbarui!`, 'success');
+      await fetchDocuments();
+    } catch (err) {
+      console.error(err);
+      showMessage('Terjadi kesalahan saat menyimpan konfirmasi masal.', 'error');
+    } finally {
+      setIsTableLoading(false);
+    }
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDocuments = useMemo(() => {
@@ -589,30 +676,37 @@ export default function Publication({ user }: { user: any }) {
         }}
       />
 
-      {/* Upload Action Bar Section */}
-      <PublicationActionBar 
+      {/* Combined Action Toolbar & Filter Chips Section */}
+      <ScopusFiltersBar
+        documents={documents}
+        scopusFilter={scopusFilter}
+        setScopusFilter={setScopusFilter}
+        articleFilter={articleFilter}
+        setArticleFilter={setArticleFilter}
+        quartileFilter={quartileFilter}
+        setQuartileFilter={setQuartileFilter}
+        sourceFilter={sourceFilter}
+        setSourceFilter={setSourceFilter}
+        crossIndexedOnly={crossIndexedOnly}
+        setCrossIndexedOnly={setCrossIndexedOnly}
+        onResetPage={() => setCurrentPage(1)}
         onUploadClick={() => setIsUploadModalOpen(true)}
         onDownloadTemplate={handleDownloadTemplate}
         onImportExcel={handleImportExcel}
         isImporting={isImporting}
+        showFilters={urlKategori === 'Jurnal Internasional' || urlKategori === 'Jurnal Nasional' || urlKategori === ''}
       />
 
-      {(urlKategori === 'Jurnal Internasional' || urlKategori === 'Jurnal Nasional') && (
-        <ScopusFiltersBar
-          documents={documents}
-          scopusFilter={scopusFilter}
-          setScopusFilter={setScopusFilter}
-          articleFilter={articleFilter}
-          setArticleFilter={setArticleFilter}
-          quartileFilter={quartileFilter}
-          setQuartileFilter={setQuartileFilter}
-          sourceFilter={sourceFilter}
-          setSourceFilter={setSourceFilter}
-          crossIndexedOnly={crossIndexedOnly}
-          setCrossIndexedOnly={setCrossIndexedOnly}
-          onResetPage={() => setCurrentPage(1)}
-        />
-      )}
+      {/* Bulk Correspondence Confirmation Banner */}
+      <UnconfirmedCorrespondenceBanner
+        unconfirmedDocs={unconfirmedCorrespondenceDocs}
+        onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
+        onOpenBulkModal={() => setIsBulkCorrespondenceModalOpen(true)}
+        onFilterUnconfirmed={() => {
+          setScopusFilter('unconfirmed');
+          setCurrentPage(1);
+        }}
+      />
 
       {/* Document History Table */}
       <PublicationTable 
@@ -709,6 +803,14 @@ export default function Publication({ user }: { user: any }) {
         setIsTableLoading={setIsTableLoading}
         setCurrentPage={setCurrentPage}
         onShowMessage={showMessage}
+      />
+
+      {/* Bulk Correspondence Modal */}
+      <BulkCorrespondenceModal
+        isOpen={isBulkCorrespondenceModalOpen}
+        onClose={() => setIsBulkCorrespondenceModalOpen(false)}
+        unconfirmedDocs={unconfirmedCorrespondenceDocs}
+        onSaveBulk={handleSaveBulkCorrespondence}
       />
 
       {/* Detail Slide-over Drawer */}
