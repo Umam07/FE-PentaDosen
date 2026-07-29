@@ -263,15 +263,17 @@ export function DocumentDetailDrawer({
                           Tahun {formatDisplayYear(linkedResearch.tahun)}
                         </span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={onChangeResearchClick}
-                        className="w-full py-2 bg-white dark:bg-zinc-800 hover:bg-gray-50 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-indigo-100 dark:border-indigo-900/30 shadow-sm transition-colors text-center"
-                      >
-                        Ubah Hubungan Penelitian
-                      </button>
+                      {onChangeResearchClick && (
+                        <button
+                          type="button"
+                          onClick={onChangeResearchClick}
+                          className="w-full py-2 bg-white dark:bg-zinc-800 hover:bg-gray-50 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-indigo-100 dark:border-indigo-900/30 shadow-sm transition-colors text-center"
+                        >
+                          Ubah Hubungan Penelitian
+                        </button>
+                      )}
                     </div>
-                  ) : (
+                  ) : onLinkResearchClick ? (
                     <button
                       type="button"
                       onClick={onLinkResearchClick}
@@ -281,6 +283,11 @@ export function DocumentDetailDrawer({
                       <span className="text-[10px] font-black uppercase tracking-widest">Pilih Penelitian Asal</span>
                       <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-500">Hubungkan dokumen ke penelitian dosen</span>
                     </button>
+                  ) : (
+                    <div className="p-4 bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/50 rounded-2xl flex items-center gap-2 text-gray-400">
+                      <Link className="w-3.5 h-3.5 text-gray-400 dark:text-zinc-500 shrink-0" />
+                      <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Tidak ada penelitian terhubung</span>
+                    </div>
                   )}
                 </div>
               )}
@@ -342,7 +349,7 @@ export function DocumentDetailDrawer({
                       : <Download className="w-4 h-4" />}
                   </button>
                 </div>
-              ) : (
+              ) : onUploadPdf ? (
                 <div>
                   <label className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-primary-200 dark:shadow-primary-900/20 cursor-pointer transition-all active:scale-95">
                     {uploadingPdfId === docId ? (
@@ -360,6 +367,10 @@ export function DocumentDetailDrawer({
                       </>
                     )}
                   </label>
+                </div>
+              ) : (
+                <div className="w-full py-3.5 px-4 bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 text-xs font-bold uppercase tracking-widest rounded-xl text-center">
+                  Tidak Ada File Dokumen
                 </div>
               )}
             </div>
