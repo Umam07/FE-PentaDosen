@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   MessageSquare, Search, Send, Clock, CheckCircle2, 
-  HelpCircle, RefreshCw, X, ChevronRight, User, AlertCircle
+  HelpCircle, RefreshCw, X, ChevronRight, User, AlertCircle,
+  Image as ImageIcon, Maximize2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SupportTicket, SupportTicketCounts } from '../types/cmsDashboard.types';
@@ -28,6 +29,9 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
   const [replyText, setReplyText] = useState('');
   const [markAsCompleted, setMarkAsCompleted] = useState(false);
   const [submittingReply, setSubmittingReply] = useState(false);
+
+  // State Modal Preview Gambar Full
+  const [fullViewImageUrl, setFullViewImageUrl] = useState<string | null>(null);
 
   const fetchTickets = async () => {
     setLoading(true);
@@ -82,7 +86,6 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
       });
 
       if (res.ok) {
-        const data = await res.json();
         triggerMessage('Balasan pesan berhasil dikirim ke dosen!', 'success');
         setSelectedTicket(null);
         setReplyText('');
@@ -125,7 +128,6 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
     }
   };
 
-  // Filtered tickets client-side search & status chip
   const filteredTickets = tickets.filter(t => {
     const matchesFilter = activeFilter === 'semua' || t.status === activeFilter;
     const q = searchQuery.toLowerCase();
@@ -176,7 +178,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
           <div>
             <h3 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Pesan Masuk (Support Tickets)</h3>
             <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider mt-0.5">
-              Kelola dan balas pertanyaan/kendala yang dikirim oleh dosen
+              Kelola dan balas pertanyaan/kendala lengkap dengan tangkapan layar yang dikirim oleh dosen
             </p>
           </div>
         </div>
@@ -278,9 +280,17 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
 
                     {/* Subject & Preview */}
                     <td className="py-4 px-4 sm:px-5 max-w-xs">
-                      <p className="font-bold text-slate-900 dark:text-white truncate">
-                        {t.subject || 'Tanpa Subjek'}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        {t.image_url && (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 shrink-0">
+                            <ImageIcon className="w-3 h-3" />
+                            Gambar
+                          </span>
+                        )}
+                        <p className="font-bold text-slate-900 dark:text-white truncate">
+                          {t.subject || 'Tanpa Subjek'}
+                        </p>
+                      </div>
                       <p className="text-[11px] text-slate-500 dark:text-zinc-400 truncate mt-0.5">
                         {t.message}
                       </p>
@@ -402,7 +412,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                 </div>
 
                 {/* Question Section */}
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-zinc-500">
                     Subjek &amp; Isi Pesan Dosen:
                   </label>
@@ -413,6 +423,31 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     <p className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
                       {selectedTicket.message}
                     </p>
+
+                    {/* Lampiran Gambar jika ada */}
+                    {selectedTicket.image_url && (
+                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-zinc-800">
+                        <p className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                          <ImageIcon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                          Lampiran Gambar Kendala Dosen:
+                        </p>
+                        <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-zinc-700 max-w-sm">
+                          <img
+                            src={selectedTicket.image_url}
+                            alt="Screenshot Kendala Dosen"
+                            className="max-h-56 w-auto object-cover rounded-xl"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setFullViewImageUrl(selectedTicket.image_url || null)}
+                            className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs font-bold cursor-pointer"
+                          >
+                            <Maximize2 className="w-4 h-4" />
+                            <span>Perbesar Gambar</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -448,7 +483,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     </label>
                     <textarea
                       rows={4}
-                      placeholder="Tuliskan balasan atau penjelasan untuk dosen..."
+                      placeholder="Tuliskan balasan atau solusi untuk dosen..."
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       className="w-full p-3 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 leading-relaxed"
@@ -491,6 +526,39 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                   </div>
                 </form>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL PREVIEW GAMBAR FULL ADMIN */}
+      <AnimatePresence>
+        {fullViewImageUrl && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setFullViewImageUrl(null)}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-2"
+            >
+              <button
+                onClick={() => setFullViewImageUrl(null)}
+                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 border border-slate-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <img
+                src={fullViewImageUrl}
+                alt="Gambar Kendala Dosen"
+                className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl mx-auto"
+              />
             </motion.div>
           </div>
         )}

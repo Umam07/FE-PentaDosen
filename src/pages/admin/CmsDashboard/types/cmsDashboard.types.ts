@@ -72,6 +72,7 @@ export interface SupportTicket {
   user_id: number;
   subject: string | null;
   message: string;
+  image_url?: string | null;
   status: 'menunggu' | 'dibalas' | 'selesai';
   admin_reply: string | null;
   replied_by: number | null;

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   HelpCircle, Search, ChevronDown, BookOpen,
   Globe, Award, Zap, FileText, X, MessageSquare, 
-  FileQuestion, Send, Clock, CheckCircle2, Inbox, CheckCircle, AlertCircle
+  FileQuestion, Send, Clock, CheckCircle2, Inbox, CheckCircle, AlertCircle,
+  Image as ImageIcon, Trash2, Maximize2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
@@ -17,16 +18,21 @@ export default function FaqHelp({ user }: { user: any }) {
   const [expandedFaqId, setExpandedFaqId] = useState<number | null>(null);
   const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
 
-  // State Tiket Support Dosen (Poin 2 & 3)
+  // State Tiket Support Dosen
   const [myTickets, setMyTickets] = useState<any[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
   const [expandedTicketId, setExpandedTicketId] = useState<number | null>(null);
 
-  // State Modal Kirim Pesan ke Admin
+  // State Modal Kirim Pesan ke Admin + Lampiran Gambar (Maks 10MB)
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketMessage, setTicketMessage] = useState('');
+  const [ticketImageFile, setTicketImageFile] = useState<File | null>(null);
+  const [ticketImagePreview, setTicketImagePreview] = useState<string | null>(null);
   const [submittingTicket, setSubmittingTicket] = useState(false);
+
+  // State Modal Zoom/Preview Gambar
+  const [fullViewImageUrl, setFullViewImageUrl] = useState<string | null>(null);
 
   // State Notifikasi Toast Sederhana
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -122,6 +128,32 @@ export default function FaqHelp({ user }: { user: any }) {
     }
   };
 
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('File yang dipilih harus berupa gambar (JPG, PNG, WebP, GIF).', 'error');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Ukuran gambar terlalu besar. Maksimal 10 MB.', 'error');
+      return;
+    }
+
+    setTicketImageFile(file);
+    setTicketImagePreview(URL.createObjectURL(file));
+  };
+
+  const removeSelectedImage = () => {
+    setTicketImageFile(null);
+    if (ticketImagePreview) {
+      URL.revokeObjectURL(ticketImagePreview);
+      setTicketImagePreview(null);
+    }
+  };
+
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ticketMessage.trim()) {
@@ -131,20 +163,24 @@ export default function FaqHelp({ user }: { user: any }) {
 
     setSubmittingTicket(true);
     try {
+      const formData = new FormData();
+      formData.append('user_id', String(user?.id || 1));
+      formData.append('subject', ticketSubject.trim());
+      formData.append('message', ticketMessage.trim());
+      if (ticketImageFile) {
+        formData.append('image', ticketImageFile);
+      }
+
       const res = await fetch('/api/support-tickets', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: user?.id || 1,
-          subject: ticketSubject.trim(),
-          message: ticketMessage.trim()
-        })
+        body: formData
       });
 
       if (res.ok) {
         showToast('Pesan Anda berhasil dikirim ke admin!', 'success');
         setTicketSubject('');
         setTicketMessage('');
+        removeSelectedImage();
         setIsTicketModalOpen(false);
         fetchMyTickets();
       } else {
@@ -397,7 +433,7 @@ export default function FaqHelp({ user }: { user: any }) {
           </div>
         </div>
 
-        {/* 5. CARD "PESAN KE ADMIN" (Point 2) */}
+        {/* 5. CARD "PESAN KE ADMIN" */}
         <div id="kontak-support" className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
           <div className="space-y-1">
             <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -405,7 +441,7 @@ export default function FaqHelp({ user }: { user: any }) {
               Punya Pertanyaan Lain?
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Kirim pesan Anda, tim admin akan segera membalasnya.
+              Kirim pesan beserta screenshot kendala Anda (maks 10MB), tim admin akan segera membalasnya.
             </p>
           </div>
 
@@ -418,7 +454,7 @@ export default function FaqHelp({ user }: { user: any }) {
           </button>
         </div>
 
-        {/* 6. SECTION "RIWAYAT PESAN SAYA" (Point 3) */}
+        {/* 6. SECTION "RIWAYAT PESAN SAYA" */}
         <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3.5">
             <div className="flex items-center gap-2.5">
@@ -452,8 +488,14 @@ export default function FaqHelp({ user }: { user: any }) {
                       className="w-full p-4 text-left flex justify-between items-center gap-4 cursor-pointer focus:outline-none"
                     >
                       <div className="min-w-0 space-y-1">
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2.5 flex-wrap">
                           {getTicketStatusBadge(ticket.status)}
+                          {ticket.image_url && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                              <ImageIcon className="w-3 h-3 text-primary-500" />
+                              Gambar
+                            </span>
+                          )}
                           <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
                             {ticket.subject || 'Tanpa Subjek'}
                           </h4>
@@ -485,13 +527,37 @@ export default function FaqHelp({ user }: { user: any }) {
                         >
                           <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/50 space-y-3 text-xs leading-relaxed">
                             {/* Full Question Text */}
-                            <div className="space-y-1 bg-slate-100/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
+                            <div className="space-y-2 bg-slate-100/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
                               <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                                 Isi Pesan Anda:
                               </p>
                               <p className="text-slate-700 dark:text-slate-200 font-medium whitespace-pre-line">
                                 {ticket.message}
                               </p>
+
+                              {/* Preview Lampiran Gambar Dosen jika ada */}
+                              {ticket.image_url && (
+                                <div className="mt-3 pt-2.5 border-t border-slate-200/80 dark:border-slate-700/80">
+                                  <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                    <ImageIcon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                                    Lampiran Tangkapan Layar / Gambar:
+                                  </p>
+                                  <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-w-xs">
+                                    <img
+                                      src={ticket.image_url}
+                                      alt="Lampiran Dosen"
+                                      className="max-h-48 w-auto object-cover rounded-xl"
+                                    />
+                                    <button
+                                      onClick={() => setFullViewImageUrl(ticket.image_url)}
+                                      className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-bold cursor-pointer"
+                                    >
+                                      <Maximize2 className="w-4 h-4" />
+                                      <span>Lihat Gambar Utuh</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
                             </div>
 
                             {/* Admin Reply Box */}
@@ -542,7 +608,7 @@ export default function FaqHelp({ user }: { user: any }) {
 
       </div>
 
-      {/* MODAL FORM KIRIM PESAN KE ADMIN */}
+      {/* MODAL FORM KIRIM PESAN KE ADMIN + LAMPIRAN GAMBAR */}
       <AnimatePresence>
         {isTicketModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -550,7 +616,7 @@ export default function FaqHelp({ user }: { user: any }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsTicketModalOpen(false)}
+              onClick={() => { if (!submittingTicket) setIsTicketModalOpen(false); }}
               className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
             />
 
@@ -558,7 +624,7 @@ export default function FaqHelp({ user }: { user: any }) {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-10 p-6 space-y-4"
+              className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-10 p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3.5">
                 <div className="flex items-center gap-2.5">
@@ -568,7 +634,7 @@ export default function FaqHelp({ user }: { user: any }) {
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white">Kirim Pesan ke Admin</h3>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
-                      Tim support kami siap membantu Anda
+                      Sampaikan kendala atau pertanyaan Anda
                     </p>
                   </div>
                 </div>
@@ -581,7 +647,7 @@ export default function FaqHelp({ user }: { user: any }) {
                 </button>
               </div>
 
-              <form onSubmit={handleCreateTicket} className="space-y-4">
+              <form onSubmit={handleCreateTicket} className="space-y-4 overflow-y-auto flex-1 pr-1">
                 {/* Input Subjek */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
@@ -611,8 +677,62 @@ export default function FaqHelp({ user }: { user: any }) {
                   />
                 </div>
 
+                {/* Upload Gambar Tangkapan Layar (Maks 10MB) */}
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+                      Lampirkan Gambar Kendala <span className="text-slate-400 font-normal">(Opsional)</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400">Maks 10 MB</span>
+                  </label>
+
+                  {ticketImagePreview ? (
+                    <div className="relative group rounded-xl border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-950 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={ticketImagePreview}
+                          alt="Preview"
+                          className="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-800 shrink-0"
+                        />
+                        <div className="min-w-0 text-xs">
+                          <p className="font-bold text-slate-800 dark:text-slate-200 truncate">
+                            {ticketImageFile?.name}
+                          </p>
+                          <p className="text-[10px] text-slate-400">
+                            {ticketImageFile ? (ticketImageFile.size / (1024 * 1024)).toFixed(2) : 0} MB
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={removeSelectedImage}
+                        className="p-2 rounded-lg bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 transition-colors cursor-pointer"
+                        title="Hapus gambar"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-500 rounded-xl p-4 cursor-pointer bg-slate-50/50 dark:bg-slate-950/40 transition-colors group">
+                      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                        <ImageIcon className="w-5 h-5" />
+                        <span className="text-xs font-semibold">Klik untuk memilih gambar / screenshot</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-1">Format disukai: PNG, JPG, JPEG, WebP (Maks 10 MB)</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+
                 {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-2.5 pt-2">
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => setIsTicketModalOpen(false)}
@@ -631,6 +751,39 @@ export default function FaqHelp({ user }: { user: any }) {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL ZOOM / PREVIEW GAMBAR FULL */}
+      <AnimatePresence>
+        {fullViewImageUrl && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setFullViewImageUrl(null)}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-2"
+            >
+              <button
+                onClick={() => setFullViewImageUrl(null)}
+                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 border border-slate-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <img
+                src={fullViewImageUrl}
+                alt="Full View Attachment"
+                className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl mx-auto"
+              />
             </motion.div>
           </div>
         )}
