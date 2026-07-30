@@ -28,18 +28,6 @@ export function useExternalDocuments({
     setFilterYearExt(isPublic ? null : new Date().getFullYear());
   }, [publicationSubTab, isPublic]);
 
-  const availableYearsScopus = useMemo(() => {
-    return [currentYear];
-  }, [currentYear, currentYear]);
-
-  const availableYearsScholar = useMemo(() => {
-    return [currentYear];
-  }, [currentYear, currentYear]);
-
-  const availableYearsCross = useMemo(() => {
-    return [currentYear];
-  }, [currentYear, currentYear]);
-
   const scopusList = scopusPublications || [];
   const scholarList = publications || [];
 
@@ -49,6 +37,42 @@ export function useExternalDocuments({
       return scopusList.some(scopusDoc => normalizeTitle(scopusDoc.title) === scholarTitle);
     });
   }, [scholarList, scopusList]);
+
+  const availableYearsScopus = useMemo(() => {
+    const yearsSet = new Set<number>();
+    scopusList.forEach((d: any) => {
+      const dateVal = d.published_at || d.year || d.coverDate;
+      if (dateVal) {
+        const y = typeof dateVal === 'number' ? dateVal : new Date(dateVal).getFullYear();
+        if (!isNaN(y) && y > 1900 && y <= 2100) yearsSet.add(y);
+      }
+    });
+    return Array.from(yearsSet).sort((a, b) => b - a);
+  }, [scopusList]);
+
+  const availableYearsScholar = useMemo(() => {
+    const yearsSet = new Set<number>();
+    scholarList.forEach((d: any) => {
+      const dateVal = d.published_at || d.year;
+      if (dateVal) {
+        const y = typeof dateVal === 'number' ? dateVal : new Date(dateVal).getFullYear();
+        if (!isNaN(y) && y > 1900 && y <= 2100) yearsSet.add(y);
+      }
+    });
+    return Array.from(yearsSet).sort((a, b) => b - a);
+  }, [scholarList]);
+
+  const availableYearsCross = useMemo(() => {
+    const yearsSet = new Set<number>();
+    crossIndexedDocs.forEach((d: any) => {
+      const dateVal = d.published_at || d.year;
+      if (dateVal) {
+        const y = typeof dateVal === 'number' ? dateVal : new Date(dateVal).getFullYear();
+        if (!isNaN(y) && y > 1900 && y <= 2100) yearsSet.add(y);
+      }
+    });
+    return Array.from(yearsSet).sort((a, b) => b - a);
+  }, [crossIndexedDocs]);
 
   const filteredScopusList = useMemo(() => {
     let result = scopusList;

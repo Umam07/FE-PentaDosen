@@ -346,18 +346,21 @@ export default function Publication({ user }: { user: any }) {
   }, [documents, urlKategori, filterYear, scopusFilter, articleFilter, quartileFilter, sourceFilter, crossIndexedOnly, crossTitlesSet]);
 
   const availableYears = useMemo(() => {
-    const years = new Set<number>();
-    years.add(new Date().getFullYear());
-    documents.forEach((d: any) => {
+    const targetDocs = urlKategori
+      ? documents.filter((d: any) => (d.category || '').toLowerCase() === urlKategori.toLowerCase())
+      : documents;
+
+    const yearsSet = new Set<number>();
+    targetDocs.forEach((d: any) => {
       if (d.published_at) {
         const y = new Date(d.published_at).getFullYear();
-        if (!isNaN(y)) {
-          years.add(y);
+        if (!isNaN(y) && y > 1900 && y <= 2100) {
+          yearsSet.add(y);
         }
       }
     });
-    return Array.from(years).sort((a, b) => b - a);
-  }, [documents]);
+    return Array.from(yearsSet).sort((a, b) => b - a);
+  }, [documents, urlKategori]);
 
   const stats = useMemo(() => {
     const src = filteredDocuments;

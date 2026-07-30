@@ -100,10 +100,21 @@ export default function Research({ user }: ResearchProps) {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Year filter
-  const [filterYear, setFilterYear] = useState<number | null>(new Date().getFullYear());
+  const [filterYear, setFilterYear] = useState<number | null>(null);
 
   const availableYears = useMemo(() => {
-    return [new Date().getFullYear()];
+    const yearsSet = new Set<number>();
+    (researchList || []).forEach((r: any) => {
+      const raw = r.tahun;
+      if (raw) {
+        const str = String(raw);
+        const y = str.length === 4 ? parseInt(str, 10) : new Date(str).getFullYear();
+        if (!isNaN(y) && y > 1900 && y <= 2100) {
+          yearsSet.add(y);
+        }
+      }
+    });
+    return Array.from(yearsSet).sort((a, b) => b - a);
   }, [researchList]);
 
   const filteredResearchList = useMemo(() => {

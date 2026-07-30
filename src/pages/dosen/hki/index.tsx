@@ -193,8 +193,17 @@ export default function HKI({ user }: { user: any }) {
   }, [documents, filterYear]);
 
   const availableYears = useMemo(() => {
-    return [new Date().getFullYear()];
-  }, []);
+    const yearsSet = new Set<number>();
+    (documents || []).forEach((d: any) => {
+      if (d.published_at) {
+        const y = new Date(d.published_at).getFullYear();
+        if (!isNaN(y) && y > 1900 && y <= 2100) {
+          yearsSet.add(y);
+        }
+      }
+    });
+    return Array.from(yearsSet).sort((a, b) => b - a);
+  }, [documents]);
 
   const stats = useMemo(() => {
     const src = filteredDocuments;
