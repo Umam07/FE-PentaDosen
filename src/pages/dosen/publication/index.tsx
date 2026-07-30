@@ -612,7 +612,7 @@ export default function Publication({ user }: { user: any }) {
       await fetchDocuments();
     } catch (err) {
       console.error(err);
-      showMessage('Terjadi kesalahan saat memproses konfirmasi masal.', 'error');
+      showMessage('Terjadi kesalahan saat memproses konfirmasi massal.', 'error');
     } finally {
       setIsTableLoading(false);
     }
@@ -648,7 +648,7 @@ export default function Publication({ user }: { user: any }) {
       await fetchDocuments();
     } catch (err) {
       console.error(err);
-      showMessage('Terjadi kesalahan saat menyimpan konfirmasi masal.', 'error');
+      showMessage('Terjadi kesalahan saat menyimpan konfirmasi massal.', 'error');
     } finally {
       setIsTableLoading(false);
     }

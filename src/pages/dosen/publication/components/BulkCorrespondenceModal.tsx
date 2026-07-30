@@ -84,7 +84,7 @@ export default function BulkCorrespondenceModal({
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-zinc-100 uppercase tracking-tight">
-                  Konfirmasi Masal Kepenulisan Korespondensi
+                  Konfirmasi Massal Kepenulisan Korespondensi
                 </h3>
                 <p className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mt-0.5">
                   Verifikasi {totalCount} publikasi beranggota majemuk dalam satu tampilan cepat.

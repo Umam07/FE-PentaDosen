@@ -189,7 +189,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
               )}
             </div>
             <p className="text-[10px] sm:text-xs font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mt-0.5">
-              Registrasi publikasi baru, impor masal, atau saring data
+              Registrasi publikasi baru, impor massal, atau saring data
             </p>
           </div>
         </div>
