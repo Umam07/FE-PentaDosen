@@ -11,7 +11,9 @@ import KpiTab from './components/KpiTab';
 import AnnouncementsTab from './components/AnnouncementsTab';
 import FaqTab from './components/FaqTab';
 import TemplatesTab from './components/TemplatesTab';
+import SupportTicketsTab from './components/SupportTicketsTab';
 import { User } from './types/cmsDashboard.types';
+import { MessageSquare } from 'lucide-react';
 
 interface CmsDashboardProps {
   user: User;
@@ -22,9 +24,10 @@ interface CmsDashboardProps {
  * Mengelola navigasi tab utama dan notifikasi global.
  */
 export default function CmsDashboard({ user }: CmsDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'users' | 'kpi' | 'announcements' | 'faq' | 'templates'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'kpi' | 'announcements' | 'faq' | 'templates' | 'support'>('users');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+  const [pendingTicketCount, setPendingTicketCount] = useState<number>(0);
 
   // Trigger pesan notifikasi temporer (hilang setelah 4 detik)
   const triggerMessage = (text: string, type: 'success' | 'error' = 'success') => {
@@ -32,6 +35,22 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
     setMessageType(type);
     setTimeout(() => setMessage(''), 4000);
   };
+
+  // Fetch pending ticket count untuk badge tab
+  React.useEffect(() => {
+    const fetchPendingCount = async () => {
+      try {
+        const res = await fetch(`/api/admin/support-tickets?status=menunggu&role=${encodeURIComponent(user?.role || 'super admin')}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPendingTicketCount(data.pending_count || data.counts?.menunggu || 0);
+        }
+      } catch (e) {
+        // Silent catch
+      }
+    };
+    fetchPendingCount();
+  }, [user]);
 
   return (
     <div className="max-w-none space-y-6 lg:space-y-8 pb-12">
@@ -48,7 +67,7 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
           <div>
             <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Super Admin CMS Panel</h3>
             <p className="text-xs font-bold text-gray-400 dark:text-zinc-505 uppercase tracking-widest mt-1">
-              Pusat konfigurasi master data, pengumuman, panduan, berkas template, dan hak akses
+              Pusat konfigurasi master data, pengumuman, panduan, berkas template, pesan masuk support, dan hak akses
             </p>
           </div>
         </div>
@@ -80,6 +99,7 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
           { id: 'kpi', label: 'Bobot KPI & Periode', icon: Settings },
           { id: 'announcements', label: 'Pengumuman', icon: Megaphone },
           { id: 'faq', label: 'Panduan & FAQ', icon: HelpCircle },
+          { id: 'support', label: 'Pesan Masuk', icon: MessageSquare, badge: pendingTicketCount },
           { id: 'templates', label: 'Template Berkas', icon: FileSpreadsheet },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
@@ -103,6 +123,13 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
               <span className="relative z-10 flex items-center gap-2">
                 <tab.icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
                 {tab.label}
+                {tab.badge !== undefined && tab.badge > 0 && (
+                  <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
+                    isActive ? 'bg-white text-primary-600' : 'bg-red-500 text-white animate-pulse'
+                  }`}>
+                    {tab.badge}
+                  </span>
+                )}
               </span>
             </button>
           );
@@ -115,6 +142,7 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
         {activeTab === 'kpi' && <KpiTab triggerMessage={triggerMessage} />}
         {activeTab === 'announcements' && <AnnouncementsTab triggerMessage={triggerMessage} user={user} />}
         {activeTab === 'faq' && <FaqTab triggerMessage={triggerMessage} />}
+        {activeTab === 'support' && <SupportTicketsTab triggerMessage={triggerMessage} user={user} />}
         {activeTab === 'templates' && <TemplatesTab triggerMessage={triggerMessage} />}
       </div>
     </div>

@@ -66,3 +66,36 @@ export interface Template {
 export interface TemplatesResponse {
   templates: Template[];
 }
+
+export interface SupportTicket {
+  id: number;
+  user_id: number;
+  subject: string | null;
+  message: string;
+  status: 'menunggu' | 'dibalas' | 'selesai';
+  admin_reply: string | null;
+  replied_by: number | null;
+  replied_at: string | null;
+  created_at: string;
+  updated_at: string;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+    fakultas: string | null;
+    program_studi: string | null;
+  };
+  replied_by_admin?: {
+    id: number;
+    name: string;
+    role: string;
+  };
+}
+
+export interface SupportTicketCounts {
+  menunggu: number;
+  dibalas: number;
+  selesai: number;
+  total: number;
+}
+
