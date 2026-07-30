@@ -42,14 +42,37 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
     fetchFaqs
   } = useFaqTab(triggerMessage);
 
+  const getCategoryBadgeClass = (cat: string) => {
+    const c = (cat || '').toLowerCase();
+    if (c.includes('publikasi') || c.includes('scholar') || c.includes('scopus')) {
+      return 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800';
+    }
+    if (c.includes('buku')) {
+      return 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+    }
+    if (c.includes('hki')) {
+      return 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800';
+    }
+    if (c.includes('penelitian')) {
+      return 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
+    }
+    if (c.includes('kpi')) {
+      return 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+    }
+    return 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-200 dark:border-zinc-700';
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
       <div className="flex justify-between items-center">
-        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Daftar Tanya Jawab / Panduan</p>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Daftar Tanya Jawab / Panduan</p>
+          <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 mt-0.5">Kelola kategori dan isi panduan untuk dosen</p>
+        </div>
         <button
           onClick={handleOpenCreate}
-          className="inline-flex items-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all active:scale-95"
+          className="inline-flex items-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all active:scale-95 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Tambah Panduan / FAQ
@@ -62,7 +85,7 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
           <thead className="bg-gray-50/50 dark:bg-zinc-800/30">
             <tr>
               <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest w-20">Urutan</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest w-36">Kategori</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest w-40">Kategori</th>
               <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Pertanyaan / Topik</th>
               <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Jawaban / Panduan</th>
               <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest w-28">Aksi</th>
@@ -76,11 +99,11 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                 <tr key={f.id} className="hover:bg-primary-50/10 transition-colors">
                   <td className="px-6 py-4 text-xs font-black text-center text-gray-500">{f.order_index ?? 0}</td>
                   <td className="px-6 py-4">
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-lg text-[9px] font-black uppercase tracking-wider text-gray-600 dark:text-zinc-400">
+                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${getCategoryBadgeClass(f.category)}`}>
                       {f.category}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-extrabold text-gray-900 dark:text-zinc-100 uppercase tracking-tight text-xs">{f.question}</td>
+                  <td className="px-6 py-4 font-extrabold text-gray-900 dark:text-zinc-100 tracking-tight text-xs">{f.question}</td>
                   <td className="px-6 py-4 text-xs font-bold text-gray-500 max-w-sm truncate">
                     <div className="flex items-center gap-2">
                       {f.file_url && (
@@ -101,7 +124,7 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                             title: f.question,
                             category: f.category
                           })}
-                          className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all"
+                          className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
                           title="Preview PDF"
                         >
                           <Eye className="w-4 h-4" />
@@ -109,14 +132,14 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                       )}
                       <button
                         onClick={() => handleOpenEdit(f)}
-                        className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all"
+                        className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
                         title="Edit Panduan"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setDeleteFaq(f)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800 rounded-lg transition-all"
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
                         title="Hapus Panduan"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -160,7 +183,7 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                   </h3>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Panduan tata cara penggunaan fitur bagi pengguna dosen.</p>
                 </div>
-                <button onClick={() => setIsOpenForm(false)} className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-50">
+                <button onClick={() => setIsOpenForm(false)} className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-50 cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -172,13 +195,14 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-850 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
                     >
-                      <option value="Umum">Umum</option>
-                      <option value="Google Scholar">Google Scholar</option>
-                      <option value="Scopus">Scopus</option>
-                      <option value="Upload KPI">Upload KPI</option>
-                      <option value="Penelitian">Penelitian</option>
+                      <option value="Umum">Umum (Pertanyaan &amp; Akun)</option>
+                      <option value="Publikasi">Publikasi (Google Scholar, Scopus, SINTA)</option>
+                      <option value="Buku">Buku &amp; Monograf</option>
+                      <option value="HKI">HKI &amp; Paten</option>
+                      <option value="Penelitian">Penelitian &amp; Pengabdian</option>
+                      <option value="Upload KPI">Upload KPI &amp; Kinerja Dosen</option>
                     </select>
                   </div>
                   
@@ -189,7 +213,7 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                       required
                       value={orderIndex}
                       onChange={(e) => setOrderIndex(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
                     />
                   </div>
                 </div>
@@ -199,88 +223,63 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: Bagaimana cara sinkronisasi data Scopus?"
+                    placeholder="Contoh: Bagaimana cara menautkan profil Scopus?"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Detail Panduan / Jawaban</label>
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Jawaban / Penjelasan Singkat</label>
                   <textarea
-                    required
                     rows={4}
-                    placeholder="Tuliskan isi panduan lengkap langkah demi langkah..."
+                    required
+                    placeholder="Tuliskan jawaban atau langkah ringkas..."
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 resize-none"
+                    className="w-full p-4 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-medium outline-none text-sm text-gray-900 dark:text-zinc-100 leading-relaxed"
                   />
                 </div>
 
+                {/* File PDF Attachment */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Dokumen Panduan PDF (Opsional)</label>
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">File Panduan PDF (Opsional)</label>
                   {existingFileUrl && !removeFile ? (
-                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-850 border border-gray-150 dark:border-zinc-800 rounded-xl">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <FileText className="w-4 h-4 text-red-500 shrink-0" />
-                        <span className="text-xs font-bold text-gray-600 dark:text-zinc-400 truncate max-w-[280px]">
-                          {existingFileUrl.split('/').pop() || 'panduan.pdf'}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setPreviewDoc({
-                            fileUrl: existingFileUrl,
-                            title: question,
-                            category: category
-                          })}
-                          className="text-[10px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-wider hover:underline"
-                        >
-                          Lihat
-                        </button>
-                      </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-100 dark:border-zinc-700 text-xs">
+                      <span className="font-bold text-gray-700 dark:text-zinc-300 truncate">File Panduan PDF Terlampir</span>
                       <button
                         type="button"
                         onClick={() => setRemoveFile(true)}
-                        className="px-3 py-1 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
+                        className="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-wider"
                       >
-                        Hapus PDF
+                        Hapus Berkas
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-1.5">
-                      <input
-                        type="file"
-                        accept="application/pdf"
-                        onChange={handleFileChange}
-                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-855 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-xs text-gray-900 dark:text-zinc-100 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-primary-50 file:text-primary-600 dark:file:bg-primary-950/30 dark:file:text-primary-400 hover:file:bg-primary-100/50 cursor-pointer"
-                      />
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">
-                        Format file harus PDF, ukuran maksimal 10MB.
-                      </p>
-                      {removeFile && (
-                        <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">
-                          * PDF lama akan dihapus setelah Anda menyimpan perubahan.
-                        </p>
-                      )}
-                    </div>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-medium text-xs text-gray-700 dark:text-zinc-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:bg-primary-50 file:text-primary-600"
+                    />
                   )}
                 </div>
 
-                <div className="pt-4 flex gap-3">
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-zinc-800">
                   <button
                     type="button"
                     onClick={() => setIsOpenForm(false)}
-                    className="flex-1 py-3.5 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-600 dark:text-zinc-300 rounded-xl text-xs font-black uppercase tracking-widest"
+                    className="px-5 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="flex-1 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg disabled:opacity-40"
+                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
-                    {saving ? 'Menyimpan...' : 'Simpan Panduan'}
+                    {saving ? 'Menyimpan...' : (editingId ? 'Simpan Perubahan' : 'Tambah Panduan')}
                   </button>
                 </div>
               </form>
@@ -289,6 +288,15 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
         )}
       </AnimatePresence>
 
+      {/* Delete Confirmation Modal */}
+      <FaqDeleteModal
+        isOpen={!!deleteFaq}
+        onClose={() => setDeleteFaq(null)}
+        faq={deleteFaq}
+        onSuccess={fetchFaqs}
+        triggerMessage={triggerMessage}
+      />
+
       {/* PDF Preview Modal */}
       <PdfPreviewModal
         isOpen={!!previewDoc}
@@ -296,14 +304,6 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
         fileUrl={previewDoc?.fileUrl ?? null}
         title={previewDoc?.title}
         category={previewDoc?.category}
-      />
-
-      <FaqDeleteModal
-        isOpen={!!deleteFaq}
-        onClose={() => setDeleteFaq(null)}
-        faq={deleteFaq}
-        onSuccess={fetchFaqs}
-        triggerMessage={triggerMessage}
       />
     </div>
   );

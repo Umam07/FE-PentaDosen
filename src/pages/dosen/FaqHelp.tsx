@@ -3,7 +3,7 @@ import {
   HelpCircle, Search, ChevronDown, BookOpen,
   Globe, Award, Zap, FileText, X, MessageSquare, 
   FileQuestion, Send, Clock, CheckCircle2, Inbox, CheckCircle, AlertCircle,
-  Image as ImageIcon, Trash2, Maximize2, ExternalLink, Eye
+  Image as ImageIcon, Trash2, Maximize2, ExternalLink, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
@@ -87,10 +87,30 @@ export default function FaqHelp({ user }: { user: any }) {
     fetchMyTickets();
   }, [user]);
 
-  const categories = ['Semua', 'Umum', 'Google Scholar', 'Scopus', 'Upload KPI', 'Penelitian'];
+  // Kategori FAQ Terstruktur & Lebih Masuk Akal
+  const categories = [
+    'Semua',
+    'Umum',
+    'Publikasi',
+    'Buku',
+    'HKI',
+    'Penelitian',
+    'Upload KPI'
+  ];
+
+  const normalizeCategory = (cat: string) => {
+    const c = (cat || '').trim().toLowerCase();
+    if (c === 'google scholar' || c === 'scopus' || c === 'publikasi' || c.includes('publikasi')) return 'Publikasi';
+    if (c === 'buku' || c.includes('buku')) return 'Buku';
+    if (c === 'hki' || c.includes('hki')) return 'HKI';
+    if (c === 'penelitian' || c.includes('penelitian')) return 'Penelitian';
+    if (c === 'upload kpi' || c === 'kpi' || c.includes('kpi')) return 'Upload KPI';
+    return 'Umum';
+  };
 
   const filteredFaqs = faqs.filter(faq => {
-    const matchesCategory = activeCategory === 'Semua' || faq.category === activeCategory;
+    const normCategory = normalizeCategory(faq.category);
+    const matchesCategory = activeCategory === 'Semua' || normCategory === activeCategory;
     const matchesSearch =
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
@@ -106,18 +126,45 @@ export default function FaqHelp({ user }: { user: any }) {
   };
 
   const getCategoryTheme = (cat: string) => {
-    switch (cat) {
-      case 'Google Scholar':
-        return { icon: BookOpen, classes: 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400' };
-      case 'Scopus':
-        return { icon: Globe, classes: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400' };
-      case 'Upload KPI':
-        return { icon: Award, classes: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400' };
+    const norm = normalizeCategory(cat);
+    switch (norm) {
+      case 'Publikasi':
+        return { 
+          icon: Globe, 
+          label: 'Publikasi & Indeksasi',
+          classes: 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400' 
+        };
+      case 'Buku':
+        return { 
+          icon: BookOpen, 
+          label: 'Buku & Monograf',
+          classes: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400' 
+        };
+      case 'HKI':
+        return { 
+          icon: ShieldCheck, 
+          label: 'HKI & Paten',
+          classes: 'bg-purple-500/10 text-purple-600 dark:bg-purple-500/15 dark:text-purple-400' 
+        };
       case 'Penelitian':
-        return { icon: Zap, classes: 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400' };
+        return { 
+          icon: Zap, 
+          label: 'Penelitian & Pengabdian',
+          classes: 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400' 
+        };
+      case 'Upload KPI':
+        return { 
+          icon: Award, 
+          label: 'Upload KPI & Kinerja',
+          classes: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400' 
+        };
       case 'Umum':
       default:
-        return { icon: FileText, classes: 'bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400' };
+        return { 
+          icon: FileText, 
+          label: 'Umum & Akun',
+          classes: 'bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400' 
+        };
     }
   };
 
@@ -290,11 +337,11 @@ export default function FaqHelp({ user }: { user: any }) {
         {/* 4. TABS + FAQ ACCORDION */}
         <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
 
-          {/* Tabs Kategori */}
+          {/* Tabs Kategori Terstruktur */}
           <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar">
             {categories.map((cat) => {
               const theme = getCategoryTheme(cat);
-              const IconComponent = theme.icon;
+              const IconComponent = cat === 'Semua' ? FileQuestion : theme.icon;
               const isActive = activeCategory === cat;
               return (
                 <button
@@ -353,9 +400,14 @@ export default function FaqHelp({ user }: { user: any }) {
                         <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${theme.classes}`}>
                           <ThemeIcon className="w-4 h-4" />
                         </div>
-                        <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
-                          {faq.question}
-                        </span>
+                        <div className="min-w-0">
+                          <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white block truncate">
+                            {faq.question}
+                          </span>
+                          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mt-0.5">
+                            {theme.label}
+                          </span>
+                        </div>
                       </div>
 
                       <ChevronDown className={`w-4 h-4 flex-shrink-0 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-slate-900 dark:text-white' : ''}`} />
