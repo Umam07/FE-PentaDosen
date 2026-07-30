@@ -28,11 +28,12 @@ export default function ScholarDocRow({
 
       <div className="flex items-start gap-5 p-5">
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
-          <div className="w-[62px] h-[62px] rounded-2xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-200/80 dark:border-zinc-700/60 flex flex-col items-center justify-center transition-colors">
-            <span className="text-xl font-black text-slate-800 dark:text-zinc-100 leading-none tabular-nums">{citations}</span>
-            <span className="text-[7px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Sitasi</span>
+          {/* Kotak indikator sitasi diseragamkan dengan warna netral dark/primary-900 */}
+          <div className="w-[62px] h-[62px] rounded-2xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-slate-800 flex flex-col items-center justify-center transition-colors shadow-xs">
+            <span className="text-xl font-black text-white leading-none tabular-nums">{citations}</span>
+            <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
-          <div className="px-2.5 py-0.5 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-2xs">
+          <div className="px-2.5 py-0.5 bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/40 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap">
             +{Math.round(docPoints)} pts
           </div>
         </div>

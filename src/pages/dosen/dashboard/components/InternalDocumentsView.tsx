@@ -144,11 +144,15 @@ export default function InternalDocumentsView({
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3 mb-3">
-                        <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 flex items-center justify-center">
+                        <div className={`p-2 rounded-xl border transition-colors flex items-center justify-center ${
+                          categoryFilter === cat.id
+                            ? 'bg-primary-100/80 dark:bg-primary-900/40 border-primary-200 dark:border-primary-800/60'
+                            : 'bg-slate-100 dark:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60'
+                        }`}>
                           <cat.icon className={`w-4 h-4 ${
                             categoryFilter === cat.id
                               ? 'text-primary-600 dark:text-primary-400'
-                              : 'text-slate-400'
+                              : 'text-slate-500 dark:text-slate-400'
                           }`} />
                         </div>
                         <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
@@ -197,8 +201,9 @@ export default function InternalDocumentsView({
                   ))}
                 </div>
 
-                {/* Doc count badge */}
-                <div className="flex-shrink-0 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                {/* Badge informasi jumlah dokumen yang netral & non-interaktif */}
+                <div className="flex-shrink-0 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
                   {filteredDocs.length} Dokumen
                 </div>
               </div>

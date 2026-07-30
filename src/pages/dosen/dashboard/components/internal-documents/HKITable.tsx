@@ -104,12 +104,12 @@ export default function HKITable({
                     </td>
                     <td className="hidden sm:table-cell px-6 py-4">
                       {doc.is_kpi_counted ? (
-                        <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1.5 rounded-xl border border-primary-100">
-                          <Sparkles className="w-3 h-3" /> KPI
+                        <div className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                          <Sparkles className="w-3 h-3 text-slate-500 dark:text-slate-400" /> KPI
                         </div>
                       ) : (
-                        <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 rounded-xl border border-slate-100">
-                          <Archive className="w-3 h-3" /> Arsip
+                        <div className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                          <Archive className="w-3 h-3 text-slate-400" /> Arsip
                         </div>
                       )}
                     </td>
