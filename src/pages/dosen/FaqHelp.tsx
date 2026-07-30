@@ -87,6 +87,13 @@ export default function FaqHelp({ user }: { user: any }) {
     fetchMyTickets();
   }, [user]);
 
+  // Handle hash navigation (misal dari notifikasi lonceng ke #kontak-support)
+  useEffect(() => {
+    if (window.location.hash === '#kontak-support') {
+      setIsTicketModalOpen(true);
+    }
+  }, []);
+
   // Kategori FAQ Terstruktur & Lebih Masuk Akal
   const categories = [
     'Semua',
@@ -165,13 +172,6 @@ export default function FaqHelp({ user }: { user: any }) {
           label: 'Umum & Akun',
           classes: 'bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400' 
         };
-    }
-  };
-
-  const scrollToSupport = () => {
-    const el = document.getElementById('kontak-support');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -292,19 +292,30 @@ export default function FaqHelp({ user }: { user: any }) {
         )}
       </AnimatePresence>
 
-      {/* 1. HEADER (Full-width di dalam kontainer utama halaman) */}
-      <div className="flex items-center gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900/40">
-          <HelpCircle className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+      {/* 1. HEADER HALAMAN + TOMBOL UTAMA "KIRIM PESAN KE ADMIN" */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center gap-4">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900/40">
+            <HelpCircle className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest leading-none mb-1.5">
+              Pusat Dukungan
+            </p>
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
+              Bantuan &amp; FAQ
+            </h2>
+          </div>
         </div>
-        <div>
-          <p className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest leading-none mb-1.5">
-            Pusat Dukungan
-          </p>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
-            Bantuan &amp; FAQ
-          </h2>
-        </div>
+
+        {/* Tombol Utama Kirim Pesan ke Admin di Header Halaman */}
+        <button
+          onClick={() => setIsTicketModalOpen(true)}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+        >
+          <Send className="w-3.5 h-3.5" />
+          <span>Kirim Pesan ke Admin</span>
+        </button>
       </div>
 
       {/* SECTION KONTEN TERPUSAT (max-width: 850px) */}
@@ -474,7 +485,7 @@ export default function FaqHelp({ user }: { user: any }) {
                   Panduan untuk kategori &quot;<span className="font-semibold text-slate-700 dark:text-slate-300">{activeCategory}</span>&quot; sedang disiapkan oleh administrator.
                 </p>
                 <button
-                  onClick={scrollToSupport}
+                  onClick={() => setIsTicketModalOpen(true)}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-50 hover:bg-primary-100 dark:bg-primary-950/40 dark:hover:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 text-xs font-semibold transition-colors cursor-pointer"
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
@@ -485,37 +496,25 @@ export default function FaqHelp({ user }: { user: any }) {
           </div>
         </div>
 
-        {/* 5. CARD "PESAN KE ADMIN" */}
-        <div id="kontak-support" className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
-          <div className="space-y-1">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-              Punya Pertanyaan Lain?
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Kirim pesan beserta screenshot kendala Anda (maks 10MB), tim admin akan segera membalasnya.
-            </p>
-          </div>
-
-          <button
-            onClick={() => setIsTicketModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-colors cursor-pointer w-full sm:w-auto shadow-2xs"
-          >
-            <Send className="w-3.5 h-3.5" />
-            <span>Kirim Pesan</span>
-          </button>
-        </div>
-
-        {/* 6. SECTION "RIWAYAT PESAN SAYA" */}
-        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3.5">
+        {/* 5. SECTION "RIWAYAT PESAN SAYA" */}
+        <div id="kontak-support" className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-3.5">
             <div className="flex items-center gap-2.5">
               <Inbox className="w-4 h-4 text-primary-600 dark:text-primary-400" />
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">Riwayat Pesan Saya</h3>
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                {myTickets.length} Tiket
+              </span>
             </div>
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-              {myTickets.length} Tiket
-            </span>
+
+            {/* Aksi Tambah Pesan Baru terintegrasi di Header Riwayat */}
+            <button
+              onClick={() => setIsTicketModalOpen(true)}
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 dark:bg-primary-950/40 dark:hover:bg-primary-900/50 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 text-xs font-bold transition-colors cursor-pointer self-start sm:self-auto"
+            >
+              <Send className="w-3 h-3" />
+              <span>+ Kirim Pesan Baru</span>
+            </button>
           </div>
 
           {loadingTickets ? (
@@ -662,9 +661,16 @@ export default function FaqHelp({ user }: { user: any }) {
             <div className="py-10 text-center">
               <Inbox className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
               <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Belum Ada Pesan yang Dikirim</h4>
-              <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto">
+              <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto mb-3">
                 Pesan atau pertanyaan yang Anda kirim ke admin akan muncul di sini.
               </p>
+              <button
+                onClick={() => setIsTicketModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Kirim Pesan Pertama</span>
+              </button>
             </div>
           )}
         </div>
@@ -685,7 +691,7 @@ export default function FaqHelp({ user }: { user: any }) {
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-10 p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
