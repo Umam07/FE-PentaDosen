@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell, CheckCheck, Trash2, X,
-  CheckCircle, XCircle, Clock, ShieldCheck,
+  CheckCircle2, XCircle, Clock, ShieldCheck,
   FileText, Beaker, RefreshCw, Megaphone,
-  BellOff
+  MessageSquare, BellOff
 } from 'lucide-react';
 
 interface NotificationItem {
@@ -24,31 +24,182 @@ interface NotificationBellProps {
   userId: number | string | undefined;
 }
 
-// ─── Styling helpers ────────────────────────────────────────────────────────
-// Reduced to a smaller, more disciplined semantic palette: primary (neutral/info),
-// emerald (success), red (rejected/failed), amber (pending). Everything else
-// falls back to primary so the dropdown doesn't read like a rainbow.
-const typeConfig: Record<string, {
+// ─── Styling helpers dengan identitas visual unik untuk setiap tipe notifikasi ─
+interface TypeConfigItem {
   icon: ElementType;
   iconColor: string;
   bg: string;
+  borderColor: string;
+  tagBg: string;
   label: string;
-}> = {
-  doc_approved:              { icon: CheckCircle,  iconColor: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/40', label: 'Disetujui'     },
-  penelitian_approved:       { icon: CheckCircle,  iconColor: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/40', label: 'Disetujui'     },
-  doc_rejected:              { icon: XCircle,      iconColor: 'text-red-600 dark:text-red-400',         bg: 'bg-red-50 dark:bg-red-950/40',         label: 'Ditolak'       },
-  penelitian_rejected:       { icon: XCircle,      iconColor: 'text-red-600 dark:text-red-400',         bg: 'bg-red-50 dark:bg-red-950/40',         label: 'Ditolak'       },
-  doc_verified_prodi:        { icon: ShieldCheck,  iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Terverifikasi' },
-  penelitian_verified_prodi: { icon: ShieldCheck,  iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Terverifikasi' },
-  doc_pending_lppm:          { icon: Clock,        iconColor: 'text-amber-600 dark:text-amber-400',     bg: 'bg-amber-50 dark:bg-amber-950/40',     label: 'Menunggu'      },
-  penelitian_pending_lppm:   { icon: Clock,        iconColor: 'text-amber-600 dark:text-amber-400',     bg: 'bg-amber-50 dark:bg-amber-950/40',     label: 'Menunggu'      },
-  doc_submitted:             { icon: FileText,     iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Dikirim'       },
-  penelitian_submitted:      { icon: Beaker,       iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Dikirim'       },
-  announcement:              { icon: Megaphone,    iconColor: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-950/40', label: 'Pengumuman'    },
+}
+
+const typeConfigMap: Record<string, TypeConfigItem> = {
+  // Support Tickets / Balasan Pesan Dosen
+  support_ticket_replied: {
+    icon: MessageSquare,
+    iconColor: 'text-indigo-600 dark:text-indigo-400',
+    bg: 'bg-indigo-50 dark:bg-indigo-950/40',
+    borderColor: 'border-l-indigo-500 dark:border-l-indigo-400',
+    tagBg: 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60',
+    label: 'Pesan Support'
+  },
+  new_support_ticket: {
+    icon: MessageSquare,
+    iconColor: 'text-indigo-600 dark:text-indigo-400',
+    bg: 'bg-indigo-50 dark:bg-indigo-950/40',
+    borderColor: 'border-l-indigo-500 dark:border-l-indigo-400',
+    tagBg: 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60',
+    label: 'Pesan Support'
+  },
+
+  // Dokumen Disetujui LPPM
+  doc_approved: {
+    icon: CheckCircle2,
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    bg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    borderColor: 'border-l-emerald-500 dark:border-l-emerald-400',
+    tagBg: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+    label: 'Disetujui LPPM'
+  },
+  penelitian_approved: {
+    icon: CheckCircle2,
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    bg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    borderColor: 'border-l-emerald-500 dark:border-l-emerald-400',
+    tagBg: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+    label: 'Disetujui LPPM'
+  },
+
+  // Dokumen Ditolak
+  doc_rejected: {
+    icon: XCircle,
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    bg: 'bg-rose-50 dark:bg-rose-950/40',
+    borderColor: 'border-l-rose-500 dark:border-l-rose-400',
+    tagBg: 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+    label: 'Ditolak'
+  },
+  penelitian_rejected: {
+    icon: XCircle,
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    bg: 'bg-rose-50 dark:bg-rose-950/40',
+    borderColor: 'border-l-rose-500 dark:border-l-rose-400',
+    tagBg: 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+    label: 'Ditolak'
+  },
+
+  // Verifikasi Fakultas / Prodi
+  doc_verified_fakultas: {
+    icon: ShieldCheck,
+    iconColor: 'text-sky-600 dark:text-sky-400',
+    bg: 'bg-sky-50 dark:bg-sky-950/40',
+    borderColor: 'border-l-sky-500 dark:border-l-sky-400',
+    tagBg: 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
+    label: 'Diverifikasi Fakultas'
+  },
+  doc_verified_prodi: {
+    icon: ShieldCheck,
+    iconColor: 'text-sky-600 dark:text-sky-400',
+    bg: 'bg-sky-50 dark:bg-sky-950/40',
+    borderColor: 'border-l-sky-500 dark:border-l-sky-400',
+    tagBg: 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
+    label: 'Diverifikasi Prodi'
+  },
+  penelitian_verified_prodi: {
+    icon: ShieldCheck,
+    iconColor: 'text-sky-600 dark:text-sky-400',
+    bg: 'bg-sky-50 dark:bg-sky-950/40',
+    borderColor: 'border-l-sky-500 dark:border-l-sky-400',
+    tagBg: 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
+    label: 'Diverifikasi Prodi'
+  },
+
+  // Menunggu LPPM / Proses
+  doc_pending_lppm: {
+    icon: Clock,
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    borderColor: 'border-l-amber-500 dark:border-l-amber-400',
+    tagBg: 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+    label: 'Menunggu LPPM'
+  },
+  penelitian_pending_lppm: {
+    icon: Clock,
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    borderColor: 'border-l-amber-500 dark:border-l-amber-400',
+    tagBg: 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+    label: 'Menunggu LPPM'
+  },
+
+  // Dokumen / Pengajuan Baru
+  doc_submitted: {
+    icon: FileText,
+    iconColor: 'text-teal-600 dark:text-teal-400',
+    bg: 'bg-teal-50 dark:bg-teal-950/40',
+    borderColor: 'border-l-teal-500 dark:border-l-teal-400',
+    tagBg: 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800/60',
+    label: 'Pengajuan Baru'
+  },
+  penelitian_submitted: {
+    icon: Beaker,
+    iconColor: 'text-teal-600 dark:text-teal-400',
+    bg: 'bg-teal-50 dark:bg-teal-950/40',
+    borderColor: 'border-l-teal-500 dark:border-l-teal-400',
+    tagBg: 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800/60',
+    label: 'Penelitian Baru'
+  },
+
+  // Pengumuman
+  announcement: {
+    icon: Megaphone,
+    iconColor: 'text-purple-600 dark:text-purple-400',
+    bg: 'bg-purple-50 dark:bg-purple-950/40',
+    borderColor: 'border-l-purple-500 dark:border-l-purple-400',
+    tagBg: 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/60',
+    label: 'Pengumuman'
+  },
 };
 
-const getTypeConfig = (type: string) =>
-  typeConfig[type] ?? { icon: Bell, iconColor: 'text-gray-500 dark:text-zinc-400', bg: 'bg-gray-50 dark:bg-zinc-800', label: 'Info' };
+/**
+ * Mendapatkan konfigurasi visual secara cerdas berdasarkan type & pencocokan kata kunci
+ */
+const getTypeConfig = (type: string, title: string = '', message: string = ''): TypeConfigItem => {
+  if (typeConfigMap[type]) {
+    return typeConfigMap[type];
+  }
+
+  const combined = (type + ' ' + title + ' ' + message).toLowerCase();
+
+  if (combined.includes('support') || combined.includes('pesan') || combined.includes('balas') || combined.includes('bantuan')) {
+    return typeConfigMap.support_ticket_replied;
+  }
+  if (combined.includes('disetujui') || combined.includes('diterima') || combined.includes('approved')) {
+    return typeConfigMap.doc_approved;
+  }
+  if (combined.includes('ditolak') || combined.includes('revisi') || combined.includes('rejected')) {
+    return typeConfigMap.doc_rejected;
+  }
+  if (combined.includes('verifikasi') || combined.includes('fakultas') || combined.includes('prodi')) {
+    return typeConfigMap.doc_verified_fakultas;
+  }
+  if (combined.includes('menunggu') || combined.includes('lppm') || combined.includes('pending')) {
+    return typeConfigMap.doc_pending_lppm;
+  }
+  if (combined.includes('pengumuman') || combined.includes('announcement')) {
+    return typeConfigMap.announcement;
+  }
+
+  return {
+    icon: Bell,
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    bg: 'bg-blue-50 dark:bg-blue-950/40',
+    borderColor: 'border-l-blue-500 dark:border-l-blue-400',
+    tagBg: 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+    label: 'Informasi'
+  };
+};
 
 function timeAgo(dateStr: string): string {
   const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
@@ -58,9 +209,6 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(diff / 86400)} hari lalu`;
 }
 
-// Strips trailing decorative symbols (e.g. "✓", "!") that sometimes come
-// through in backend-generated titles, so the heading stays clean typography
-// instead of relying on a stray glyph to signal status.
 function cleanTitle(title: string): string {
   return title.replace(/[\s✓✔!]+$/u, '').trim();
 }
@@ -74,7 +222,7 @@ interface NotificationCardProps {
 }
 
 function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
-  const cfg = getTypeConfig(notif.type);
+  const cfg = getTypeConfig(notif.type, notif.title, notif.message);
   const Icon = cfg.icon;
 
   return (
@@ -85,58 +233,55 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
       exit={{ opacity: 0, x: 12, scale: 0.97 }}
       transition={{ duration: 0.18 }}
       onClick={() => onClick(notif)}
-      className={`group relative flex gap-3.5 p-4 rounded-2xl mb-1.5 cursor-pointer transition-all duration-200 ${
+      className={`group relative flex gap-3.5 p-4 rounded-2xl mb-2 cursor-pointer transition-all duration-200 border-l-4 ${cfg.borderColor} ${
         notif.is_read
-          ? 'bg-transparent border border-transparent hover:bg-gray-50/60 dark:hover:bg-zinc-800/40'
-          : 'bg-primary-50/30 dark:bg-primary-950/15 border border-gray-100 dark:border-zinc-800/60 border-l-4 border-l-primary-500 dark:border-l-primary-400 shadow-sm shadow-primary-500/5 hover:bg-primary-50/50 dark:hover:bg-primary-950/25 hover:border-gray-200 dark:hover:border-zinc-700'
+          ? 'bg-white/60 dark:bg-zinc-900/60 border-t border-r border-b border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800/60'
+          : 'bg-slate-50/80 dark:bg-zinc-800/80 border-t border-r border-b border-slate-200 dark:border-zinc-700 shadow-2xs hover:bg-slate-100/70 dark:hover:bg-zinc-800'
       }`}
     >
-      {/* Icon — the single visual carrier of "what kind of notification this is" */}
-      <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0 transition-opacity duration-200 ${
-        notif.is_read ? 'opacity-60 dark:opacity-50' : 'opacity-100'
+      {/* Icon Container dengan warna khas per kategori */}
+      <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0 shadow-2xs border border-white/50 dark:border-transparent ${
+        notif.is_read ? 'opacity-70' : 'opacity-100'
       }`}>
-        <Icon className={`w-[18px] h-[18px] ${cfg.iconColor}`} />
+        <Icon className={`w-5 h-5 ${cfg.iconColor}`} />
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0 pr-6">
-        <div className="flex items-start justify-between gap-2">
-          <p className={`text-sm leading-snug ${
+      <div className="flex-1 min-w-0 pr-5">
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <p className={`text-xs sm:text-sm leading-snug ${
             notif.is_read
-              ? 'font-medium text-gray-500 dark:text-zinc-400'
-              : 'font-semibold text-gray-900 dark:text-zinc-100'
+              ? 'font-medium text-slate-700 dark:text-zinc-300'
+              : 'font-bold text-slate-900 dark:text-white'
           }`}>
             {cleanTitle(notif.title)}
           </p>
           {!notif.is_read && (
-            <span className="relative flex h-2 w-2 mt-1.5 flex-shrink-0">
+            <span className="relative flex h-2 w-2 mt-1 flex-shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
             </span>
           )}
         </div>
 
-        <p className={`text-xs leading-relaxed line-clamp-2 mt-1 ${
+        <p className={`text-xs leading-relaxed line-clamp-2 ${
           notif.is_read
-            ? 'text-gray-400 dark:text-zinc-500'
-            : 'text-gray-600 dark:text-zinc-300'
+            ? 'text-slate-500 dark:text-zinc-400'
+            : 'text-slate-700 dark:text-zinc-200'
         }`}>
           {notif.message}
         </p>
 
-        <div className="flex items-center gap-2 mt-2">
-          <span className={`text-[11px] font-semibold transition-colors duration-200 ${
-            notif.is_read
-              ? 'text-gray-400 dark:text-zinc-500'
-              : cfg.iconColor
-          }`}>
+        {/* Footer Meta: Pill Badge + Time Ago */}
+        <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${cfg.tagBg}`}>
             {cfg.label}
           </span>
-          <span className="w-0.5 h-0.5 rounded-full bg-gray-300 dark:bg-zinc-600" />
-          <span className={`text-[11px] transition-colors duration-200 ${
+          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-zinc-600" />
+          <span className={`text-[11px] ${
             notif.is_read
-              ? 'text-gray-400 dark:text-zinc-500'
-              : 'text-gray-500 dark:text-zinc-400 font-medium'
+              ? 'text-slate-400 dark:text-zinc-500'
+              : 'text-slate-500 dark:text-zinc-400 font-semibold'
           }`}>
             {timeAgo(notif.created_at)}
           </span>
@@ -146,7 +291,7 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
       {/* Delete button (hover reveal) */}
       <button
         onClick={(e) => onDelete(notif.id, e)}
-        className="absolute top-3.5 right-3.5 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all duration-150"
+        className="absolute top-3 right-3 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-all duration-150"
         title="Hapus notifikasi"
       >
         <X className="w-3.5 h-3.5" />
@@ -251,7 +396,34 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       await markRead(notif.id);
     }
 
-    if (notif.type === 'announcement') {
+    const titleLower = (notif.title || '').toLowerCase();
+    const messageLower = (notif.message || '').toLowerCase();
+    const typeLower = (notif.type || '').toLowerCase();
+
+    // 1. Pesan Support Ticket
+    if (
+      typeLower.includes('support') ||
+      titleLower.includes('support') ||
+      messageLower.includes('support') ||
+      messageLower.includes('pesan anda') ||
+      messageLower.includes('admin membalas')
+    ) {
+      const storedUserStr = sessionStorage.getItem('pentadosen_user');
+      let currentUser: any = null;
+      if (storedUserStr) {
+        try { currentUser = JSON.parse(storedUserStr); } catch (e) {}
+      }
+      if (currentUser?.role === 'super admin' || currentUser?.role === 'admin') {
+        navigate('/admin/cms');
+      } else {
+        navigate('/help#kontak-support');
+      }
+      setIsOpen(false);
+      return;
+    }
+
+    // 2. Announcement
+    if (typeLower === 'announcement') {
       navigate('/help');
       setIsOpen(false);
       return;
@@ -277,9 +449,9 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
     const isSuperAdmin = currentUser.role === 'super admin';
 
     const isResearch =
-      notif.type.includes('penelitian') ||
-      notif.message.toLowerCase().includes('penelitian') ||
-      notif.title.toLowerCase().includes('penelitian') ||
+      typeLower.includes('penelitian') ||
+      messageLower.includes('penelitian') ||
+      titleLower.includes('penelitian') ||
       !!notif.data?.penelitian_id;
 
     if (isResearch) {
@@ -294,9 +466,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
 
     const docId = notif.data?.doc_id;
     let category = '';
-
-    const messageLower = notif.message.toLowerCase();
-    const titleLower = notif.title.toLowerCase();
 
     if (messageLower.includes('buku') || titleLower.includes('buku')) {
       category = 'Buku';
@@ -386,7 +555,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
         ref={bellRef}
         id="notification-bell-btn"
         onClick={() => setIsOpen(prev => !prev)}
-        className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 dark:hover:bg-zinc-700 border border-gray-100 dark:border-zinc-700 text-gray-500 hover:text-primary-600 transition-all duration-200 flex-shrink-0"
+        className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 dark:hover:bg-zinc-700 border border-gray-100 dark:border-zinc-700 text-gray-500 hover:text-primary-600 transition-all duration-200 flex-shrink-0 cursor-pointer"
         aria-label="Notifikasi"
       >
         <motion.div
@@ -404,7 +573,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full leading-none"
+              className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full leading-none shadow-2xs"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </motion.span>
@@ -429,7 +598,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                 right: isMobile ? '12px' : dropPos.right,
                 zIndex: 9998,
               }}
-              className="w-auto sm:w-[420px] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl shadow-black/10 border border-gray-200 dark:border-zinc-700/60 overflow-hidden flex flex-col"
+              className="w-auto sm:w-[440px] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl shadow-black/10 border border-gray-200 dark:border-zinc-700/60 overflow-hidden flex flex-col"
             >
               {/* ── Header ────────────────────────────────────────────────── */}
               <div className="px-5 pt-5 pb-4">
@@ -455,7 +624,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => { setLoading(true); fetchNotifications().finally(() => setLoading(false)); }}
-                      className="p-2 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
+                      className="p-2 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                       title="Refresh"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -463,7 +632,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllRead}
-                        className="p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
+                        className="p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                         title="Tandai semua dibaca"
                       >
                         <CheckCheck className="w-3.5 h-3.5" />
@@ -472,7 +641,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     {notifications.length > 0 && (
                       <button
                         onClick={clearAll}
-                        className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
+                        className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                         title="Hapus semua"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -480,7 +649,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     )}
                     <button
                       onClick={() => setIsOpen(false)}
-                      className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
+                      className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -494,7 +663,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors duration-200 ${
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
                           activeTab === tab
                             ? 'bg-primary-600 text-white'
                             : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200'
