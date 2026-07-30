@@ -22,29 +22,28 @@ export default function ScholarDocRow({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.05 }}
-      className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-blue-400/40 hover:shadow-2xl hover:shadow-blue-500/8 transition-all duration-300 overflow-hidden"
+      className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-zinc-700 hover:shadow-xl transition-all duration-300 overflow-hidden"
     >
-      <div className="h-[3px] w-full bg-blue-500 opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="h-[3px] w-full bg-slate-200 dark:bg-zinc-700 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="flex items-start gap-5 p-5">
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
-          <div className="w-[62px] h-[62px] rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 flex flex-col items-center justify-center group-hover:bg-blue-100/60 dark:group-hover:bg-blue-950/50 transition-colors">
-            <span className="text-xl font-black text-blue-700 dark:text-blue-300 leading-none tabular-nums">{citations}</span>
-            <span className="text-[7px] font-black text-blue-400/80 uppercase tracking-widest mt-0.5">Sitasi</span>
+          <div className="w-[62px] h-[62px] rounded-2xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-200/80 dark:border-zinc-700/60 flex flex-col items-center justify-center transition-colors">
+            <span className="text-xl font-black text-slate-800 dark:text-zinc-100 leading-none tabular-nums">{citations}</span>
+            <span className="text-[7px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
-          <div className="px-2.5 py-0.5 bg-blue-600 text-white rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-sm shadow-blue-500/30">
+          <div className="px-2.5 py-0.5 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-2xs">
             +{Math.round(docPoints)} pts
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-blue-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
               Scholar
             </span>
             {isAlsoScopus && (
-              <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">
+              <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[7px] font-black uppercase tracking-widest rounded-full border border-emerald-200/60 dark:border-emerald-900/40">
                 ✓ Scopus {scopusQuartile && scopusQuartile !== 'None' ? `(${scopusQuartile})` : ''}
               </span>
             )}

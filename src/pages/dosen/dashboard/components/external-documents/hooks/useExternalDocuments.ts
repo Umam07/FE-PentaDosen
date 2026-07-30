@@ -20,13 +20,13 @@ export function useExternalDocuments({
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
   const currentYear = new Date().getFullYear();
-  const [filterYearExt, setFilterYearExt] = useState<number | null>(isPublic ? null : currentYear);
+  const [filterYearExt, setFilterYearExt] = useState<number | null>(null);
 
   // Reset page and year filter when switching tabs
   useEffect(() => {
     setCurrentPage(1);
-    setFilterYearExt(isPublic ? null : new Date().getFullYear());
-  }, [publicationSubTab, isPublic]);
+    setFilterYearExt(null);
+  }, [publicationSubTab]);
 
   const scopusList = scopusPublications || [];
   const scholarList = publications || [];
@@ -38,14 +38,27 @@ export function useExternalDocuments({
     });
   }, [scholarList, scopusList]);
 
+  const extractDocYear = (doc: any): number | null => {
+    if (doc.year) {
+      const y = typeof doc.year === 'number' ? doc.year : parseInt(doc.year, 10);
+      if (!isNaN(y) && y > 1900 && y <= 2100) return y;
+    }
+    if (doc.published_at) {
+      const y = new Date(doc.published_at).getFullYear();
+      if (!isNaN(y) && y > 1900 && y <= 2100) return y;
+    }
+    if (doc.coverDate) {
+      const y = new Date(doc.coverDate).getFullYear();
+      if (!isNaN(y) && y > 1900 && y <= 2100) return y;
+    }
+    return null;
+  };
+
   const availableYearsScopus = useMemo(() => {
     const yearsSet = new Set<number>();
     scopusList.forEach((d: any) => {
-      const dateVal = d.published_at || d.year || d.coverDate;
-      if (dateVal) {
-        const y = typeof dateVal === 'number' ? dateVal : new Date(dateVal).getFullYear();
-        if (!isNaN(y) && y > 1900 && y <= 2100) yearsSet.add(y);
-      }
+      const y = extractDocYear(d);
+      if (y) yearsSet.add(y);
     });
     return Array.from(yearsSet).sort((a, b) => b - a);
   }, [scopusList]);
@@ -53,11 +66,8 @@ export function useExternalDocuments({
   const availableYearsScholar = useMemo(() => {
     const yearsSet = new Set<number>();
     scholarList.forEach((d: any) => {
-      const dateVal = d.published_at || d.year;
-      if (dateVal) {
-        const y = typeof dateVal === 'number' ? dateVal : new Date(dateVal).getFullYear();
-        if (!isNaN(y) && y > 1900 && y <= 2100) yearsSet.add(y);
-      }
+      const y = extractDocYear(d);
+      if (y) yearsSet.add(y);
     });
     return Array.from(yearsSet).sort((a, b) => b - a);
   }, [scholarList]);
@@ -65,11 +75,8 @@ export function useExternalDocuments({
   const availableYearsCross = useMemo(() => {
     const yearsSet = new Set<number>();
     crossIndexedDocs.forEach((d: any) => {
-      const dateVal = d.published_at || d.year;
-      if (dateVal) {
-        const y = typeof dateVal === 'number' ? dateVal : new Date(dateVal).getFullYear();
-        if (!isNaN(y) && y > 1900 && y <= 2100) yearsSet.add(y);
-      }
+      const y = extractDocYear(d);
+      if (y) yearsSet.add(y);
     });
     return Array.from(yearsSet).sort((a, b) => b - a);
   }, [crossIndexedDocs]);
@@ -79,7 +86,7 @@ export function useExternalDocuments({
 
     // Year filter
     if (filterYearExt) {
-      result = result.filter((doc: any) => Number(doc.year) === filterYearExt);
+      result = result.filter((doc: any) => extractDocYear(doc) === filterYearExt);
     }
 
     // Korespondensi Filter
@@ -113,12 +120,12 @@ export function useExternalDocuments({
 
   const filteredScholarList = useMemo(() => {
     if (!filterYearExt) return scholarList;
-    return scholarList.filter((doc: any) => Number(doc.year) === filterYearExt);
+    return scholarList.filter((doc: any) => extractDocYear(doc) === filterYearExt);
   }, [scholarList, filterYearExt]);
 
   const filteredCrossIndexedDocs = useMemo(() => {
     if (!filterYearExt) return crossIndexedDocs;
-    return crossIndexedDocs.filter((doc: any) => Number(doc.year) === filterYearExt);
+    return crossIndexedDocs.filter((doc: any) => extractDocYear(doc) === filterYearExt);
   }, [crossIndexedDocs, filterYearExt]);
 
   return {

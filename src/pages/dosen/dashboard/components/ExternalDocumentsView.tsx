@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  TrendingUp, Calendar, Search, Lock, Zap
+  TrendingUp, Calendar, Search, Lock, Zap, AlertTriangle, X
 } from 'lucide-react';
 import { ProfileTrendChart } from './ProfileCharts';
 import { calculateScholarPoints } from '../pointsCalculator';
@@ -31,6 +31,8 @@ export default function ExternalDocumentsView({
   loading = false,
   isPublic = false
 }: ExternalDocumentsViewProps) {
+  const [showFormulaInfo, setShowFormulaInfo] = React.useState(true);
+
   const {
     currentPage,
     setCurrentPage,
@@ -209,7 +211,7 @@ export default function ExternalDocumentsView({
                       </div>
                     </div>
                     <div className="space-y-5">
-                      {/* Banner konfirmasi co-author / corresponding author */}
+                      {/* Banner konfirmasi co-author / corresponding author (Single-Line Notice Bar) */}
                       {!isPublic && (() => {
                         const unconfirmedScopusCount = scopusList.filter((doc) => {
                           const totalAuthors = Number(doc.total_authors) || 1;
@@ -221,45 +223,64 @@ export default function ExternalDocumentsView({
 
                         return (
                           <motion.div
-                            initial={{ opacity: 0, y: -15 }}
+                            initial={{ opacity: 0, y: -6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="p-6 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent border border-amber-500/25 rounded-[2rem] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
+                            exit={{ opacity: 0, y: -6 }}
+                            className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl px-4 py-3 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3"
                           >
-                            <div className="flex items-start gap-4">
-                              <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner flex-shrink-0">
-                                <Zap className="w-6 h-6 text-amber-500 animate-pulse" />
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Konfirmasi Penulis Korespondensi Diperlukan</h4>
-                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                                  Terdapat <span className="font-black text-orange-600 dark:text-orange-400">{unconfirmedScopusCount} publikasi Scopus</span> yang belum dikonfirmasi status penulis korespondensinya.
-                                  Silakan perbarui status di bawah untuk memastikan perhitungan poin KPI Anda akurat.
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex-shrink-0 self-end md:self-center">
-                              <span className="px-4 py-2 bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest block text-center shadow-md shadow-amber-500/20 animate-bounce">
-                                {unconfirmedScopusCount} Perlu Update
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 animate-pulse" />
+                              <span className="text-xs font-bold text-amber-950 dark:text-amber-200 truncate">
+                                <strong className="font-extrabold">{unconfirmedScopusCount} Publikasi Scopus</strong> perlu konfirmasi status korespondensi
                               </span>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setScopusFilter('unconfirmed');
+                                  setCurrentPage(1);
+                                }}
+                                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-[11px] font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+                              >
+                                Filter {unconfirmedScopusCount} Perlu Update
+                              </button>
                             </div>
                           </motion.div>
                         );
                       })()}
 
-                      {/* Info skema SINTA Scopus */}
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50/60 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-100 dark:border-orange-900/30 rounded-2xl">
-                        <div className="flex items-start gap-3 flex-1">
-                          <div className="w-8 h-8 rounded-xl bg-orange-500/15 flex items-center justify-center flex-shrink-0 border border-orange-200/50 dark:border-orange-800/50">
-                            <span className="text-orange-600 text-[13px] font-black">∑</span>
+                      {/* Info skema SINTA Scopus (Collapsible/Dismissible) */}
+                      {showFormulaInfo && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="flex items-center justify-between gap-4 p-3.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 rounded-2xl"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-7 h-7 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0 font-black text-xs">
+                              ∑
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[10px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider truncate">
+                                Formula Penilaian Scopus · Skema Persentase SINTA
+                              </p>
+                              <p className="text-[9px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Didasarkan pada peran penulis &amp; status korespondensi
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest">Formula Penilaian Scopus · Skema Persentase Baru</p>
-                            <p className="text-[10px] font-bold text-orange-600/70 dark:text-orange-400/70 mt-0.5">
-                              Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Penghitungan persentase didasarkan pada peran penulis & status korespondensi
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowFormulaInfo(false)}
+                            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors shrink-0 cursor-pointer"
+                            title="Tutup informasi ini"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </motion.div>
+                      )}
 
                       {/* Filter korespondensi & tipe dokumen Scopus */}
                       {!isPublic && (
@@ -364,11 +385,12 @@ export default function ExternalDocumentsView({
 
                       {/* Year Filter for Scopus */}
                       {!isPublic && (
-                        <div className="mt-2">
+                        <div className="mt-2 relative z-50">
                           <YearFilterBar
                             availableYears={availableYearsScopus}
                             selectedYear={filterYearExt}
                             onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                            className="rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-xs"
                           />
                         </div>
                       )}
@@ -511,33 +533,44 @@ export default function ExternalDocumentsView({
 
                       {/* Year Filter for Scholar */}
                       {!isPublic && (
-                        <div className="mt-0 mb-0">
+                        <div className="mt-0 mb-0 relative z-50">
                           <YearFilterBar
                             availableYears={availableYearsScholar}
                             selectedYear={filterYearExt}
                             onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                            className="rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-xs"
                           />
                         </div>
                       )}
 
                       <div className="grid grid-cols-1 gap-4">
-                        {filteredScholarList && (isPublic ? filteredScholarList.slice(0, 5) : filteredScholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc, idx) => {
-                          const docPoints = calculateScholarPoints(doc);
-                          const scopusMatch = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
-                          const isAlsoScopus = !!scopusMatch;
-                          const scopusQuartile = scopusMatch ? scopusMatch.quartile : null;
-                          return (
-                            <ScholarDocRow
-                              key={idx}
-                              doc={doc}
-                              docPoints={docPoints}
-                              isAlsoScopus={isAlsoScopus}
-                              scopusQuartile={scopusQuartile}
-                              idx={idx}
-                              normalizeTitle={normalizeTitle}
-                            />
-                          );
-                        })}
+                        {filteredScholarList.length > 0 ? (
+                          (isPublic ? filteredScholarList.slice(0, 5) : filteredScholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc, idx) => {
+                            const docPoints = calculateScholarPoints(doc);
+                            const scopusMatch = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
+                            const isAlsoScopus = !!scopusMatch;
+                            const scopusQuartile = scopusMatch ? scopusMatch.quartile : null;
+                            return (
+                              <ScholarDocRow
+                                key={idx}
+                                doc={doc}
+                                docPoints={docPoints}
+                                isAlsoScopus={isAlsoScopus}
+                                scopusQuartile={scopusQuartile}
+                                idx={idx}
+                                normalizeTitle={normalizeTitle}
+                              />
+                            );
+                          })
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-12 text-slate-300 space-y-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-100 dark:border-slate-800/80 rounded-[2rem]">
+                            <Search className="w-6 h-6 opacity-30" />
+                            <div className="text-center">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tidak Ada Dokumen</p>
+                              <p className="text-[9px] font-bold text-slate-400/80 mt-1">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {isPublic ? (
@@ -622,11 +655,14 @@ export default function ExternalDocumentsView({
 
                 {/* Year Filter for Cross-Indexed */}
                 {!isPublic && (
-                  <YearFilterBar
-                    availableYears={availableYearsCross}
-                    selectedYear={filterYearExt}
-                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                  />
+                  <div className="relative z-50">
+                    <YearFilterBar
+                      availableYears={availableYearsCross}
+                      selectedYear={filterYearExt}
+                      onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                      className="rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-xs"
+                    />
+                  </div>
                 )}
 
                 {loading ? (

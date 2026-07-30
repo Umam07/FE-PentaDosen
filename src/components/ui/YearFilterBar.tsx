@@ -59,7 +59,7 @@ export default function YearFilterBar({
   const containerCls =
     variant === 'slate'
       ? 'flex items-center gap-3 py-2 px-1 mb-2 bg-slate-500/5 dark:bg-slate-900/10 rounded-xl p-2 border border-slate-150 dark:border-slate-800/50'
-      : 'px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-3 border-b border-gray-100 dark:border-zinc-850 bg-gray-50/20 dark:bg-zinc-900/20 backdrop-blur-md';
+      : 'px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-3 border-b border-gray-100 dark:border-zinc-850 bg-gray-50/20 dark:bg-zinc-900/20';
 
   const labelCls =
     'flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-zinc-500 shrink-0';
@@ -75,7 +75,7 @@ export default function YearFilterBar({
       </div>
 
       {/* Custom Dropdown Filter Tahun */}
-      <div className="relative inline-block" ref={dropdownRef}>
+      <div className="relative z-50 inline-block" ref={dropdownRef}>
         <button
           type="button"
           onClick={() => {
@@ -107,7 +107,7 @@ export default function YearFilterBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute left-0 top-full mt-1.5 z-50 min-w-[170px] w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden py-1.5"
+              className="absolute left-0 top-full mt-1.5 z-[999] min-w-[170px] w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xl py-1.5"
             >
               {/* Filter Pencarian/Search Input jika opsi tahun > 10 */}
               {sortedYears.length > 10 && (

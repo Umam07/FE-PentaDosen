@@ -22,37 +22,35 @@ export default function CrossIndexedDocRow({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.05 }}
-      className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-emerald-400/40 hover:shadow-2xl hover:shadow-emerald-500/8 transition-all duration-300 overflow-hidden"
+      className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-zinc-700 hover:shadow-xl transition-all duration-300 overflow-hidden"
     >
-      <div className="h-[3px] w-full bg-emerald-500 opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="h-[3px] w-full bg-slate-200 dark:bg-zinc-700 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="flex items-start gap-5 p-5">
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
-          <div className="w-[62px] h-[62px] rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 flex flex-col items-center justify-center group-hover:bg-emerald-100/60 dark:group-hover:bg-emerald-950/50 transition-colors">
-            <span className="text-xl font-black text-emerald-700 dark:text-emerald-300 leading-none tabular-nums">{citations}</span>
-            <span className="text-[7px] font-black text-emerald-400/80 uppercase tracking-widest mt-0.5">Sitasi</span>
+          <div className="w-[62px] h-[62px] rounded-2xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-200/80 dark:border-zinc-700/60 flex flex-col items-center justify-center transition-colors">
+            <span className="text-xl font-black text-slate-800 dark:text-zinc-100 leading-none tabular-nums">{citations}</span>
+            <span className="text-[7px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
-          <div className="px-2.5 py-0.5 bg-emerald-600 text-white rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-sm shadow-emerald-500/30">
+          <div className="px-2.5 py-0.5 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-2xs">
             +{Math.round(bd.totalPoints)} pts
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
               Scopus &amp; Scholar
             </span>
-            <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-orange-500/20">
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
               Poin Scopus Digunakan
             </span>
             {bd.q && bd.q !== 'None' && (
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${bd.q === 'Q1' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25' : bd.q === 'Q2' ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400 border-teal-500/25' : bd.q === 'Q3' ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/25' : 'bg-slate-400/10 text-slate-500 dark:text-slate-400 border-slate-300/30'} rounded-full text-[7px] font-black uppercase tracking-widest border`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${bd.q === 'Q1' ? 'bg-emerald-500' : bd.q === 'Q2' ? 'bg-teal-500' : bd.q === 'Q3' ? 'bg-blue-500' : 'bg-slate-400'} inline-block`} />
+              <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
                 {bd.q}
               </span>
             )}
-            <span className={`px-2 py-0.5 ${bd.role === 'Single Author' ? 'bg-violet-500/10 text-violet-700 dark:text-violet-400' : bd.role === 'First Author' ? 'bg-orange-500/10 text-orange-700 dark:text-orange-400' : 'bg-slate-400/10 text-slate-600 dark:text-slate-400'} rounded-full text-[7px] font-black uppercase tracking-widest`}>
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
               {bd.role}
             </span>
             <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">

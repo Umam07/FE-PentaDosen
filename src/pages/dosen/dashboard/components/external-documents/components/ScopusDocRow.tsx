@@ -68,48 +68,63 @@ export default function ScopusDocRow({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.04 }}
-      className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-orange-400/40 hover:shadow-2xl hover:shadow-orange-500/8 transition-all duration-300 overflow-hidden"
+      className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-zinc-700 hover:shadow-xl transition-all duration-300 overflow-hidden"
     >
-      <div className={`h-[3px] w-full ${qConf.barColor} opacity-50 group-hover:opacity-100 transition-opacity duration-300`} />
+      <div className="h-[3px] w-full bg-slate-200 dark:bg-zinc-700 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="flex items-start gap-5 p-5">
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
-          <div className="w-[62px] h-[62px] rounded-2xl bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/40 flex flex-col items-center justify-center group-hover:bg-orange-100/60 dark:group-hover:bg-orange-950/50 transition-colors">
-            <span className="text-xl font-black text-orange-700 dark:text-orange-300 leading-none tabular-nums">{bd.citations}</span>
-            <span className="text-[7px] font-black text-orange-400/80 uppercase tracking-widest mt-0.5">Sitasi</span>
+          <div className="w-[62px] h-[62px] rounded-2xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-200/80 dark:border-zinc-700/60 flex flex-col items-center justify-center transition-colors">
+            <span className="text-xl font-black text-slate-800 dark:text-zinc-100 leading-none tabular-nums">{bd.citations}</span>
+            <span className="text-[7px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
-          <div className="px-2.5 py-0.5 bg-orange-600 text-white rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-sm shadow-orange-500/30">
+          <div className="px-2.5 py-0.5 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap shadow-2xs">
             +{Math.round(bd.totalPoints)} pts
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-orange-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 inline-block" />
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
               Scopus
             </span>
             {bd.q && bd.q !== 'None' && (
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${qConf.bg} ${qConf.text} rounded-full text-[7px] font-black uppercase tracking-widest border ${qConf.border}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${qConf.barColor} inline-block`} />
+              <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
                 {bd.q}
               </span>
             )}
-            <span className={`px-2 py-0.5 ${rConf.bg} ${rConf.text} rounded-full text-[7px] font-black uppercase tracking-widest`}>
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
               {bd.role}
             </span>
-            <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full text-[7px] font-bold uppercase tracking-wide">
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-bold uppercase tracking-widest rounded-full bg-transparent">
               {subtypeLabel}
             </span>
             {isHyper && (
-              <span className="px-2 py-0.5 bg-red-500/10 text-red-600 dark:text-red-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-red-500/20">
+              <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
                 Hyperauthor
               </span>
             )}
             {isAlsoScholar && (
-              <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[7px] font-black uppercase tracking-widest border border-emerald-500/20">
+              <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[7px] font-black uppercase tracking-widest rounded-full border border-emerald-200/60 dark:border-emerald-900/40">
                 ✓ Scholar
               </span>
+            )}
+            {!isPublic && showCorrespondingControls && (
+              <>
+                {!bd.isCorrespondingConfirmed ? (
+                  <span className="px-2 py-0.5 bg-orange-500 text-white dark:bg-orange-600 text-[7px] font-black uppercase rounded-full shadow-xs">
+                    ⚠️ Perlu Konfirmasi
+                  </span>
+                ) : bd.isCorresponding ? (
+                  <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[7px] font-black uppercase rounded-full border border-emerald-200/60 dark:border-emerald-900/40">
+                    ✓ Corresponding
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[7px] font-black uppercase rounded-full border border-emerald-200/60 dark:border-emerald-900/40">
+                    Non-Corresponding
+                  </span>
+                )}
+              </>
             )}
             <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">
               <Calendar className="w-3 h-3" /> {doc.year || '—'}
@@ -149,94 +164,6 @@ export default function ScopusDocRow({
             )}
           </div>
 
-          {/* Konfirmasi status korespondensi untuk co-author. Skema poin KPI berbeda jika corresponding author */}
-          {!isPublic && showCorrespondingControls && (
-            <div className={`mt-3 mb-4 p-3 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner transition-colors duration-200 ${
-              !bd.isCorrespondingConfirmed && !isEditingCorresponding
-                ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30'
-                : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800'
-            }`}>
-
-              {bd.isCorrespondingConfirmed && !isEditingCorresponding ? (
-                <>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-emerald-500/20 shadow-sm">
-                      ✓ Dikonfirmasi
-                    </span>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                      Penulis korespondensi:
-                    </span>
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[8px] font-black uppercase tracking-wider border shadow-sm ${
-                      bd.isCorresponding
-                        ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
-                        : 'bg-slate-200/60 dark:bg-slate-700/40 text-slate-500 dark:text-slate-400 border-slate-300/40 dark:border-slate-600/40'
-                    }`}>
-                      {bd.isCorresponding ? '✓ Ya' : '✗ Tidak'}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => setIsEditingCorresponding(true)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 hover:text-orange-600 hover:border-orange-400 dark:hover:border-orange-500/50 dark:hover:text-orange-400 transition-all whitespace-nowrap shadow-sm"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                    Ubah
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {isEditingCorresponding ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-blue-500/20 shadow-sm">
-                        ✏️ Ubah Pilihan
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl text-[8px] font-black uppercase tracking-wider border border-amber-500/20 animate-pulse shadow-sm">
-                        ⚠️ Perlu Konfirmasi
-                      </span>
-                    )}
-                    <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">
-                      Apakah Anda penulis korespondensi?
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      disabled={isUpdating}
-                      onClick={() => handleToggleCorresponding(true)}
-                      className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-orange-600 border-orange-600 text-white hover:bg-orange-700 active:scale-95 shadow-md shadow-orange-500/20 disabled:opacity-50"
-                    >
-                      Ya
-                    </button>
-                    <button
-                      disabled={isUpdating}
-                      onClick={() => handleToggleCorresponding(false)}
-                      className="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 active:scale-95 disabled:opacity-50"
-                    >
-                      Tidak
-                    </button>
-                    {isUpdating ? (
-                      <div className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                    ) : isEditingCorresponding && (
-                      <button
-                        onClick={() => setIsEditingCorresponding(false)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        title="Batal"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
           {bd.citations > 0 && (
             <div className="mb-3.5">
               <div className="flex items-center justify-between mb-1">
@@ -271,6 +198,11 @@ export default function ScopusDocRow({
               doc={doc}
               bd={bd}
               isCrossIndexed={isAlsoScholar}
+              showCorrespondingControls={showCorrespondingControls}
+              updatingCorrespondingId={isUpdating ? doc.id : null}
+              handleToggleCorresponding={async (_id, isCorr) => {
+                await handleToggleCorresponding(isCorr);
+              }}
             />
           )}
         </div>
