@@ -3,7 +3,7 @@ import {
   HelpCircle, Search, ChevronDown, BookOpen,
   Globe, Award, Zap, FileText, X, MessageSquare, 
   FileQuestion, Send, Clock, CheckCircle2, Inbox, CheckCircle, AlertCircle,
-  Image as ImageIcon, Trash2, Maximize2
+  Image as ImageIcon, Trash2, Maximize2, ExternalLink, Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
@@ -491,8 +491,8 @@ export default function FaqHelp({ user }: { user: any }) {
                         <div className="flex items-center gap-2.5 flex-wrap">
                           {getTicketStatusBadge(ticket.status)}
                           {ticket.image_url && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
-                              <ImageIcon className="w-3 h-3 text-primary-500" />
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                              <ImageIcon className="w-3 h-3 text-indigo-500" />
                               Gambar
                             </span>
                           )}
@@ -537,24 +537,35 @@ export default function FaqHelp({ user }: { user: any }) {
 
                               {/* Preview Lampiran Gambar Dosen jika ada */}
                               {ticket.image_url && (
-                                <div className="mt-3 pt-2.5 border-t border-slate-200/80 dark:border-slate-700/80">
-                                  <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                    <ImageIcon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
-                                    Lampiran Tangkapan Layar / Gambar:
-                                  </p>
-                                  <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-w-xs">
+                                <div className="mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                                      <ImageIcon className="w-3.5 h-3.5" />
+                                      Lampiran Tangkapan Layar:
+                                    </p>
+                                    <a
+                                      href={ticket.image_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 underline"
+                                    >
+                                      <ExternalLink className="w-3 h-3" />
+                                      <span>Buka di Tab Baru</span>
+                                    </a>
+                                  </div>
+                                  <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950/90 max-w-sm p-1.5">
                                     <img
                                       src={ticket.image_url}
                                       alt="Lampiran Dosen"
-                                      className="max-h-48 w-auto object-cover rounded-xl"
+                                      className="max-h-48 w-auto object-contain rounded-lg mx-auto"
                                     />
-                                    <button
+                                    <div
                                       onClick={() => setFullViewImageUrl(ticket.image_url)}
-                                      className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-bold cursor-pointer"
+                                      className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-bold cursor-pointer"
                                     >
                                       <Maximize2 className="w-4 h-4" />
-                                      <span>Lihat Gambar Utuh</span>
-                                    </button>
+                                      <span>Perbesar Gambar</span>
+                                    </div>
                                   </div>
                                 </div>
                               )}
@@ -765,25 +776,45 @@ export default function FaqHelp({ user }: { user: any }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setFullViewImageUrl(null)}
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
+              className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-2"
+              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-3 flex flex-col"
             >
-              <button
-                onClick={() => setFullViewImageUrl(null)}
-                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 border border-slate-700 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <img
-                src={fullViewImageUrl}
-                alt="Full View Attachment"
-                className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl mx-auto"
-              />
+              <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-800 px-2">
+                <div className="flex items-center gap-2 text-white text-xs font-bold">
+                  <ImageIcon className="w-4 h-4 text-indigo-400" />
+                  <span>Pratinjau Tangkapan Layar Kendala</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={fullViewImageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Tab Baru</span>
+                  </a>
+                  <button
+                    onClick={() => setFullViewImageUrl(null)}
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center overflow-auto p-2">
+                <img
+                  src={fullViewImageUrl}
+                  alt="Full View Attachment"
+                  className="max-h-[80vh] w-auto max-w-full object-contain rounded-xl shadow-md border border-slate-800"
+                />
+              </div>
             </motion.div>
           </div>
         )}

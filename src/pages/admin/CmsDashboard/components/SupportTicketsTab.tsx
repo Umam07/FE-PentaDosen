@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   MessageSquare, Search, Send, Clock, CheckCircle2, 
   HelpCircle, RefreshCw, X, ChevronRight, User, AlertCircle,
-  Image as ImageIcon, Maximize2
+  Image as ImageIcon, Maximize2, ExternalLink, Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SupportTicket, SupportTicketCounts } from '../types/cmsDashboard.types';
@@ -30,8 +30,9 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
   const [markAsCompleted, setMarkAsCompleted] = useState(false);
   const [submittingReply, setSubmittingReply] = useState(false);
 
-  // State Modal Preview Gambar Full
+  // State Modal Preview Gambar Full & Fallback Error
   const [fullViewImageUrl, setFullViewImageUrl] = useState<string | null>(null);
+  const [imageLoadError, setImageLoadError] = useState(false);
 
   const fetchTickets = async () => {
     setLoading(true);
@@ -62,6 +63,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
     setSelectedTicket(ticket);
     setReplyText(ticket.admin_reply || '');
     setMarkAsCompleted(ticket.status === 'selesai');
+    setImageLoadError(false);
   };
 
   const handleSendReply = async (e: React.FormEvent) => {
@@ -198,9 +200,9 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
           {[
             { key: 'semua', label: 'Semua', count: counts.total },
-            { key: 'menunggu', label: 'Menunggu', count: counts.menunggu, color: 'bg-amber-500 text-white' },
-            { key: 'dibalas', label: 'Dibalas', count: counts.dibalas, color: 'bg-emerald-600 text-white' },
-            { key: 'selesai', label: 'Selesai', count: counts.selesai, color: 'bg-slate-600 text-white' },
+            { key: 'menunggu', label: 'Menunggu', count: counts.menunggu },
+            { key: 'dibalas', label: 'Dibalas', count: counts.dibalas },
+            { key: 'selesai', label: 'Selesai', count: counts.selesai },
           ].map((tab) => {
             const isActive = activeFilter === tab.key;
             return (
@@ -282,8 +284,8 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     <td className="py-4 px-4 sm:px-5 max-w-xs">
                       <div className="flex items-center gap-2">
                         {t.image_url && (
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 shrink-0">
-                            <ImageIcon className="w-3 h-3" />
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 shrink-0 shadow-2xs">
+                            <ImageIcon className="w-3 h-3 text-indigo-500" />
                             Gambar
                           </span>
                         )}
@@ -416,7 +418,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                   <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-zinc-500">
                     Subjek &amp; Isi Pesan Dosen:
                   </label>
-                  <div className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+                  <div className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
                     <h5 className="text-xs font-bold text-slate-900 dark:text-white">
                       {selectedTicket.subject || 'Tanpa Subjek'}
                     </h5>
@@ -424,27 +426,72 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                       {selectedTicket.message}
                     </p>
 
-                    {/* Lampiran Gambar jika ada */}
+                    {/* Lampiran Gambar Kendala Dosen (Tampilan Baru & Interaktif) */}
                     {selectedTicket.image_url && (
-                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-zinc-800">
-                        <p className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                          <ImageIcon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
-                          Lampiran Gambar Kendala Dosen:
-                        </p>
-                        <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-zinc-700 max-w-sm">
-                          <img
-                            src={selectedTicket.image_url}
-                            alt="Screenshot Kendala Dosen"
-                            className="max-h-56 w-auto object-cover rounded-xl"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setFullViewImageUrl(selectedTicket.image_url || null)}
-                            className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs font-bold cursor-pointer"
-                          >
-                            <Maximize2 className="w-4 h-4" />
-                            <span>Perbesar Gambar</span>
-                          </button>
+                      <div className="mt-3 pt-3.5 border-t border-slate-100 dark:border-zinc-800 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                            <ImageIcon className="w-3.5 h-3.5" />
+                            Lampiran Tangkapan Layar Kendala Dosen
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setFullViewImageUrl(selectedTicket.image_url || null)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-bold transition-colors cursor-pointer"
+                            >
+                              <Maximize2 className="w-3 h-3" />
+                              <span>Perbesar</span>
+                            </button>
+                            <a
+                              href={selectedTicket.image_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 border border-slate-200 dark:border-zinc-700 text-[10px] font-bold transition-colors cursor-pointer"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              <span>Tab Baru</span>
+                            </a>
+                          </div>
+                        </div>
+
+                        {/* Visual Image Preview Box */}
+                        <div className="relative group rounded-2xl overflow-hidden border border-slate-200 dark:border-zinc-700/80 bg-slate-950/90 dark:bg-zinc-950 flex items-center justify-center p-2 min-h-[160px] max-h-80 shadow-inner">
+                          {!imageLoadError ? (
+                            <>
+                              <img
+                                src={selectedTicket.image_url}
+                                alt="Tangkapan Layar Kendala Dosen"
+                                onError={() => setImageLoadError(true)}
+                                className="max-h-72 w-auto max-w-full object-contain rounded-xl transition-transform duration-300 group-hover:scale-[1.02]"
+                              />
+                              <div 
+                                onClick={() => setFullViewImageUrl(selectedTicket.image_url || null)}
+                                className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 text-white cursor-pointer backdrop-blur-[1px]"
+                              >
+                                <div className="p-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white">
+                                  <Eye className="w-6 h-6" />
+                                </div>
+                                <span className="text-xs font-black uppercase tracking-wider bg-slate-900/80 px-3 py-1 rounded-full border border-slate-700">
+                                  Klik untuk Memperbesar Gambar
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="p-6 text-center space-y-2 text-slate-400">
+                              <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
+                              <p className="text-xs font-bold text-slate-300">Gagal Memuat Pratinjau Gambar</p>
+                              <a
+                                href={selectedTicket.image_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs text-primary-400 underline font-semibold"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                                <span>Buka Gambar Secara Langsung</span>
+                              </a>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -540,25 +587,45 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setFullViewImageUrl(null)}
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
+              className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-2"
+              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-3 flex flex-col"
             >
-              <button
-                onClick={() => setFullViewImageUrl(null)}
-                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 border border-slate-700 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <img
-                src={fullViewImageUrl}
-                alt="Gambar Kendala Dosen"
-                className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl mx-auto"
-              />
+              <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-800 px-2">
+                <div className="flex items-center gap-2 text-white text-xs font-bold">
+                  <ImageIcon className="w-4 h-4 text-indigo-400" />
+                  <span>Pratinjau Tangkapan Layar Kendala Dosen</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={fullViewImageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Tab Baru</span>
+                  </a>
+                  <button
+                    onClick={() => setFullViewImageUrl(null)}
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center overflow-auto p-2">
+                <img
+                  src={fullViewImageUrl}
+                  alt="Gambar Kendala Dosen"
+                  className="max-h-[80vh] w-auto max-w-full object-contain rounded-xl shadow-md border border-slate-800"
+                />
+              </div>
             </motion.div>
           </div>
         )}
