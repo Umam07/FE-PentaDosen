@@ -30,6 +30,7 @@ export interface LecturerProfileData {
     scopus_id?: string;
   } | null;
   scholarData?: {
+    document_count?: number;
     total_citations: number;
     h_index: number;
     i10_index: number;

@@ -107,11 +107,11 @@ export default function FaqHelp({ user }: { user: any }) {
 
   const normalizeCategory = (cat: string) => {
     const c = (cat || '').trim().toLowerCase();
-    if (c === 'google scholar' || c === 'scopus' || c === 'publikasi' || c.includes('publikasi')) return 'Publikasi';
+    if (c === 'google scholar' || c === 'scopus' || c === 'publikasi' || c.includes('publikasi') || c.includes('scholar')) return 'Publikasi';
     if (c === 'buku' || c.includes('buku')) return 'Buku';
-    if (c === 'hki' || c.includes('hki')) return 'HKI';
-    if (c === 'penelitian' || c.includes('penelitian')) return 'Penelitian';
-    if (c === 'upload kpi' || c === 'kpi' || c.includes('kpi')) return 'Upload KPI';
+    if (c === 'hki' || c.includes('hki') || c.includes('paten')) return 'HKI';
+    if (c === 'penelitian' || c.includes('penelitian') || c.includes('pengabdian')) return 'Penelitian';
+    if (c === 'upload kpi' || c === 'kpi' || c.includes('kpi') || c.includes('kinerja')) return 'Upload KPI';
     return 'Umum';
   };
 
@@ -168,7 +168,7 @@ export default function FaqHelp({ user }: { user: any }) {
       case 'Umum':
       default:
         return { 
-          icon: FileText, 
+          icon: HelpCircle, 
           label: 'Umum & Akun',
           classes: 'bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400' 
         };
@@ -243,25 +243,30 @@ export default function FaqHelp({ user }: { user: any }) {
   };
 
   const getTicketStatusBadge = (status: string) => {
-    switch (status) {
+    const s = (status || '').toLowerCase().trim();
+    switch (s) {
       case 'menunggu':
+      case 'pending':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400 border border-amber-500/20">
-            <Clock className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-500/20">
+            <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
             Menunggu
           </span>
         );
       case 'dibalas':
+      case 'replied':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 border border-emerald-500/20">
-            <CheckCircle2 className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-500/20">
+            <MessageSquare className="w-3 h-3 text-blue-600 dark:text-blue-400" />
             Dibalas Admin
           </span>
         );
       case 'selesai':
+      case 'completed':
+      case 'closed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400 border border-slate-500/20">
-            <CheckCircle2 className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-500/20">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
             Selesai
           </span>
         );
@@ -498,7 +503,7 @@ export default function FaqHelp({ user }: { user: any }) {
 
         {/* 5. SECTION "RIWAYAT PESAN SAYA" */}
         <div id="kontak-support" className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-3.5">
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-3.5">
             <div className="flex items-center gap-2.5">
               <Inbox className="w-4 h-4 text-primary-600 dark:text-primary-400" />
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">Riwayat Pesan Saya</h3>
@@ -506,15 +511,6 @@ export default function FaqHelp({ user }: { user: any }) {
                 {myTickets.length} Tiket
               </span>
             </div>
-
-            {/* Aksi Tambah Pesan Baru terintegrasi di Header Riwayat */}
-            <button
-              onClick={() => setIsTicketModalOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 dark:bg-primary-950/40 dark:hover:bg-primary-900/50 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 text-xs font-bold transition-colors cursor-pointer self-start sm:self-auto"
-            >
-              <Send className="w-3 h-3" />
-              <span>+ Kirim Pesan Baru</span>
-            </button>
           </div>
 
           {loadingTickets ? (
@@ -542,9 +538,9 @@ export default function FaqHelp({ user }: { user: any }) {
                         <div className="flex items-center gap-2.5 flex-wrap">
                           {getTicketStatusBadge(ticket.status)}
                           {ticket.image_url && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
-                              <ImageIcon className="w-3 h-3 text-indigo-500" />
-                              Gambar
+                            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                              <ImageIcon className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                              <span>Gambar</span>
                             </span>
                           )}
                           <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
@@ -590,9 +586,9 @@ export default function FaqHelp({ user }: { user: any }) {
                               {ticket.image_url && (
                                 <div className="mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-2">
                                   <div className="flex items-center justify-between">
-                                    <p className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
-                                      <ImageIcon className="w-3.5 h-3.5" />
-                                      Lampiran Tangkapan Layar:
+                                    <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                      <ImageIcon className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                                      Lampiran Gambar:
                                     </p>
                                     <a
                                       href={ticket.image_url}
@@ -622,11 +618,14 @@ export default function FaqHelp({ user }: { user: any }) {
                               )}
                             </div>
 
-                            {/* Admin Reply Box */}
+                            {/* Admin Reply Box / Status Info */}
                             {ticket.admin_reply ? (
-                              <div className="space-y-1 bg-emerald-50/70 dark:bg-emerald-950/30 p-3.5 rounded-xl border border-emerald-200/80 dark:border-emerald-900/50">
-                                <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-1">
-                                  <span>Balasan Tim Admin:</span>
+                              <div className="space-y-1.5 bg-blue-50/70 dark:bg-blue-950/30 p-3.5 rounded-xl border border-blue-200/80 dark:border-blue-900/50">
+                                <div className="flex items-center justify-between text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">
+                                  <span className="flex items-center gap-1.5">
+                                    <MessageSquare className="w-3.5 h-3.5" />
+                                    Balasan Tim Admin:
+                                  </span>
                                   {ticket.replied_at && (
                                     <span>
                                       {new Date(ticket.replied_at).toLocaleDateString('id-ID', {
@@ -643,9 +642,14 @@ export default function FaqHelp({ user }: { user: any }) {
                                   {ticket.admin_reply}
                                 </p>
                               </div>
+                            ) : ticket.status === 'selesai' ? (
+                              <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-medium flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                <span>Tiket pesan ini telah ditandai selesai.</span>
+                              </div>
                             ) : (
                               <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 text-xs font-medium flex items-center gap-2">
-                                <Clock className="w-4 h-4 shrink-0" />
+                                <Clock className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
                                 <span>Pesan Anda telah diterima. Mohon tunggu balasan dari tim admin.</span>
                               </div>
                             )}
