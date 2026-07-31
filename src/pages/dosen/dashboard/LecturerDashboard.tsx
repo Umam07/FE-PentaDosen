@@ -323,16 +323,16 @@ export default function LecturerDashboard({ user }: { user: any }) {
                 ) : scholarData ? (
                   <div className="grid grid-cols-3 gap-3">
                     <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
+                      <span className="text-[9px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">Dokumen</span>
+                      <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 tabular-nums">{scholarData.document_count ?? profileData?.publications?.length ?? 0}</span>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
                       <span className="text-[9px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">Total Sitasi</span>
-                      <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tabular-nums">{scholarData.total_citations}</span>
+                      <span className="text-2xl font-black text-amber-600 dark:text-amber-400 tabular-nums">{scholarData.total_citations}</span>
                     </div>
                     <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
                       <span className="text-[9px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">h-index</span>
                       <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">{scholarData.h_index}</span>
-                    </div>
-                    <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-center gap-1">
-                      <span className="text-[9px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">i10-index</span>
-                      <span className="text-2xl font-black text-purple-600 dark:text-purple-400 tabular-nums">{scholarData.i10_index}</span>
                     </div>
                   </div>
                 ) : (
