@@ -3,7 +3,9 @@ import React from 'react';
 export interface DepartmentStats {
   fakultas: string;
   dosen_count: number;
-  research_count: number;
+  research_count?: number;
+  publication_count?: number;
+  document_count?: number;
   total_points: number;
 }
 
@@ -22,6 +24,8 @@ export interface DepartmentItem extends FakultasMeta {
   id: string;
   name: string;
   lecturerCount: number;
-  researchCount: number;
+  researchCount?: number;
+  publicationCount?: number;
+  documentCount: number;
   totalKPI: number;
 }

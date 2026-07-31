@@ -68,8 +68,8 @@ export default function DepartementCard({ dept, index, onClick }: DepartementCar
               <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.lecturerCount}</p>
             </div>
             <div className="border-x border-slate-200/50 dark:border-slate-800/50">
-              <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Riset</p>
-              <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.researchCount}</p>
+              <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Dokumen</p>
+              <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.documentCount}</p>
             </div>
             <div>
               <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Prodi</p>

@@ -23,7 +23,7 @@ export const useDepartementList = () => {
         );
 
         const merged: DepartmentItem[] = DEFAULT_NAMES.map(name => {
-          const stats = statsMap.get(name) || { dosen_count: 0, research_count: 0, total_points: 0 };
+          const stats = statsMap.get(name) || { dosen_count: 0, research_count: 0, publication_count: 0, document_count: 0, total_points: 0 };
           const meta = FAKULTAS_METADATA[name];
           
           return {
@@ -32,6 +32,10 @@ export const useDepartementList = () => {
             ...meta,
             lecturerCount: stats.dosen_count || 0,
             researchCount: stats.research_count || 0,
+            publicationCount: stats.publication_count || 0,
+            documentCount: stats.document_count !== undefined 
+              ? stats.document_count 
+              : ((stats.publication_count || 0) + (stats.research_count || 0)),
             totalKPI: stats.total_points || 0
           };
         });

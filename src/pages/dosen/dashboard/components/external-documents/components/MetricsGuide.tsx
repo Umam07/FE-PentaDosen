@@ -55,20 +55,20 @@ export default function MetricsGuide() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-violet-200 dark:border-violet-800/50">
-                      <th className="pb-3 pl-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">Kategori</th>
-                      <th className="pb-3 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Base SKS</th>
-                      <th className="pb-3 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Jumlah Penulis</th>
-                      <th className="pb-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">Role</th>
-                      <th className="pb-3 pr-2 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Persentase</th>
+                      <th className="pb-3 pl-2 pr-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Kategori</th>
+                      <th className="pb-3 px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Base SKS</th>
+                      <th className="pb-3 px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Jumlah Penulis</th>
+                      <th className="pb-3 px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                      <th className="pb-3 pr-2 pl-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Persentase</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-sm font-semibold text-slate-700 dark:text-slate-300">
                     <tr className="bg-violet-100/50 dark:bg-violet-900/10">
-                      <td className="py-3 pl-2">Semua</td>
-                      <td className="py-3 text-right">100%</td>
-                      <td className="py-3 text-right">1</td>
-                      <td className="py-3 text-violet-700 dark:text-violet-400 font-black">Single Author</td>
-                      <td className="py-3 pr-2 text-right font-black text-violet-700 dark:text-violet-400">100%</td>
+                      <td className="py-3 pl-2 pr-4">Semua</td>
+                      <td className="py-3 px-4 text-right">100%</td>
+                      <td className="py-3 px-4 text-center">1</td>
+                      <td className="py-3 px-4 text-violet-700 dark:text-violet-400 font-black">Single Author</td>
+                      <td className="py-3 pr-2 pl-4 text-right font-black text-violet-700 dark:text-violet-400">100%</td>
                     </tr>
                   </tbody>
                 </table>
