@@ -6,7 +6,7 @@ import {
   Bell, CheckCheck, Trash2, X,
   CheckCircle2, XCircle, Clock, ShieldCheck,
   FileText, Beaker, RefreshCw, Megaphone,
-  MessageSquare, BellOff
+  MessageSquare, BellOff, Sparkles
 } from 'lucide-react';
 
 interface NotificationItem {
@@ -24,13 +24,12 @@ interface NotificationBellProps {
   userId: number | string | undefined;
 }
 
-// ─── Styling helpers dengan identitas visual unik untuk setiap tipe notifikasi ─
+// ─── Minimalist Visual Tokens per Notification Category ─────────────────────
 interface TypeConfigItem {
   icon: ElementType;
   iconColor: string;
-  bg: string;
-  borderColor: string;
-  tagBg: string;
+  iconBg: string;
+  badgeBg: string;
   label: string;
 }
 
@@ -39,35 +38,31 @@ const typeConfigMap: Record<string, TypeConfigItem> = {
   support_ticket_replied: {
     icon: MessageSquare,
     iconColor: 'text-indigo-600 dark:text-indigo-400',
-    bg: 'bg-indigo-50 dark:bg-indigo-950/40',
-    borderColor: 'border-l-indigo-500 dark:border-l-indigo-400',
-    tagBg: 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60',
-    label: 'Pesan Support'
+    iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
+    badgeBg: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200/50 dark:border-indigo-800/40',
+    label: 'Support'
   },
   new_support_ticket: {
     icon: MessageSquare,
     iconColor: 'text-indigo-600 dark:text-indigo-400',
-    bg: 'bg-indigo-50 dark:bg-indigo-950/40',
-    borderColor: 'border-l-indigo-500 dark:border-l-indigo-400',
-    tagBg: 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60',
-    label: 'Pesan Support'
+    iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
+    badgeBg: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200/50 dark:border-indigo-800/40',
+    label: 'Support'
   },
 
   // Dokumen Disetujui LPPM
   doc_approved: {
     icon: CheckCircle2,
     iconColor: 'text-emerald-600 dark:text-emerald-400',
-    bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-    borderColor: 'border-l-emerald-500 dark:border-l-emerald-400',
-    tagBg: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+    badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/40',
     label: 'Disetujui LPPM'
   },
   penelitian_approved: {
     icon: CheckCircle2,
     iconColor: 'text-emerald-600 dark:text-emerald-400',
-    bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-    borderColor: 'border-l-emerald-500 dark:border-l-emerald-400',
-    tagBg: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+    badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/40',
     label: 'Disetujui LPPM'
   },
 
@@ -75,17 +70,15 @@ const typeConfigMap: Record<string, TypeConfigItem> = {
   doc_rejected: {
     icon: XCircle,
     iconColor: 'text-rose-600 dark:text-rose-400',
-    bg: 'bg-rose-50 dark:bg-rose-950/40',
-    borderColor: 'border-l-rose-500 dark:border-l-rose-400',
-    tagBg: 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50',
+    badgeBg: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200/50 dark:border-rose-800/40',
     label: 'Ditolak'
   },
   penelitian_rejected: {
     icon: XCircle,
     iconColor: 'text-rose-600 dark:text-rose-400',
-    bg: 'bg-rose-50 dark:bg-rose-950/40',
-    borderColor: 'border-l-rose-500 dark:border-l-rose-400',
-    tagBg: 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50',
+    badgeBg: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200/50 dark:border-rose-800/40',
     label: 'Ditolak'
   },
 
@@ -93,43 +86,38 @@ const typeConfigMap: Record<string, TypeConfigItem> = {
   doc_verified_fakultas: {
     icon: ShieldCheck,
     iconColor: 'text-sky-600 dark:text-sky-400',
-    bg: 'bg-sky-50 dark:bg-sky-950/40',
-    borderColor: 'border-l-sky-500 dark:border-l-sky-400',
-    tagBg: 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
-    label: 'Diverifikasi Fakultas'
+    iconBg: 'bg-sky-50 dark:bg-sky-950/50',
+    badgeBg: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/50 dark:border-sky-800/40',
+    label: 'Verifikasi Fakultas'
   },
   doc_verified_prodi: {
     icon: ShieldCheck,
     iconColor: 'text-sky-600 dark:text-sky-400',
-    bg: 'bg-sky-50 dark:bg-sky-950/40',
-    borderColor: 'border-l-sky-500 dark:border-l-sky-400',
-    tagBg: 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
-    label: 'Diverifikasi Prodi'
+    iconBg: 'bg-sky-50 dark:bg-sky-950/50',
+    badgeBg: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/50 dark:border-sky-800/40',
+    label: 'Verifikasi Prodi'
   },
   penelitian_verified_prodi: {
     icon: ShieldCheck,
     iconColor: 'text-sky-600 dark:text-sky-400',
-    bg: 'bg-sky-50 dark:bg-sky-950/40',
-    borderColor: 'border-l-sky-500 dark:border-l-sky-400',
-    tagBg: 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
-    label: 'Diverifikasi Prodi'
+    iconBg: 'bg-sky-50 dark:bg-sky-950/50',
+    badgeBg: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/50 dark:border-sky-800/40',
+    label: 'Verifikasi Prodi'
   },
 
   // Menunggu LPPM / Proses
   doc_pending_lppm: {
     icon: Clock,
     iconColor: 'text-amber-600 dark:text-amber-400',
-    bg: 'bg-amber-50 dark:bg-amber-950/40',
-    borderColor: 'border-l-amber-500 dark:border-l-amber-400',
-    tagBg: 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+    badgeBg: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/50 dark:border-amber-800/40',
     label: 'Menunggu LPPM'
   },
   penelitian_pending_lppm: {
     icon: Clock,
     iconColor: 'text-amber-600 dark:text-amber-400',
-    bg: 'bg-amber-50 dark:bg-amber-950/40',
-    borderColor: 'border-l-amber-500 dark:border-l-amber-400',
-    tagBg: 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+    badgeBg: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/50 dark:border-amber-800/40',
     label: 'Menunggu LPPM'
   },
 
@@ -137,34 +125,28 @@ const typeConfigMap: Record<string, TypeConfigItem> = {
   doc_submitted: {
     icon: FileText,
     iconColor: 'text-teal-600 dark:text-teal-400',
-    bg: 'bg-teal-50 dark:bg-teal-950/40',
-    borderColor: 'border-l-teal-500 dark:border-l-teal-400',
-    tagBg: 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800/60',
-    label: 'Pengajuan Baru'
+    iconBg: 'bg-teal-50 dark:bg-teal-950/50',
+    badgeBg: 'bg-teal-50 text-teal-700 dark:bg-teal-950/60 dark:text-teal-300 border-teal-200/50 dark:border-teal-800/40',
+    label: 'Pengajuan'
   },
   penelitian_submitted: {
     icon: Beaker,
     iconColor: 'text-teal-600 dark:text-teal-400',
-    bg: 'bg-teal-50 dark:bg-teal-950/40',
-    borderColor: 'border-l-teal-500 dark:border-l-teal-400',
-    tagBg: 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800/60',
-    label: 'Penelitian Baru'
+    iconBg: 'bg-teal-50 dark:bg-teal-950/50',
+    badgeBg: 'bg-teal-50 text-teal-700 dark:bg-teal-950/60 dark:text-teal-300 border-teal-200/50 dark:border-teal-800/40',
+    label: 'Penelitian'
   },
 
   // Pengumuman
   announcement: {
     icon: Megaphone,
     iconColor: 'text-purple-600 dark:text-purple-400',
-    bg: 'bg-purple-50 dark:bg-purple-950/40',
-    borderColor: 'border-l-purple-500 dark:border-l-purple-400',
-    tagBg: 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/60',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/50',
+    badgeBg: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200/50 dark:border-purple-800/40',
     label: 'Pengumuman'
   },
 };
 
-/**
- * Mendapatkan konfigurasi visual secara cerdas berdasarkan type & pencocokan kata kunci
- */
 const getTypeConfig = (type: string, title: string = '', message: string = ''): TypeConfigItem => {
   if (typeConfigMap[type]) {
     return typeConfigMap[type];
@@ -194,9 +176,8 @@ const getTypeConfig = (type: string, title: string = '', message: string = ''): 
   return {
     icon: Bell,
     iconColor: 'text-blue-600 dark:text-blue-400',
-    bg: 'bg-blue-50 dark:bg-blue-950/40',
-    borderColor: 'border-l-blue-500 dark:border-l-blue-400',
-    tagBg: 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50',
+    badgeBg: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/50 dark:border-blue-800/40',
     label: 'Informasi'
   };
 };
@@ -204,18 +185,17 @@ const getTypeConfig = (type: string, title: string = '', message: string = ''): 
 function timeAgo(dateStr: string): string {
   const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
   if (diff < 60) return 'Baru saja';
-  if (diff < 3600) return `${Math.floor(diff / 60)} menit lalu`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} mnt lalu`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} jam lalu`;
-  return `${Math.floor(diff / 86400)} hari lalu`;
+  return `${Math.floor(diff / 86400)} hri lalu`;
 }
 
 function cleanTitle(title: string): string {
   return title.replace(/[\s✓✔!]+$/u, '').trim();
 }
 
-// ─── Notification Card Sub-Component ────────────────────────────────────────
+// ─── Notification Card Sub-Component (Minimalist Design) ─────────────────────
 interface NotificationCardProps {
-  key?: any;
   notif: NotificationItem;
   onClick: (n: NotificationItem) => void | Promise<void>;
   onDelete: (id: number, e: ReactMouseEvent<HTMLButtonElement>) => void | Promise<void>;
@@ -230,58 +210,57 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
       layout
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: 12, scale: 0.97 }}
-      transition={{ duration: 0.18 }}
+      exit={{ opacity: 0, x: 10, scale: 0.97 }}
+      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
       onClick={() => onClick(notif)}
-      className={`group relative flex gap-3.5 p-4 rounded-2xl mb-2 cursor-pointer transition-all duration-200 border-l-4 ${cfg.borderColor} ${
+      className={`group relative flex items-start gap-3 p-3 sm:p-3.5 rounded-xl mb-1.5 cursor-pointer transition-all duration-200 border ${
         notif.is_read
-          ? 'bg-white/60 dark:bg-zinc-900/60 border-t border-r border-b border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800/60'
-          : 'bg-slate-50/80 dark:bg-zinc-800/80 border-t border-r border-b border-slate-200 dark:border-zinc-700 shadow-2xs hover:bg-slate-100/70 dark:hover:bg-zinc-800'
+          ? 'bg-transparent border-transparent hover:bg-slate-100/70 dark:hover:bg-zinc-800/50'
+          : 'bg-slate-50/90 dark:bg-zinc-800/60 border-slate-200/70 dark:border-zinc-700/60 shadow-2xs hover:bg-slate-100/90 dark:hover:bg-zinc-800'
       }`}
     >
-      {/* Icon Container dengan warna khas per kategori */}
-      <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0 shadow-2xs border border-white/50 dark:border-transparent ${
-        notif.is_read ? 'opacity-70' : 'opacity-100'
+      {/* Sleek Unread Accent Bar */}
+      {!notif.is_read && (
+        <span className="absolute left-1 top-3 bottom-3 w-1 rounded-full bg-blue-600 dark:bg-blue-500" />
+      )}
+
+      {/* Icon Badge */}
+      <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-opacity ${cfg.iconBg} ${
+        notif.is_read ? 'opacity-60' : 'opacity-100'
       }`}>
-        <Icon className={`w-5 h-5 ${cfg.iconColor}`} />
+        <Icon className={`w-4 h-4 ${cfg.iconColor}`} strokeWidth={2} />
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0 pr-5">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <p className={`text-xs sm:text-sm leading-snug ${
+        <div className="flex items-center justify-between gap-2 mb-0.5">
+          <h4 className={`text-xs sm:text-sm leading-snug truncate ${
             notif.is_read
               ? 'font-medium text-slate-700 dark:text-zinc-300'
-              : 'font-bold text-slate-900 dark:text-white'
+              : 'font-semibold text-slate-900 dark:text-white'
           }`}>
             {cleanTitle(notif.title)}
-          </p>
-          {!notif.is_read && (
-            <span className="relative flex h-2 w-2 mt-1 flex-shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-            </span>
-          )}
+          </h4>
         </div>
 
         <p className={`text-xs leading-relaxed line-clamp-2 ${
           notif.is_read
             ? 'text-slate-500 dark:text-zinc-400'
-            : 'text-slate-700 dark:text-zinc-200'
+            : 'text-slate-600 dark:text-zinc-300'
         }`}>
           {notif.message}
         </p>
 
-        {/* Footer Meta: Pill Badge + Time Ago */}
-        <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${cfg.tagBg}`}>
+        {/* Footer Meta */}
+        <div className="flex items-center gap-2 mt-2 text-[11px]">
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium border ${cfg.badgeBg}`}>
             {cfg.label}
           </span>
-          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-zinc-600" />
+          <span className="text-slate-300 dark:text-zinc-600">•</span>
           <span className={`text-[11px] ${
             notif.is_read
               ? 'text-slate-400 dark:text-zinc-500'
-              : 'text-slate-500 dark:text-zinc-400 font-semibold'
+              : 'text-slate-500 dark:text-zinc-400 font-medium'
           }`}>
             {timeAgo(notif.created_at)}
           </span>
@@ -291,7 +270,7 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
       {/* Delete button (hover reveal) */}
       <button
         onClick={(e) => onDelete(notif.id, e)}
-        className="absolute top-3 right-3 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-all duration-150"
+        className="absolute top-2.5 right-2.5 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-600 hover:bg-slate-200/60 dark:hover:bg-zinc-700/60 transition-all duration-150"
         title="Hapus notifikasi"
       >
         <X className="w-3.5 h-3.5" />
@@ -550,22 +529,22 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
   // ── Render ───────────────────────────────────────────────────────────────
   return (
     <>
-      {/* Bell Button */}
+      {/* Bell Button (Minimalist & Sleek) */}
       <button
         ref={bellRef}
         id="notification-bell-btn"
         onClick={() => setIsOpen(prev => !prev)}
-        className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 dark:hover:bg-zinc-700 border border-gray-100 dark:border-zinc-700 text-gray-500 hover:text-primary-600 transition-all duration-200 flex-shrink-0 cursor-pointer"
+        className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100/80 dark:bg-zinc-800/80 hover:bg-slate-200/70 dark:hover:bg-zinc-700/80 border border-slate-200/60 dark:border-zinc-700/60 text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex-shrink-0 cursor-pointer"
         aria-label="Notifikasi"
       >
         <motion.div
           animate={bellAnim ? { rotate: [0, -15, 15, -10, 10, -5, 5, 0] } : { rotate: 0 }}
           transition={{ duration: 0.7, ease: 'easeInOut' }}
         >
-          <Bell className="w-[18px] h-[18px]" />
+          <Bell className="w-[18px] h-[18px]" strokeWidth={2} />
         </motion.div>
 
-        {/* Unread Badge */}
+        {/* Minimal Unread Dot / Counter Badge */}
         <AnimatePresence>
           {unreadCount > 0 && (
             <motion.span
@@ -573,7 +552,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full leading-none shadow-2xs"
+              className="absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 flex items-center justify-center bg-blue-600 text-white text-[10px] font-bold rounded-full leading-none shadow-xs border border-white dark:border-zinc-900"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </motion.span>
@@ -587,10 +566,10 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
           {isOpen && (
             <motion.div
               ref={dropdownRef}
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
+              initial={{ opacity: 0, y: -6, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.97 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              exit={{ opacity: 0, y: -6, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 position: 'fixed',
                 top: dropPos.top,
@@ -598,33 +577,31 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                 right: isMobile ? '12px' : dropPos.right,
                 zIndex: 9998,
               }}
-              className="w-auto sm:w-[440px] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl shadow-black/10 border border-gray-200 dark:border-zinc-700/60 overflow-hidden flex flex-col"
+              className="w-auto sm:w-[410px] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/40 border border-slate-200/80 dark:border-zinc-800 overflow-hidden flex flex-col"
             >
               {/* ── Header ────────────────────────────────────────────────── */}
-              <div className="px-5 pt-5 pb-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center gap-2.5 mb-0.5">
-                      <div className="w-7 h-7 rounded-lg bg-primary-50 dark:bg-primary-900/40 flex items-center justify-center">
-                        <Bell className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
-                      </div>
-                      <h3 className="text-base font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
-                        Notifikasi
-                      </h3>
-                    </div>
+              <div className="p-4 sm:p-4.5 pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-zinc-100 tracking-tight">
+                      Notifikasi
+                    </h3>
                     {unreadCount > 0 ? (
-                      <p className="text-xs text-gray-500 dark:text-zinc-400 ml-9">
-                        <span className="font-semibold text-primary-600 dark:text-primary-400">{unreadCount}</span> belum dibaca
-                      </p>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40">
+                        {unreadCount} Baru
+                      </span>
                     ) : (
-                      <p className="text-xs text-gray-400 dark:text-zinc-500 ml-9">Semua sudah dibaca</p>
+                      <span className="text-xs text-slate-400 dark:text-zinc-500 font-normal">
+                        Semua dibaca
+                      </span>
                     )}
                   </div>
 
+                  {/* Header Actions */}
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => { setLoading(true); fetchNotifications().finally(() => setLoading(false)); }}
-                      className="p-2 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                       title="Refresh"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -632,7 +609,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllRead}
-                        className="p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-all cursor-pointer"
                         title="Tandai semua dibaca"
                       >
                         <CheckCheck className="w-3.5 h-3.5" />
@@ -641,7 +618,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     {notifications.length > 0 && (
                       <button
                         onClick={clearAll}
-                        className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all cursor-pointer"
                         title="Hapus semua"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -649,24 +626,24 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                     )}
                     <button
                       onClick={() => setIsOpen(false)}
-                      className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all cursor-pointer"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
-                {/* Tabs */}
+                {/* Minimal Segmented Tabs */}
                 {notifications.length > 0 && (
-                  <div className="flex gap-1 mt-4 bg-gray-50 dark:bg-zinc-800 p-1 rounded-xl border border-gray-100 dark:border-zinc-700">
+                  <div className="grid grid-cols-2 gap-1 mt-3.5 p-1 bg-slate-100/70 dark:bg-zinc-800/70 rounded-xl">
                     {(['all', 'unread'] as const).map(tab => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
+                        className={`relative py-1 sm:py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
                           activeTab === tab
-                            ? 'bg-primary-600 text-white'
-                            : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200'
+                            ? 'bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-2xs'
+                            : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
                         }`}
                       >
                         {tab === 'all' ? 'Semua' : `Belum Dibaca${unreadCount > 0 ? ` (${unreadCount})` : ''}`}
@@ -676,23 +653,23 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                 )}
               </div>
 
-              {/* Divider */}
-              <div className="h-px bg-gray-100 dark:bg-zinc-700/60 mx-5" />
+              {/* Subtle Divider */}
+              <div className="h-px bg-slate-100 dark:bg-zinc-800/80 mx-4" />
 
               {/* ── List ──────────────────────────────────────────────────── */}
-              <div className="overflow-y-auto max-h-[min(440px,calc(100vh-180px))] custom-scrollbar px-3 py-3">
+              <div className="overflow-y-auto max-h-[min(400px,calc(100vh-200px))] px-2.5 py-2 custom-scrollbar">
                 {displayed.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 flex items-center justify-center mb-4">
-                      <BellOff className="w-7 h-7 text-gray-300 dark:text-zinc-600" />
+                  <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-800 flex items-center justify-center mb-3 text-slate-400 dark:text-zinc-500">
+                      <BellOff className="w-5 h-5" />
                     </div>
-                    <p className="text-sm font-semibold text-gray-500 dark:text-zinc-400">
-                      {activeTab === 'unread' ? 'Tidak ada notifikasi baru' : 'Tidak ada notifikasi'}
+                    <p className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-zinc-300">
+                      {activeTab === 'unread' ? 'Tidak ada notifikasi belum dibaca' : 'Belum ada notifikasi'}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1 leading-relaxed">
+                    <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-1 max-w-[220px]">
                       {activeTab === 'unread'
-                        ? 'Semua notifikasi sudah dibaca'
-                        : 'Notifikasi baru akan muncul di sini'}
+                        ? 'Semua notifikasi penting sudah Anda periksa'
+                        : 'Informasi dan pembaruan sistem akan tampil di sini'}
                     </p>
                   </div>
                 ) : (
@@ -709,13 +686,13 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                 )}
               </div>
 
-              {/* ── Footer ────────────────────────────────────────────────── */}
-              <div className="h-px bg-gray-100 dark:bg-zinc-700/60 mx-5" />
-              <div className="px-5 py-3 flex items-center justify-between">
-                <p className="text-[11px] text-gray-400 dark:text-zinc-500">
-                  Pembaruan otomatis setiap 30 detik
-                </p>
-                <span className="text-[11px] font-semibold text-gray-400 dark:text-zinc-500">
+              {/* ── Minimalist Footer ────────────────────────────────────────── */}
+              <div className="h-px bg-slate-100 dark:bg-zinc-800/80 mx-4" />
+              <div className="px-4 py-2.5 flex items-center justify-between bg-slate-50/50 dark:bg-zinc-900/50">
+                <span className="text-[10px] text-slate-400 dark:text-zinc-500">
+                  Update otomatis (30s)
+                </span>
+                <span className="text-[10px] font-semibold text-slate-400 dark:text-zinc-500">
                   PentaDosen
                 </span>
               </div>
