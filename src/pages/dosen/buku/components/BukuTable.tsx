@@ -80,25 +80,7 @@ export default function BukuTable({
         <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Buku</h3>
       </div>
 
-      {/* Filter bar */}
-      <div className="px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-3 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/10">
-        <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-          <Filter className="w-3.5 h-3.5" /> Filter:
-        </div>
-        {['', ...BUKU_CATEGORIES.map(b => b.value)].map(k => (
-          <button 
-            key={k} 
-            onClick={() => { setFilterKategori(k); setCurrentPage(1); }}
-            className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-              filterKategori === k 
-                ? 'bg-primary-600 text-white' 
-                : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-200 dark:border-zinc-700 hover:border-primary-300'
-            }`}
-          >
-            {k || 'Semua'}
-          </button>
-        ))}
-      </div>
+
 
       {/* Year Filter */}
       <YearFilterBar
