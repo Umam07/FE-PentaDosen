@@ -120,7 +120,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       roles: ['super admin'] 
     },
     { 
-      name: 'Bantuan & FAQ', 
+      name: 'Panduan & Bantuan', 
       path: '/help', 
       icon: HelpCircle, 
       roles: ['dosen', 'admin penelitian', 'admin fakultas', 'super admin', 'staf', 'reviewer'] 

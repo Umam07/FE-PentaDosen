@@ -61,7 +61,7 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
     { label: "HKI (Hak Kekayaan Intelektual)", path: "/hki", icon: <Award className="h-4 w-4 text-amber-500" />, category: "Karya Ilmiah" },
     { label: "Penelitian Dosen", path: "/research", icon: <Beaker className="h-4 w-4 text-purple-500" />, category: "Karya Ilmiah" },
     { label: "Buku", path: "/buku", icon: <Book className="h-4 w-4 text-pink-500" />, category: "Karya Ilmiah" },
-    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ],
   "admin penelitian": [
     { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
@@ -70,7 +70,7 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
     { label: "Daftar Dosen Universitas", path: "/admin/lecturers", icon: <Users className="h-4 w-4 text-blue-500" />, category: "Keanggotaan" },
     { label: "Sinkronisasi Data API", path: "/admin/sync", icon: <RefreshCw className="h-4 w-4 text-orange-500" />, category: "Integrasi" },
     { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4 text-rose-500" />, category: "Sistem Audit" },
-    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ],
   "admin fakultas": [
     { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
@@ -78,11 +78,11 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
     { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4 text-violet-500" />, category: "Dokumen" },
     { label: "Daftar Dosen Fakultas", path: "/admin/lecturers", icon: <Users className="h-4 w-4 text-blue-500" />, category: "Keanggotaan" },
     { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4 text-rose-500" />, category: "Sistem Audit" },
-    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ],
   "super admin": [
     { label: "Panel CMS (Manajemen User)", path: "/admin/cms", icon: <ShieldAlert className="h-4 w-4 text-red-500" />, category: "Administrator" },
-    { label: "Bantuan & FAQ", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ]
 };
 

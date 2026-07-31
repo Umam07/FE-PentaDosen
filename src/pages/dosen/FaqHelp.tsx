@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import {
-  HelpCircle, Search, ChevronDown, BookOpen,
-  Globe, Award, Zap, FileText, X, MessageSquare, 
+  HelpCircle, Search, ChevronDown, FileText, X, MessageSquare,
   FileQuestion, Send, Clock, CheckCircle2, Inbox, CheckCircle, AlertCircle,
-  Image as ImageIcon, Trash2, Maximize2, ExternalLink, ShieldCheck
+  Image as ImageIcon, Maximize2, ExternalLink, BookOpen, Plus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../components/ui/pdf-preview-modal';
-import AnnouncementsBanner from './dashboard/components/AnnouncementsBanner';
+import AnnouncementsBanner from '../../components/ui/AnnouncementsBanner';
 
 export default function FaqHelp({ user }: { user: any }) {
+  const [activeMainTab, setActiveMainTab] = useState<'panduan' | 'pesan'>('panduan');
+
   const [faqs, setFaqs] = useState<any[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [expandedFaqId, setExpandedFaqId] = useState<number | null>(null);
-  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category: string } | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<{ fileUrl: string; title: string; category?: string } | null>(null);
 
   // State Tiket Support Dosen
   const [myTickets, setMyTickets] = useState<any[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
   const [expandedTicketId, setExpandedTicketId] = useState<number | null>(null);
+  const [readTicketIds, setReadTicketIds] = useState<number[]>([]);
 
   // State Modal Kirim Pesan ke Admin + Lampiran Gambar (Maks 10MB)
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
@@ -87,41 +88,35 @@ export default function FaqHelp({ user }: { user: any }) {
     fetchMyTickets();
   }, [user]);
 
-  // Handle hash navigation (misal dari notifikasi lonceng ke #kontak-support)
+  // Handle hash navigation (#kontak-support)
   useEffect(() => {
     if (window.location.hash === '#kontak-support') {
+      setActiveMainTab('pesan');
       setIsTicketModalOpen(true);
     }
   }, []);
 
-  // Kategori FAQ Terstruktur & Lebih Masuk Akal
-  const categories = [
-    'Semua',
-    'Umum',
-    'Publikasi',
-    'Buku',
-    'HKI',
-    'Penelitian',
-    'Upload KPI'
-  ];
+  // Hitung tiket yang membutuhkan perhatian (status Menunggu/Dibalas) dan belum ditandai terbaca
+  const unreadTicketCount = myTickets.filter(t => {
+    const s = (t.status || '').toLowerCase().trim();
+    const isNeedsAttention = s === 'dibalas' || s === 'replied' || s === 'menunggu' || s === 'pending';
+    return isNeedsAttention && !readTicketIds.includes(t.id);
+  }).length;
 
-  const normalizeCategory = (cat: string) => {
-    const c = (cat || '').trim().toLowerCase();
-    if (c === 'google scholar' || c === 'scopus' || c === 'publikasi' || c.includes('publikasi') || c.includes('scholar')) return 'Publikasi';
-    if (c === 'buku' || c.includes('buku')) return 'Buku';
-    if (c === 'hki' || c.includes('hki') || c.includes('paten')) return 'HKI';
-    if (c === 'penelitian' || c.includes('penelitian') || c.includes('pengabdian')) return 'Penelitian';
-    if (c === 'upload kpi' || c === 'kpi' || c.includes('kpi') || c.includes('kinerja')) return 'Upload KPI';
-    return 'Umum';
+  const handleTabSwitch = (tab: 'panduan' | 'pesan') => {
+    setActiveMainTab(tab);
+    if (tab === 'pesan') {
+      // Tandai tiket saat ini sebagai terbaca sehingga badge berkurang
+      const ids = myTickets.map(t => t.id);
+      setReadTicketIds(prev => Array.from(new Set([...prev, ...ids])));
+    }
   };
 
   const filteredFaqs = faqs.filter(faq => {
-    const normCategory = normalizeCategory(faq.category);
-    const matchesCategory = activeCategory === 'Semua' || normCategory === activeCategory;
-    const matchesSearch =
+    return (
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   });
 
   const toggleExpand = (id: number) => {
@@ -130,49 +125,6 @@ export default function FaqHelp({ user }: { user: any }) {
 
   const toggleTicketExpand = (id: number) => {
     setExpandedTicketId(expandedTicketId === id ? null : id);
-  };
-
-  const getCategoryTheme = (cat: string) => {
-    const norm = normalizeCategory(cat);
-    switch (norm) {
-      case 'Publikasi':
-        return { 
-          icon: Globe, 
-          label: 'Publikasi & Indeksasi',
-          classes: 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400' 
-        };
-      case 'Buku':
-        return { 
-          icon: BookOpen, 
-          label: 'Buku & Monograf',
-          classes: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400' 
-        };
-      case 'HKI':
-        return { 
-          icon: ShieldCheck, 
-          label: 'HKI & Paten',
-          classes: 'bg-purple-500/10 text-purple-600 dark:bg-purple-500/15 dark:text-purple-400' 
-        };
-      case 'Penelitian':
-        return { 
-          icon: Zap, 
-          label: 'Penelitian & Pengabdian',
-          classes: 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400' 
-        };
-      case 'Upload KPI':
-        return { 
-          icon: Award, 
-          label: 'Upload KPI & Kinerja',
-          classes: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400' 
-        };
-      case 'Umum':
-      default:
-        return { 
-          icon: HelpCircle, 
-          label: 'Umum & Akun',
-          classes: 'bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400' 
-        };
-    }
   };
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -297,387 +249,428 @@ export default function FaqHelp({ user }: { user: any }) {
         )}
       </AnimatePresence>
 
-      {/* 1. HEADER HALAMAN + TOMBOL UTAMA "KIRIM PESAN KE ADMIN" */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
-        <div className="flex items-center gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900/40">
-            <HelpCircle className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest leading-none mb-1.5">
-              Pusat Dukungan
-            </p>
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
-              Bantuan &amp; FAQ
-            </h2>
-          </div>
+      {/* 1. HEADER HALAMAN */}
+      <div className="flex items-center gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900/40">
+          <HelpCircle className="w-5 h-5 text-primary-600 dark:text-primary-400" />
         </div>
-
-        {/* Tombol Utama Kirim Pesan ke Admin di Header Halaman */}
-        <button
-          onClick={() => setIsTicketModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
-        >
-          <Send className="w-3.5 h-3.5" />
-          <span>Kirim Pesan ke Admin</span>
-        </button>
+        <div>
+          <p className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest leading-none mb-1.5">
+            Pusat Dukungan
+          </p>
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
+            Panduan &amp; Bantuan
+          </h2>
+        </div>
       </div>
 
       {/* SECTION KONTEN TERPUSAT (max-width: 850px) */}
       <div className="max-w-[850px] mx-auto space-y-6">
 
-        {/* 2. SEARCH BAR */}
-        <div className="relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-400 transition-colors" />
-          <input
-            type="text"
-            placeholder="Cari panduan, kata kunci, atau pertanyaan..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 rounded-xl text-sm font-medium outline-none focus:border-primary-500 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:focus:ring-primary-500/20 transition-all text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-2xs"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
-              title="Bersihkan pencarian"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-
-        {/* 3. ANNOUNCEMENTS BANNER */}
+        {/* 2. ANNOUNCEMENTS BANNER (Global Banner Halaman) */}
         <AnnouncementsBanner announcements={announcements} />
 
-        {/* 4. TABS + FAQ ACCORDION */}
-        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+        {/* 3. NAVIGATION TABS (Panduan vs Pesan Saya) */}
+        <div className="flex items-center gap-6 sm:gap-8 border-b border-slate-200 dark:border-slate-800 pb-1">
+          {/* Tab 1: Panduan */}
+          <button
+            onClick={() => handleTabSwitch('panduan')}
+            className={`group relative pb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer select-none ${
+              activeMainTab === 'panduan'
+                ? 'text-primary-600 dark:text-primary-400'
+                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Panduan</span>
+            {activeMainTab === 'panduan' && (
+              <motion.div
+                layoutId="faq-main-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary-600 dark:bg-primary-400 rounded-full"
+              />
+            )}
+          </button>
 
-          {/* Tabs Kategori Terstruktur */}
-          <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar">
-            {categories.map((cat) => {
-              const theme = getCategoryTheme(cat);
-              const IconComponent = cat === 'Semua' ? FileQuestion : theme.icon;
-              const isActive = activeCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => { setActiveCategory(cat); setExpandedFaqId(null); }}
-                  className={`px-5 py-3.5 text-[11px] font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 cursor-pointer select-none ${
-                    isActive
-                      ? 'border-primary-600 text-primary-600 dark:text-primary-400 bg-primary-50/30 dark:bg-primary-950/20'
-                      : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'
-                  }`}
-                >
-                  <IconComponent className="w-3.5 h-3.5" />
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
+          {/* Tab 2: Pesan Saya */}
+          <button
+            onClick={() => handleTabSwitch('pesan')}
+            className={`group relative pb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer select-none ${
+              activeMainTab === 'pesan'
+                ? 'text-primary-600 dark:text-primary-400'
+                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Pesan Saya</span>
 
-          {/* Body Accordion FAQ */}
-          <div className="p-4 sm:p-5 space-y-2.5">
-            {loading ? (
-              <phantom-ui loading={true} animation="shimmer" className="block space-y-2.5">
-                {[1, 2, 3].map(i => (
-                  <div
-                    key={i}
-                    className="h-16 w-full bg-slate-50 dark:bg-slate-800/40 rounded-xl flex items-center px-5 justify-between"
-                  >
-                    <div className="flex items-center gap-3 w-2/3">
-                      <div className="h-9 w-9 rounded-lg bg-slate-200 dark:bg-slate-700" />
-                      <div className="h-3.5 bg-slate-200 dark:bg-slate-700 rounded w-4/5" />
-                    </div>
-                    <div className="h-4 w-4 bg-slate-200 dark:bg-slate-700 rounded-full" />
-                  </div>
-                ))}
-              </phantom-ui>
-            ) : filteredFaqs.length > 0 ? (
-              filteredFaqs.map((faq) => {
-                const isExpanded = expandedFaqId === faq.id;
-                const theme = getCategoryTheme(faq.category);
-                const ThemeIcon = theme.icon;
+            {/* Badge Unread Ticket Count */}
+            {unreadTicketCount > 0 && (
+              <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                {unreadTicketCount}
+              </span>
+            )}
 
-                return (
-                  <div
-                    key={faq.id}
-                    className={`rounded-xl border overflow-hidden transition-all ${
-                      isExpanded
-                        ? 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs'
-                        : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-700'
-                    }`}
-                  >
-                    <button
-                      onClick={() => toggleExpand(faq.id)}
-                      className="w-full px-5 py-4 text-left flex justify-between items-center gap-4 focus:outline-none group cursor-pointer"
-                    >
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${theme.classes}`}>
-                          <ThemeIcon className="w-4 h-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white block truncate">
-                            {faq.question}
-                          </span>
-                          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mt-0.5">
-                            {theme.label}
-                          </span>
-                        </div>
-                      </div>
+            {activeMainTab === 'pesan' && (
+              <motion.div
+                layoutId="faq-main-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary-600 dark:bg-primary-400 rounded-full"
+              />
+            )}
+          </button>
+        </div>
 
-                      <ChevronDown className={`w-4 h-4 flex-shrink-0 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-slate-900 dark:text-white' : ''}`} />
-                    </button>
-
-                    <AnimatePresence initial={false}>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2, ease: 'easeOut' }}
-                        >
-                          <div className="px-5 pb-5 pt-1 border-t border-slate-100 dark:border-slate-800/50 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                            <p className="pl-[52px]">{faq.answer}</p>
-                            {faq.file_url && (
-                              <div className="mt-4 pl-[52px]">
-                                <button
-                                  onClick={() => setPreviewDoc({
-                                    fileUrl: faq.file_url,
-                                    title: faq.question,
-                                    category: faq.category
-                                  })}
-                                  className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-                                >
-                                  <FileText className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-                                  <span>Lihat Panduan PDF</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              })
-            ) : searchQuery ? (
-              <div className="py-14 px-4 text-center">
-                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mx-auto mb-3.5 border border-slate-200 dark:border-slate-700">
-                  <HelpCircle className="w-6 h-6 text-slate-400 dark:text-slate-500" />
-                </div>
-                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Panduan Tidak Ditemukan</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-4">
-                  Tidak ada panduan yang cocok dengan kata kunci &quot;<span className="font-semibold text-slate-700 dark:text-slate-300">{searchQuery}</span>&quot;.
-                </p>
+        {/* ─── TAB 1: PANDUAN & MANUAL BOOK ─── */}
+        {activeMainTab === 'panduan' && (
+          <div className="space-y-6">
+            {/* Search Bar */}
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-400 transition-colors" />
+              <input
+                type="text"
+                placeholder="Cari panduan, kata kunci, atau topik..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 rounded-xl text-sm font-medium outline-none focus:border-primary-500 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:focus:ring-primary-500/20 transition-all text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-2xs"
+              />
+              {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
+                  title="Bersihkan pencarian"
                 >
                   <X className="w-3.5 h-3.5" />
-                  <span>Bersihkan Pencarian</span>
                 </button>
-              </div>
-            ) : (
-              <div className="py-14 px-4 text-center">
-                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800/80 rounded-xl flex items-center justify-center mx-auto mb-3.5 border border-slate-200 dark:border-slate-700">
-                  <FileQuestion className="w-6 h-6 text-slate-400 dark:text-slate-500" />
+              )}
+            </div>
+
+            {/* Manual Book & Panduan Accordion List */}
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2.5">
+                  <FileQuestion className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Manual Book &amp; Panduan Penggunaan</h3>
                 </div>
-                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-                  Belum ada panduan untuk kategori ini
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-4">
-                  Panduan untuk kategori &quot;<span className="font-semibold text-slate-700 dark:text-slate-300">{activeCategory}</span>&quot; sedang disiapkan oleh administrator.
-                </p>
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
+                  {filteredFaqs.length} Panduan
+                </span>
+              </div>
+
+              <div className="p-4 sm:p-5 space-y-2.5">
+                {loading ? (
+                  <phantom-ui loading={true} animation="shimmer" className="block space-y-2.5">
+                    {[1, 2, 3].map(i => (
+                      <div
+                        key={i}
+                        className="h-16 w-full bg-slate-50 dark:bg-slate-800/40 rounded-xl flex items-center px-5 justify-between"
+                      >
+                        <div className="flex items-center gap-3 w-2/3">
+                          <div className="h-9 w-9 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                          <div className="h-3.5 bg-slate-200 dark:bg-slate-700 rounded w-4/5" />
+                        </div>
+                        <div className="h-4 w-4 bg-slate-200 dark:bg-slate-700 rounded-full" />
+                      </div>
+                    ))}
+                  </phantom-ui>
+                ) : filteredFaqs.length > 0 ? (
+                  filteredFaqs.map((faq) => {
+                    const isExpanded = expandedFaqId === faq.id;
+
+                    return (
+                      <div
+                        key={faq.id}
+                        className={`rounded-xl border overflow-hidden transition-all ${
+                          isExpanded
+                            ? 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs'
+                            : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        <button
+                          onClick={() => toggleExpand(faq.id)}
+                          className="w-full px-5 py-4 text-left flex justify-between items-center gap-4 focus:outline-none group cursor-pointer"
+                        >
+                          <div className="flex items-center gap-3.5 min-w-0">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-950/30 dark:text-primary-400">
+                              <HelpCircle className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate">
+                              {faq.question}
+                            </span>
+                          </div>
+
+                          <ChevronDown className={`w-4 h-4 flex-shrink-0 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-slate-900 dark:text-white' : ''}`} />
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                            >
+                              <div className="px-5 pb-5 pt-1 border-t border-slate-100 dark:border-slate-800/50 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                                <p className="pl-[52px]">{faq.answer}</p>
+                                {faq.file_url && (
+                                  <div className="mt-4 pl-[52px]">
+                                    <button
+                                      onClick={() => setPreviewDoc({
+                                        fileUrl: faq.file_url,
+                                        title: faq.question,
+                                        category: faq.category
+                                      })}
+                                      className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                                    >
+                                      <FileText className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                                      <span>Lihat Panduan PDF</span>
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })
+                ) : searchQuery ? (
+                  <div className="py-14 px-4 text-center">
+                    <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mx-auto mb-3.5 border border-slate-200 dark:border-slate-700">
+                      <HelpCircle className="w-6 h-6 text-slate-400 dark:text-slate-500" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Panduan Tidak Ditemukan</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-4">
+                      Tidak ada panduan yang cocok dengan kata kunci &quot;<span className="font-semibold text-slate-700 dark:text-slate-300">{searchQuery}</span>&quot;.
+                    </p>
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Bersihkan Pencarian</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="py-14 px-4 text-center">
+                    <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800/80 rounded-xl flex items-center justify-center mx-auto mb-3.5 border border-slate-200 dark:border-slate-700">
+                      <FileQuestion className="w-6 h-6 text-slate-400 dark:text-slate-500" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
+                      Belum Ada Panduan
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-4">
+                      Panduan dan manual book sedang disiapkan oleh administrator.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── TAB 2: PESAN SAYA ─── */}
+        {activeMainTab === 'pesan' && (
+          <div className="space-y-6">
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
+              
+              {/* Header Action Bar untuk Tab Pesan Saya */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/40 shrink-0">
+                    <Inbox className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2.5">
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                        Riwayat Pesan Saya
+                      </h3>
+                      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                        {myTickets.length} Tiket
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      Konsultasi &amp; bantuan teknis yang dikirimkan ke administrator
+                    </p>
+                  </div>
+                </div>
+
+                {/* Tombol Kirim Pesan Baru */}
                 <button
                   onClick={() => setIsTicketModalOpen(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-50 hover:bg-primary-100 dark:bg-primary-950/40 dark:hover:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 text-xs font-semibold transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
-                  <span>Kirim Pesan ke Admin</span>
+                  <Plus className="w-4 h-4" />
+                  <span>Kirim Pesan Baru</span>
                 </button>
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* 5. SECTION "RIWAYAT PESAN SAYA" */}
-        <div id="kontak-support" className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
-          <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-3.5">
-            <div className="flex items-center gap-2.5">
-              <Inbox className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Riwayat Pesan Saya</h3>
-              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
-                {myTickets.length} Tiket
-              </span>
-            </div>
-          </div>
-
-          {loadingTickets ? (
-            <div className="py-8 text-center text-xs font-medium text-slate-400">
-              Memuat riwayat pesan...
-            </div>
-          ) : myTickets.length > 0 ? (
-            <div className="space-y-3">
-              {myTickets.map((ticket) => {
-                const isExpanded = expandedTicketId === ticket.id;
-                return (
-                  <div
-                    key={ticket.id}
-                    className={`rounded-xl border transition-all overflow-hidden ${
-                      isExpanded
-                        ? 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs'
-                        : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-700'
-                    }`}
-                  >
-                    <button
-                      onClick={() => toggleTicketExpand(ticket.id)}
-                      className="w-full p-4 text-left flex justify-between items-center gap-4 cursor-pointer focus:outline-none"
-                    >
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          {getTicketStatusBadge(ticket.status)}
-                          {ticket.image_url && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                              <ImageIcon className="w-3 h-3 text-slate-400 dark:text-slate-500" />
-                              <span>Gambar</span>
-                            </span>
-                          )}
-                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
-                            {ticket.subject || 'Tanpa Subjek'}
-                          </h4>
-                        </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate pl-0.5">
-                          {ticket.message}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 hidden sm:inline">
-                          {new Date(ticket.created_at).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                          })}
-                        </span>
-                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-slate-900 dark:text-white' : ''}`} />
-                      </div>
-                    </button>
-
-                    <AnimatePresence initial={false}>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2, ease: 'easeOut' }}
+              {/* Body Daftar Pesan */}
+              {loadingTickets ? (
+                <div className="py-12 text-center text-xs font-medium text-slate-400">
+                  Memuat riwayat pesan...
+                </div>
+              ) : myTickets.length > 0 ? (
+                <div className="space-y-3 pt-1">
+                  {myTickets.map((ticket) => {
+                    const isExpanded = expandedTicketId === ticket.id;
+                    return (
+                      <div
+                        key={ticket.id}
+                        className={`rounded-xl border transition-all overflow-hidden ${
+                          isExpanded
+                            ? 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs'
+                            : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        <button
+                          onClick={() => toggleTicketExpand(ticket.id)}
+                          className="w-full p-4 text-left flex justify-between items-center gap-4 cursor-pointer focus:outline-none"
                         >
-                          <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/50 space-y-3 text-xs leading-relaxed">
-                            {/* Full Question Text */}
-                            <div className="space-y-2 bg-slate-100/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
-                              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                                Isi Pesan Anda:
-                              </p>
-                              <p className="text-slate-700 dark:text-slate-200 font-medium whitespace-pre-line">
-                                {ticket.message}
-                              </p>
-
-                              {/* Preview Lampiran Gambar Dosen jika ada */}
+                          <div className="min-w-0 space-y-1">
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                              {getTicketStatusBadge(ticket.status)}
                               {ticket.image_url && (
-                                <div className="mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-2">
-                                  <div className="flex items-center justify-between">
-                                    <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                      <ImageIcon className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                                      Lampiran Gambar:
-                                    </p>
-                                    <a
-                                      href={ticket.image_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 underline"
-                                    >
-                                      <ExternalLink className="w-3 h-3" />
-                                      <span>Buka di Tab Baru</span>
-                                    </a>
-                                  </div>
-                                  <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950/90 max-w-sm p-1.5">
-                                    <img
-                                      src={ticket.image_url}
-                                      alt="Lampiran Dosen"
-                                      className="max-h-48 w-auto object-contain rounded-lg mx-auto"
-                                    />
-                                    <div
-                                      onClick={() => setFullViewImageUrl(ticket.image_url)}
-                                      className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-bold cursor-pointer"
-                                    >
-                                      <Maximize2 className="w-4 h-4" />
-                                      <span>Perbesar Gambar</span>
-                                    </div>
-                                  </div>
-                                </div>
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                                  <ImageIcon className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                                  <span>Gambar</span>
+                                </span>
                               )}
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
+                                {ticket.subject || 'Tanpa Subjek'}
+                              </h4>
                             </div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate pl-0.5">
+                              {ticket.message}
+                            </p>
+                          </div>
 
-                            {/* Admin Reply Box / Status Info */}
-                            {ticket.admin_reply ? (
-                              <div className="space-y-1.5 bg-blue-50/70 dark:bg-blue-950/30 p-3.5 rounded-xl border border-blue-200/80 dark:border-blue-900/50">
-                                <div className="flex items-center justify-between text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">
-                                  <span className="flex items-center gap-1.5">
-                                    <MessageSquare className="w-3.5 h-3.5" />
-                                    Balasan Tim Admin:
-                                  </span>
-                                  {ticket.replied_at && (
-                                    <span>
-                                      {new Date(ticket.replied_at).toLocaleDateString('id-ID', {
-                                        day: 'numeric',
-                                        month: 'short',
-                                        year: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                      })}
-                                    </span>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 hidden sm:inline">
+                              {new Date(ticket.created_at).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric'
+                              })}
+                            </span>
+                            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-slate-900 dark:text-white' : ''}`} />
+                          </div>
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                            >
+                              <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/50 space-y-3 text-xs leading-relaxed">
+                                {/* Isi Pesan User */}
+                                <div className="space-y-2 bg-slate-100/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
+                                  <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                                    Isi Pesan Anda:
+                                  </p>
+                                  <p className="text-slate-700 dark:text-slate-200 font-medium whitespace-pre-line">
+                                    {ticket.message}
+                                  </p>
+
+                                  {/* Preview Lampiran Gambar Dosen */}
+                                  {ticket.image_url && (
+                                    <div className="mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-2">
+                                      <div className="flex items-center justify-between">
+                                        <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                          <ImageIcon className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                                          Lampiran Gambar:
+                                        </p>
+                                        <a
+                                          href={ticket.image_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 underline"
+                                        >
+                                          <ExternalLink className="w-3 h-3" />
+                                          <span>Buka di Tab Baru</span>
+                                        </a>
+                                      </div>
+                                      <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950/90 max-w-sm p-1.5">
+                                        <img
+                                          src={ticket.image_url}
+                                          alt="Lampiran Dosen"
+                                          className="max-h-48 w-auto object-contain rounded-lg mx-auto"
+                                        />
+                                        <div
+                                          onClick={() => setFullViewImageUrl(ticket.image_url)}
+                                          className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-bold cursor-pointer"
+                                        >
+                                          <Maximize2 className="w-4 h-4" />
+                                          <span>Perbesar Gambar</span>
+                                        </div>
+                                      </div>
+                                    </div>
                                   )}
                                 </div>
-                                <p className="text-slate-800 dark:text-slate-100 font-medium whitespace-pre-line">
-                                  {ticket.admin_reply}
-                                </p>
+
+                                {/* Balasan Tim Admin */}
+                                {ticket.admin_reply ? (
+                                  <div className="space-y-1.5 bg-blue-50/70 dark:bg-blue-950/30 p-3.5 rounded-xl border border-blue-200/80 dark:border-blue-900/50">
+                                    <div className="flex items-center justify-between text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">
+                                      <span className="flex items-center gap-1.5">
+                                        <MessageSquare className="w-3.5 h-3.5" />
+                                        Balasan Tim Admin:
+                                      </span>
+                                      {ticket.replied_at && (
+                                        <span>
+                                          {new Date(ticket.replied_at).toLocaleDateString('id-ID', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                          })}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-slate-800 dark:text-slate-100 font-medium whitespace-pre-line">
+                                      {ticket.admin_reply}
+                                    </p>
+                                  </div>
+                                ) : ticket.status === 'selesai' ? (
+                                  <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-medium flex items-center gap-2">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                    <span>Tiket pesan ini telah ditandai selesai.</span>
+                                  </div>
+                                ) : (
+                                  <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 text-xs font-medium flex items-center gap-2">
+                                    <Clock className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                                    <span>Pesan Anda telah diterima. Mohon tunggu balasan dari tim admin.</span>
+                                  </div>
+                                )}
                               </div>
-                            ) : ticket.status === 'selesai' ? (
-                              <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-medium flex items-center gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                                <span>Tiket pesan ini telah ditandai selesai.</span>
-                              </div>
-                            ) : (
-                              <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 text-xs font-medium flex items-center gap-2">
-                                <Clock className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
-                                <span>Pesan Anda telah diterima. Mohon tunggu balasan dari tim admin.</span>
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              })}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-14 text-center">
+                  <Inbox className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+                  <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Belum Ada Pesan yang Dikirim</h4>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto mb-4 leading-relaxed">
+                    Pesan atau pertanyaan yang Anda kirim ke admin akan muncul di sini.
+                  </p>
+                  <button
+                    onClick={() => setIsTicketModalOpen(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Kirim Pesan Pertama</span>
+                  </button>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="py-10 text-center">
-              <Inbox className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-              <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Belum Ada Pesan yang Dikirim</h4>
-              <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto mb-3">
-                Pesan atau pertanyaan yang Anda kirim ke admin akan muncul di sini.
-              </p>
-              <button
-                onClick={() => setIsTicketModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Kirim Pesan Pertama</span>
-              </button>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
       </div>
 
@@ -784,7 +777,7 @@ export default function FaqHelp({ user }: { user: any }) {
                         className="p-2 rounded-lg bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 transition-colors cursor-pointer"
                         title="Hapus gambar"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
@@ -809,7 +802,7 @@ export default function FaqHelp({ user }: { user: any }) {
                   <button
                     type="button"
                     onClick={() => setIsTicketModalOpen(false)}
-                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-755 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Batal
                   </button>
