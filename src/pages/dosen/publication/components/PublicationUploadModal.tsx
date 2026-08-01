@@ -174,17 +174,17 @@ export default function PublicationUploadModal({
             onClick={() => setDocType('kpi')}
             className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
               docType === 'kpi'
-                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/10 ring-4 ring-emerald-500/10'
-                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10'
+                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
             }`}
           >
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-              docType === 'kpi' ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-emerald-50'
+              docType === 'kpi' ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50'
             }`}>
-              <Sparkles className={`w-5 h-5 ${docType === 'kpi' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 group-hover:text-emerald-500'}`} />
+              <Sparkles className={`w-5 h-5 ${docType === 'kpi' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
             </div>
             <div className="text-left min-w-0">
-              <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-emerald-900 dark:text-emerald-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
+              <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-primary-900 dark:text-primary-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
                 KPI Dosen
               </p>
               <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Automated Scoring</p>
@@ -196,17 +196,17 @@ export default function PublicationUploadModal({
             onClick={() => setDocType('arsip')}
             className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
               docType === 'arsip'
-                ? 'border-gray-500 bg-gray-50 dark:bg-zinc-800 ring-4 ring-gray-500/10'
-                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10'
+                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
             }`}
           >
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-              docType === 'arsip' ? 'bg-gray-200 dark:bg-zinc-700' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-gray-200/60'
+              docType === 'arsip' ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50'
             }`}>
-              <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-gray-600 dark:text-zinc-300' : 'text-gray-400 group-hover:text-gray-500'}`} />
+              <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
             </div>
             <div className="text-left min-w-0">
-              <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-gray-900 dark:text-zinc-100' : 'text-gray-500 group-hover:text-gray-900'}`}>
+              <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-primary-900 dark:text-primary-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
                 Arsip Umum
               </p>
               <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Storage Only (0 Pts)</p>

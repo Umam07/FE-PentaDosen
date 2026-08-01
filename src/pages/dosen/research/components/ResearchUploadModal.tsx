@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Upload, Home, Landmark, Globe, CalendarDays, 
-  ChevronDown, CheckCircle, Sparkles, XCircle, FileText 
+  ChevronDown, CheckCircle, Sparkles, XCircle, FileText, Archive 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
@@ -22,6 +22,8 @@ interface ResearchUploadModalProps {
   setDanaDisetujui: (val: string) => void;
   tahun: Date | undefined;
   setTahun: (val: Date | undefined) => void;
+  docType?: 'kpi' | 'arsip';
+  setDocType?: (val: 'kpi' | 'arsip') => void;
   file: File | null;
   setFile: (val: File | null) => void;
   loading: boolean;
@@ -45,6 +47,8 @@ export default function ResearchUploadModal({
   setDanaDisetujui,
   tahun,
   setTahun,
+  docType = 'kpi',
+  setDocType,
   file,
   setFile,
   loading,
@@ -55,8 +59,17 @@ export default function ResearchUploadModal({
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Scoring preview calculated locally based on program and danaDisetujui
+  // Scoring preview calculated locally based on docType, program, and danaDisetujui
   const scoringPreview = useMemo(() => {
+    if (docType === 'arsip') {
+      return {
+        base: 0,
+        dana: '0',
+        total: '0',
+        message: 'Kategori Arsip: Dokumen disimpan sebagai arsip (0 Poin)',
+      };
+    }
+
     const rawValue = danaDisetujui.replace(/\./g, '');
     if (!rawValue || isNaN(Number(rawValue))) return null;
 
@@ -71,7 +84,7 @@ export default function ResearchUploadModal({
       total: basePoints.toString(),
       message: `Estimasi Poin: ${basePoints} Poin`,
     };
-  }, [program, danaDisetujui]);
+  }, [docType, program, danaDisetujui]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -126,12 +139,58 @@ export default function ResearchUploadModal({
       maxWidthClass="max-w-4xl"
     >
       <form onSubmit={onSubmit} className="space-y-6">
+        {/* Selector Tipe Dokumen: KPI Dosen vs Arsip Umum */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            type="button"
+            onClick={() => setDocType?.('kpi')}
+            className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+              docType === 'kpi'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10'
+                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+              docType === 'kpi' ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50'
+            }`}>
+              <Sparkles className={`w-5 h-5 ${docType === 'kpi' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
+            </div>
+            <div className="text-left min-w-0">
+              <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'kpi' ? 'text-primary-900 dark:text-primary-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                KPI Dosen
+              </p>
+              <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Automated Scoring</p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setDocType?.('arsip')}
+            className={`group relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 ${
+              docType === 'arsip'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10'
+                : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
+              docType === 'arsip' ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50'
+            }`}>
+              <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
+            </div>
+            <div className="text-left min-w-0">
+              <p className={`text-[11px] font-black uppercase tracking-tight ${docType === 'arsip' ? 'text-primary-900 dark:text-primary-200' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                Arsip Umum
+              </p>
+              <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Storage Only (0 Pts)</p>
+            </div>
+          </button>
+        </div>
         {/* Program Selector */}
         <div className="space-y-2">
           <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
             Kategori Program Penelitian
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
               { key: 'hibah internal', label: 'Hibah Internal', icon: Home, pts: 3 },
               { key: 'hibah dikti', label: 'Hibah Dikti', icon: Landmark, pts: 6 },
@@ -141,15 +200,27 @@ export default function ResearchUploadModal({
                 key={item.key}
                 type="button"
                 onClick={() => setProgram(item.key)}
-                className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                className={`group relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer ${
                   program === item.key
-                    ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-950/20 text-primary-700 dark:text-primary-400 font-extrabold shadow-sm'
-                    : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 hover:border-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10'
+                    : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
                 }`}
               >
-                <item.icon className="w-5 h-5 mb-2" />
-                <span className="text-[10px] font-black uppercase tracking-wider">{item.label}</span>
-                <span className="text-[9px] font-bold text-gray-400 mt-1 uppercase">{item.pts} Pts Base</span>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-colors ${
+                  program === item.key ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50'
+                }`}>
+                  <item.icon className={`w-4 h-4 ${program === item.key ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
+                </div>
+                <span className={`text-[10px] font-black uppercase tracking-wider text-center ${
+                  program === item.key ? 'text-primary-900 dark:text-primary-200' : 'text-gray-800 dark:text-zinc-200'
+                }`}>
+                  {item.label}
+                </span>
+                <span className={`text-[9px] font-bold mt-1 uppercase ${
+                  program === item.key ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400'
+                }`}>
+                  {item.pts} Pts Base
+                </span>
               </button>
             ))}
           </div>

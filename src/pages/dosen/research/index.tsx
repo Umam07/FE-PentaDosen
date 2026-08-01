@@ -57,6 +57,7 @@ export default function Research({ user }: ResearchProps) {
   const [skema, setSkema] = useState('');
   const [fokus, setFokus] = useState('');
   const [tahun, setTahun] = useState<Date | undefined>(new Date());
+  const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
 
   // Loading states
@@ -194,6 +195,7 @@ export default function Research({ user }: ResearchProps) {
     formData.append('skema', skema);
     formData.append('fokus', fokus);
     formData.append('tahun', tahun ? formatToYYYYMMDD(tahun) : '');
+    formData.append('doc_type', docType);
 
     try {
       setLoading(true);
@@ -210,6 +212,7 @@ export default function Research({ user }: ResearchProps) {
         setFokus('');
         setFile(null);
         setTahun(new Date());
+        setDocType('kpi');
         setIsUploadModalOpen(false);
 
         setIsTableLoading(true);
@@ -652,6 +655,8 @@ export default function Research({ user }: ResearchProps) {
         setDanaDisetujui={setDanaDisetujui}
         tahun={tahun}
         setTahun={setTahun}
+        docType={docType}
+        setDocType={setDocType}
         file={file}
         setFile={setFile}
         loading={loading}
