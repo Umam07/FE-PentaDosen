@@ -1,8 +1,15 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, FormEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import type { ResearchItem, UserSession, PreviewDocState, StatsInfo } from '../types/research.types';
-import { fetchUserResearch, deleteResearchItem, uploadResearchPdf } from '../services/researchService';
+import {
+  fetchUserResearch,
+  createResearch,
+  updateResearch,
+  deleteResearchItem,
+  uploadResearchPdf,
+} from '../services/researchService';
 import { generateResearchExcelTemplate } from '../utils/researchUtils';
+import { formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 
 export function useResearch(user: UserSession) {
   const location = useLocation();
@@ -18,6 +25,7 @@ export function useResearch(user: UserSession) {
     return researchList.find((r) => r.id === selectedDocForDetail.id) || selectedDocForDetail;
   }, [researchList, selectedDocForDetail]);
 
+  // Form states untuk Tambah Penelitian
   const [judulPenelitian, setJudulPenelitian] = useState('');
   const [danaDisetujui, setDanaDisetujui] = useState('');
 
@@ -39,9 +47,10 @@ export function useResearch(user: UserSession) {
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [file, setFile] = useState<File | null>(null);
 
-  // Loading states
+  // Loading & Progress states
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   // Toast notifications
   const [message, setMessage] = useState('');
@@ -58,6 +67,15 @@ export function useResearch(user: UserSession) {
   // Edit states
   const [editDoc, setEditDoc] = useState<ResearchItem | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editJudul, setEditJudul] = useState('');
+  const [editDana, setEditDana] = useState('');
+  const [editProgram, setEditProgram] = useState('hibah internal');
+  const [editSkema, setEditSkema] = useState('');
+  const [editFokus, setEditFokus] = useState('');
+  const [editTahun, setEditTahun] = useState<Date | undefined>(undefined);
+  const [editFile, setEditFile] = useState<File | null>(null);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [editUploadProgress, setEditUploadProgress] = useState<number | null>(null);
 
   // Delete states
   const [deleteDoc, setDeleteDoc] = useState<ResearchItem | null>(null);
@@ -149,6 +167,127 @@ export function useResearch(user: UserSession) {
     };
   }, [filteredResearchList]);
 
+  // Handler Submit Upload Penelitian Baru
+  const handleUpload = useCallback(async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!judulPenelitian || !danaDisetujui || !program || !skema || !fokus || !tahun || !file) {
+      showMessage('Harap isi semua data termasuk file PDF.', 'error');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showMessage('Ukuran file maksimal 10MB.', 'error');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('judul_penelitian', judulPenelitian.trim());
+    formData.append('dana_disetujui', danaDisetujui.replace(/\./g, ''));
+    formData.append('user_id', String(user.id));
+    formData.append('program', program);
+    formData.append('skema', skema);
+    formData.append('fokus', fokus);
+    formData.append('tahun', tahun ? formatToYYYYMMDD(tahun) : '');
+    formData.append('doc_type', docType);
+
+    try {
+      setLoading(true);
+      setUploadProgress(0);
+
+      const res = await createResearch(formData, setUploadProgress);
+
+      if (res.ok) {
+        await new Promise((r) => setTimeout(r, 400));
+        showMessage(res.data?.message || 'Penelitian berhasil diunggah!', 'success');
+        setJudulPenelitian('');
+        setDanaDisetujui('');
+        setSkema('');
+        setFokus('');
+        setFile(null);
+        setTahun(new Date());
+        setDocType('kpi');
+        setIsUploadModalOpen(false);
+
+        setIsTableLoading(true);
+        await loadResearchList();
+        setIsTableLoading(false);
+      } else {
+        showMessage(res.data?.message || 'Gagal menambahkan penelitian.', 'error');
+      }
+    } catch (err) {
+      console.error('Upload research error:', err);
+      showMessage('Terjadi kesalahan koneksi saat mengunggah.', 'error');
+    } finally {
+      setLoading(false);
+      setUploadProgress(null);
+    }
+  }, [judulPenelitian, danaDisetujui, program, skema, fokus, tahun, file, docType, user?.id, showMessage, loadResearchList]);
+
+  // Handler Open Edit Modal
+  const openEditModal = useCallback((resDoc: ResearchItem) => {
+    setEditDoc(resDoc);
+    setEditJudul(resDoc.judul_penelitian || '');
+    setEditDana(resDoc.dana_disetujui ? Number(resDoc.dana_disetujui).toLocaleString('id-ID') : '');
+    setEditProgram(resDoc.program || 'hibah internal');
+    setEditSkema(resDoc.skema || '');
+    setEditFokus(resDoc.fokus || '');
+    setEditTahun(resDoc.tahun ? new Date(resDoc.tahun) : new Date());
+    setEditFile(null);
+    setIsEditModalOpen(true);
+  }, []);
+
+  // Handler Submit Update Penelitian
+  const handleUpdate = useCallback(async (e: FormEvent) => {
+    e.preventDefault();
+    if (!editDoc) return;
+
+    if (!editJudul || !editDana || !editProgram || !editSkema || !editFokus || !editTahun) {
+      showMessage('Harap lengkapi semua field.', 'error');
+      return;
+    }
+
+    try {
+      setIsEditLoading(true);
+      setEditUploadProgress(0);
+
+      const formData = new FormData();
+      formData.append('judul_penelitian', editJudul.trim());
+      formData.append('dana_disetujui', editDana.replace(/\./g, ''));
+      formData.append('program', editProgram);
+      formData.append('skema', editSkema);
+      formData.append('fokus', editFokus);
+      formData.append('tahun', editTahun ? formatToYYYYMMDD(editTahun) : '');
+      if (editFile) {
+        formData.append('file', editFile);
+      }
+
+      const res = await updateResearch(editDoc.id, formData, setEditUploadProgress);
+
+      if (res.ok) {
+        await new Promise((r) => setTimeout(r, 400));
+        showMessage(res.data?.message || 'Penelitian berhasil diperbarui!', 'success');
+        setEditFile(null);
+        setIsEditModalOpen(false);
+        setEditDoc(null);
+
+        setIsTableLoading(true);
+        await loadResearchList();
+        setIsTableLoading(false);
+      } else {
+        showMessage(res.data?.message || 'Gagal memperbarui penelitian.', 'error');
+      }
+    } catch (err) {
+      console.error('Update research error:', err);
+      showMessage('Terjadi kesalahan saat memperbarui.', 'error');
+    } finally {
+      setIsEditLoading(false);
+      setEditUploadProgress(null);
+    }
+  }, [editDoc, editJudul, editDana, editProgram, editSkema, editFokus, editTahun, editFile, showMessage, loadResearchList]);
+
+  // Upload PDF Bukti tambahan pada tabel
   const handleUploadPdf = useCallback(async (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
     const fileInput = e.target.files?.[0];
     if (!fileInput) return;
@@ -238,7 +377,7 @@ export function useResearch(user: UserSession) {
     isTableLoading,
     setIsTableLoading,
     loading,
-    setLoading,
+    uploadProgress,
     message,
     messageType,
     showMessage,
@@ -255,6 +394,22 @@ export function useResearch(user: UserSession) {
     setEditDoc,
     isEditModalOpen,
     setIsEditModalOpen,
+    editJudul,
+    setEditJudul,
+    editDana,
+    setEditDana,
+    editProgram,
+    setEditProgram,
+    editSkema,
+    setEditSkema,
+    editFokus,
+    setEditFokus,
+    editTahun,
+    setEditTahun,
+    editFile,
+    setEditFile,
+    isEditLoading,
+    editUploadProgress,
     deleteDoc,
     setDeleteDoc,
     isDeleteModalOpen,
@@ -269,6 +424,9 @@ export function useResearch(user: UserSession) {
     filteredResearchList,
     availableYears,
     stats,
+    handleUpload,
+    openEditModal,
+    handleUpdate,
     handleUploadPdf,
     handleDeleteSubmit,
     handleDownloadTemplate,

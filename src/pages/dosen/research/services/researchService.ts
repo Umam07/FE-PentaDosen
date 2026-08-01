@@ -1,4 +1,5 @@
 import type { ResearchItem } from '../types/research.types';
+import { uploadWithProgress } from '../../../../lib/utils';
 
 /**
  * Mengambil daftar penelitian hibah milik dosen
@@ -8,6 +9,28 @@ export async function fetchUserResearch(userId: string | number): Promise<Resear
   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   const data = await res.json();
   return data.data || [];
+}
+
+/**
+ * Menambahkan penelitian hibah baru dengan upload progress
+ */
+export async function createResearch(
+  formData: FormData,
+  onProgress?: (progress: number) => void
+): Promise<{ ok: boolean; data: any }> {
+  return await uploadWithProgress('/api/penelitian', 'POST', formData, onProgress);
+}
+
+/**
+ * Memperbarui data penelitian hibah dengan upload progress
+ */
+export async function updateResearch(
+  id: number,
+  formData: FormData,
+  onProgress?: (progress: number) => void
+): Promise<{ ok: boolean; data: any }> {
+  formData.append('_method', 'PUT');
+  return await uploadWithProgress(`/api/penelitian/${id}`, 'POST', formData, onProgress);
 }
 
 /**

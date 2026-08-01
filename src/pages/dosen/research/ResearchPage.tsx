@@ -84,10 +84,7 @@ export default function Research({ user }: { user: UserSession }) {
         onPreviewPdf={res.setPreviewDoc}
         onUploadPdf={res.handleUploadPdf}
         uploadingPdfId={res.uploadingPdfId}
-        onEditClick={(doc) => {
-          res.setEditDoc(doc);
-          res.setIsEditModalOpen(true);
-        }}
+        onEditClick={res.openEditModal}
         onDeleteClick={(doc) => {
           res.setDeleteDoc(doc);
           res.setIsDeleteModalOpen(true);
@@ -118,42 +115,9 @@ export default function Research({ user }: { user: UserSession }) {
         file={res.file}
         setFile={res.setFile}
         loading={res.loading}
+        onSubmit={res.handleUpload}
         onErrorMsg={(msg) => res.showMessage(msg, 'error')}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          res.setLoading(true);
-          try {
-            const formData = new FormData();
-            formData.append('user_id', String(user.id));
-            formData.append('judul_penelitian', res.judulPenelitian);
-            formData.append('dana_disetujui', res.danaDisetujui);
-            formData.append('program', res.program);
-            formData.append('skema', res.skema);
-            formData.append('fokus', res.fokus);
-            formData.append('tahun', res.tahun ? String(res.tahun.getFullYear()) : String(new Date().getFullYear()));
-            formData.append('doc_type', res.docType);
-            if (res.file) formData.append('file', res.file);
-
-            const r = await fetch('/api/penelitian', { method: 'POST', body: formData });
-            const data = await r.json();
-            if (r.ok) {
-              res.showMessage('Penelitian berhasil ditambahkan!', 'success');
-              res.setIsUploadModalOpen(false);
-              res.setJudulPenelitian('');
-              res.setDanaDisetujui('');
-              res.setSkema('');
-              res.setFokus('');
-              res.setFile(null);
-              await res.loadResearchList();
-            } else {
-              res.showMessage(data.message || 'Gagal menambahkan penelitian.', 'error');
-            }
-          } catch (err) {
-            res.showMessage('Terjadi kesalahan koneksi.', 'error');
-          } finally {
-            res.setLoading(false);
-          }
-        }}
+        uploadProgress={res.uploadProgress}
       />
 
       {res.editDoc && (
@@ -164,27 +128,23 @@ export default function Research({ user }: { user: UserSession }) {
             res.setEditDoc(null);
           }}
           editDoc={res.editDoc}
-          editJudul={res.editDoc.judul_penelitian}
-          setEditJudul={() => {}}
-          editDana={String(res.editDoc.dana_disetujui)}
-          setEditDana={() => {}}
-          editProgram={res.editDoc.program}
-          setEditProgram={() => {}}
-          editSkema={res.editDoc.skema || ''}
-          setEditSkema={() => {}}
-          editFokus={res.editDoc.fokus || ''}
-          setEditFokus={() => {}}
-          editTahun={new Date(Number(res.editDoc.tahun), 0, 1)}
-          setEditTahun={() => {}}
-          editFile={null}
-          setEditFile={() => {}}
-          isEditLoading={false}
-          onSubmit={async (e) => {
-            e.preventDefault();
-            res.setIsEditModalOpen(false);
-            res.setEditDoc(null);
-            await res.loadResearchList();
-          }}
+          editJudul={res.editJudul}
+          setEditJudul={res.setEditJudul}
+          editDana={res.editDana}
+          setEditDana={res.setEditDana}
+          editProgram={res.editProgram}
+          setEditProgram={res.setEditProgram}
+          editSkema={res.editSkema}
+          setEditSkema={res.setEditSkema}
+          editFokus={res.editFokus}
+          setEditFokus={res.setEditFokus}
+          editTahun={res.editTahun}
+          setEditTahun={res.setEditTahun}
+          editFile={res.editFile}
+          setEditFile={res.setEditFile}
+          isEditLoading={res.isEditLoading}
+          onSubmit={res.handleUpdate}
+          uploadProgress={res.editUploadProgress}
         />
       )}
 
@@ -222,9 +182,22 @@ export default function Research({ user }: { user: UserSession }) {
           catatan={res.activeDetailDoc.catatan}
           year={res.activeDetailDoc.tahun}
           points={res.activeDetailDoc.awarded_points || 0}
-          isKpiCounted={res.activeDetailDoc.is_kpi_counted}
+          isKpiCounted={true}
+          hideKpiClassification={true}
+          customMetadata={
+            <div>
+              <p className="text-[9px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest leading-none mb-1.5">
+                Dana Disetujui
+              </p>
+              <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-800 dark:text-zinc-200">
+                Rp {Number(res.activeDetailDoc.dana_disetujui || 0).toLocaleString('id-ID')}
+              </div>
+            </div>
+          }
+          showResearchLink={false}
           fileUrl={res.activeDetailDoc.file_url}
           docId={res.activeDetailDoc.id}
+          uploadingPdfId={res.uploadingPdfId}
           onPreviewClick={() => {
             if (res.activeDetailDoc?.file_url) {
               res.setPreviewDoc({
