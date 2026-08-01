@@ -118,6 +118,7 @@ export default function Research({ user }: { user: UserSession }) {
         file={res.file}
         setFile={res.setFile}
         loading={res.loading}
+        onErrorMsg={(msg) => res.showMessage(msg, 'error')}
         onSubmit={async (e) => {
           e.preventDefault();
           res.setLoading(true);
@@ -178,7 +179,7 @@ export default function Research({ user }: { user: UserSession }) {
           editFile={null}
           setEditFile={() => {}}
           isEditLoading={false}
-          onEditSubmit={async (e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             res.setIsEditModalOpen(false);
             res.setEditDoc(null);
