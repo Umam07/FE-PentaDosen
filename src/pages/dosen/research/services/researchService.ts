@@ -4,11 +4,12 @@ import { uploadWithProgress } from '../../../../lib/utils';
 /**
  * Mengambil daftar penelitian hibah milik dosen
  */
-export async function fetchUserResearch(userId: string | number): Promise<ResearchItem[]> {
-  const res = await fetch(`/api/penelitian?user_id=${userId}`);
+export async function fetchUserResearch(userId: string | number, role?: string): Promise<ResearchItem[]> {
+  const roleQuery = role ? `&role=${role}` : '';
+  const res = await fetch(`/api/penelitian?user_id=${userId}${roleQuery}`);
   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   const data = await res.json();
-  return data.data || [];
+  return data.penelitian || data.data || [];
 }
 
 /**

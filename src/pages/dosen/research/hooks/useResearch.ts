@@ -11,6 +11,14 @@ import {
 import { generateResearchExcelTemplate } from '../utils/researchUtils';
 import { formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 
+const parseYear = (raw: any): number | null => {
+  if (!raw) return null;
+  const str = String(raw);
+  if (str.length === 4 && !isNaN(Number(str))) return parseInt(str, 10);
+  const parsed = new Date(str).getFullYear();
+  return isNaN(parsed) ? null : parsed;
+};
+
 export function useResearch(user: UserSession) {
   const location = useLocation();
   const urlKategori = useMemo(() => {
@@ -98,12 +106,12 @@ export function useResearch(user: UserSession) {
   const loadResearchList = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const data = await fetchUserResearch(user.id);
+      const data = await fetchUserResearch(user.id, user.role);
       setResearchList(data);
     } catch (err) {
       console.error('Error fetching research list:', err);
     }
-  }, [user?.id]);
+  }, [user?.id, user?.role]);
 
   useEffect(() => {
     const initData = async () => {
@@ -137,7 +145,7 @@ export function useResearch(user: UserSession) {
 
     if (filterYear) {
       result = result.filter((r) => {
-        const y = Number(r.tahun);
+        const y = parseYear(r.tahun);
         return y === filterYear;
       });
     }
@@ -148,8 +156,8 @@ export function useResearch(user: UserSession) {
   const availableYears = useMemo(() => {
     const yearsSet = new Set<number>();
     researchList.forEach((r) => {
-      const y = Number(r.tahun);
-      if (!isNaN(y) && y > 1900 && y <= 2100) {
+      const y = parseYear(r.tahun);
+      if (y && y > 1900 && y <= 2100) {
         yearsSet.add(y);
       }
     });
