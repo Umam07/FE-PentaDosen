@@ -151,14 +151,11 @@ export default function Publication({ user }: { user: UserSession }) {
         }}
         setDeleteDoc={(doc) => {
           pub.setDeleteDoc(doc);
-          pub.setIsDeleteModalOpen(true);
         }}
-        openLinkingModal={(doc) => {
-          pub.setDocToLink(doc);
-          pub.setIsLinkingModalOpen(true);
-        }}
-        fetchDocuments={pub.loadDocuments}
-        onShowMessage={pub.showMessage}
+        setIsDeleteModalOpen={pub.setIsDeleteModalOpen}
+        availableYears={pub.availableYears}
+        filterYear={pub.filterYear}
+        onYearChange={pub.setFilterYear}
       />
 
       {/* Modals */}
