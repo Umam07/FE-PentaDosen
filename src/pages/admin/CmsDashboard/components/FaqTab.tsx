@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus, Edit, Trash2, X, FileText, Eye } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Edit, Trash2, X, FileText, Eye, Search, FileQuestion, HelpCircle, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PdfPreviewModal } from '../../../../components/ui/pdf-preview-modal';
 import { useFaqTab } from '../hooks/useFaqTab';
@@ -11,6 +11,7 @@ interface FaqTabProps {
 
 /**
  * Tab Manajemen Tanya Jawab / Panduan PDF.
+ * Disesuaikan tampilan dan aksinya secara tepat dengan halaman FaqHelpPage Dosen.
  */
 export default function FaqTab({ triggerMessage }: FaqTabProps) {
   const {
@@ -42,121 +43,239 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
     fetchFaqs
   } = useFaqTab(triggerMessage);
 
-  const getCategoryBadgeClass = (cat: string) => {
-    const c = (cat || '').toLowerCase();
-    if (c.includes('publikasi') || c.includes('scholar') || c.includes('scopus')) {
-      return 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800';
-    }
-    if (c.includes('buku')) {
-      return 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
-    }
-    if (c.includes('hki')) {
-      return 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800';
-    }
-    if (c.includes('penelitian')) {
-      return 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
-    }
-    if (c.includes('kpi')) {
-      return 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
-    }
-    return 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-200 dark:border-zinc-700';
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedFaqId, setExpandedFaqId] = useState<number | null>(null);
+
+  const toggleExpandFaq = (id: number) => {
+    setExpandedFaqId(prev => (prev === id ? null : id));
   };
+
+  const filteredFaqs = faqs.filter(f => {
+    const query = searchQuery.toLowerCase().trim();
+    return (
+      query === '' ||
+      f.question.toLowerCase().includes(query) ||
+      f.answer.toLowerCase().includes(query) ||
+      (f.category && f.category.toLowerCase().includes(query))
+    );
+  });
 
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Daftar Tanya Jawab / Panduan</p>
-          <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 mt-0.5">Kelola kategori dan isi panduan untuk dosen</p>
+          <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 mt-0.5">Kelola isi dan file panduan untuk dosen</p>
         </div>
         <button
           onClick={handleOpenCreate}
-          className="inline-flex items-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all active:scale-95 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           Tambah Panduan / FAQ
         </button>
       </div>
 
-      {/* Grid of FAQs */}
-      <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-sm">
-        <table className="min-w-full divide-y divide-gray-150 dark:divide-zinc-800 text-sm">
-          <thead className="bg-gray-50/50 dark:bg-zinc-800/30">
-            <tr>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest w-20">Urutan</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest w-40">Kategori</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Pertanyaan / Topik</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Jawaban / Panduan</th>
-              <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest w-28">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50 dark:divide-zinc-800 text-gray-700 dark:text-zinc-300">
-            {loading ? (
-              [1, 2, 3].map(i => <tr key={i} className="animate-pulse"><td colSpan={5} className="px-6 py-5 bg-gray-50/10 h-16" /></tr>)
-            ) : faqs.length > 0 ? (
-              faqs.map((f) => (
-                <tr key={f.id} className="hover:bg-primary-50/10 transition-colors">
-                  <td className="px-6 py-4 text-xs font-black text-center text-gray-500">{f.order_index ?? 0}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${getCategoryBadgeClass(f.category)}`}>
-                      {f.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 font-extrabold text-gray-900 dark:text-zinc-100 tracking-tight text-xs">{f.question}</td>
-                  <td className="px-6 py-4 text-xs font-bold text-gray-500 max-w-sm truncate">
-                    <div className="flex items-center gap-2">
-                      {f.file_url && (
-                        <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-950/30 rounded text-[9px] font-black tracking-widest uppercase">
-                          <FileText className="w-2.5 h-2.5" />
-                          PDF
-                        </span>
-                      )}
-                      <span className="truncate">{f.answer}</span>
+      {/* Search Bar matching FaqSearchInput design */}
+      <div className="relative group">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-400 transition-colors" />
+        <input
+          type="text"
+          placeholder="Cari panduan, kata kunci, atau topik..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-11 pr-10 py-3 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 hover:border-slate-400 dark:hover:border-zinc-600 rounded-xl text-sm font-medium outline-none focus:border-primary-500 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:focus:ring-primary-500/20 transition-all text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-2xs"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors cursor-pointer"
+            title="Bersihkan pencarian"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+
+      {/* Main Accordion Card List Container matching FaqAccordionList */}
+      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xs">
+        {/* Container Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-zinc-800">
+          <div className="flex items-center gap-2.5">
+            <FileQuestion className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Manual Book &amp; Panduan Penggunaan</h3>
+          </div>
+          <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-800 px-2.5 py-1 rounded-md">
+            {filteredFaqs.length} Panduan
+          </span>
+        </div>
+
+        <div className="p-4 sm:p-5 space-y-2.5">
+          {loading ? (
+            <div className="block space-y-2.5 animate-pulse">
+              {[1, 2, 3].map(i => (
+                <div
+                  key={i}
+                  className="h-16 w-full bg-slate-50 dark:bg-zinc-800/40 rounded-xl flex items-center px-5 justify-between"
+                >
+                  <div className="flex items-center gap-3 w-2/3">
+                    <div className="h-9 w-9 rounded-lg bg-slate-200 dark:bg-zinc-700" />
+                    <div className="h-3.5 bg-slate-200 dark:bg-zinc-700 rounded w-4/5" />
+                  </div>
+                  <div className="h-4 w-4 bg-slate-200 dark:bg-zinc-700 rounded-full" />
+                </div>
+              ))}
+            </div>
+          ) : filteredFaqs.length > 0 ? (
+            filteredFaqs.map((f) => {
+              const isExpanded = expandedFaqId === f.id;
+
+              return (
+                <div
+                  key={f.id}
+                  className={`rounded-xl border overflow-hidden transition-all ${
+                    isExpanded
+                      ? 'border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-2xs'
+                      : 'border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-800/20 hover:border-slate-300 dark:hover:border-zinc-700'
+                  }`}
+                >
+                  {/* Card Header & Controls */}
+                  <div className="w-full px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    {/* Left: Icon & Question */}
+                    <div
+                      onClick={() => toggleExpandFaq(f.id)}
+                      className="flex items-center gap-3.5 min-w-0 flex-1 cursor-pointer select-none group"
+                    >
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-950/30 dark:text-primary-400">
+                        <HelpCircle className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1 space-y-0.5">
+                        <h4 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                          {f.question}
+                        </h4>
+                      </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-1">
+
+                    {/* Right: Admin Action Buttons & Expand Arrow */}
+                    <div className="flex items-center justify-end gap-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-zinc-800">
                       {f.file_url && (
                         <button
-                          onClick={() => setPreviewDoc({
-                            fileUrl: f.file_url!,
-                            title: f.question,
-                            category: f.category
-                          })}
-                          className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPreviewDoc({
+                              fileUrl: f.file_url!,
+                              title: f.question,
+                              category: f.category
+                            });
+                          }}
+                          className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
                           title="Preview PDF"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                       )}
                       <button
-                        onClick={() => handleOpenEdit(f)}
-                        className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEdit(f);
+                        }}
+                        className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
                         title="Edit Panduan"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => setDeleteFaq(f)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteFaq(f);
+                        }}
+                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800 rounded-lg transition-all cursor-pointer"
                         title="Hapus Panduan"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
+                      <button
+                        onClick={() => toggleExpandFaq(f.id)}
+                        className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                        title={isExpanded ? 'Sembunyikan detail' : 'Tampilkan detail'}
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-slate-900 dark:text-white' : ''}`} />
+                      </button>
                     </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-400 font-bold italic uppercase text-xs tracking-widest">
-                  Belum ada tanya jawab / panduan penggunaan.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                  </div>
+
+                  {/* Accordion Expand Body */}
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                      >
+                        <div className="px-5 pb-5 pt-1 border-t border-slate-100 dark:border-zinc-800/50 text-xs sm:text-sm font-medium text-slate-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
+                          <p className="pl-[52px]">{f.answer}</p>
+                          {f.file_url && (
+                            <div className="mt-4 pl-[52px]">
+                              <button
+                                onClick={() => setPreviewDoc({
+                                  fileUrl: f.file_url!,
+                                  title: f.question,
+                                  category: f.category
+                                })}
+                                className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-900 dark:text-zinc-100 border border-slate-200 dark:border-zinc-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                              >
+                                <FileText className="w-3.5 h-3.5 text-slate-500 dark:text-zinc-400" />
+                                <span>Lihat Panduan PDF</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })
+          ) : searchQuery ? (
+            <div className="py-14 px-4 text-center">
+              <div className="w-12 h-12 bg-slate-100 dark:bg-zinc-800 rounded-xl flex items-center justify-center mx-auto mb-3.5 border border-slate-200 dark:border-zinc-700">
+                <HelpCircle className="w-6 h-6 text-slate-400 dark:text-zinc-500" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-zinc-200 mb-1">Panduan Tidak Ditemukan</h3>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed mb-4">
+                Tidak ada panduan yang cocok dengan pencarian &quot;{searchQuery}&quot;.
+              </p>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Bersihkan Pencarian</span>
+              </button>
+            </div>
+          ) : (
+            <div className="py-14 px-4 text-center">
+              <div className="w-12 h-12 bg-slate-100 dark:bg-zinc-800/80 rounded-xl flex items-center justify-center mx-auto mb-3.5 border border-slate-200 dark:border-zinc-700">
+                <FileQuestion className="w-6 h-6 text-slate-400 dark:text-zinc-500" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-zinc-200 mb-1">
+                Belum Ada Panduan
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed mb-4">
+                Klik tombol &quot;Tambah Panduan / FAQ&quot; di atas untuk membuat panduan pertama.
+              </p>
+              <button
+                onClick={handleOpenCreate}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah Panduan Baru</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Editor Modal Popup */}
@@ -189,33 +308,15 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
               </div>
 
               <form onSubmit={handleSave} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Kategori Panduan</label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
-                    >
-                      <option value="Umum">Umum (Pertanyaan &amp; Akun)</option>
-                      <option value="Publikasi">Publikasi (Google Scholar, Scopus, SINTA)</option>
-                      <option value="Buku">Buku &amp; Monograf</option>
-                      <option value="HKI">HKI &amp; Paten</option>
-                      <option value="Penelitian">Penelitian &amp; Pengabdian</option>
-                      <option value="Upload KPI">Upload KPI &amp; Kinerja Dosen</option>
-                    </select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Urutan Tampil (Order)</label>
-                    <input
-                      type="number"
-                      required
-                      value={orderIndex}
-                      onChange={(e) => setOrderIndex(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Urutan Tampil (Order)</label>
+                  <input
+                    type="number"
+                    required
+                    value={orderIndex}
+                    onChange={(e) => setOrderIndex(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold outline-none text-sm text-gray-900 dark:text-zinc-100"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -251,7 +352,7 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                       <button
                         type="button"
                         onClick={() => setRemoveFile(true)}
-                        className="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-wider"
+                        className="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-wider cursor-pointer"
                       >
                         Hapus Berkas
                       </button>
@@ -261,7 +362,7 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
                       type="file"
                       accept=".pdf"
                       onChange={handleFileChange}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-medium text-xs text-gray-700 dark:text-zinc-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:bg-primary-50 file:text-primary-600"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl font-medium text-xs text-gray-700 dark:text-zinc-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:bg-primary-50 file:text-primary-600 cursor-pointer"
                     />
                   )}
                 </div>
