@@ -50,15 +50,20 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
       console.warn('Backend unavailable for admin tickets, using local fallback:', e);
     }
 
-    // Merge with local storage tickets for offline/dev sync
+    // Merge with local storage tickets for offline/dev sync and deduplicate
     try {
       const rawAll = localStorage.getItem('penta_support_tickets_all');
       if (rawAll) {
         const localAll: any[] = JSON.parse(rawAll);
-        const map = new Map<number, any>();
-        loadedTickets.forEach(t => map.set(t.id, t));
-        localAll.forEach(t => {
-          if (!map.has(t.id)) map.set(t.id, t);
+        const map = new Map<string, any>();
+        [...localAll, ...loadedTickets].forEach(t => {
+          const key = `${t.user_id}_${(t.subject || '').trim()}_${(t.message || '').trim()}`;
+          const existing = map.get(key);
+          if (!existing) {
+            map.set(key, t);
+          } else if (t.id < 1000000000000 && existing.id >= 1000000000000) {
+            map.set(key, t);
+          }
         });
         loadedTickets = Array.from(map.values());
       }

@@ -28,10 +28,42 @@ export function saveLocalTicket(ticket: SupportTicketItem) {
     } else {
       all.unshift(ticket);
     }
-    localStorage.setItem(STORAGE_ALL_KEY, JSON.stringify(all));
+    localStorage.setItem(STORAGE_ALL_KEY, JSON.stringify(deduplicateTickets(all)));
   } catch {
     // Silent catch
   }
+}
+
+export function removeLocalTicket(id: number) {
+  try {
+    const rawAll = localStorage.getItem(STORAGE_ALL_KEY);
+    if (!rawAll) return;
+    const all: SupportTicketItem[] = JSON.parse(rawAll);
+    const filtered = all.filter(t => t.id !== id);
+    localStorage.setItem(STORAGE_ALL_KEY, JSON.stringify(filtered));
+  } catch {
+    // Silent catch
+  }
+}
+
+function deduplicateTickets(tickets: SupportTicketItem[]): SupportTicketItem[] {
+  const map = new Map<string, SupportTicketItem>();
+
+  for (const t of tickets) {
+    const key = `${t.user_id}_${(t.subject || '').trim()}_${(t.message || '').trim()}`;
+    const existing = map.get(key);
+
+    if (!existing) {
+      map.set(key, t);
+    } else {
+      // Prioritize real database ID (< 1000000000000) over temporary timestamp ID
+      if (t.id < 1000000000000 && existing.id >= 1000000000000) {
+        map.set(key, t);
+      }
+    }
+  }
+
+  return Array.from(map.values());
 }
 
 /**
@@ -70,7 +102,7 @@ export async function fetchFaqsAndAnnouncements(): Promise<{ faqs: FaqItem[]; an
 }
 
 /**
- * Mengambil tiket dukungan milik dosen tertentu (selalu menggabungkan server + local storage fallback)
+ * Mengambil tiket dukungan milik dosen tertentu (tanpa duplikasi)
  */
 export async function fetchUserSupportTickets(userId: number): Promise<SupportTicketItem[]> {
   let serverTickets: SupportTicketItem[] = [];
@@ -88,26 +120,23 @@ export async function fetchUserSupportTickets(userId: number): Promise<SupportTi
     console.warn('Backend unavailable, using local tickets:', e);
   }
 
-  // Merge server tickets and local storage tickets so no ticket is ever hidden
   const localTickets = getLocalTickets(userId);
   const ticketMap = new Map<number, SupportTicketItem>();
 
-  // Add local tickets first
   localTickets.forEach(t => ticketMap.set(t.id, t));
-  // Add/override with server tickets
   serverTickets.forEach(t => {
     ticketMap.set(t.id, t);
     saveLocalTicket(t);
   });
 
-  const merged = Array.from(ticketMap.values());
+  const merged = deduplicateTickets(Array.from(ticketMap.values()));
   merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return merged;
 }
 
 /**
- * Mengirimkan tiket dukungan / pesan baru ke admin
+ * Mengirimkan tiket dukungan / pesan baru ke admin (menghapus tempTicket bila server sukses)
  */
 export async function createSupportTicket(formData: FormData): Promise<{ ok: boolean; data: any }> {
   const userId = Number(formData.get('user_id') || 1);
@@ -120,9 +149,9 @@ export async function createSupportTicket(formData: FormData): Promise<{ ok: boo
     imageUrl = URL.createObjectURL(imageFile);
   }
 
-  const newTicketId = Date.now();
+  const tempTicketId = Date.now();
   const initialMsg: TicketMessage = {
-    id: `msg_${newTicketId}_1`,
+    id: `msg_${tempTicketId}_1`,
     sender: 'user',
     sender_id: userId,
     sender_name: 'Dosen',
@@ -132,8 +161,8 @@ export async function createSupportTicket(formData: FormData): Promise<{ ok: boo
     created_at: new Date().toISOString()
   };
 
-  const localTicket: SupportTicketItem = {
-    id: newTicketId,
+  const tempTicket: SupportTicketItem = {
+    id: tempTicketId,
     user_id: userId,
     subject: subject || 'Tanpa Subjek',
     message: message,
@@ -143,8 +172,8 @@ export async function createSupportTicket(formData: FormData): Promise<{ ok: boo
     created_at: new Date().toISOString()
   };
 
-  // Always save local copy immediately so it appears on screen without delay
-  saveLocalTicket(localTicket);
+  // Simpan sementara agar langsung terlihat di UI
+  saveLocalTicket(tempTicket);
 
   try {
     const res = await fetch('/api/support-tickets', {
@@ -156,9 +185,11 @@ export async function createSupportTicket(formData: FormData): Promise<{ ok: boo
     if (res.ok && contentType && contentType.includes('application/json')) {
       const data = await res.json();
       if (data.ticket) {
+        // Hapus tempTicket dan simpan tiket resmi dari server
+        removeLocalTicket(tempTicketId);
         saveLocalTicket(data.ticket);
+        return { ok: true, data };
       }
-      return { ok: true, data };
     }
   } catch (e) {
     console.warn('Backend connection failed when creating ticket, using local state:', e);
@@ -168,7 +199,7 @@ export async function createSupportTicket(formData: FormData): Promise<{ ok: boo
     ok: true,
     data: {
       message: 'Pesan Anda berhasil dikirim ke admin.',
-      ticket: localTicket
+      ticket: tempTicket
     }
   };
 }
@@ -187,7 +218,6 @@ export async function sendTicketReply(ticketId: number, formData: FormData): Pro
     imageUrl = URL.createObjectURL(imageFile);
   }
 
-  // Update local copy immediately
   const localTickets = getLocalTickets();
   const targetIndex = localTickets.findIndex(t => t.id === ticketId);
   let updatedTicket: SupportTicketItem | null = null;
