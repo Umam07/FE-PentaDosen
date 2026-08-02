@@ -15,6 +15,7 @@ export interface DropdownSelectProps<T extends string | number = string | number
   className?: string;
   size?: "sm" | "md";
   position?: "top" | "bottom";
+  disabled?: boolean;
 }
 
 export function DropdownSelect<T extends string | number = string | number>({
@@ -24,7 +25,8 @@ export function DropdownSelect<T extends string | number = string | number>({
   icon,
   className = "",
   size = "md",
-  position = "bottom"
+  position = "bottom",
+  disabled = false
 }: DropdownSelectProps<T>) {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -42,8 +44,12 @@ export function DropdownSelect<T extends string | number = string | number>({
   const selectedOption = options.find((opt) => opt.value === value) || options[0];
 
   const buttonClasses = size === "sm"
-    ? "w-full flex items-center justify-between px-3 py-1.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-[10px] font-extrabold uppercase tracking-wider focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm cursor-pointer"
-    : "w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm cursor-pointer";
+    ? `w-full flex items-center justify-between px-3 py-1.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
+        disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
+      }`
+    : `w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
+        disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
+      }`;
 
   const optionClasses = size === "sm"
     ? "w-full text-left px-3.5 py-2 text-[9px] font-extrabold uppercase tracking-wider transition-all duration-150 flex items-center justify-between cursor-pointer"
@@ -53,7 +59,8 @@ export function DropdownSelect<T extends string | number = string | number>({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        disabled={disabled}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
         className={buttonClasses}
       >
         <div className="flex items-center gap-2">
