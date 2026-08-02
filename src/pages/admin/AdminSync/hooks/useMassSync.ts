@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SyncState, SyncLog, SyncStats, Lecturer, SessionUser } from '../types/adminSync.types';
+import { toast } from '@/components/ui/toast';
 import { fetchWithRetry, logMassSyncActivity, fetchLecturers } from '../services/adminSyncService';
 import { calculateProgress, calculateETA } from '../utils/adminSyncUtils';
 
@@ -200,6 +201,7 @@ export function useMassSync({ user, lecturers, setLecturers }: UseMassSyncParams
     const text = syncLogs.map(l => `[${l.time}] [${l.type.toUpperCase()}] ${l.msg}`).join('\n');
     navigator.clipboard.writeText(text);
     setCopied(true);
+    toast.success('Log sinkronisasi berhasil disalin ke clipboard!', 'Salin Log');
     setTimeout(() => setCopied(false), 2000);
   }, [syncLogs]);
 

@@ -20,20 +20,20 @@ interface CmsDashboardProps {
 }
 
 /**
- * Main Orchestrator untuk Halaman CMS Dashboard Admin.
- * Mengelola navigasi tab utama dan notifikasi global.
+ * CMS Dashboard Root Component
  */
 export default function CmsDashboard({ user }: CmsDashboardProps) {
   const [activeTab, setActiveTab] = useState<'users' | 'kpi' | 'announcements' | 'faq' | 'templates' | 'support'>('users');
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [pendingTicketCount, setPendingTicketCount] = useState<number>(0);
 
-  // Trigger pesan notifikasi temporer (hilang setelah 4 detik)
+  // Trigger pesan notifikasi via toast
   const triggerMessage = (text: string, type: 'success' | 'error' = 'success') => {
-    setMessage(text);
-    setMessageType(type);
-    setTimeout(() => setMessage(''), 4000);
+    toast.show({
+      title: type === 'success' ? 'Sukses' : 'Gagal',
+      message: text,
+      variant: type === 'success' ? 'success' : 'error',
+      position: 'bottom-right',
+    });
   };
 
   // Fetch pending ticket count untuk badge tab
@@ -72,25 +72,6 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
           </div>
         </div>
       </motion.div>
-
-      {/* Global Alerts */}
-      <AnimatePresence>
-        {message && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className={`p-4 rounded-2xl flex items-center gap-3 border ${
-              messageType === 'success' 
-                ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30' 
-                : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/30'
-            }`}
-          >
-            {messageType === 'success' ? <CheckCircle className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
-            <span className="text-xs font-black uppercase tracking-wider">{message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Navigation Tabs */}
       <div className="bg-white dark:bg-zinc-900/80 backdrop-blur-md p-2 rounded-[2rem] border border-gray-100 dark:border-zinc-800/80 shadow-sm flex flex-wrap gap-1.5">

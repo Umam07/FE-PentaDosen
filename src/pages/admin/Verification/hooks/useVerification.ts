@@ -14,6 +14,7 @@ import {
   fetchPendingResearch, 
   verifyItem 
 } from '../services/verificationService';
+import { toast } from '@/components/ui/toast';
 
 export function useVerification(user: SessionUser) {
   const [searchParams] = useSearchParams();
@@ -170,14 +171,21 @@ export function useVerification(user: SessionUser) {
       const success = await verifyItem(docId, type, status, user.role, user.id, catatan);
       
       if (success) {
+        toast.success(
+          status === 'Approved' ? 'Dokumen berhasil disetujui!' : 'Dokumen telah ditolak.',
+          'Verifikasi Dokumen'
+        );
         if (activeTab === 'penelitian') {
           await getResearch();
         } else {
           await getDocuments();
         }
+      } else {
+        toast.error('Gagal memverifikasi dokumen.', 'Verifikasi Dokumen');
       }
     } catch (err) {
       console.error('Gagal memverifikasi dokumen:', err);
+      toast.error('Terjadi kesalahan saat memverifikasi dokumen.', 'Verifikasi Dokumen');
     } finally {
       setActionLoading(null);
     }

@@ -1,6 +1,4 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
 import type { UserSession } from './types/faqHelp.types';
 import { useFaqHelp } from './hooks/useFaqHelp';
 import FaqHelpHeader from './components/FaqHelpHeader';
@@ -12,31 +10,28 @@ import CreateTicketModal from './components/CreateTicketModal';
 import ImagePreviewModal from './components/ImagePreviewModal';
 import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
 import AnnouncementsBanner from '../../../components/ui/AnnouncementsBanner';
+import Toaster, { ToasterRef } from '@/components/ui/toast';
 
 export default function FaqHelp({ user }: { user: UserSession }) {
   const faqState = useFaqHelp(user);
+  const toasterRef = useRef<ToasterRef>(null);
+
+  useEffect(() => {
+    if (faqState.toast.message) {
+      toasterRef.current?.show({
+        title: faqState.toast.type === 'success' ? 'Sukses' : 'Gagal',
+        message: faqState.toast.message,
+        variant: faqState.toast.type === 'success' ? 'success' : 'error',
+        position: 'bottom-right',
+      });
+    }
+  }, [faqState.toast]);
 
   return (
     <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-6 pb-20">
 
       {/* Toast Notification */}
-      <AnimatePresence>
-        {faqState.toast.message && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-5 right-5 z-[999] p-4 rounded-xl shadow-lg border flex items-center gap-3 text-xs font-bold ${
-              faqState.toast.type === 'success'
-                ? 'bg-emerald-50 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800'
-                : 'bg-red-50 dark:bg-red-950/90 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800'
-            }`}
-          >
-            {faqState.toast.type === 'success' ? <CheckCircle className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-red-600" />}
-            <span>{faqState.toast.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toaster ref={toasterRef} defaultPosition="bottom-right" />
 
       {/* Header Halaman */}
       <FaqHelpHeader />

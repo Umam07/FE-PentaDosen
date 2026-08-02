@@ -1,8 +1,7 @@
-import React from 'react';
-import { CheckCircle, XCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect } from 'react';
 import type { UserSession } from './types/research.types';
 import { useResearch } from './hooks/useResearch';
+import { toast } from '@/components/ui/toast';
 
 import ResearchHeader from './components/ResearchHeader';
 import ResearchStats from './components/ResearchStats';
@@ -19,6 +18,16 @@ import { DocumentDetailDrawer } from '../../../components/ui/document-detail-dra
 export default function Research({ user }: { user: UserSession }) {
   const res = useResearch(user);
 
+  useEffect(() => {
+    if (res.message) {
+      toast.show({
+        title: res.messageType === 'success' ? 'Sukses' : 'Gagal',
+        message: res.message,
+        variant: res.messageType === 'success' ? 'success' : 'error',
+      });
+    }
+  }, [res.message, res.messageType]);
+
   const totalPages = Math.ceil(res.filteredResearchList.length / res.itemsPerPage) || 1;
   const indexOfLastItem = res.currentPage * res.itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - res.itemsPerPage;
@@ -26,29 +35,6 @@ export default function Research({ user }: { user: UserSession }) {
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {res.message && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-5 right-5 z-[999] p-4 rounded-xl shadow-lg border flex items-center gap-3 text-xs font-bold ${
-              res.messageType === 'success'
-                ? 'bg-emerald-50 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800'
-                : 'bg-red-50 dark:bg-red-950/90 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800'
-            }`}
-          >
-            {res.messageType === 'success' ? (
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
-            ) : (
-              <XCircle className="w-4 h-4 text-red-600" />
-            )}
-            <span>{res.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Header Halaman */}
       <ResearchHeader
         onOpenMetricsModal={() => res.setIsMetricsModalOpen(true)}

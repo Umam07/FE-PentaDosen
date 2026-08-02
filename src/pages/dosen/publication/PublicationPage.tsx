@@ -1,8 +1,7 @@
-import React from 'react';
-import { CheckCircle, XCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect } from 'react';
 import type { UserSession } from './types/publication.types';
 import { usePublication } from './hooks/usePublication';
+import { toast } from '@/components/ui/toast';
 
 import PublicationHeader from './components/PublicationHeader';
 import PublicationStats from './components/PublicationStats';
@@ -51,30 +50,18 @@ export default function Publication({ user }: { user: UserSession }) {
     await handleBulkSaveCorrespondence(selections);
   };
 
+  useEffect(() => {
+    if (pub.message) {
+      toast.show({
+        title: pub.messageType === 'success' ? 'Sukses' : 'Gagal',
+        message: pub.message,
+        variant: pub.messageType === 'success' ? 'success' : 'error',
+      });
+    }
+  }, [pub.message, pub.messageType]);
+
   return (
     <div className="space-y-8 pb-12">
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {pub.message && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-5 right-5 z-[999] p-4 rounded-xl shadow-lg border flex items-center gap-3 text-xs font-bold ${
-              pub.messageType === 'success'
-                ? 'bg-emerald-50 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800'
-                : 'bg-red-50 dark:bg-red-950/90 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800'
-            }`}
-          >
-            {pub.messageType === 'success' ? (
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
-            ) : (
-              <XCircle className="w-4 h-4 text-red-600" />
-            )}
-            <span>{pub.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Header Halaman */}
       <PublicationHeader

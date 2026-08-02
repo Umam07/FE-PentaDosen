@@ -9,6 +9,7 @@ import { LogOut, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { OnboardingDialog } from './components/ui/onboarding-dialog';
+import Toaster from './components/ui/toast';
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
@@ -336,13 +337,6 @@ export default function App() {
                 </p>
                 
                 <div className="space-y-4">
-                  <button
-                    onClick={() => setIsRateLimited(false)}
-                    className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-200 dark:shadow-blue-900/20 transition-all flex items-center justify-center group"
-                  >
-                    Mengerti & Tutup
-                  </button>
-                  
                   <p className="text-[10px] text-gray-400 dark:text-zinc-500 text-center font-black uppercase tracking-[0.2em]">
                     PentaDosen Security Protocol
                   </p>
@@ -352,6 +346,9 @@ export default function App() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Global Toast Notification System */}
+      <Toaster defaultPosition="bottom-right" />
     </Router>
   );
 }
