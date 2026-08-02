@@ -81,9 +81,12 @@ export default function FaqHelp({ user }: { user: UserSession }) {
             loadingTickets={faqState.loadingTickets}
             myTickets={faqState.myTickets}
             expandedTicketId={faqState.expandedTicketId}
+            user={user}
             onToggleTicketExpand={faqState.toggleTicketExpand}
             onOpenCreateModal={() => faqState.setIsTicketModalOpen(true)}
             onZoomImage={faqState.setFullViewImageUrl}
+            onRefreshTickets={faqState.loadMyTickets}
+            showToast={faqState.showToast}
           />
         )}
       </div>

@@ -67,12 +67,24 @@ export interface TemplatesResponse {
   templates: Template[];
 }
 
+export interface TicketMessage {
+  id: string;
+  sender: 'user' | 'admin';
+  sender_id?: number;
+  sender_name?: string;
+  sender_role?: string;
+  message: string;
+  image_url?: string;
+  created_at: string;
+}
+
 export interface SupportTicket {
   id: number;
   user_id: number;
   subject: string | null;
   message: string;
   image_url?: string | null;
+  messages?: TicketMessage[];
   status: 'menunggu' | 'dibalas' | 'selesai';
   admin_reply: string | null;
   replied_by: number | null;

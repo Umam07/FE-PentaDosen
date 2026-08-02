@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Inbox, Plus, ChevronDown, Clock, MessageSquare, CheckCircle2,
-  Image as ImageIcon, ExternalLink, Maximize2
+  Image as ImageIcon, Maximize2, Send, Paperclip, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { MyTicketsListProps } from '../types/faqHelp.types';
+import type { MyTicketsListProps, TicketMessage } from '../types/faqHelp.types';
+import { sendTicketReply } from '../services/faqHelpService';
 
 export default function MyTicketsList({
   loadingTickets,
   myTickets,
   expandedTicketId,
+  user,
   onToggleTicketExpand,
   onOpenCreateModal,
   onZoomImage,
+  onRefreshTickets,
+  showToast,
 }: MyTicketsListProps) {
+  // State lokal untuk balasan pesan lanjutan oleh dosen
+  const [replyText, setReplyText] = useState('');
+  const [replyImageFile, setReplyImageFile] = useState<File | null>(null);
+  const [replyImagePreview, setReplyImagePreview] = useState<string | null>(null);
+  const [submittingReply, setSubmittingReply] = useState(false);
+
   const getTicketStatusBadge = (status: string) => {
     const s = (status || '').toLowerCase().trim();
     switch (s) {
@@ -22,7 +32,7 @@ export default function MyTicketsList({
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-500/20">
             <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-            Menunggu
+            Menunggu Balasan Admin
           </span>
         );
       case 'dibalas':
@@ -47,6 +57,79 @@ export default function MyTicketsList({
     }
   };
 
+  const handleReplyImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      if (showToast) showToast('File terlampir harus berupa gambar.', 'error');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      if (showToast) showToast('Ukuran gambar tidak boleh melebihi 10 MB.', 'error');
+      return;
+    }
+
+    setReplyImageFile(file);
+    setReplyImagePreview(URL.createObjectURL(file));
+  };
+
+  const removeReplyImage = () => {
+    setReplyImageFile(null);
+    if (replyImagePreview) {
+      URL.revokeObjectURL(replyImagePreview);
+      setReplyImagePreview(null);
+    }
+  };
+
+  const handleSendFollowUpReply = async (e: React.FormEvent, ticketId: number) => {
+    e.preventDefault();
+    if (!replyText.trim()) {
+      if (showToast) showToast('Pesan balasan tidak boleh kosong.', 'error');
+      return;
+    }
+
+    setSubmittingReply(true);
+    try {
+      const formData = new FormData();
+      formData.append('sender', 'user');
+      formData.append('sender_id', String(user?.id || 1));
+      formData.append('message', replyText.trim());
+      if (replyImageFile) {
+        formData.append('image', replyImageFile);
+      }
+
+      const res = await sendTicketReply(ticketId, formData);
+      if (res.ok) {
+        if (showToast) showToast('Balasan pesan Anda berhasil dikirim ke admin!', 'success');
+        setReplyText('');
+        removeReplyImage();
+        if (onRefreshTickets) onRefreshTickets();
+      } else {
+        if (showToast) showToast(res.data?.message || 'Gagal mengirim balasan pesan.', 'error');
+      }
+    } catch (err) {
+      console.error('Error sending ticket reply:', err);
+      if (showToast) showToast('Terjadi kesalahan saat mengirim pesan balasan.', 'error');
+    } finally {
+      setSubmittingReply(false);
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    try {
+      return new Date(dateStr).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
       
@@ -59,14 +142,14 @@ export default function MyTicketsList({
           <div>
             <div className="flex items-center gap-2.5">
               <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                Riwayat Pesan Saya
+                Riwayat Pesan &amp; Konsultasi Saya
               </h3>
               <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                 {myTickets.length} Tiket
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Konsultasi &amp; bantuan teknis yang dikirimkan ke administrator
+              Percakapan interaktif &amp; konsultasi kendala teknis dengan administrator
             </p>
           </div>
         </div>
@@ -90,6 +173,30 @@ export default function MyTicketsList({
         <div className="space-y-3 pt-1">
           {myTickets.map((ticket) => {
             const isExpanded = expandedTicketId === ticket.id;
+
+            // Dapatkan list pesan (multichat messages jika ada, atau fallback buatan dari message & admin_reply)
+            const rawMessages: TicketMessage[] = (ticket.messages && ticket.messages.length > 0)
+              ? ticket.messages
+              : [
+                  {
+                    id: `init-${ticket.id}`,
+                    sender: 'user',
+                    sender_name: user?.name || 'Anda',
+                    sender_role: 'dosen',
+                    message: ticket.message,
+                    image_url: ticket.image_url,
+                    created_at: ticket.created_at
+                  },
+                  ...(ticket.admin_reply ? [{
+                    id: `reply-${ticket.id}`,
+                    sender: 'admin' as const,
+                    sender_name: 'Tim Admin',
+                    sender_role: 'super admin',
+                    message: ticket.admin_reply,
+                    created_at: ticket.replied_at || ticket.created_at
+                  }] : [])
+                ];
+
             return (
               <div
                 key={ticket.id}
@@ -106,10 +213,10 @@ export default function MyTicketsList({
                   <div className="min-w-0 space-y-1">
                     <div className="flex items-center gap-2.5 flex-wrap">
                       {getTicketStatusBadge(ticket.status)}
-                      {ticket.image_url && (
+                      {rawMessages.some(m => !!m.image_url) && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400">
                           <ImageIcon className="w-3 h-3 text-slate-400 dark:text-slate-500" />
-                          <span>Gambar</span>
+                          <span>Lampiran Gambar</span>
                         </span>
                       )}
                       <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
@@ -117,7 +224,7 @@ export default function MyTicketsList({
                       </h4>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 truncate pl-0.5">
-                      {ticket.message}
+                      {rawMessages[rawMessages.length - 1]?.message || ticket.message}
                     </p>
                   </div>
 
@@ -141,87 +248,155 @@ export default function MyTicketsList({
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
-                      <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/50 space-y-3 text-xs leading-relaxed">
-                        {/* Isi Pesan User */}
-                        <div className="space-y-2 bg-slate-100/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
-                          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                            Isi Pesan Anda:
-                          </p>
-                          <p className="text-slate-700 dark:text-slate-200 font-medium whitespace-pre-line">
-                            {ticket.message}
-                          </p>
+                      <div className="px-4 pb-5 pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-4">
+                        
+                        {/* Area Chat Conversation Thread */}
+                        <div className="bg-slate-50/70 dark:bg-slate-950/40 p-3.5 sm:p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 space-y-3.5 max-h-[420px] overflow-y-auto">
+                          
+                          <div className="text-center py-1">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-200/60 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
+                              Percakapan Dimulai: {formatDate(ticket.created_at)}
+                            </span>
+                          </div>
 
-                          {/* Preview Lampiran Gambar Dosen */}
-                          {ticket.image_url && (
-                            <div className="mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-2">
-                              <div className="flex items-center justify-between">
-                                <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                  <ImageIcon className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                                  Lampiran Gambar:
-                                </p>
-                                <a
-                                  href={ticket.image_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 underline"
-                                >
-                                  <ExternalLink className="w-3 h-3" />
-                                  <span>Buka di Tab Baru</span>
-                                </a>
-                              </div>
-                              <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950/90 max-w-sm p-1.5">
-                                <img
-                                  src={ticket.image_url}
-                                  alt="Lampiran Dosen"
-                                  className="max-h-48 w-auto object-contain rounded-lg mx-auto"
-                                />
-                                <div
-                                  onClick={() => onZoomImage(ticket.image_url!)}
-                                  className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-bold cursor-pointer"
-                                >
-                                  <Maximize2 className="w-4 h-4" />
-                                  <span>Perbesar Gambar</span>
+                          {rawMessages.map((msg, index) => {
+                            const isUserMsg = msg.sender === 'user';
+
+                            return isUserMsg ? (
+                              /* Bubble Chat Pengirim (Dosen - Kanan) */
+                              <div key={msg.id || index} className="flex justify-end gap-2.5 max-w-[88%] sm:max-w-[80%] ml-auto">
+                                <div className="space-y-1 text-right min-w-0">
+                                  <div className="flex items-center justify-end gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-semibold px-1">
+                                    <span>{msg.sender_name || user?.name || 'Anda'}</span>
+                                    <span>•</span>
+                                    <span>{formatDate(msg.created_at)}</span>
+                                  </div>
+                                  <div className="bg-primary-600 dark:bg-primary-600 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-xs shadow-xs text-xs leading-relaxed text-left font-medium border border-primary-500/30">
+                                    <p className="whitespace-pre-line">{msg.message}</p>
+                                    
+                                    {/* Preview Lampiran Gambar */}
+                                    {msg.image_url && (
+                                      <div className="mt-3 pt-2.5 border-t border-white/20">
+                                        <div className="relative group inline-block rounded-xl overflow-hidden bg-slate-950/80 p-1 border border-white/30 max-w-xs">
+                                          <img
+                                            src={msg.image_url}
+                                            alt="Lampiran"
+                                            className="max-h-44 w-auto object-contain rounded-lg"
+                                          />
+                                          <div
+                                            onClick={() => onZoomImage(msg.image_url!)}
+                                            className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-bold cursor-pointer"
+                                          >
+                                            <Maximize2 className="w-4 h-4" />
+                                            <span>Perbesar</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-950/80 text-primary-700 dark:text-primary-300 font-bold flex items-center justify-center text-xs shrink-0 border border-primary-200 dark:border-primary-800 shadow-2xs mt-4">
+                                  {user?.name ? user.name.charAt(0).toUpperCase() : 'D'}
                                 </div>
                               </div>
-                            </div>
-                          )}
+                            ) : (
+                              /* Bubble Chat Penerima (Admin - Kiri) */
+                              <div key={msg.id || index} className="flex justify-start gap-2.5 max-w-[88%] sm:max-w-[80%] mr-auto">
+                                <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-slate-800 text-white font-black flex items-center justify-center text-xs shrink-0 border border-slate-700 shadow-2xs mt-4">
+                                  A
+                                </div>
+                                <div className="space-y-1 text-left min-w-0">
+                                  <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-semibold px-1">
+                                    <span className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40 uppercase tracking-wider text-[9px]">
+                                      Admin
+                                    </span>
+                                    <span>{msg.sender_name || 'Tim Administrator'}</span>
+                                    <span>•</span>
+                                    <span>{formatDate(msg.created_at)}</span>
+                                  </div>
+                                  <div className="bg-white dark:bg-slate-800/90 text-slate-800 dark:text-slate-100 p-3.5 sm:p-4 rounded-2xl rounded-tl-xs border border-slate-200/80 dark:border-slate-700/80 shadow-2xs text-xs leading-relaxed font-medium">
+                                    <p className="whitespace-pre-line">{msg.message}</p>
+
+                                    {/* Preview Lampiran Gambar Admin jika ada */}
+                                    {msg.image_url && (
+                                      <div className="mt-3 pt-2.5 border-t border-slate-200 dark:border-slate-700">
+                                        <div className="relative group inline-block rounded-xl overflow-hidden bg-slate-950/80 p-1 border border-slate-700 max-w-xs">
+                                          <img
+                                            src={msg.image_url}
+                                            alt="Lampiran Admin"
+                                            className="max-h-44 w-auto object-contain rounded-lg"
+                                          />
+                                          <div
+                                            onClick={() => onZoomImage(msg.image_url!)}
+                                            className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-bold cursor-pointer"
+                                          >
+                                            <Maximize2 className="w-4 h-4" />
+                                            <span>Perbesar</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
 
-                        {/* Balasan Tim Admin */}
-                        {ticket.admin_reply ? (
-                          <div className="space-y-1.5 bg-blue-50/70 dark:bg-blue-950/30 p-3.5 rounded-xl border border-blue-200/80 dark:border-blue-900/50">
-                            <div className="flex items-center justify-between text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">
-                              <span className="flex items-center gap-1.5">
-                                <MessageSquare className="w-3.5 h-3.5" />
-                                Balasan Tim Admin:
-                              </span>
-                              {ticket.replied_at && (
-                                <span>
-                                  {new Date(ticket.replied_at).toLocaleDateString('id-ID', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-slate-800 dark:text-slate-100 font-medium whitespace-pre-line">
-                              {ticket.admin_reply}
-                            </p>
-                          </div>
-                        ) : ticket.status === 'selesai' ? (
-                          <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-medium flex items-center gap-2">
+                        {/* Status Notice Banner jika Tiket Selesai */}
+                        {ticket.status === 'selesai' && (
+                          <div className="p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs font-medium flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                            <span>Tiket pesan ini telah ditandai selesai.</span>
-                          </div>
-                        ) : (
-                          <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 text-xs font-medium flex items-center gap-2">
-                            <Clock className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
-                            <span>Pesan Anda telah diterima. Mohon tunggu balasan dari tim admin.</span>
+                            <span>Tiket ini ditandai selesai oleh admin. Mengirim pesan baru akan membuka kembali tiket ini.</span>
                           </div>
                         )}
+
+                        {/* Form Kirim Pesan Balasan Lanjutan */}
+                        <form onSubmit={(e) => handleSendFollowUpReply(e, ticket.id)} className="space-y-3 pt-1">
+                          
+                          {/* Preview Lampiran Gambar Balasan Dosen */}
+                          {replyImagePreview && (
+                            <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-950 p-1">
+                              <img src={replyImagePreview} alt="Preview Lampiran" className="h-16 w-auto object-contain rounded-lg" />
+                              <button
+                                type="button"
+                                onClick={removeReplyImage}
+                                className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 shadow-md cursor-pointer transition-colors"
+                                title="Hapus gambar"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+
+                          <div className="flex items-center gap-2">
+                            <label
+                              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 text-slate-500 dark:text-slate-400 cursor-pointer transition-colors shrink-0"
+                              title="Lampirkan tangkapan layar/gambar"
+                            >
+                              <Paperclip className="w-4 h-4" />
+                              <input type="file" accept="image/*" className="hidden" onChange={handleReplyImageChange} />
+                            </label>
+
+                            <input
+                              type="text"
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              placeholder="Ketik balasan atau pertanyaan susulan ke admin..."
+                              className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                            />
+
+                            <button
+                              type="submit"
+                              disabled={submittingReply || !replyText.trim()}
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 disabled:opacity-50 cursor-pointer shrink-0"
+                            >
+                              <Send className="w-3.5 h-3.5" />
+                              <span>{submittingReply ? 'Mengirim...' : 'Kirim'}</span>
+                            </button>
+                          </div>
+                        </form>
+
                       </div>
                     </motion.div>
                   )}

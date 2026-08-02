@@ -22,6 +22,17 @@ export interface AnnouncementItem {
   created_at?: string;
 }
 
+export interface TicketMessage {
+  id: string;
+  sender: 'user' | 'admin';
+  sender_id?: number;
+  sender_name?: string;
+  sender_role?: string;
+  message: string;
+  image_url?: string;
+  created_at: string;
+}
+
 export interface SupportTicketItem {
   id: number;
   user_id: number;
@@ -31,6 +42,7 @@ export interface SupportTicketItem {
   status: string;
   admin_reply?: string;
   replied_at?: string;
+  messages?: TicketMessage[];
   created_at: string;
 }
 
@@ -78,9 +90,12 @@ export interface MyTicketsListProps {
   loadingTickets: boolean;
   myTickets: SupportTicketItem[];
   expandedTicketId: number | null;
+  user?: UserSession;
   onToggleTicketExpand: (id: number) => void;
   onOpenCreateModal: () => void;
   onZoomImage: (url: string) => void;
+  onRefreshTickets?: () => void;
+  showToast?: (msg: string, type?: 'success' | 'error') => void;
 }
 
 export interface CreateTicketModalProps {

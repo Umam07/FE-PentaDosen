@@ -43,10 +43,10 @@ export function useFaqHelp(user: UserSession) {
   }, []);
 
   const loadMyTickets = useCallback(async () => {
-    if (!user?.id) return;
+    const targetUserId = user?.id ? Number(user.id) : 1;
     setLoadingTickets(true);
     try {
-      const tickets = await fetchUserSupportTickets(user.id);
+      const tickets = await fetchUserSupportTickets(targetUserId);
       setMyTickets(tickets);
     } catch (e) {
       console.error('Error fetching support tickets:', e);
@@ -165,7 +165,7 @@ export function useFaqHelp(user: UserSession) {
         setTicketMessage('');
         removeSelectedImage();
         setIsTicketModalOpen(false);
-        loadMyTickets();
+        await loadMyTickets();
       } else {
         showToast(res.data?.message || 'Gagal mengirim pesan.', 'error');
       }
@@ -204,6 +204,8 @@ export function useFaqHelp(user: UserSession) {
     fullViewImageUrl,
     setFullViewImageUrl,
     toast,
+    showToast,
+    loadMyTickets,
     handleTabSwitch,
     filteredFaqs,
     toggleExpandFaq,
