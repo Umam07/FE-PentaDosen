@@ -9,13 +9,13 @@ import PublicationStats from './components/PublicationStats';
 import PublicationActionBar from './components/PublicationActionBar';
 import PublicationTable from './components/PublicationTable';
 import PublicationUploadModal from './components/PublicationUploadModal';
+import BulkCorrespondenceModal from './components/BulkCorrespondenceModal';
 import PublicationLinkingModal from './components/PublicationLinkingModal';
 import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
 import ScopusFiltersBar from './components/ScopusFiltersBar';
 import MetricsGuideModal from './components/MetricsGuideModal';
 import UnconfirmedCorrespondenceBanner from './components/UnconfirmedCorrespondenceBanner';
-import BulkCorrespondenceModal from './components/BulkCorrespondenceModal';
 
 import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
@@ -82,16 +82,6 @@ export default function Publication({ user }: { user: UserSession }) {
         onOpenMetricsModal={() => pub.setIsMetricsModalOpen(true)}
       />
 
-      {/* Unconfirmed Correspondence Banner */}
-      {pub.urlKategori === 'Jurnal Internasional' && pub.unconfirmedCorrespondenceDocs.length > 0 && (
-        <UnconfirmedCorrespondenceBanner
-          unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
-          onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
-          onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
-          onFilterUnconfirmed={() => pub.setScopusFilter('unconfirmed')}
-        />
-      )}
-
       {/* Kartu Ringkasan Statistik */}
       <PublicationStats
         stats={{ ...pub.stats, crossIndexed: pub.crossIndexedCount }}
@@ -129,6 +119,16 @@ export default function Publication({ user }: { user: UserSession }) {
           onDownloadTemplate={pub.handleDownloadTemplate}
           onImportExcel={() => {}}
           isImporting={pub.isImporting}
+        />
+      )}
+
+      {/* Unconfirmed Correspondence Banner */}
+      {pub.urlKategori === 'Jurnal Internasional' && pub.unconfirmedCorrespondenceDocs.length > 0 && (
+        <UnconfirmedCorrespondenceBanner
+          unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
+          onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
+          onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
+          onFilterUnconfirmed={() => pub.setScopusFilter('unconfirmed')}
         />
       )}
 
@@ -173,6 +173,13 @@ export default function Publication({ user }: { user: UserSession }) {
         onShowMessage={pub.showMessage}
       />
 
+      <BulkCorrespondenceModal
+        isOpen={pub.isBulkCorrespondenceModalOpen}
+        onClose={() => pub.setIsBulkCorrespondenceModalOpen(false)}
+        unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
+        onSaveBulk={handleBulkSaveCorrespondence}
+      />
+
       <PublicationLinkingModal
         isOpen={pub.isLinkingModalOpen}
         onClose={() => {
@@ -211,13 +218,6 @@ export default function Publication({ user }: { user: UserSession }) {
         setIsTableLoading={pub.setIsTableLoading}
         setCurrentPage={pub.setCurrentPage}
         onShowMessage={pub.showMessage}
-      />
-
-      <BulkCorrespondenceModal
-        isOpen={pub.isBulkCorrespondenceModalOpen}
-        onClose={() => pub.setIsBulkCorrespondenceModalOpen(false)}
-        unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
-        onSaveBulk={handleBulkSaveCorrespondence}
       />
 
       <MetricsGuideModal
