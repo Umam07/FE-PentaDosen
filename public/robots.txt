@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://www.pentadosen.site/sitemap.xml
+Sitemap: https://pentadosen.yarsi.ac.id/sitemap.xml

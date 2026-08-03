@@ -1,0 +1,16 @@
+# PentaDosen 2.0 - Platform Portofolio & Tri Dharma Dosen Universitas YARSI
+
+> PentaDosen 2.0 adalah sistem informasi manajemen portofolio dan integrasi kegiatan Tri Dharma Perguruan Tinggi (Pendidikan, Penelitian, dan Pengabdian kepada Masyarakat) untuk dosen Universitas YARSI.
+
+## Halaman & Fitur Utama
+
+- [Beranda](https://pentadosen.yarsi.ac.id/): Halaman utama platform PentaDosen 2.0 dengan ringkasan fitur dan statistik.
+- [Insights & Analitik](https://pentadosen.yarsi.ac.id/insights): Visualisasi data dan analitik kinerja akademik dosen Universitas YARSI.
+- [Fakultas & Program Studi](https://pentadosen.yarsi.ac.id/departments): Daftar fakultas dan program studi di Universitas YARSI.
+- [Direktori Dosen](https://pentadosen.yarsi.ac.id/lecturers): Portofolio akademik, publikasi Google Scholar & Scopus dosen Universitas YARSI.
+- [Tim Pengembang](https://pentadosen.yarsi.ac.id/developers): Profil dan kontributor pengembang sistem PentaDosen 2.0.
+
+## Resource & Sitemap
+
+- [Sitemap XML](https://pentadosen.yarsi.ac.id/sitemap.xml): Peta situs terstruktur format XML.
+- [Robots.txt](https://pentadosen.yarsi.ac.id/robots.txt): Panduan akses dan crawling mesin pencari.
