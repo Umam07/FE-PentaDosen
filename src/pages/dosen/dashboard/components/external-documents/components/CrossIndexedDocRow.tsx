@@ -13,10 +13,6 @@ export default function CrossIndexedDocRow({
   const bd = calculateScopusBreakdown(scopusDoc || doc);
   const citations = bd.citations || 0;
 
-  // Batas perhitungan poin sitasi diset maksimal 200 di UI progress bar
-  const citMax = 200;
-  const citPct = Math.min(100, (citations / citMax) * 100);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -26,32 +22,32 @@ export default function CrossIndexedDocRow({
     >
       <div className="h-[3px] w-full bg-slate-200 dark:bg-zinc-700 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
 
-      <div className="flex items-start gap-5 p-5">
+      <div className="flex items-start gap-4 p-5">
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
-          {/* Kotak indikator sitasi diseragamkan dengan warna netral dark/primary-900 */}
-          <div className="w-[62px] h-[62px] rounded-2xl bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-slate-800 flex flex-col items-center justify-center transition-colors shadow-xs">
-            <span className="text-xl font-black text-white leading-none tabular-nums">{citations}</span>
+          {/* Kotak indikator sitasi versi compact netral */}
+          <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center shadow-2xs">
+            <span className="text-base font-black text-slate-800 dark:text-slate-100 leading-none tabular-nums">{citations}</span>
             <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Sitasi</span>
           </div>
-          <div className="px-2.5 py-0.5 bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/40 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap">
+          <div className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap">
             +{Math.round(bd.totalPoints)} pts
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase tracking-wider rounded-full bg-slate-50/50 dark:bg-slate-800/30">
               Scopus &amp; Scholar
             </span>
-            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase tracking-wider rounded-full bg-slate-50/50 dark:bg-slate-800/30">
               Poin Scopus Digunakan
             </span>
             {bd.q && bd.q !== 'None' && (
-              <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
+              <span className="px-2 py-0.5 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase tracking-wider rounded-full bg-slate-50/50 dark:bg-slate-800/30">
                 {bd.q}
               </span>
             )}
-            <span className="px-2 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[7px] font-black uppercase tracking-widest rounded-full bg-transparent">
+            <span className="px-2 py-0.5 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase tracking-wider rounded-full bg-slate-50/50 dark:bg-slate-800/30">
               {bd.role}
             </span>
             <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">
@@ -91,23 +87,6 @@ export default function CrossIndexedDocRow({
               </span>
             )}
           </div>
-
-          {citations > 0 && (
-            <div className="mb-3.5">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Sitasi</span>
-                <span className="text-[8px] font-black text-emerald-500">{citations} sitasi</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${citPct}%` }}
-                  transition={{ delay: idx * 0.05 + 0.2, duration: 0.6, ease: 'easeOut' }}
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"
-                />
-              </div>
-            </div>
-          )}
 
           <div className="flex items-center gap-2">
             <button

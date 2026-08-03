@@ -207,8 +207,6 @@ export default function LecturerDashboard({ user }: { user: any }) {
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400">
                 {loading ? (
                   <>
-                    <span className="inline-block h-3.5 bg-slate-200 dark:bg-slate-800 animate-pulse rounded w-16" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 hidden sm:inline" />
                     <span className="inline-block h-3.5 bg-slate-200 dark:bg-slate-800 animate-pulse rounded w-20" />
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 hidden sm:inline" />
                     <span className="inline-block h-3.5 bg-slate-200 dark:bg-slate-800 animate-pulse rounded w-24" />
@@ -217,15 +215,13 @@ export default function LecturerDashboard({ user }: { user: any }) {
                   </>
                 ) : (
                   <>
-                    <span className="capitalize">{activeUser?.role || 'Lecturer'}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 hidden sm:inline" />
                     {activeUser?.fakultas && (
                       <>
                         <span>{activeUser.fakultas}</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 hidden sm:inline" />
                       </>
                     )}
-                    <span>{activeUser?.program_studi || 'Lecturer'}</span>
+                    <span>{activeUser?.program_studi || 'Teknik Informatika'}</span>
                     {activeUser?.penta_id && (
                       <>
                         <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 hidden sm:inline" />
