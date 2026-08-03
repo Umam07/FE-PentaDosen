@@ -13,6 +13,7 @@ import PublicationLinkingModal from './components/PublicationLinkingModal';
 import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
 import ScopusFiltersBar from './components/ScopusFiltersBar';
+import NationalFiltersBar from './components/NationalFiltersBar';
 import MetricsGuideModal from './components/MetricsGuideModal';
 import UnconfirmedCorrespondenceBanner from './components/UnconfirmedCorrespondenceBanner';
 
@@ -87,10 +88,10 @@ export default function Publication({ user }: { user: UserSession }) {
         />
       )}
 
-      {/* Scopus Filters Bar */}
-      {pub.urlKategori === 'Jurnal Internasional' && (
+      {/* Scopus Filters Bar (Jurnal Internasional) */}
+      {(pub.urlKategori || '').toLowerCase().includes('jurnal internasional') && (
         <ScopusFiltersBar
-          documents={pub.documents}
+          documents={pub.documents || []}
           scopusFilter={pub.scopusFilter}
           setScopusFilter={pub.setScopusFilter}
           articleFilter={pub.articleFilter}
@@ -109,8 +110,29 @@ export default function Publication({ user }: { user: UserSession }) {
         />
       )}
 
+      {/* National Filters Bar (Jurnal Nasional) */}
+      {(pub.urlKategori || '').toLowerCase().includes('jurnal nasional') && (
+        <NationalFiltersBar
+          documents={pub.documents || []}
+          sintaFilter={pub.sintaFilter}
+          setSintaFilter={pub.setSintaFilter}
+          sourceFilter={pub.sourceFilter}
+          setSourceFilter={pub.setSourceFilter}
+          correspondenceFilter={pub.scopusFilter}
+          setCorrespondenceFilter={pub.setScopusFilter}
+          crossIndexedOnly={pub.crossIndexedOnly}
+          setCrossIndexedOnly={pub.setCrossIndexedOnly}
+          onResetPage={() => pub.setCurrentPage(1)}
+          onUploadClick={() => pub.setIsUploadModalOpen(true)}
+          onDownloadTemplate={pub.handleDownloadTemplate}
+          onImportExcel={() => {}}
+          isImporting={pub.isImporting}
+        />
+      )}
+
+
       {/* Unconfirmed Correspondence Banner */}
-      {pub.urlKategori === 'Jurnal Internasional' && pub.unconfirmedCorrespondenceDocs.length > 0 && (
+      {(pub.urlKategori || '').toLowerCase().includes('jurnal internasional') && (pub.unconfirmedCorrespondenceDocs || []).length > 0 && (
         <UnconfirmedCorrespondenceBanner
           unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
           onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
@@ -118,6 +140,7 @@ export default function Publication({ user }: { user: UserSession }) {
           onFilterUnconfirmed={() => pub.setScopusFilter('unconfirmed')}
         />
       )}
+
 
       {/* Tabel Publikasi */}
       <PublicationTable

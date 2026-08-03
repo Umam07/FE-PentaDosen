@@ -21,7 +21,32 @@ export interface PublicationDoc {
   awarded_points?: number;
   linked_research_id?: number;
   catatan?: string;
+  sinta_rank?: string;
+  is_accredited?: boolean;
+  issn?: string;
+  garuda_id?: string;
 }
+
+export interface InternationalPublicationDoc extends PublicationDoc {
+  quartile?: string;
+  scopus_id?: string;
+  sjr?: number;
+  subtype?: string;
+}
+
+export interface NationalPublicationDoc extends PublicationDoc {
+  sinta_rank?: 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'Non-SINTA';
+  is_accredited?: boolean;
+  issn?: string;
+  garuda_id?: string;
+}
+
+export type SintaFilterType = 'all' | 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'Non-SINTA';
+export type ScopusFilterType = 'all' | 'unconfirmed' | 'confirmed';
+export type ArticleFilterType = 'all' | 'article' | 'non-article';
+export type QuartileFilterType = 'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None';
+export type SourceFilterType = 'all' | 'external' | 'manual';
+
 
 export interface ApprovedResearch {
   id: number;

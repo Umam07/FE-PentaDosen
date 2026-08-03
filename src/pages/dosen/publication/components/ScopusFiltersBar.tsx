@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
 import { MailCheck, FileText, Award, RotateCcw, Globe, Upload, Zap, Download, FileSpreadsheet } from 'lucide-react';
 
-export type ScopusFilterType = 'all' | 'unconfirmed' | 'confirmed';
-export type ArticleFilterType = 'all' | 'article' | 'non-article';
-export type QuartileFilterType = 'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None';
-export type SourceFilterType = 'all' | 'external' | 'manual';
+import type { ScopusFilterType, ArticleFilterType, QuartileFilterType, SourceFilterType } from '../types/publication.types';
+export type { ScopusFilterType, ArticleFilterType, QuartileFilterType, SourceFilterType };
+
 
 interface ScopusFiltersBarProps {
   documents: any[];
@@ -48,10 +47,10 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
 }) => {
   // Filter hanya dokumen Jurnal Internasional/Nasional untuk penghitungan indikator filter
   const jiDocs = useMemo(() => {
-    return documents.filter(
+    return (documents || []).filter(
       (d: any) =>
-        (d.category || '').toLowerCase() === 'jurnal internasional' ||
-        (d.category || '').toLowerCase() === 'jurnal nasional' ||
+        String(d.category || '').toLowerCase().includes('jurnal internasional') ||
+        String(d.category || '').toLowerCase().includes('jurnal nasional') ||
         d.source === 'scopus'
     );
   }, [documents]);
@@ -64,10 +63,11 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
 
     jiDocs.forEach((d: any) => {
       if (d.source === 'scopus') {
+        const subtypeStr = String(d.subtype || '').toLowerCase();
         const isArticle =
           !d.subtype ||
-          d.subtype.toLowerCase() === 'ar' ||
-          d.subtype.toLowerCase() === 'article';
+          subtypeStr === 'ar' ||
+          subtypeStr === 'article';
         const totalAuthors = Number(d.total_authors) || 1;
 
         if (isArticle && totalAuthors > 1 && !d.is_corresponding_confirmed) {
@@ -91,10 +91,11 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
 
     jiDocs.forEach((d: any) => {
       if (d.source === 'scopus') {
+        const subtypeStr = String(d.subtype || '').toLowerCase();
         const isArt =
           !d.subtype ||
-          d.subtype.toLowerCase() === 'ar' ||
-          d.subtype.toLowerCase() === 'article';
+          subtypeStr === 'ar' ||
+          subtypeStr === 'article';
         if (isArt) article++;
         else nonArticle++;
       } else {
@@ -115,7 +116,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     let none = 0;
 
     jiDocs.forEach((d: any) => {
-      const q = (d.quartile || '').toUpperCase();
+      const q = String(d.quartile || '').toUpperCase();
       if (q === 'Q1') q1++;
       else if (q === 'Q2') q2++;
       else if (q === 'Q3') q3++;
@@ -125,6 +126,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
 
     return { total, Q1: q1, Q2: q2, Q3: q3, Q4: q4, None: none };
   }, [jiDocs]);
+
 
   // Penghitungan Sumber Data
   const sourceCounts = useMemo(() => {

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import type {
   PublicationDoc, ApprovedResearch, WeightCategory,
-  UserSession, PreviewDocState, StatsInfo
+  UserSession, PreviewDocState, StatsInfo, SintaFilterType
 } from '../types/publication.types';
 import {
   fetchUserDocuments, fetchCategoryWeights, fetchApprovedResearch, uploadPdfDocument
@@ -68,13 +68,15 @@ export function usePublication(user: UserSession) {
   // Year filter
   const [filterYear, setFilterYear] = useState<number | null>(null);
 
-  // Scopus Specific Filters
+  // Scopus & National Specific Filters
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
+  const [sintaFilter, setSintaFilter] = useState<SintaFilterType>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
   const [quartileFilter, setQuartileFilter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'None'>('all');
   const [sourceFilter, setSourceFilter] = useState<'all' | 'external' | 'manual'>('all');
   const [crossIndexedOnly, setCrossIndexedOnly] = useState(false);
   const [isBulkCorrespondenceModalOpen, setIsBulkCorrespondenceModalOpen] = useState(false);
+
 
   const showMessage = useCallback((msg: string, type: 'success' | 'error') => {
     setMessage(msg);
@@ -157,7 +159,9 @@ export function usePublication(user: UserSession) {
       setCategory(urlKategori);
       setFilterYear(null);
       setQuartileFilter('all');
+      setSintaFilter('all');
       setSourceFilter('all');
+      setScopusFilter('all');
       setCrossIndexedOnly(false);
       setCurrentPage(1);
     }
@@ -205,9 +209,13 @@ export function usePublication(user: UserSession) {
   }, [documents, urlKategori, crossTitlesSet]);
 
   const filteredDocuments = useMemo(() => {
-    let result = documents;
+    let result = documents || [];
     if (urlKategori) {
-      result = result.filter((d) => (d.category || '').toLowerCase() === urlKategori.toLowerCase());
+      const targetCat = urlKategori.toLowerCase();
+      result = result.filter((d) => {
+        const cat = String(d.category || '').toLowerCase();
+        return cat === targetCat || cat.includes(targetCat) || targetCat.includes(cat);
+      });
     }
     if (filterYear) {
       result = result.filter((d) => {
@@ -216,11 +224,15 @@ export function usePublication(user: UserSession) {
       });
     }
 
-    if (urlKategori === 'Jurnal Internasional') {
+    const isJIUrl = urlKategori.toLowerCase().includes('jurnal internasional');
+    const isJNUrl = urlKategori.toLowerCase().includes('jurnal nasional');
+
+    if (isJIUrl) {
       if (scopusFilter === 'unconfirmed') {
         result = result.filter((d) => {
           if (d.source === 'scopus') {
-            const isArticle = !d.subtype || d.subtype.toLowerCase() === 'ar' || d.subtype.toLowerCase() === 'article';
+            const subtypeStr = String(d.subtype || '').toLowerCase();
+            const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
             const totalAuthors = Number(d.total_authors) || 1;
             return isArticle && totalAuthors > 1 && !d.is_corresponding_confirmed;
           }
@@ -229,7 +241,8 @@ export function usePublication(user: UserSession) {
       } else if (scopusFilter === 'confirmed') {
         result = result.filter((d) => {
           if (d.source === 'scopus') {
-            const isArticle = !d.subtype || d.subtype.toLowerCase() === 'ar' || d.subtype.toLowerCase() === 'article';
+            const subtypeStr = String(d.subtype || '').toLowerCase();
+            const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
             const totalAuthors = Number(d.total_authors) || 1;
             return !isArticle || totalAuthors <= 1 || d.is_corresponding_confirmed;
           }
@@ -240,26 +253,55 @@ export function usePublication(user: UserSession) {
       if (articleFilter === 'article') {
         result = result.filter((d) => {
           if (d.source === 'scopus') {
-            return !d.subtype || d.subtype.toLowerCase() === 'ar' || d.subtype.toLowerCase() === 'article';
+            const subtypeStr = String(d.subtype || '').toLowerCase();
+            return !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
           }
           return true;
         });
       } else if (articleFilter === 'non-article') {
         result = result.filter((d) => {
           if (d.source === 'scopus') {
-            return d.subtype && d.subtype.toLowerCase() !== 'ar' && d.subtype.toLowerCase() !== 'article';
+            const subtypeStr = String(d.subtype || '').toLowerCase();
+            return d.subtype && subtypeStr !== 'ar' && subtypeStr !== 'article';
           }
           return false;
         });
       }
+
+      if (quartileFilter !== 'all') {
+        result = result.filter((d) => {
+          const qStr = String(d.quartile || '');
+          const q = ['Q1', 'Q2', 'Q3', 'Q4'].includes(qStr) ? qStr : 'None';
+          return q === quartileFilter;
+        });
+      }
     }
 
-    if (quartileFilter !== 'all') {
-      result = result.filter((d) => {
-        const q = d.quartile && ['Q1', 'Q2', 'Q3', 'Q4'].includes(d.quartile) ? d.quartile : 'None';
-        return q === quartileFilter;
-      });
+    if (isJNUrl) {
+      if (sintaFilter !== 'all') {
+        result = result.filter((d) => {
+          const rank = String(d.sinta_rank || 'Non-SINTA').toUpperCase();
+          return rank === sintaFilter.toUpperCase();
+        });
+      }
+
+      if (scopusFilter === 'unconfirmed') {
+        result = result.filter((d) => {
+          const subtypeStr = String(d.subtype || '').toLowerCase();
+          const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
+          const totalAuthors = Number(d.total_authors) || 1;
+          return isArticle && totalAuthors > 1 && !d.is_corresponding_confirmed;
+        });
+      } else if (scopusFilter === 'confirmed') {
+        result = result.filter((d) => {
+          const subtypeStr = String(d.subtype || '').toLowerCase();
+          const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
+          const totalAuthors = Number(d.total_authors) || 1;
+          return !isArticle || totalAuthors <= 1 || d.is_corresponding_confirmed;
+        });
+      }
     }
+
 
     if (crossIndexedOnly) {
       const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -267,13 +309,14 @@ export function usePublication(user: UserSession) {
     }
 
     if (sourceFilter === 'external') {
-      result = result.filter((d) => d.source === 'scopus' || d.source === 'scholar');
+      result = result.filter((d) => d.source === 'scopus' || d.source === 'scholar' || d.source === 'sinta' || d.source === 'garuda');
     } else if (sourceFilter === 'manual') {
-      result = result.filter((d) => d.source !== 'scopus' && d.source !== 'scholar');
+      result = result.filter((d) => d.source !== 'scopus' && d.source !== 'scholar' && d.source !== 'sinta' && d.source !== 'garuda');
     }
 
     return result;
-  }, [documents, urlKategori, filterYear, scopusFilter, articleFilter, quartileFilter, sourceFilter, crossIndexedOnly, crossTitlesSet]);
+  }, [documents, urlKategori, filterYear, scopusFilter, sintaFilter, articleFilter, quartileFilter, sourceFilter, crossIndexedOnly, crossTitlesSet]);
+
 
   const availableYears = useMemo(() => {
     const targetDocs = urlKategori
@@ -392,6 +435,8 @@ export function usePublication(user: UserSession) {
     setFilterYear,
     scopusFilter,
     setScopusFilter,
+    sintaFilter,
+    setSintaFilter,
     articleFilter,
     setArticleFilter,
     quartileFilter,
