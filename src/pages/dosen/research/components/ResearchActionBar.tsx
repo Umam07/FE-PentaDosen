@@ -39,7 +39,6 @@ export default function ResearchActionBar({
           className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95"
         >
           Unggah Penelitian Baru
-          <Zap className="w-4 h-4 ml-2 fill-white" />
         </button>
         <button
           type="button"

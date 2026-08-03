@@ -22,7 +22,7 @@ export default function PublicationStats({
   isCrossIndexedActive
 }: PublicationStatsProps) {
   const statItems = [
-    { label: 'Total Dokumen', value: stats.total, icon: FileText, color: 'blue' },
+    { label: 'Total Dokumen', value: stats.total, icon: FileText, color: 'slate' },
     { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
     { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
     { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'indigo' },
@@ -55,7 +55,7 @@ export default function PublicationStats({
           }`}
         >
           <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${
-            item.color === 'blue' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400' :
+            item.color === 'slate' ? 'bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400' :
             item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
             item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
             item.color === 'teal' ? 'bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400' :

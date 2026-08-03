@@ -202,7 +202,6 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
             className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap"
           >
             Unggah Publikasi Baru
-            <Zap className="w-3.5 h-3.5 ml-1.5 fill-white shrink-0" />
           </button>
           <button 
             type="button"

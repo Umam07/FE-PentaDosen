@@ -162,7 +162,7 @@ export default function HKITable({
                             <span className="animate-pulse">Uploading...</span>
                           ) : (
                             <>
-                              <Upload className="w-3.5 h-3.5 mr-1" /> Upload File
+                              Upload File
                               <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
                             </>
                           )}

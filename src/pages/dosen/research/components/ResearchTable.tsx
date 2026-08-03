@@ -179,7 +179,7 @@ export default function ResearchTable({
                       {formatDateVal(res.tahun)}
                     </span>
                   </td>
-                  <td className="hidden sm:table-cell px-6 py-4 text-xs font-black text-emerald-600 tabular-nums">
+                  <td className="hidden sm:table-cell px-6 py-4 text-xs font-black text-gray-900 dark:text-zinc-100 tabular-nums">
                     {formatCurrency(res.dana_disetujui)}
                   </td>
                   <td className="px-6 py-4">
@@ -203,7 +203,6 @@ export default function ResearchTable({
                           <span className="animate-pulse">Uploading...</span>
                         ) : (
                           <>
-                            <Upload className="w-3.5 h-3.5 mr-1" />
                             Upload
                             <input
                               type="file"

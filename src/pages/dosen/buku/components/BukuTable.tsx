@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  Filter, BookOpen, CheckCircle, XCircle, Clock, 
+  Filter, Book, CheckCircle, XCircle, Clock, 
   FileText, Upload, Sparkles, Archive, Link, Info, 
   Lock, Pencil, Trash2, ChevronLeft, ChevronRight 
 } from 'lucide-react';
@@ -139,7 +139,7 @@ export default function BukuTable({
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors shrink-0">
-                          <BookOpen className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400 dark:text-zinc-500 group-hover:text-primary-600" />
+                          <Book className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400 dark:text-zinc-500 group-hover:text-primary-600" />
                         </div>
                         <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-sm">
                           <p className="text-[11px] sm:text-xs lg:text-sm font-extrabold text-gray-900 dark:text-zinc-100 truncate tracking-tight uppercase" title={doc.title}>{doc.title}</p>
@@ -179,7 +179,7 @@ export default function BukuTable({
                             <span className="animate-pulse">Uploading...</span>
                           ) : (
                             <>
-                              <Upload className="w-3.5 h-3.5 mr-1" /> Upload File
+                              Upload File
                               <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
                             </>
                           )}
@@ -279,7 +279,7 @@ export default function BukuTable({
               <tr>
                 <td colSpan={10} className="px-4 lg:px-8 py-16 text-center">
                   <div className="flex flex-col items-center">
-                     <BookOpen className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
+                     <Book className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
                      <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest italic">Inventory Empty</p>
                   </div>
                 </td>

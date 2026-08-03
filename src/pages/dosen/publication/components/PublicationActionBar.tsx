@@ -37,7 +37,6 @@ export default function PublicationActionBar({
           className="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 whitespace-nowrap"
         >
           Unggah Publikasi Baru
-          <Zap className="w-4 h-4 ml-1.5 fill-white shrink-0" />
         </button>
         <button 
           type="button"
