@@ -1,11 +1,12 @@
 import React from 'react';
 import { 
-  Beaker, ChevronLeft, ChevronRight, Lock, Pencil, Trash2, 
+  ChevronLeft, ChevronRight, Lock, Pencil, Trash2, 
   FileText, Upload, Info 
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
+import { getResearchSchemaIcon } from '../utils/researchIconMapper';
 
 const formatDateVal = (dateStr: string | number) => {
   if (!dateStr) return '-';
@@ -134,13 +135,15 @@ export default function ResearchTable({
                 ))}
               </phantom-ui>
             ) : currentItems.length > 0 ? (
-              currentItems.map((res: any) => (
-                <tr key={res.id} className="hover:bg-primary-50/20 transition-colors group">
-                  <td className="px-6 py-4 cursor-pointer" onClick={() => onViewDetail(res)}>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 transition-colors">
-                        <Beaker className="w-4 h-4 text-gray-400 group-hover:text-primary-600" />
-                      </div>
+              currentItems.map((res: any) => {
+                const SchemaIcon = getResearchSchemaIcon(res.program, res.skema);
+                return (
+                  <tr key={res.id} className="hover:bg-primary-50/20 transition-colors group">
+                    <td className="px-6 py-4 cursor-pointer" onClick={() => onViewDetail(res)}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 transition-colors flex-shrink-0">
+                          <SchemaIcon className="w-4 h-4 text-gray-400 group-hover:text-primary-600" />
+                        </div>
                       <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-sm">
                         <p
                           className="font-extrabold text-gray-900 dark:text-zinc-100 uppercase tracking-tight truncate max-w-md"
@@ -283,7 +286,8 @@ export default function ResearchTable({
                     )}
                   </td>
                 </tr>
-              ))
+                );
+              })
             ) : (
               <tr>
                 <td

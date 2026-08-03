@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Beaker, FileText, Info } from 'lucide-react';
+import { FileText, Info } from 'lucide-react';
 import Pagination from '../Pagination';
 import type { DocTableBaseProps } from './internal-documents.types';
 import { formatTanggal, formatRupiah } from './utils/formatting';
+import { getResearchSchemaIcon } from '../../../research/utils/researchIconMapper';
 
 export default function PenelitianTable({
   filteredDocs,
@@ -50,19 +51,21 @@ export default function PenelitianTable({
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {filteredDocs
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-              .map((doc, idx) => (
-                <motion.tr
-                  key={idx}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.04 }}
-                  className="hover:bg-primary-50/20 dark:hover:bg-primary-900/10 transition-colors group"
-                >
-                  <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors flex-shrink-0">
-                        <Beaker className="w-4 h-4 text-slate-400 group-hover:text-primary-600" />
-                      </div>
+              .map((doc, idx) => {
+                const SchemaIcon = getResearchSchemaIcon(doc.program, doc.skema);
+                return (
+                  <motion.tr
+                    key={idx}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.04 }}
+                    className="hover:bg-primary-50/20 dark:hover:bg-primary-900/10 transition-colors group"
+                  >
+                    <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors flex-shrink-0">
+                          <SchemaIcon className="w-4 h-4 text-slate-400 group-hover:text-primary-600" />
+                        </div>
                       <div className="min-w-0">
                         <p className="font-extrabold text-slate-900 dark:text-slate-100 uppercase tracking-tight truncate max-w-xs lg:max-w-sm" title={doc.title}>
                           {doc.title}
@@ -141,7 +144,8 @@ export default function PenelitianTable({
                     </button>
                   </td>
                 </motion.tr>
-              ))}
+                );
+              })}
           </tbody>
         </table>
       </div>
