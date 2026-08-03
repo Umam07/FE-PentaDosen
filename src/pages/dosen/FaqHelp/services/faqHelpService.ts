@@ -18,6 +18,12 @@ export function getLocalTickets(userId?: number): SupportTicketItem[] {
   return [];
 }
 
+export function notifyTicketUpdate() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('penta_tickets_updated'));
+  }
+}
+
 export function saveLocalTicket(ticket: SupportTicketItem) {
   try {
     const rawAll = localStorage.getItem(STORAGE_ALL_KEY);
@@ -29,6 +35,7 @@ export function saveLocalTicket(ticket: SupportTicketItem) {
       all.unshift(ticket);
     }
     localStorage.setItem(STORAGE_ALL_KEY, JSON.stringify(deduplicateTickets(all)));
+    notifyTicketUpdate();
   } catch {
     // Silent catch
   }
@@ -41,6 +48,7 @@ export function removeLocalTicket(id: number) {
     const all: SupportTicketItem[] = JSON.parse(rawAll);
     const filtered = all.filter(t => t.id !== id);
     localStorage.setItem(STORAGE_ALL_KEY, JSON.stringify(filtered));
+    notifyTicketUpdate();
   } catch {
     // Silent catch
   }

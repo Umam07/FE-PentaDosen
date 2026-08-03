@@ -23,6 +23,21 @@ export default function MyTicketsList({
   const [replyImageFile, setReplyImageFile] = useState<File | null>(null);
   const [replyImagePreview, setReplyImagePreview] = useState<string | null>(null);
   const [submittingReply, setSubmittingReply] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<'aktif' | 'selesai' | 'semua'>('aktif');
+
+  const isCompletedStatus = (status: string) => {
+    const s = (status || '').toLowerCase().trim();
+    return s === 'selesai' || s === 'completed' || s === 'closed';
+  };
+
+  const activeCount = myTickets.filter(t => !isCompletedStatus(t.status)).length;
+  const completedCount = myTickets.filter(t => isCompletedStatus(t.status)).length;
+
+  const filteredTickets = myTickets.filter(t => {
+    if (statusFilter === 'aktif') return !isCompletedStatus(t.status);
+    if (statusFilter === 'selesai') return isCompletedStatus(t.status);
+    return true;
+  });
 
   const getTicketStatusBadge = (status: string) => {
     const s = (status || '').toLowerCase().trim();
@@ -140,7 +155,7 @@ export default function MyTicketsList({
             <Inbox className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                 Riwayat Pesan &amp; Konsultasi Saya
               </h3>
@@ -164,14 +179,58 @@ export default function MyTicketsList({
         </button>
       </div>
 
+      {/* Sub-Filter Tabs (Aktif, Selesai, Semua) */}
+      {myTickets.length > 0 && (
+        <div className="bg-slate-100/80 dark:bg-zinc-800/60 p-1.5 rounded-2xl border border-slate-200/60 dark:border-zinc-700/60 flex items-center gap-1.5 overflow-x-auto no-scrollbar shadow-2xs">
+          {[
+            { key: 'aktif', label: 'Aktif / Dalam Proses', count: activeCount, icon: Clock, iconColor: 'text-amber-500' },
+            { key: 'selesai', label: 'Selesai', count: completedCount, icon: CheckCircle2, iconColor: 'text-emerald-500' },
+            { key: 'semua', label: 'Semua Pesan', count: myTickets.length, icon: Inbox, iconColor: 'text-primary-500' },
+          ].map((tab) => {
+            const isActive = statusFilter === tab.key;
+            const TabIcon = tab.icon;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setStatusFilter(tab.key as any)}
+                className={`relative group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 outline-none select-none cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? 'text-slate-900 dark:text-white'
+                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-700/40'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="active-dosen-ticket-tab"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    className="absolute inset-0 bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-slate-200/80 dark:border-zinc-700"
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <TabIcon className={`w-3.5 h-3.5 ${tab.iconColor}`} />
+                  <span>{tab.label}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors ${
+                    isActive
+                      ? 'bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/60'
+                      : 'bg-slate-200/80 dark:bg-zinc-700/80 text-slate-700 dark:text-zinc-300'
+                  }`}>
+                    {tab.count}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* Body Daftar Pesan */}
       {loadingTickets ? (
         <div className="py-12 text-center text-xs font-medium text-slate-400">
           Memuat riwayat pesan...
         </div>
-      ) : myTickets.length > 0 ? (
+      ) : filteredTickets.length > 0 ? (
         <div className="space-y-3 pt-1">
-          {myTickets.map((ticket) => {
+          {filteredTickets.map((ticket) => {
             const isExpanded = expandedTicketId === ticket.id;
 
             // Dapatkan list pesan (multichat messages jika ada, atau fallback buatan dari message & admin_reply)
@@ -408,16 +467,26 @@ export default function MyTicketsList({
       ) : (
         <div className="py-14 text-center">
           <Inbox className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-          <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Belum Ada Pesan yang Dikirim</h4>
+          <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            {statusFilter === 'aktif'
+              ? 'Tidak Ada Pesan Aktif / Dalam Proses'
+              : statusFilter === 'selesai'
+              ? 'Belum Ada Pesan Selesai'
+              : 'Belum Ada Pesan yang Dikirim'}
+          </h4>
           <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto mb-4 leading-relaxed">
-            Pesan atau pertanyaan yang Anda kirim ke admin akan muncul di sini.
+            {statusFilter === 'aktif'
+              ? 'Semua pertanyaan atau konsultasi Anda telah diselesaikan oleh admin.'
+              : statusFilter === 'selesai'
+              ? 'Pesan atau konsultasi yang telah ditandai selesai oleh admin akan muncul di sini.'
+              : 'Pesan atau pertanyaan yang Anda kirim ke admin akan muncul di sini.'}
           </p>
           <button
             onClick={onOpenCreateModal}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>Kirim Pesan Pertama</span>
+            <span>Kirim Pesan Baru</span>
           </button>
         </div>
       )}

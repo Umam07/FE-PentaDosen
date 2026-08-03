@@ -42,16 +42,16 @@ export function useFaqHelp(user: UserSession) {
     setTimeout(() => setToast({ message: null, type: 'success' }), 4000);
   }, []);
 
-  const loadMyTickets = useCallback(async () => {
+  const loadMyTickets = useCallback(async (isSilent = false) => {
     const targetUserId = user?.id ? Number(user.id) : 1;
-    setLoadingTickets(true);
+    if (!isSilent) setLoadingTickets(true);
     try {
       const tickets = await fetchUserSupportTickets(targetUserId);
       setMyTickets(tickets);
     } catch (e) {
       console.error('Error fetching support tickets:', e);
     } finally {
-      setLoadingTickets(false);
+      if (!isSilent) setLoadingTickets(false);
     }
   }, [user?.id]);
 
@@ -71,6 +71,26 @@ export function useFaqHelp(user: UserSession) {
     loadInitialData();
     loadMyTickets();
   }, [user, loadMyTickets]);
+
+  // Polling interval & custom storage event listener untuk update real-time pesan dosen
+  useEffect(() => {
+    const handleUpdate = () => {
+      loadMyTickets(true);
+    };
+
+    window.addEventListener('penta_tickets_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    const intervalId = setInterval(() => {
+      loadMyTickets(true);
+    }, 3000);
+
+    return () => {
+      window.removeEventListener('penta_tickets_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+      clearInterval(intervalId);
+    };
+  }, [loadMyTickets]);
 
   // Handle hash navigation (#kontak-support)
   useEffect(() => {
