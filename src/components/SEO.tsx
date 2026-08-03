@@ -12,10 +12,18 @@ export default function SEO({
   title = "PentaDosen 2.0 - Platform Portofolio & Tri Dharma Dosen Universitas YARSI",
   description = "PentaDosen 2.0 adalah platform sistem informasi manajemen portofolio dan Tri Dharma Dosen Universitas YARSI. Otomatisasi sinkronisasi data publikasi Google Scholar & Scopus, penelitian, pengabdian, HKI, dan evaluasi kinerja akademik dosen.",
   keywords = "PentaDosen, Penta Dosen, Universitas YARSI, Dosen YARSI, Tri Dharma Dosen, Google Scholar, Scopus, Portofolio Dosen, Publikasi Dosen, Penelitian Dosen, HKI, LPPM YARSI",
-  canonical = "https://www.pentadosen.site/",
-  ogImage = "https://www.pentadosen.site/PentaDosen-2-0-07-06-2026_05_02_PM.webp"
+  canonical,
+  ogImage
 }: SEOProps) {
   useEffect(() => {
+    // Determine base URL dynamically based on current environment or fallback to official campus domain
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://pentadosen.yarsi.ac.id';
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+    
+    // Active canonical link: prioritize passed canonical, otherwise default to current origin or official campus domain
+    const activeCanonical = canonical || `${currentOrigin}${currentPath}`;
+    const activeOgImage = ogImage || `${currentOrigin}/PentaDosen-2-0-07-06-2026_05_02_PM.webp`;
+
     // 1. Update Document Title
     document.title = title;
 
@@ -41,26 +49,27 @@ export default function SEO({
     // 3. Update Open Graph Tags
     updateMeta('meta[property="og:title"]', 'content', title);
     updateMeta('meta[property="og:description"]', 'content', description);
-    updateMeta('meta[property="og:url"]', 'content', canonical);
-    updateMeta('meta[property="og:image"]', 'content', ogImage);
+    updateMeta('meta[property="og:url"]', 'content', activeCanonical);
+    updateMeta('meta[property="og:image"]', 'content', activeOgImage);
 
     // 4. Update Twitter Card Tags
     updateMeta('meta[property="twitter:title"]', 'content', title);
     updateMeta('meta[property="twitter:description"]', 'content', description);
-    updateMeta('meta[property="twitter:url"]', 'content', canonical);
-    updateMeta('meta[property="twitter:image"]', 'content', ogImage);
+    updateMeta('meta[property="twitter:url"]', 'content', activeCanonical);
+    updateMeta('meta[property="twitter:image"]', 'content', activeOgImage);
 
     // 5. Update Canonical Link
     let linkCanonical = document.querySelector('link[rel="canonical"]');
     if (linkCanonical) {
-      linkCanonical.setAttribute('href', canonical);
+      linkCanonical.setAttribute('href', activeCanonical);
     } else {
       linkCanonical = document.createElement('link');
       linkCanonical.setAttribute('rel', 'canonical');
-      linkCanonical.setAttribute('href', canonical);
+      linkCanonical.setAttribute('href', activeCanonical);
       document.head.appendChild(linkCanonical);
     }
   }, [title, description, keywords, canonical, ogImage]);
 
   return null;
 }
+
