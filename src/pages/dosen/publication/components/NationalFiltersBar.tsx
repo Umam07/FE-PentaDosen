@@ -39,76 +39,6 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
   isImporting,
   showFilters = true,
 }) => {
-  // Filter khusus dokumen Jurnal Nasional
-  const jnDocs = useMemo(() => {
-    return (documents || []).filter(
-      (d: any) =>
-        String(d.category || '').toLowerCase().includes('jurnal nasional') ||
-        d.source === 'scholar' ||
-        d.source === 'sinta' ||
-        d.source === 'garuda'
-    );
-  }, [documents]);
-
-  // Penghitungan Akreditasi SINTA
-  const sintaCounts = useMemo(() => {
-    const total = jnDocs.length;
-    let s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0, s6 = 0, nonSinta = 0;
-
-    jnDocs.forEach((d: any) => {
-      const rank = String(d.sinta_rank || '').toUpperCase();
-      if (rank === 'S1') s1++;
-      else if (rank === 'S2') s2++;
-      else if (rank === 'S3') s3++;
-      else if (rank === 'S4') s4++;
-      else if (rank === 'S5') s5++;
-      else if (rank === 'S6') s6++;
-      else nonSinta++;
-    });
-
-    return { total, S1: s1, S2: s2, S3: s3, S4: s4, S5: s5, S6: s6, 'Non-SINTA': nonSinta };
-  }, [jnDocs]);
-
-  // Penghitungan Sumber Data
-  const sourceCounts = useMemo(() => {
-    const total = jnDocs.length;
-    let external = 0;
-    let manual = 0;
-
-    jnDocs.forEach((d: any) => {
-      if (d.source === 'scholar' || d.source === 'sinta' || d.source === 'garuda') {
-        external++;
-      } else {
-        manual++;
-      }
-    });
-
-    return { total, external, manual };
-  }, [jnDocs]);
-
-  // Penghitungan Korespondensi
-  const correspondenceCounts = useMemo(() => {
-    const total = jnDocs.length;
-    let unconfirmed = 0;
-    let confirmed = 0;
-
-    jnDocs.forEach((d: any) => {
-      const subtypeStr = String(d.subtype || '').toLowerCase();
-      const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
-      const totalAuthors = Number(d.total_authors) || 1;
-
-      if (isArticle && totalAuthors > 1 && !d.is_corresponding_confirmed) {
-        unconfirmed++;
-      } else {
-        confirmed++;
-      }
-    });
-
-    return { total, unconfirmed, confirmed };
-  }, [jnDocs]);
-
-
-  // Hitung filter aktif
   const activeFiltersCount = useMemo(() => {
     let count = 0;
     if (sintaFilter !== 'all') count++;
@@ -200,14 +130,10 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
                   <Award className="w-3.5 h-3.5 text-emerald-500" />
                   Akreditasi SINTA
                 </label>
-                <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500">
-                  {sintaCounts.total} Dokumen
-                </span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {(['all', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'Non-SINTA'] as SintaFilterType[]).map((val) => {
                   const isActive = sintaFilter === val;
-                  const count = val === 'all' ? sintaCounts.total : sintaCounts[val];
                   const labelMap: Record<string, string> = {
                     all: 'Semua',
                     'Non-SINTA': 'Non-SINTA',
@@ -225,11 +151,6 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
                       }`}
                     >
                       <span>{labelMap[val] || val}</span>
-                      <span className={`text-[10px] px-1 py-0.2 rounded-full ${
-                        isActive ? 'bg-white/20 text-white dark:bg-black/20' : 'bg-slate-200/60 dark:bg-zinc-700/60 text-slate-500 dark:text-zinc-400'
-                      }`}>
-                        {count}
-                      </span>
                     </button>
                   );
                 })}
@@ -243,15 +164,12 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
                   <Globe className="w-3.5 h-3.5 text-primary-500" />
                   Sumber Data
                 </label>
-                <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500">
-                  {sourceCounts.total} Dokumen
-                </span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {[
-                  { id: 'all', label: 'Semua', count: sourceCounts.total },
-                  { id: 'external', label: 'Google Scholar / SINTA', count: sourceCounts.external },
-                  { id: 'manual', label: 'Input Manual', count: sourceCounts.manual },
+                  { id: 'all', label: 'Semua' },
+                  { id: 'external', label: 'Google Scholar / SINTA' },
+                  { id: 'manual', label: 'Input Manual' },
                 ].map((item) => {
                   const isActive = sourceFilter === item.id;
                   return (
@@ -267,11 +185,6 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
                       }`}
                     >
                       <span>{item.label}</span>
-                      <span className={`text-[10px] px-1 py-0.2 rounded-full ${
-                        isActive ? 'bg-white/20 text-white dark:bg-black/20' : 'bg-slate-200/60 dark:bg-zinc-700/60 text-slate-500 dark:text-zinc-400'
-                      }`}>
-                        {item.count}
-                      </span>
                     </button>
                   );
                 })}
@@ -285,15 +198,12 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
                   <MailCheck className="w-3.5 h-3.5 text-amber-500" />
                   Status Korespondensi
                 </label>
-                <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500">
-                  {correspondenceCounts.total} Dokumen
-                </span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {[
-                  { id: 'all', label: 'Semua', count: correspondenceCounts.total },
-                  { id: 'unconfirmed', label: 'Belum Konfirmasi', count: correspondenceCounts.unconfirmed },
-                  { id: 'confirmed', label: 'Sudah Konfirmasi', count: correspondenceCounts.confirmed },
+                  { id: 'all', label: 'Semua' },
+                  { id: 'unconfirmed', label: 'Belum Konfirmasi' },
+                  { id: 'confirmed', label: 'Sudah Konfirmasi' },
                 ].map((item) => {
                   const isActive = correspondenceFilter === item.id;
                   return (
@@ -309,11 +219,6 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
                       }`}
                     >
                       <span>{item.label}</span>
-                      <span className={`text-[10px] px-1 py-0.2 rounded-full ${
-                        isActive ? 'bg-white/20 text-white dark:bg-black/20' : 'bg-slate-200/60 dark:bg-zinc-700/60 text-slate-500 dark:text-zinc-400'
-                      }`}>
-                        {item.count}
-                      </span>
                     </button>
                   );
                 })}
