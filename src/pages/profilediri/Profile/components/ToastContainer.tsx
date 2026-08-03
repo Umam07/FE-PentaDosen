@@ -8,13 +8,14 @@ interface ToastContainerProps {
 
 export const ToastContainer: React.FC<ToastContainerProps> = ({ message }) => {
   useEffect(() => {
-    if (message.text) {
-      toast.show({
-        title: message.type === 'success' ? 'Sukses' : 'Gagal',
-        message: message.text,
-        variant: message.type === 'success' ? 'success' : 'error',
-        position: 'bottom-right',
-      });
+    if (!message.text) return;
+
+    if (message.type === 'success') {
+      toast.success(message.text, 'Sukses');
+    } else if (message.type === 'error') {
+      toast.error(message.text, 'Gagal');
+    } else {
+      toast.info(message.text, 'Informasi');
     }
   }, [message.text, message.type]);
 

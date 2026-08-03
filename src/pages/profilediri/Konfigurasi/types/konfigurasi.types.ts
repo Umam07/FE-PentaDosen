@@ -38,8 +38,8 @@ export interface KonfigurasiProps {
   handleSync: () => Promise<void>;
   handleSyncScopus: () => Promise<void>;
   handleSyncAll: () => Promise<void>;
-  message: { text: string; type: 'success' | 'error' | '' };
-  setMessage: (msg: { text: string; type: 'success' | 'error' | '' }) => void;
+  message: { text: string; type: 'success' | 'error' | 'info' | '' };
+  setMessage: (msg: { text: string; type: 'success' | 'error' | 'info' | '' }) => void;
   tabVariants: any;
 }
 

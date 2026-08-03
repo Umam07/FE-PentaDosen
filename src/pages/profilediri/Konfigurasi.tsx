@@ -71,7 +71,7 @@ export default function Konfigurasi({
         {/* Google Scholar */}
         <IntegrationCard
           title="Google Scholar"
-          description="Dipakai untuk mengambil sitasi, h-index, i10-index, dan daftar publikasi Scholar."
+          description="Dipakai untuk mengambil dokumen, sitasi, h-index, dan daftar publikasi Scholar."
           type="scholar"
           icon={Globe}
           value={scholarId}

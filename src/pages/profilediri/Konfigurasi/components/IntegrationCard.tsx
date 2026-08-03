@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw, Search, Save, Trash2, TrendingUp, Award, Zap, BookOpen } from 'lucide-react';
+import { RefreshCw, Search, Save, Trash2, TrendingUp, Award, BookOpen } from 'lucide-react';
 import { MetricTile } from './MetricTile';
 import { AuthorPreview } from './AuthorPreview';
 import { IntegrationCardProps } from '../types/konfigurasi.types';
@@ -40,18 +40,11 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
   const tone = toneClasses[type];
   const isSaved = Boolean(savedValue);
   const saveDisabled = loading || !value || (value !== savedValue && !checkedAuthor);
-  const metrics =
-    type === 'scholar'
-      ? [
-          { label: 'Citations', value: data?.total_citations, icon: TrendingUp },
-          { label: 'h-index', value: data?.h_index, icon: Award },
-          { label: 'i10-index', value: data?.i10_index, icon: Zap },
-        ]
-      : [
-          { label: 'Documents', value: data?.document_count, icon: BookOpen },
-          { label: 'Citations', value: data?.total_citations, icon: TrendingUp },
-          { label: 'h-index', value: data?.h_index, icon: Award },
-        ];
+  const metrics = [
+    { label: 'Documents', value: data?.document_count, icon: BookOpen },
+    { label: 'Citations', value: data?.total_citations, icon: TrendingUp },
+    { label: 'h-index', value: data?.h_index, icon: Award },
+  ];
 
   return (
     <section className="rounded-[2rem] border border-slate-200/60 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">

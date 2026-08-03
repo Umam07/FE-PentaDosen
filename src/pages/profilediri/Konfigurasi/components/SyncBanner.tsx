@@ -33,7 +33,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
         <button
           onClick={onSyncAll}
           disabled={loading || (!scholarId && !scopusId)}
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary-600/20 transition-colors hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50 lg:w-auto"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50 lg:w-auto"
         >
           {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
           Sinkronkan Semua

@@ -21,5 +21,5 @@ export interface ProfileStat {
 
 export interface ToastMessage {
   text: string;
-  type: 'success' | 'error' | '';
+  type: 'success' | 'error' | 'info' | '';
 }

@@ -344,7 +344,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     }
     try {
       setLoading(true);
-      setMessage({ text: 'Sedang sinkronisasi data...', type: '' });
+      setMessage({ text: 'Sedang sinkronisasi data...', type: 'info' });
 
       const syncPromises = [];
       if (scholarId) syncPromises.push(profileService.syncScholar(user.id));
