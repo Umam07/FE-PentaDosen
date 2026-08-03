@@ -14,6 +14,7 @@ import TemplatesTab from './components/TemplatesTab';
 import SupportTicketsTab from './components/SupportTicketsTab';
 import { User } from './types/cmsDashboard.types';
 import { MessageSquare } from 'lucide-react';
+import { toast } from '@/components/ui/toast';
 
 interface CmsDashboardProps {
   user: User;
