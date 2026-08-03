@@ -156,6 +156,7 @@ export function usePublication(user: UserSession) {
 
   useEffect(() => {
     if (urlKategori) {
+      setIsTableLoading(true);
       setCategory(urlKategori);
       setFilterYear(null);
       setQuartileFilter('all');
@@ -164,6 +165,8 @@ export function usePublication(user: UserSession) {
       setScopusFilter('all');
       setCrossIndexedOnly(false);
       setCurrentPage(1);
+      // Beri waktu satu tick agar filter & filteredDocuments selesai di-recalculate
+      setTimeout(() => setIsTableLoading(false), 0);
     }
   }, [urlKategori]);
 
