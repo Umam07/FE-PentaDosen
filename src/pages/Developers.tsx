@@ -1,5 +1,6 @@
 import Navbar from '../components/Home/Navbar';
 import Footer from '../components/Home/Footer';
+import SEO from '../components/SEO';
 import { Github, Instagram, ArrowLeft, GraduationCap, Code2, Users, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
@@ -90,6 +91,12 @@ function MemberAvatar({ name, initials, photoUrl, size = "normal" }: { name: str
 export default function Developers() {
   return (
     <div className="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col selection:bg-slate-200 dark:selection:bg-slate-800">
+      <SEO
+        title="Tim Pengembang & Pembimbing DUK Team — PentaDosen Universitas YARSI"
+        description="Profil Dosen Pembimbing dan Tim Pengembang (DUK Team) di balik platform tata kelola publikasi ilmiah PentaDosen Universitas YARSI."
+        keywords="DUK Team, Tim Pengembang PentaDosen, Universitas YARSI, Nurmaya, Kiki Aimar Wicaksana, Muhammad Syafi'ul Umam, Rafi Daniswara Anggoro Putra"
+        canonical="https://www.pentadosen.site/developers"
+      />
       {/* Header Navbar */}
       <Navbar />
 

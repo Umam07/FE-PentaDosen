@@ -88,9 +88,9 @@ export default function Navbar() {
               <div className="h-5 sm:h-7 w-[1px] bg-gray-300 dark:bg-gray-700/80 shrink-0" />
               <div className="flex items-center gap-1.5 sm:gap-2 shrink min-w-0">
                 <PentaDosenLogo className="w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
-                <h1 className="text-sm xs:text-base sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase truncate">
+                <span className="text-sm xs:text-base sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase truncate">
                   Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
-                </h1>
+                </span>
               </div>
             </Link>
 
