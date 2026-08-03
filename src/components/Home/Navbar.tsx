@@ -115,7 +115,7 @@ export default function Navbar() {
               {user ? (
                 <Link 
                   to="/dashboard"
-                  className="flex items-center gap-2 text-sm font-black text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 px-6 py-2.5 rounded-xl shadow-lg shadow-primary-100 hover:shadow-primary-200 transition-all duration-300 group"
+                  className="flex items-center gap-2 text-sm font-black text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 px-6 py-2.5 rounded-xl transition-all duration-300 group"
                 >
                       Insights
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -130,7 +130,7 @@ export default function Navbar() {
                         </Link>
                         <Link 
                           to="/insights"
-                          className="flex items-center gap-2 text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 px-5 py-2.5 rounded-xl shadow-lg shadow-primary-100 hover:shadow-primary-200 transition-all duration-300 group"
+                          className="flex items-center gap-2 text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 px-5 py-2.5 rounded-xl transition-all duration-300 group"
                         >
                           Insights
                           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -270,7 +270,7 @@ export default function Navbar() {
                     <Link
                       to="/insights"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-md shadow-primary-500/10"
+                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all"
                     >
                       Insights
                       <ArrowRight className="w-4 h-4" />

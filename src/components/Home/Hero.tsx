@@ -56,18 +56,11 @@ export default function Hero() {
             {/* Primary Button */}
             <Link
               to="/insights"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 bg-slate-900 dark:bg-primary-600 hover:bg-primary-600 dark:hover:bg-primary-500 text-white font-bold text-base px-10 py-5 rounded-2xl shadow-2xl shadow-slate-200 dark:shadow-none transition-all duration-300 group overflow-hidden relative"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 bg-slate-900 dark:bg-primary-600 hover:bg-primary-600 dark:hover:bg-primary-500 text-white font-bold text-base px-10 py-5 rounded-2xl transition-all duration-300 group overflow-hidden relative"
             >
               <span className="relative z-10">Lihat Lebih Lengkap</span>
               <LayoutDashboard className="w-5 h-5 group-hover:rotate-12 transition-transform relative z-10" />
               <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              
-              {/* Shine Effect */}
-              <motion.div
-                className="absolute top-0 -inset-full h-full w-1/2 z-20 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
-                animate={{ left: ['-100%', '200%'] }}
-                transition={{ repeat: Infinity, duration: 2, ease: "linear", delay: 2, repeatDelay: 1 }}
-              />
             </Link>
 
 
