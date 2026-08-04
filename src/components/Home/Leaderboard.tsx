@@ -91,11 +91,8 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                         )}
                       </div>
                       {index === 0 && (
-                        <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 z-10">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-5 w-5 bg-white dark:bg-slate-900 border border-amber-500 items-center justify-center shadow-md">
-                            <Crown className="w-3 h-3 text-amber-500 fill-amber-400" />
-                          </span>
+                        <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 z-10 rounded-full bg-white dark:bg-slate-900 border border-amber-500 items-center justify-center shadow-xs shadow-amber-500/20">
+                          <Crown className="w-3 h-3 text-amber-500 fill-amber-400" />
                         </span>
                       )}
                     </div>
