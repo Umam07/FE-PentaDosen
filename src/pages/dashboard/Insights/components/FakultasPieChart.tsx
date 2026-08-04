@@ -48,9 +48,11 @@ export default function FakultasPieChart({
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Poin KPI per Fakultas</h2>
-            <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold rounded-full border border-slate-200 dark:border-slate-700 shadow-inner">
-              {totalFakultasPoints.toLocaleString()} Poin
-            </span>
+            <phantom-ui loading={loading} animation="shimmer" className="inline-block">
+              <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold rounded-full border border-slate-200 dark:border-slate-700 shadow-inner">
+                {totalFakultasPoints.toLocaleString()} Poin
+              </span>
+            </phantom-ui>
           </div>
           <p className="text-slate-500 dark:text-slate-400 font-medium text-xs max-w-sm">
             Distribusi metrik KPI di seluruh fakultas secara real-time.

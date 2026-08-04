@@ -50,7 +50,9 @@ export default function InsightsMetricsRow({
             <Building2 className="w-7 h-7" />
           </div>
           <div>
-            <p className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tighter">6</p>
+            <phantom-ui loading={loading} animation="shimmer" className="block">
+              <p className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tighter">6</p>
+            </phantom-ui>
             <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Fakultas</p>
           </div>
         </button>
