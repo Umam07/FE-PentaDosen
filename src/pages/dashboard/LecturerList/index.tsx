@@ -19,6 +19,7 @@ export default function LecturerList() {
     setSelectedFakultas,
     loading,
     fakultasOptions,
+    fakultasCounts,
     filteredLecturers
   } = useLecturerList();
 
@@ -26,7 +27,7 @@ export default function LecturerList() {
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-colors duration-500 font-sans">
       <Navbar />
 
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-8">
         
         {/* Header Section */}
         <LecturerHeader 
@@ -41,11 +42,12 @@ export default function LecturerList() {
           fakultasOptions={fakultasOptions}
           selectedFakultas={selectedFakultas}
           onFakultasChange={setSelectedFakultas}
+          fakultasCounts={fakultasCounts}
         />
 
         {/* Lecturer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence mode="wait">
             {loading ? (
               <LecturerSkeleton />
             ) : filteredLecturers.length > 0 ? (
