@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { GraduationCap, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { DepartmentItem } from '../types';
 
 interface DepartementCardProps {
@@ -17,22 +17,15 @@ export default function DepartementCard({ dept, index, onClick }: DepartementCar
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       whileHover={{ y: -6 }}
-      className={`group relative bg-white dark:bg-slate-900/90 backdrop-blur-md p-7 rounded-3xl border border-slate-200/60 dark:border-slate-800/80 shadow-xs hover:shadow-xl ${dept.glowColor} transition-all duration-500 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[460px]`}
+      className="group relative bg-white dark:bg-slate-900 p-7 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[460px]"
       onClick={onClick}
     >
-      {/* Decorative background glow */}
-      <div className={`absolute -right-10 -top-10 w-28 h-28 ${dept.color} opacity-5 group-hover:opacity-15 group-hover:scale-125 rounded-full blur-xl transition-all duration-700`}></div>
-      
       <div className="relative z-10 flex flex-col h-full justify-between flex-1">
         <div className="space-y-5">
           {/* Icon and Title Header */}
           <div className="flex items-start justify-between">
             <div className={`w-14 h-14 rounded-2xl ${dept.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
               <dept.icon className={`w-7 h-7 ${dept.textColor}`} />
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 dark:bg-slate-800/40 rounded-full border border-slate-100 dark:border-slate-800">
-              <GraduationCap className="w-3 h-3 text-slate-400" />
-              <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Fakultas</span>
             </div>
           </div>
 

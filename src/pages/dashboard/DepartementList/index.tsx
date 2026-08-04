@@ -26,6 +26,7 @@ export default function DepartementList() {
         <DepartementHeader 
           search={search}
           onSearchChange={setSearch}
+          totalFiltered={filteredDepartments.length}
           onBack={() => navigate('/insights')}
         />
 
