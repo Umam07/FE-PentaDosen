@@ -85,7 +85,7 @@ export default function InsightsLeaderboard({
                     )}
                   </div>
                   {index === 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 z-10 rounded-full bg-white dark:bg-slate-900 border border-amber-500 items-center justify-center shadow-xs shadow-amber-500/20">
+                    <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 z-10 rounded-full bg-white dark:bg-slate-900 border border-amber-500 items-center justify-center shadow-xs">
                       <Crown className="w-3 h-3 text-amber-500 fill-amber-400" />
                     </span>
                   )}

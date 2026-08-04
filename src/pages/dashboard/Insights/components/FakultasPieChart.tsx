@@ -44,7 +44,7 @@ export default function FakultasPieChart({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 relative z-10">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="p-2.5 bg-primary-500 rounded-xl shadow-md shadow-primary-500/20">
+            <div className="p-2.5 bg-primary-500 rounded-xl">
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Poin KPI per Fakultas</h2>

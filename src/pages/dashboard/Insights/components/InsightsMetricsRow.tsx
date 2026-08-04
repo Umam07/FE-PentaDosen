@@ -58,13 +58,13 @@ export default function InsightsMetricsRow({
         </button>
       </motion.div>
 
-      {/* Top Performer Card - Clean, Minimalist, Elegant (No Glow Gradient) */}
+      {/* Top Performer Card - Clean, Minimalist, Soft Highlight */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.2 }}
-        className="lg:col-span-12 xl:col-span-7 bg-white dark:bg-slate-900 p-7 lg:p-8 rounded-3xl border border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group overflow-hidden relative shadow-xs hover:shadow-md transition-all duration-500"
+        className="lg:col-span-12 xl:col-span-7 bg-white dark:bg-slate-900 p-7 lg:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group overflow-hidden relative shadow-xs transition-all duration-300"
       >
         {/* Content Section */}
         <div className="space-y-3.5 flex-1 min-w-0">
@@ -81,7 +81,7 @@ export default function InsightsMetricsRow({
             <div className="flex flex-wrap items-center gap-3 pt-0.5">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Akumulasi KPI</span>
               <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 hidden sm:inline-block" />
-              <div className="inline-flex items-baseline gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/60 shadow-xs">
+              <div className="inline-flex items-baseline gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-xs">
                 <span className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
                   {Math.round(stats?.top_performer?.total_kpi_points || 0).toLocaleString()}
                 </span>
@@ -93,15 +93,15 @@ export default function InsightsMetricsRow({
           </phantom-ui>
         </div>
         
-        {/* Rank 01 Badge Section - Solid Clean Style */}
+        {/* Rank 01 Badge Section - Soft Pastel Highlight Style */}
         <div className="self-stretch sm:self-center flex items-center justify-end sm:justify-center">
-          <div className="px-6 py-4 rounded-2xl bg-amber-500 text-white flex sm:flex-col items-center justify-center gap-3 sm:gap-1.5 shadow-sm border border-amber-400/20">
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white">
-              <Trophy className="w-5 h-5" />
+          <div className="px-6 py-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 flex sm:flex-col items-center justify-center gap-3 sm:gap-1.5 border border-amber-200/80 dark:border-amber-500/20">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/15 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
+              <Trophy className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="text-left sm:text-center">
-              <span className="block text-[9px] font-extrabold uppercase tracking-widest text-amber-100 leading-none">Rank</span>
-              <span className="text-xl font-black tracking-tight leading-none text-white">#01</span>
+              <span className="block text-[9px] font-extrabold uppercase tracking-widest text-amber-600/80 dark:text-amber-400/80 leading-none">Rank</span>
+              <span className="text-xl font-black tracking-tight leading-none text-amber-700 dark:text-amber-400">#01</span>
             </div>
           </div>
         </div>
