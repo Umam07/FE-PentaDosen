@@ -189,7 +189,7 @@ export default function PublicationEditModal({
             <div className="space-y-2">
               <label htmlFor="edit-pub-sinta-rank" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
                 <Award className="w-3.5 h-3.5 text-amber-500" />
-                Peringkat Akreditasi SINTA
+                Akreditasi SINTA
               </label>
               <div className="relative">
                 <select

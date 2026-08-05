@@ -27,6 +27,7 @@ export interface PublicationDoc {
   is_accredited?: boolean;
   issn?: string;
   garuda_id?: string;
+  is_kpi_counted?: boolean;
 }
 
 export interface InternationalPublicationDoc extends PublicationDoc {

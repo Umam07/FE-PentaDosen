@@ -1,22 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  Upload, Sparkles, Archive, AlertCircle, Shield, 
-  CalendarDays, ChevronDown, CheckCircle, Award
+  Upload, Sparkles, Archive, AlertCircle, 
+  CalendarDays, ChevronDown, Award, FileText, XCircle
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import { uploadWithProgress } from '../../../../lib/utils';
-import { FileText, XCircle } from 'lucide-react';
+import type { UserSession, PublicationDoc, WeightCategory } from '../types/publication.types';
 
 interface PublicationUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: any;
-  documents: any[];
+  user: UserSession;
+  documents: PublicationDoc[];
   category: string;
-  weights: any[];
-  isWeightsLoading: boolean;
+  weights: WeightCategory[];
+  isWeightsLoading?: boolean;
   fetchDocuments: () => Promise<void>;
   setIsTableLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
@@ -30,7 +30,6 @@ export default function PublicationUploadModal({
   documents,
   category,
   weights,
-  isWeightsLoading,
   fetchDocuments,
   setIsTableLoading,
   setCurrentPage,
@@ -50,34 +49,25 @@ export default function PublicationUploadModal({
     return (category || '').toLowerCase().includes('jurnal nasional');
   }, [category]);
 
+  const modalSubtitle = useMemo(() => {
+    if (!category) return 'Daftarkan Jurnal Ilmiah, Prosiding, atau Book Chapter';
+    const activeWeight = weights.find((w) => w.category === category);
+    const points = activeWeight?.weight_value;
+    const catLower = category.toLowerCase();
+
+    if (points !== undefined && points !== null) {
+      return `Daftarkan ${catLower} Anda · +${points} pts otomatis`;
+    }
+    return `Daftarkan ${catLower} Anda`;
+  }, [category, weights]);
+
   const duplicateFound = useMemo(() => {
     if (!title || title.length < 5) return null;
-    return documents.find((doc: any) => 
+    return documents.find((doc: PublicationDoc) => 
       doc.title.toLowerCase().trim() === title.toLowerCase().trim() && 
       doc.is_kpi_counted
     );
   }, [title, documents]);
-
-  const scoringPreview = useMemo(() => {
-    if (docType === 'arsip') {
-      return {
-        type: 'arsip' as const,
-        message: 'Kategori Arsip: Dokumen disimpan sebagai arsip (0 Poin)',
-        points: 0,
-      };
-    }
-
-    if (!date) return null;
-
-    const selectedWeight = weights.find((w: any) => w.category === category);
-    const pts = selectedWeight ? (selectedWeight as any).weight_value : 0;
-
-    return {
-      type: 'kpi' as const,
-      message: `Masuk Penghitungan KPI: +${pts} Poin`,
-      points: pts,
-    };
-  }, [date, docType, category, weights]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -118,7 +108,7 @@ export default function PublicationUploadModal({
     formData.append('file', file);
     formData.append('title', title);
     formData.append('category', category);
-    formData.append('user_id', user.id);
+    formData.append('user_id', String(user.id));
     formData.append('published_at', date ? formatToYYYYMMDD(date) : '');
     formData.append('doc_type', docType);
     if (isNationalJournal && sintaRank) {
@@ -137,11 +127,11 @@ export default function PublicationUploadModal({
         setFile(null);
         setDate(new Date());
         setSintaRank('Non-SINTA');
-        onClose(); // Tutup modal saat sukses
+        onClose();
         
         setIsTableLoading(true);
         await fetchDocuments();
-        setCurrentPage(1); // Reset ke halaman 1
+        setCurrentPage(1);
         setIsTableLoading(false);
       } else {
         onShowMessage('Gagal mengunggah dokumen.', 'error');
@@ -159,7 +149,7 @@ export default function PublicationUploadModal({
       isOpen={isOpen}
       onClose={onClose}
       title="Unggah Publikasi Baru"
-      subtitle="Daftarkan Jurnal Ilmiah, Prosiding, atau Book Chapter"
+      subtitle={modalSubtitle}
       icon={Upload}
       iconColorClass="text-primary-500"
       maxWidthClass="max-w-4xl"
@@ -236,31 +226,11 @@ export default function PublicationUploadModal({
           />
         </div>
 
-        {category && (() => {
-          const activeWeight = weights.find((w: any) => w.category === category);
-          return (
-            <div className="space-y-2">
-              <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori Publikasi</label>
-              <div className="w-full px-4 py-3 bg-primary-50 dark:bg-primary-950/20 border-2 border-primary-200 dark:border-primary-800/40 rounded-xl flex items-center gap-3">
-                <Shield className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                <span className="text-sm font-black text-primary-800 dark:text-primary-200 uppercase tracking-tight flex-1">
-                  {category}
-                </span>
-                {activeWeight && (
-                  <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-1 rounded-lg border border-emerald-100 dark:border-emerald-900/30 flex-shrink-0">
-                    +{activeWeight.weight_value} PTS
-                  </span>
-                )}
-              </div>
-            </div>
-          );
-        })()}
-
         {isNationalJournal && (
           <div className="space-y-2">
             <label htmlFor="pub-sinta-rank" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-amber-500" />
-              Peringkat Akreditasi SINTA
+              Akreditasi SINTA
             </label>
             <div className="relative">
               <select
@@ -338,7 +308,11 @@ export default function PublicationUploadModal({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => document.getElementById('pub-file-input-modal')?.click()}
-              className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer border-gray-200 dark:border-zinc-800 border-dashed bg-gray-50/30 dark:bg-zinc-800/30 hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400`}
+              className={`relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-300 cursor-pointer border-dashed hover:bg-white dark:hover:bg-zinc-900 hover:border-primary-400 ${
+                isDragging
+                  ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-950/20'
+                  : 'border-gray-200 dark:border-zinc-800 bg-gray-50/30 dark:bg-zinc-800/30'
+              }`}
             >
               <input
                 id="pub-file-input-modal"
@@ -348,8 +322,8 @@ export default function PublicationUploadModal({
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
               />
               <div className="space-y-3 text-center">
-                <div className={`mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5`}>
-                  <Upload className={`h-6 w-6 text-gray-400 group-hover:text-primary-600`} />
+                <div className="mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 bg-white dark:bg-zinc-800 shadow-sm ring-1 ring-black/5 dark:ring-white/5">
+                  <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary-600" />
                 </div>
                 <div className="flex flex-col gap-1 px-4">
                   <p className="text-xs font-black text-gray-800 dark:text-zinc-200">
@@ -384,3 +358,4 @@ export default function PublicationUploadModal({
     </BaseFormModal>
   );
 }
+
