@@ -265,7 +265,7 @@ export default function PublicationTable({
                                   ✍️ Input Manual
                                 </span>
                               )}
-                              {doc.source === 'scholar' && (
+                              {(doc.source === 'scholar' || Number(doc.citations || 0) > 0) && (
                                 <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent flex items-center gap-1">
                                   📊 {doc.citations || 0} Sitasi
                                 </span>
