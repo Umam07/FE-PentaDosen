@@ -150,7 +150,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
   // Data opsi untuk masing-masing dropdown filter
   const statusOptions: FilterOption[] = useMemo(() => [
     { id: 'all', label: 'Semua', count: correspondenceCounts.total },
-    { id: 'unconfirmed', label: 'Perlu Konfirmasi', count: correspondenceCounts.unconfirmed, isUrgent: true },
+    { id: 'unconfirmed', label: 'Perlu Konfirmasi', count: correspondenceCounts.unconfirmed },
     { id: 'confirmed', label: 'Terkonfirmasi', count: correspondenceCounts.confirmed },
   ], [correspondenceCounts]);
 

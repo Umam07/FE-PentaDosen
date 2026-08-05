@@ -74,10 +74,6 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       }`}
     >
       <div className="flex items-center gap-1.5 truncate">
-        {/* Dot orange indikator urgent di sebelah kiri label trigger */}
-        {isUrgentActive && (
-          <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" title="Perlu Konfirmasi Status" />
-        )}
         <span className="truncate">
           {categoryLabel}: <span className={isFiltered ? 'font-black text-slate-900 dark:text-zinc-50' : 'font-semibold text-slate-800 dark:text-zinc-100'}>{activeOption?.label || activeValue}</span> ({activeOption?.count ?? 0})
         </span>
@@ -128,11 +124,6 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   <Check className="w-3.5 h-3.5 text-slate-900 dark:text-zinc-100 shrink-0" />
                 ) : (
                   <span className="w-3.5 h-3.5 shrink-0" />
-                )}
-
-                {/* Dot orange untuk item urgent ("Perlu Konfirmasi") */}
-                {option.isUrgent && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
                 )}
 
                 <span className="truncate">{option.label}</span>

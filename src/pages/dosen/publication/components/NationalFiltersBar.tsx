@@ -115,7 +115,7 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
   const statusOptions: FilterOption[] = useMemo(
     () => [
       { id: 'all', label: 'Semua Status', count: sintaConfirmationCounts.total },
-      { id: 'unconfirmed', label: 'Perlu Konfirmasi SINTA', count: sintaConfirmationCounts.unconfirmed, isUrgent: true },
+      { id: 'unconfirmed', label: 'Perlu Konfirmasi SINTA', count: sintaConfirmationCounts.unconfirmed },
       { id: 'confirmed', label: 'Terkonfirmasi SINTA', count: sintaConfirmationCounts.confirmed },
     ],
     [sintaConfirmationCounts]
