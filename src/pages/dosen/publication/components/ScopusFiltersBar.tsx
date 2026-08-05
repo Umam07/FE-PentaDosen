@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import { MailCheck, FileText, Award, RotateCcw, Globe, Upload, Zap, Download, FileSpreadsheet } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Upload, Download, FileSpreadsheet } from 'lucide-react';
+import FilterDropdown, { FilterOption } from './FilterDropdown';
 
 import type { ScopusFilterType, ArticleFilterType, QuartileFilterType, SourceFilterType } from '../types/publication.types';
 export type { ScopusFilterType, ArticleFilterType, QuartileFilterType, SourceFilterType };
-
 
 interface ScopusFiltersBarProps {
   documents: any[];
@@ -45,6 +45,9 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
   isImporting,
   showFilters = true,
 }) => {
+  // State untuk melacak ID dropdown mana yang sedang terbuka (agar hanya 1 yang terbuka di satu waktu)
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+
   // Filter hanya dokumen Jurnal Internasional/Nasional untuk penghitungan indikator filter
   const jiDocs = useMemo(() => {
     return (documents || []).filter(
@@ -127,7 +130,6 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return { total, Q1: q1, Q2: q2, Q3: q3, Q4: q4, None: none };
   }, [jiDocs]);
 
-
   // Penghitungan Sumber Data
   const sourceCounts = useMemo(() => {
     const total = jiDocs.length;
@@ -145,6 +147,34 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return { total, external, manual };
   }, [jiDocs]);
 
+  // Data opsi untuk masing-masing dropdown filter
+  const statusOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua', count: correspondenceCounts.total },
+    { id: 'unconfirmed', label: 'Perlu Konfirmasi', count: correspondenceCounts.unconfirmed, isUrgent: true },
+    { id: 'confirmed', label: 'Terkonfirmasi', count: correspondenceCounts.confirmed },
+  ], [correspondenceCounts]);
+
+  const articleOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua Tipe', count: typeCounts.total },
+    { id: 'article', label: 'Article / Journal', count: typeCounts.article },
+    { id: 'non-article', label: 'Non-Article', count: typeCounts.nonArticle },
+  ], [typeCounts]);
+
+  const quartileOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua', count: quartileCounts.total },
+    { id: 'Q1', label: 'Q1', count: quartileCounts.Q1 },
+    { id: 'Q2', label: 'Q2', count: quartileCounts.Q2 },
+    { id: 'Q3', label: 'Q3', count: quartileCounts.Q3 },
+    { id: 'Q4', label: 'Q4', count: quartileCounts.Q4 },
+    { id: 'None', label: 'Non-Q', count: quartileCounts.None },
+  ], [quartileCounts]);
+
+  const sourceOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua', count: sourceCounts.total },
+    { id: 'external', label: '🌐 External API', count: sourceCounts.external },
+    { id: 'manual', label: '✍️ Input Manual', count: sourceCounts.manual },
+  ], [sourceCounts]);
+
   // Hitung jumlah filter yang sedang aktif
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -156,6 +186,11 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     return count;
   }, [scopusFilter, articleFilter, quartileFilter, sourceFilter, crossIndexedOnly]);
 
+  // Menandakan apakah ada filter yang berbeda dari default "Semua"
+  const hasActiveFilter = useMemo(() => {
+    return scopusFilter !== 'all' || articleFilter !== 'all' || quartileFilter !== 'all' || sourceFilter !== 'all' || crossIndexedOnly;
+  }, [scopusFilter, articleFilter, quartileFilter, sourceFilter, crossIndexedOnly]);
+
   const handleResetAll = () => {
     setScopusFilter('all');
     setArticleFilter('all');
@@ -164,12 +199,6 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
     if (setCrossIndexedOnly) setCrossIndexedOnly(false);
     onResetPage();
   };
-
-  // Class warna netral untuk chip filter yang aktif (sesuai ketentuan Poin 4)
-  const neutralActiveChipClass =
-    'bg-slate-900 border-slate-900 text-white dark:bg-zinc-100 dark:border-zinc-100 dark:text-zinc-900 shadow-xs';
-  const inactiveChipClass =
-    'bg-slate-50 dark:bg-zinc-800/60 border-slate-200/80 dark:border-zinc-700/60 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:border-slate-300';
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl lg:rounded-3xl p-4 sm:p-6 space-y-5 shadow-xs">
@@ -196,221 +225,100 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
           </div>
         </div>
 
-        {/* 3 Tombol Aksi Rata Kanan */}
+        {/* 2 Tombol Aksi & Import Excel Rata Kanan */}
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full lg:w-auto shrink-0">
           <button
             type="button"
             onClick={onUploadClick}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
           >
             Unggah Publikasi Baru
           </button>
           <button 
             type="button"
             onClick={onDownloadTemplate}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl hover:bg-slate-50 dark:hover:bg-zinc-700 transition-colors text-slate-700 dark:text-zinc-300 shadow-xs uppercase tracking-wider whitespace-nowrap"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl hover:bg-slate-50 dark:hover:bg-zinc-700 transition-colors text-slate-700 dark:text-zinc-300 shadow-xs uppercase tracking-wider whitespace-nowrap cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 mr-1.5 shrink-0" />
             Template
           </button>
-          <label className={`flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-xs cursor-pointer uppercase tracking-wider whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
-            <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+          {/* Tombol Import Excel disamakan dengan Template (border-slate-200, bg transparan/putih, text-slate-700) */}
+          <label className={`flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl hover:bg-slate-50 dark:hover:bg-zinc-700 transition-colors text-slate-700 dark:text-zinc-300 shadow-xs cursor-pointer uppercase tracking-wider whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+            <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 shrink-0 text-slate-500 dark:text-zinc-400" />
             {isImporting ? 'Importing...' : 'Import Excel'}
             <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={onImportExcel} disabled={isImporting} />
           </label>
-          {activeFiltersCount > 0 && (
-            <button
-              type="button"
-              onClick={handleResetAll}
-              className="inline-flex items-center justify-center p-2.5 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-zinc-800 transition-colors shrink-0"
-              title="Hapus Semua Filter"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-          )}
         </div>
       </div>
 
-      {/* Baris Bawah: Filter Chips per Grup (tanpa heading besar) */}
+      {/* Baris Bawah: Row 4 Dropdown Filter Flat */}
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 pt-1">
-          {/* 1. Status Korespondensi */}
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
-              <MailCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-              <span className="text-[11px] font-bold uppercase tracking-wider">Status Korespondensi</span>
-            </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+          {/* Container 4 Filter Dropdown (flex-wrap dengan gap konsisten gap-3) */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* 1. Dropdown Status Korespondensi */}
+            <FilterDropdown
+              categoryLabel="Status"
+              options={statusOptions}
+              activeValue={scopusFilter}
+              isOpen={openDropdownId === 'status'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'status' : null)}
+              onSelectOption={(val) => {
+                setScopusFilter(val as ScopusFilterType);
+                onResetPage();
+              }}
+            />
 
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                { id: 'all', label: 'Semua', count: correspondenceCounts.total },
-                {
-                  id: 'unconfirmed',
-                  label: 'Perlu Konfirmasi',
-                  count: correspondenceCounts.unconfirmed,
-                  highlight: correspondenceCounts.unconfirmed > 0,
-                },
-                { id: 'confirmed', label: 'Terkonfirmasi', count: correspondenceCounts.confirmed },
-              ].map((opt) => {
-                const isActive = scopusFilter === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      setScopusFilter(opt.id as ScopusFilterType);
-                      onResetPage();
-                    }}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
-                      isActive
-                        ? neutralActiveChipClass
-                        : opt.highlight
-                        ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 hover:bg-amber-100'
-                        : inactiveChipClass
-                    }`}
-                  >
-                    <span className="whitespace-nowrap">{opt.label}</span>
-                    <span
-                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
-                        isActive
-                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
-                          : opt.highlight
-                          ? 'bg-amber-200/90 text-amber-900 dark:bg-amber-900 dark:text-amber-100'
-                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
-                      }`}
-                    >
-                      {opt.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            {/* 2. Dropdown Tipe Artikel */}
+            <FilterDropdown
+              categoryLabel="Tipe Artikel"
+              options={articleOptions}
+              activeValue={articleFilter}
+              isOpen={openDropdownId === 'article'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'article' : null)}
+              onSelectOption={(val) => {
+                setArticleFilter(val as ArticleFilterType);
+                onResetPage();
+              }}
+            />
+
+            {/* 3. Dropdown Quartile Jurnal */}
+            <FilterDropdown
+              categoryLabel="Quartile Jurnal"
+              options={quartileOptions}
+              activeValue={quartileFilter}
+              isOpen={openDropdownId === 'quartile'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'quartile' : null)}
+              onSelectOption={(val) => {
+                setQuartileFilter(val as QuartileFilterType);
+                onResetPage();
+              }}
+            />
+
+            {/* 4. Dropdown Sumber Data */}
+            <FilterDropdown
+              categoryLabel="Sumber Data"
+              options={sourceOptions}
+              activeValue={sourceFilter}
+              isOpen={openDropdownId === 'source'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
+              onSelectOption={(val) => {
+                setSourceFilter(val as SourceFilterType);
+                onResetPage();
+              }}
+            />
           </div>
 
-          {/* 2. Tipe Artikel */}
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
-              <FileText className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-              <span className="text-[11px] font-bold uppercase tracking-wider">Tipe Artikel</span>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                { id: 'all', label: 'Semua Tipe', count: typeCounts.total },
-                { id: 'article', label: 'Article / Journal', count: typeCounts.article },
-                { id: 'non-article', label: 'Non-Article', count: typeCounts.nonArticle },
-              ].map((opt) => {
-                const isActive = articleFilter === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      setArticleFilter(opt.id as ArticleFilterType);
-                      onResetPage();
-                    }}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
-                      isActive ? neutralActiveChipClass : inactiveChipClass
-                    }`}
-                  >
-                    <span className="whitespace-nowrap">{opt.label}</span>
-                    <span
-                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
-                        isActive
-                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
-                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
-                      }`}
-                    >
-                      {opt.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 3. Quartile Jurnal */}
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
-              <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span className="text-[11px] font-bold uppercase tracking-wider">Quartile Jurnal</span>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                { id: 'all', label: 'Semua', count: quartileCounts.total },
-                { id: 'Q1', label: 'Q1', count: quartileCounts.Q1 },
-                { id: 'Q2', label: 'Q2', count: quartileCounts.Q2 },
-                { id: 'Q3', label: 'Q3', count: quartileCounts.Q3 },
-                { id: 'Q4', label: 'Q4', count: quartileCounts.Q4 },
-                { id: 'None', label: 'Non-Q', count: quartileCounts.None },
-              ].map((opt) => {
-                const isActive = quartileFilter === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      setQuartileFilter(opt.id as QuartileFilterType);
-                      onResetPage();
-                    }}
-                    className={`flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
-                      isActive ? neutralActiveChipClass : inactiveChipClass
-                    }`}
-                  >
-                    <span className="whitespace-nowrap">{opt.label}</span>
-                    <span
-                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
-                        isActive
-                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
-                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
-                      }`}
-                    >
-                      {opt.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 4. Sumber Data */}
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400">
-              <Globe className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-              <span className="text-[11px] font-bold uppercase tracking-wider">Sumber Data</span>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                { id: 'all', label: 'Semua', count: sourceCounts.total },
-                { id: 'external', label: '🌐 External API', count: sourceCounts.external },
-                { id: 'manual', label: '✍️ Input Manual', count: sourceCounts.manual },
-              ].map((opt) => {
-                const isActive = sourceFilter === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      setSourceFilter(opt.id as SourceFilterType);
-                      onResetPage();
-                    }}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all border ${
-                      isActive ? neutralActiveChipClass : inactiveChipClass
-                    }`}
-                  >
-                    <span className="whitespace-nowrap">{opt.label}</span>
-                    <span
-                      className={`px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold ${
-                        isActive
-                          ? 'bg-white/20 text-white dark:bg-zinc-800 dark:text-zinc-100'
-                          : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200/60 dark:border-zinc-800'
-                      }`}
-                    >
-                      {opt.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          {/* Tombol teks "Reset Filter" di ujung kanan row, warna neutral slate dengan underline hover */}
+          {hasActiveFilter && (
+            <button
+              type="button"
+              onClick={handleResetAll}
+              className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors ml-auto underline-offset-4 hover:underline cursor-pointer"
+            >
+              Reset Filter
+            </button>
+          )}
         </div>
       )}
     </div>

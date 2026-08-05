@@ -104,8 +104,8 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
             <Download className="w-3.5 h-3.5 mr-1.5 shrink-0" />
             Template
           </button>
-          <label className={`flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-xs cursor-pointer uppercase tracking-wider whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
-            <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+          <label className={`flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-black bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl hover:bg-slate-50 dark:hover:bg-zinc-700 transition-colors text-slate-700 dark:text-zinc-300 shadow-xs cursor-pointer uppercase tracking-wider whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+            <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 shrink-0 text-slate-500 dark:text-zinc-400" />
             {isImporting ? 'Importing...' : 'Import Excel'}
             <input
               type="file"
@@ -233,7 +233,7 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
               <button
                 type="button"
                 onClick={handleResetAll}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:underline underline-offset-4 rounded-lg transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Reset Semua Filter
