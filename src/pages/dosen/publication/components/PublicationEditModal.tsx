@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Sparkles, Archive, Shield, CalendarDays, ChevronDown, Upload, CheckCircle, Award } from 'lucide-react';
+import { Pencil, Sparkles, Archive, Shield, CalendarDays, ChevronDown, Upload, CheckCircle, Award, BarChart3 } from 'lucide-react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import { uploadWithProgress } from '../../../../lib/utils';
@@ -30,6 +30,7 @@ export default function PublicationEditModal({
   const [editDate, setEditDate] = useState<Date | undefined>(undefined);
   const [editDocType, setEditDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [editSintaRank, setEditSintaRank] = useState<string>('Non-SINTA');
+  const [editCitations, setEditCitations] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
@@ -42,6 +43,7 @@ export default function PublicationEditModal({
       setEditDate(editDoc.published_at ? new Date(editDoc.published_at) : new Date());
       setEditDocType(editDoc.is_kpi_counted ? 'kpi' : 'arsip');
       setEditSintaRank(editDoc.sinta_rank || 'Non-SINTA');
+      setEditCitations(editDoc.citations !== undefined && editDoc.citations !== null ? String(editDoc.citations) : '');
       setFile(null);
     }
   }, [editDoc, isOpen]);
@@ -83,6 +85,9 @@ export default function PublicationEditModal({
       formData.append('doc_type', editDocType);
       if ((editCategory || '').toLowerCase().includes('jurnal nasional')) {
         formData.append('sinta_rank', editSintaRank);
+        if (editCitations !== '') {
+          formData.append('citations', editCitations);
+        }
       }
       if (file) {
         formData.append('file', file);
@@ -186,27 +191,45 @@ export default function PublicationEditModal({
           </div>
 
           {(editCategory || '').toLowerCase().includes('jurnal nasional') && (
-            <div className="space-y-2">
-              <label htmlFor="edit-pub-sinta-rank" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-amber-500" />
-                Akreditasi SINTA
-              </label>
-              <div className="relative">
-                <select
-                  id="edit-pub-sinta-rank"
-                  value={editSintaRank}
-                  onChange={(e) => setEditSintaRank(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer appearance-none"
-                >
-                  <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi)</option>
-                  <option value="S1">SINTA 1 (S1)</option>
-                  <option value="S2">SINTA 2 (S2)</option>
-                  <option value="S3">SINTA 3 (S3)</option>
-                  <option value="S4">SINTA 4 (S4)</option>
-                  <option value="S5">SINTA 5 (S5)</option>
-                  <option value="S6">SINTA 6 (S6)</option>
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="edit-pub-sinta-rank" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-amber-500" />
+                  Akreditasi SINTA
+                </label>
+                <div className="relative">
+                  <select
+                    id="edit-pub-sinta-rank"
+                    value={editSintaRank}
+                    onChange={(e) => setEditSintaRank(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer appearance-none"
+                  >
+                    <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi)</option>
+                    <option value="S1">SINTA 1 (S1)</option>
+                    <option value="S2">SINTA 2 (S2)</option>
+                    <option value="S3">SINTA 3 (S3)</option>
+                    <option value="S4">SINTA 4 (S4)</option>
+                    <option value="S5">SINTA 5 (S5)</option>
+                    <option value="S6">SINTA 6 (S6)</option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="edit-pub-citations" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                  <BarChart3 className="w-3.5 h-3.5 text-blue-500" />
+                  Jumlah Sitasi (Opsional)
+                </label>
+                <input
+                  type="number"
+                  id="edit-pub-citations"
+                  min="0"
+                  value={editCitations}
+                  onChange={(e) => setEditCitations(e.target.value)}
+                  placeholder="0"
+                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+                />
               </div>
             </div>
           )}

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Upload, Sparkles, Archive, AlertCircle, 
-  CalendarDays, ChevronDown, Award, FileText, XCircle
+  CalendarDays, ChevronDown, Award, FileText, XCircle, BarChart3
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
@@ -39,6 +39,7 @@ export default function PublicationUploadModal({
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [docType, setDocType] = useState<'kpi' | 'arsip'>('kpi');
   const [sintaRank, setSintaRank] = useState<string>('Non-SINTA');
+  const [citations, setCitations] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   
   const [loading, setLoading] = useState(false);
@@ -126,8 +127,9 @@ export default function PublicationUploadModal({
     formData.append('user_id', String(user.id));
     formData.append('published_at', date ? formatToYYYYMMDD(date) : '');
     formData.append('doc_type', docType);
-    if (isNationalJournal && sintaRank) {
-      formData.append('sinta_rank', sintaRank);
+    if (isNationalJournal) {
+      if (sintaRank) formData.append('sinta_rank', sintaRank);
+      if (citations !== '') formData.append('citations', citations);
     }
 
     try {
@@ -142,6 +144,7 @@ export default function PublicationUploadModal({
         setFile(null);
         setDate(new Date());
         setSintaRank('Non-SINTA');
+        setCitations('');
         onClose();
         
         setIsTableLoading(true);
@@ -242,27 +245,45 @@ export default function PublicationUploadModal({
         </div>
 
         {isNationalJournal && (
-          <div className="space-y-2">
-            <label htmlFor="pub-sinta-rank" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5 text-amber-500" />
-              Akreditasi SINTA
-            </label>
-            <div className="relative">
-              <select
-                id="pub-sinta-rank"
-                value={sintaRank}
-                onChange={(e) => setSintaRank(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer appearance-none"
-              >
-                <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi)</option>
-                <option value="S1">SINTA 1 (S1)</option>
-                <option value="S2">SINTA 2 (S2)</option>
-                <option value="S3">SINTA 3 (S3)</option>
-                <option value="S4">SINTA 4 (S4)</option>
-                <option value="S5">SINTA 5 (S5)</option>
-                <option value="S6">SINTA 6 (S6)</option>
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="pub-sinta-rank" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                <Award className="w-3.5 h-3.5 text-amber-500" />
+                Akreditasi SINTA
+              </label>
+              <div className="relative">
+                <select
+                  id="pub-sinta-rank"
+                  value={sintaRank}
+                  onChange={(e) => setSintaRank(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer appearance-none"
+                >
+                  <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi)</option>
+                  <option value="S1">SINTA 1 (S1)</option>
+                  <option value="S2">SINTA 2 (S2)</option>
+                  <option value="S3">SINTA 3 (S3)</option>
+                  <option value="S4">SINTA 4 (S4)</option>
+                  <option value="S5">SINTA 5 (S5)</option>
+                  <option value="S6">SINTA 6 (S6)</option>
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="pub-citations" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                <BarChart3 className="w-3.5 h-3.5 text-blue-500" />
+                Jumlah Sitasi (Opsional)
+              </label>
+              <input
+                type="number"
+                id="pub-citations"
+                min="0"
+                value={citations}
+                onChange={(e) => setCitations(e.target.value)}
+                placeholder="0"
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100"
+              />
             </div>
           </div>
         )}

@@ -24,6 +24,7 @@ export interface PublicationDoc {
   linked_research_id?: number;
   catatan?: string;
   sinta_rank?: string;
+  citations?: number;
   is_accredited?: boolean;
   issn?: string;
   garuda_id?: string;
