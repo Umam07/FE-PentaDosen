@@ -90,7 +90,7 @@ export default function PublicationTable({
     const isHyper = !!doc.is_hyperauthor || totalAuthors > 16;
     
     let q = 'None';
-    let basePoints = 20; // Default for JN
+    let basePoints = 10;
     let docType = 'Jurnal Nasional';
 
     if (isJI) {
@@ -98,6 +98,19 @@ export default function PublicationTable({
       const basePointsMap: Record<string, number> = { Q1: 40, Q2: 38, Q3: 35, Q4: 33, None: 33 };
       basePoints = basePointsMap[q] ?? 33;
       docType = `Jurnal Internasional ${q !== 'None' ? q : '(Tanpa Quartile)'}`;
+    } else if (isJN) {
+      const sRank = String(doc.sinta_rank || 'Non-SINTA').toUpperCase();
+      const sintaPointsMap: Record<string, number> = {
+        S1: 25,
+        S2: 25,
+        S3: 20,
+        S4: 20,
+        S5: 15,
+        S6: 15,
+        'NON-SINTA': 10
+      };
+      basePoints = sintaPointsMap[sRank] ?? 10;
+      docType = `Jurnal Nasional (${sRank === 'NON-SINTA' ? 'Non-SINTA' : sRank})`;
     }
 
     let awardedPoints = 0;

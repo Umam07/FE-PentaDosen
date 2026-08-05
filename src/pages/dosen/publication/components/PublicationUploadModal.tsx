@@ -51,15 +51,30 @@ export default function PublicationUploadModal({
 
   const modalSubtitle = useMemo(() => {
     if (!category) return 'Daftarkan Jurnal Ilmiah, Prosiding, atau Book Chapter';
+    const catLower = category.toLowerCase();
+
+    if (isNationalJournal) {
+      const sintaPointsMap: Record<string, number> = {
+        S1: 25,
+        S2: 25,
+        S3: 20,
+        S4: 20,
+        S5: 15,
+        S6: 15,
+        'Non-SINTA': 10
+      };
+      const pts = sintaPointsMap[sintaRank] ?? 10;
+      return `Daftarkan ${catLower} Anda · Max +${pts} pts (${sintaRank})`;
+    }
+
     const activeWeight = weights.find((w) => w.category === category);
     const points = activeWeight?.weight_value;
-    const catLower = category.toLowerCase();
 
     if (points !== undefined && points !== null) {
       return `Daftarkan ${catLower} Anda · +${points} pts otomatis`;
     }
     return `Daftarkan ${catLower} Anda`;
-  }, [category, weights]);
+  }, [category, isNationalJournal, sintaRank, weights]);
 
   const duplicateFound = useMemo(() => {
     if (!title || title.length < 5) return null;

@@ -27,8 +27,24 @@ export const calculateScopusSintaPoints = (pub: any): number => {
       }
     } else {
       // Base SKS points
-      const basePointsMap: Record<string, number> = { Q1: 40, Q2: 38, Q3: 35, Q4: 33, None: 33 };
-      const basePoints = basePointsMap[q] ?? 33;
+      const isJN = (pub.category || '').toLowerCase().includes('jurnal nasional');
+      let basePoints = 33;
+      if (isJN) {
+        const rank = String(pub.sinta_rank || '').toUpperCase();
+        const sintaPointsMap: Record<string, number> = {
+          S1: 25,
+          S2: 25,
+          S3: 20,
+          S4: 20,
+          S5: 15,
+          S6: 15,
+          'NON-SINTA': 10
+        };
+        basePoints = sintaPointsMap[rank] ?? 10;
+      } else {
+        const basePointsMap: Record<string, number> = { Q1: 40, Q2: 38, Q3: 35, Q4: 33, None: 33 };
+        basePoints = basePointsMap[q] ?? 33;
+      }
 
       if (totalAuthors === 1 || (authorOrder === 1 && totalAuthors === 1)) {
         awardedPoints = basePoints;

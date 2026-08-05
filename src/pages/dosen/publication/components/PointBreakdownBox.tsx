@@ -178,7 +178,7 @@ export default function PointBreakdownBox({
         <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
           <div>
             <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Poin Maks {bd.q && bd.q !== 'None' ? bd.q : (isJI ? 'Tanpa Quartile' : 'Jurnal Nasional')}</p>
-            <p className="text-[9px] font-medium text-slate-400">{isJI ? 'Q1=40, Q2=38, Q3=35, Q4/None=33 pts' : 'Standard Jurnal Nasional = 20 pts'}</p>
+            <p className="text-[9px] font-medium text-slate-400">{isJI ? 'Q1=40, Q2=38, Q3=35, Q4/None=33 pts' : 'S1/S2=25, S3/S4=20, S5/S6=15, Non-SINTA=10 pts'}</p>
           </div>
           <span className="text-[11px] font-black text-slate-500 flex-shrink-0">{bd.maxPoints} pts</span>
         </div>
@@ -199,7 +199,16 @@ export default function PointBreakdownBox({
         )}
 
         <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-          <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">TOTAL POIN</span>
+          <div>
+            <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">
+              {doc.status === 'Pending' ? 'ESTIMASI TOTAL POIN' : 'TOTAL POIN'}
+            </span>
+            {doc.status === 'Pending' && (
+              <p className="text-[8px] font-bold text-amber-600 dark:text-amber-400">
+                ⚠️ Poin aktif +0 pts hingga disetujui Fakultas
+              </p>
+            )}
+          </div>
           <span className="text-base font-black text-primary-600 dark:text-primary-400">{bd.totalPoints} pts</span>
         </div>
       </div>

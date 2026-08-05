@@ -322,22 +322,45 @@ export default function MetricsGuideModal({ isOpen, onClose, category }: Metrics
               </div>
             )}
 
-            {/* Google Scholar Section */}
+            {/* Google Scholar & Jurnal Nasional Section */}
             {showScholar && (
-              <div className="bg-white dark:bg-zinc-900 p-6 sm:p-8 rounded-[2rem] border border-slate-100 dark:border-zinc-800 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
+              <div className="bg-white dark:bg-zinc-900 p-6 sm:p-8 rounded-[2rem] border border-slate-100 dark:border-zinc-800 shadow-sm space-y-6">
+                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center border border-blue-500/20 shadow-inner">
                     <Globe className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
-                    <h4 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Google Scholar (GS)</h4>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Matriks Penyelarasan Publikasi Google Scholar</p>
+                    <h4 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Jurnal Nasional & SINTA</h4>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Matriks Base Points SINTA & Penyelarasan Google Scholar</p>
+                  </div>
+                </div>
+
+                {/* Table SINTA Base Points */}
+                <div className="bg-gradient-to-r from-blue-50/50 to-white dark:from-blue-950/10 dark:to-zinc-900 rounded-2xl border border-blue-100 dark:border-blue-900/30 p-5">
+                  <h5 className="text-xs font-black text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-3">Acuan Base Points SINTA (POAK)</h5>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-blue-100 dark:border-blue-900/20">
+                      <p className="text-[9px] font-black text-slate-400 uppercase">SINTA 1 & 2</p>
+                      <p className="text-sm font-black text-blue-600 dark:text-blue-400 mt-0.5">25 pts</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-blue-100 dark:border-blue-900/20">
+                      <p className="text-[9px] font-black text-slate-400 uppercase">SINTA 3 & 4</p>
+                      <p className="text-sm font-black text-blue-600 dark:text-blue-400 mt-0.5">20 pts</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-blue-100 dark:border-blue-900/20">
+                      <p className="text-[9px] font-black text-slate-400 uppercase">SINTA 5 & 6</p>
+                      <p className="text-sm font-black text-blue-600 dark:text-blue-400 mt-0.5">15 pts</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-zinc-950 rounded-xl border border-blue-100 dark:border-blue-900/20">
+                      <p className="text-[9px] font-black text-slate-400 uppercase">Non-SINTA</p>
+                      <p className="text-sm font-black text-blue-600 dark:text-blue-400 mt-0.5">10 pts</p>
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-3.5">
                   <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800 pb-2.5 text-xs font-bold">
-                    <span className="text-slate-600 dark:text-zinc-400">Poin Per Dokumen Scholar (GS Document)</span>
+                    <span className="text-slate-600 dark:text-zinc-400">Poin Per Dokumen Scholar (GS Sync Document)</span>
                     <span className="text-blue-600 font-black">0.5 Pts</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800 pb-2.5 text-xs font-bold">
@@ -355,7 +378,7 @@ export default function MetricsGuideModal({ isOpen, onClose, category }: Metrics
                       Penghitungan poin dari jumlah sitasi dibatasi maksimal (cut-off) pada <strong>500 sitasi</strong> per dokumen publikasi.
                     </p>
                     <div className="mt-2.5 inline-block px-3 py-1.5 bg-blue-600/10 rounded-xl text-[9px] font-black text-blue-700 dark:text-blue-400">
-                      Poin = 0.5 + (Citations &gt; 0 ? 0.5 : 0) + (Min(Citations, 500) * 0.25)
+                      Poin GS = 0.5 + (Citations &gt; 0 ? 0.5 : 0) + (Min(Citations, 500) * 0.25)
                     </div>
                   </div>
                 </div>
