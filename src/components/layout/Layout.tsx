@@ -134,6 +134,9 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     if (location.pathname === '/profile') {
       return { name: 'Profil Diri' };
     }
+    if (location.pathname === '/dashboard') {
+      return { name: 'PentaDosen' };
+    }
     if (location.pathname.startsWith('/admin/lecturers/')) {
       return { name: 'Detail Performa Dosen' };
     }

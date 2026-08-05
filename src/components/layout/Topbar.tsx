@@ -126,7 +126,7 @@ export default function Topbar({
            )}
            <div className="hidden sm:block min-w-0 truncate">
               <h2 className="text-base lg:text-lg font-black text-gray-900 dark:text-zinc-100 tracking-tight flex items-center gap-2 truncate">
-                {currentPageName || 'PentaV2'}
+                {currentPageName || 'PentaDosen'}
               </h2>
            </div>
       </div>

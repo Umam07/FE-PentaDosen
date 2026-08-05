@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Search, Filter, Building2 } from 'lucide-react';
 import { FakultasFormattedItem } from '../types';
 import { renderActiveShape } from '../utils/chartHelpers';
@@ -118,8 +118,8 @@ export default function FakultasPieChart({
           ) : sortedAndFilteredData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
+                <Tooltip defaultIndex={activeDataIndex} content={() => null} />
                 <Pie
-                  activeIndex={activeDataIndex}
                   activeShape={renderActiveShape}
                   data={sortedAndFilteredData}
                   cx="50%"

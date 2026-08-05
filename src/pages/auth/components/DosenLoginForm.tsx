@@ -120,7 +120,7 @@ export function DosenLoginForm({ isAdmin, setUser, onToggleMode }: DosenLoginFor
               rel="noopener noreferrer"
               className="text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
             >
-              Lupa password atau username?
+              Lupa password?
             </a>
           </div>
 
