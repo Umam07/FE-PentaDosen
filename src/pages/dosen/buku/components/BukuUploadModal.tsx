@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Upload, Sparkles, Archive, AlertCircle, Shield, 
-  CalendarDays, ChevronDown, CheckCircle, Zap, FileText, XCircle 
+  CalendarDays, CheckCircle, Zap, FileText, XCircle, BookOpen
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
@@ -205,31 +205,51 @@ export default function BukuUploadModal({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label htmlFor="buku-category" className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori</label>
-            <div className="relative">
-              <select 
-                id="buku-category"
-                value={category} 
-                onChange={e => setCategory(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/30 focus:border-primary-500 transition-all outline-none text-sm appearance-none cursor-pointer text-gray-900 dark:text-zinc-100"
-              >
-                {BUKU_CATEGORIES.map(bc => (
-                  <option className="bg-white dark:bg-zinc-900 text-gray-950 dark:text-zinc-100" key={bc.value} value={bc.value}>{bc.label} (+{bc.points} pts)</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            </div>
+        {/* Kategori Buku Card Selection (Responsive grid) */}
+        <div className="space-y-3">
+          <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+            <BookOpen className="w-3.5 h-3.5 mr-1.5 text-primary-500" />
+            Kategori Buku
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {BUKU_CATEGORIES.map((opt) => {
+              const IconComp = opt.icon;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setCategory(opt.value)}
+                  className={`group relative flex flex-col items-center p-3 rounded-xl border-2 transition-all duration-300 ${
+                    category === opt.value
+                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10'
+                      : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                  }`}
+                >
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all duration-300 ${
+                    category === opt.value ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50'
+                  }`}>
+                    {IconComp && (
+                      <IconComp className={`w-4 h-4 ${category === opt.value ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
+                    )}
+                  </div>
+                  <p className={`text-[9px] font-black uppercase text-center tracking-tight ${
+                    category === opt.value ? 'text-primary-900 dark:text-primary-200' : 'text-gray-800 dark:text-zinc-200'
+                  }`}>
+                    {opt.label}
+                  </p>
+                  <p className={`text-[8px] font-bold mt-1 ${category === opt.value ? 'text-primary-600 dark:text-primary-400' : 'text-primary-500'}`}>+{opt.points} Pts</p>
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          <div className="space-y-2 relative">
-            <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
-              <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
-              Tanggal Terbit
-            </label>
-            <DatePicker date={date} onDateChange={setDate} placeholder="Pilih tanggal terbit" />
-          </div>
+        <div className="space-y-2 relative">
+          <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+            <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary-500" />
+            Tanggal Terbit
+          </label>
+          <DatePicker date={date} onDateChange={setDate} placeholder="Pilih tanggal terbit" />
         </div>
 
         <div className="space-y-2">

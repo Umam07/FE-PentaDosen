@@ -49,11 +49,11 @@ export default function ResearchActionBar({
           Template
         </button>
         <label
-          className={`w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors text-emerald-700 dark:text-emerald-400 shadow-sm cursor-pointer uppercase tracking-wider ${
+          className={`w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm cursor-pointer uppercase tracking-wider whitespace-nowrap ${
             isImporting ? 'opacity-50 pointer-events-none' : ''
           }`}
         >
-          <FileSpreadsheet className="w-4 h-4 mr-2" />
+          <FileSpreadsheet className="w-4 h-4 mr-2 shrink-0 text-slate-500 dark:text-zinc-400" />
           {isImporting ? 'Importing...' : 'Import Excel'}
           <input
             type="file"

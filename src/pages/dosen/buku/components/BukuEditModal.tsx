@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Sparkles, Archive, CalendarDays, ChevronDown, Upload, CheckCircle, FileText, XCircle } from 'lucide-react';
+import { Pencil, Sparkles, Archive, CalendarDays, Upload, CheckCircle, FileText, XCircle, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
 import { BUKU_CATEGORIES } from '../constants';
@@ -145,16 +145,42 @@ export default function BukuEditModal({
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Kategori Buku</label>
-            <select 
-              value={editCategory} 
-              onChange={e => setEditCategory(e.target.value)} 
-              required
-              className="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700 rounded-xl font-bold focus:bg-white dark:focus:bg-zinc-800 focus:ring-4 focus:ring-primary-100 transition-all outline-none text-sm text-gray-900 dark:text-zinc-100 cursor-pointer"
-            >
-              {BUKU_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-            </select>
+          <div className="space-y-3">
+            <label className="text-xs font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest ml-1 flex items-center">
+              <BookOpen className="w-3.5 h-3.5 mr-1.5 text-primary-500" />
+              Kategori Buku
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {BUKU_CATEGORIES.map((opt) => {
+                const IconComp = opt.icon;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setEditCategory(opt.value)}
+                    className={`group relative flex flex-col items-center p-3 rounded-xl border-2 transition-all duration-300 ${
+                      editCategory === opt.value
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 ring-4 ring-primary-500/10'
+                        : 'border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-gray-200 dark:hover:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all duration-300 ${
+                      editCategory === opt.value ? 'bg-primary-100 dark:bg-primary-900/40' : 'bg-gray-100 dark:bg-zinc-800 group-hover:bg-primary-50'
+                    }`}>
+                      {IconComp && (
+                        <IconComp className={`w-4 h-4 ${editCategory === opt.value ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-primary-500'}`} />
+                      )}
+                    </div>
+                    <p className={`text-[9px] font-black uppercase text-center tracking-tight ${
+                      editCategory === opt.value ? 'text-primary-900 dark:text-primary-200' : 'text-gray-800 dark:text-zinc-200'
+                    }`}>
+                      {opt.label}
+                    </p>
+                    <p className={`text-[8px] font-bold mt-1 ${editCategory === opt.value ? 'text-primary-600 dark:text-primary-400' : 'text-primary-500'}`}>+{opt.points} Pts</p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="space-y-2 relative">
