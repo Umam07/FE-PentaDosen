@@ -4,6 +4,11 @@ export const calculateScopusSintaPoints = (pub: any): number => {
     return Number(pub.awarded_points);
   }
 
+  const citations = Number(pub.citations) || 0;
+  if (pub.source === 'scholar' || citations > 0) {
+    return Math.round(0.5 + (citations > 0 ? 0.5 : 0) + Math.min(citations, 500) * 0.25);
+  }
+
   const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author'
     ? 'Member Author'
     : (pub.author_role || 'Member Author');
