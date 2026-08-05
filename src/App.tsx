@@ -261,41 +261,38 @@ export default function App() {
               className="fixed inset-0 bg-gray-900/60 backdrop-blur-md"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-zinc-800 p-8 lg:p-10 overflow-hidden"
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-neutral-200 dark:border-zinc-800 p-6 sm:p-7 overflow-hidden"
             >
-              {/* Decorative elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -mr-16 -mt-16" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-500/5 rounded-full -ml-12 -mb-12" />
+              {/* Accent bar tipis warna primary-orange dengan radius sudut menyatu dengan card */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-orange-500 rounded-t-2xl" />
               
-              <div className="relative">
-                <div className="w-20 h-20 bg-amber-50 dark:bg-amber-950/20 rounded-3xl flex items-center justify-center mb-8 mx-auto ring-8 ring-amber-50/50 dark:ring-amber-950/10">
-                  <AlertCircle className="w-10 h-10 text-amber-500" />
+              <div className="pt-2">
+                {/* Flat circle background warna primary-orange (opacity 15%) dan ikon solid */}
+                <div className="w-16 h-16 bg-orange-500/15 dark:bg-orange-500/20 rounded-full flex items-center justify-center mb-6 mx-auto">
+                  <AlertCircle className="w-8 h-8 text-orange-500" />
                 </div>
                 
-                <h3 className="text-2xl lg:text-3xl font-black text-gray-900 dark:text-zinc-100 text-center mb-4 tracking-tight uppercase">
-                  Sesi Berakhir
+                {/* Judul sentence case */}
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-zinc-100 text-center mb-3 tracking-tight">
+                  Sesi berakhir
                 </h3>
                 
-                <p className="text-gray-500 dark:text-zinc-400 text-center mb-10 font-bold leading-relaxed">
-                  Waktu sesi Anda telah habis karena pembatasan akses atau inaktivitas. Silakan masuk kembali untuk melanjutkan pekerjaan Anda.
+                {/* Copy body ringkas & personal dengan line-height lega */}
+                <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mb-7 leading-relaxed">
+                  Kamu perlu masuk kembali untuk melanjutkan pekerjaan. Ini terjadi otomatis demi menjaga keamanan akunmu.
                 </p>
                 
-                <div className="space-y-4">
-                  <button
-                    onClick={handleSessionExpiredAction}
-                    className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center group"
-                  >
-                    Login Kembali
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                  
-                  <p className="text-[10px] text-gray-400 dark:text-zinc-500 text-center font-black uppercase tracking-[0.2em]">
-                    PentaDosen Security Protocol
-                  </p>
-                </div>
+                {/* Tombol aksi */}
+                <button
+                  onClick={handleSessionExpiredAction}
+                  className="w-full py-3.5 px-6 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold text-sm transition-all flex items-center justify-center group"
+                >
+                  Masuk kembali
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
             </motion.div>
           </div>
