@@ -132,7 +132,7 @@ export default function Publication({ user }: { user: UserSession }) {
 
 
       {/* Unconfirmed Correspondence Banner */}
-      {(pub.urlKategori || '').toLowerCase().includes('jurnal internasional') && (pub.unconfirmedCorrespondenceDocs || []).length > 0 && (
+      {((pub.urlKategori || '').toLowerCase().includes('jurnal internasional') || (pub.urlKategori || '').toLowerCase().includes('jurnal nasional')) && (pub.unconfirmedCorrespondenceDocs || []).length > 0 && (
         <UnconfirmedCorrespondenceBanner
           unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
           onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
