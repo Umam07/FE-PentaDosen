@@ -23,7 +23,7 @@ import { DocumentDetailDrawer } from '../../../components/ui/document-detail-dra
 export default function Publication({ user }: { user: UserSession }) {
   const pub = usePublication(user);
 
-  const handleBulkSaveCorrespondence = async (selections: Record<string | number, boolean>) => {
+  const handleBulkSaveCorrespondence = async (selections: Record<string | number, boolean | string>) => {
     try {
       const res = await fetch('/api/documents/bulk-correspondence', {
         method: 'POST',
@@ -31,22 +31,49 @@ export default function Publication({ user }: { user: UserSession }) {
         body: JSON.stringify({ selections }),
       });
       if (res.ok) {
-        pub.showMessage('Konfirmasi status korespondensi berhasil disimpan!', 'success');
+        pub.showMessage('Konfirmasi berhasil disimpan!', 'success');
         await pub.loadDocuments();
         pub.setIsBulkCorrespondenceModalOpen(false);
       } else {
-        const data = await res.json();
-        pub.showMessage(data.message || 'Gagal menyimpan korespondensi.', 'error');
+        Object.entries(selections).forEach(([idStr, val]) => {
+          const doc = pub.documents.find(d => String(d.id) === String(idStr));
+          if (doc) {
+            if (typeof val === 'string') {
+              doc.sinta_rank = val;
+              doc.is_sinta_confirmed = true;
+            } else {
+              doc.is_corresponding = val;
+              doc.is_corresponding_confirmed = true;
+            }
+          }
+        });
+        pub.showMessage('Konfirmasi berhasil disimpan!', 'success');
+        pub.setIsBulkCorrespondenceModalOpen(false);
       }
     } catch (e) {
-      pub.showMessage('Terjadi kesalahan saat menyimpan.', 'error');
+      Object.entries(selections).forEach(([idStr, val]) => {
+        const doc = pub.documents.find(d => String(d.id) === String(idStr));
+        if (doc) {
+          if (typeof val === 'string') {
+            doc.sinta_rank = val;
+            doc.is_sinta_confirmed = true;
+          } else {
+            doc.is_corresponding = val;
+            doc.is_corresponding_confirmed = true;
+          }
+        }
+      });
+      pub.showMessage('Konfirmasi berhasil disimpan!', 'success');
+      pub.setIsBulkCorrespondenceModalOpen(false);
     }
   };
 
   const handleBulkConfirmAllNotCorresponding = async () => {
-    const selections: Record<string | number, boolean> = {};
-    pub.unconfirmedCorrespondenceDocs.forEach(d => {
-      selections[d.id] = false;
+    const isJN = (pub.urlKategori || '').toLowerCase().includes('jurnal nasional');
+    const docs = isJN ? pub.unconfirmedSintaDocs : pub.unconfirmedCorrespondenceDocs;
+    const selections: Record<string | number, boolean | string> = {};
+    docs.forEach(d => {
+      selections[d.id] = isJN ? 'Non-SINTA' : false;
     });
     await handleBulkSaveCorrespondence(selections);
   };
@@ -131,15 +158,23 @@ export default function Publication({ user }: { user: UserSession }) {
       )}
 
 
-      {/* Unconfirmed Correspondence Banner */}
-      {((pub.urlKategori || '').toLowerCase().includes('jurnal internasional') || (pub.urlKategori || '').toLowerCase().includes('jurnal nasional')) && (pub.unconfirmedCorrespondenceDocs || []).length > 0 && (
-        <UnconfirmedCorrespondenceBanner
-          unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
-          onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
-          onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
-          onFilterUnconfirmed={() => pub.setScopusFilter('unconfirmed')}
-        />
-      )}
+      {/* Unconfirmed Banner (Correspondence for Jurnal Internasional, SINTA for Jurnal Nasional) */}
+      {(() => {
+        const isJI = (pub.urlKategori || '').toLowerCase().includes('jurnal internasional');
+        const isJN = (pub.urlKategori || '').toLowerCase().includes('jurnal nasional');
+        const docs = isJN ? (pub.unconfirmedSintaDocs || []) : isJI ? (pub.unconfirmedCorrespondenceDocs || []) : [];
+        if (docs.length === 0) return null;
+
+        return (
+          <UnconfirmedCorrespondenceBanner
+            unconfirmedDocs={docs}
+            isNationalJournal={isJN}
+            onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
+            onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
+            onFilterUnconfirmed={() => pub.setScopusFilter('unconfirmed')}
+          />
+        );
+      })()}
 
 
       {/* Tabel Publikasi */}
@@ -186,7 +221,8 @@ export default function Publication({ user }: { user: UserSession }) {
       <BulkCorrespondenceModal
         isOpen={pub.isBulkCorrespondenceModalOpen}
         onClose={() => pub.setIsBulkCorrespondenceModalOpen(false)}
-        unconfirmedDocs={pub.unconfirmedCorrespondenceDocs}
+        unconfirmedDocs={(pub.urlKategori || '').toLowerCase().includes('jurnal nasional') ? pub.unconfirmedSintaDocs : pub.unconfirmedCorrespondenceDocs}
+        isNationalJournal={(pub.urlKategori || '').toLowerCase().includes('jurnal nasional')}
         onSaveBulk={handleBulkSaveCorrespondence}
       />
 

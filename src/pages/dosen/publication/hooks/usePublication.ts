@@ -173,14 +173,21 @@ export function usePublication(user: UserSession) {
   const unconfirmedCorrespondenceDocs = useMemo(() => {
     return documents.filter((d) => {
       const isJI = (d.category || '').toLowerCase() === 'jurnal internasional' || d.source === 'scopus';
-      const isJN = (d.category || '').toLowerCase() === 'jurnal nasional';
-      if (!isJI && !isJN) return false;
+      if (!isJI) return false;
 
       const isArticle = !d.subtype || d.subtype.toLowerCase() === 'ar' || d.subtype.toLowerCase() === 'article';
       const totalAuthors = Number(d.total_authors) || 1;
       const showCorrespondingControls = d.author_role !== 'Single Author' && totalAuthors > 1 && d.source !== 'scholar';
 
       return isArticle && showCorrespondingControls && !d.is_corresponding_confirmed;
+    });
+  }, [documents]);
+
+  const unconfirmedSintaDocs = useMemo(() => {
+    return documents.filter((d) => {
+      const isJN = (d.category || '').toLowerCase() === 'jurnal nasional' || d.source === 'scholar';
+      if (!isJN) return false;
+      return !d.is_sinta_confirmed;
     });
   }, [documents]);
 
@@ -289,19 +296,9 @@ export function usePublication(user: UserSession) {
       }
 
       if (scopusFilter === 'unconfirmed') {
-        result = result.filter((d) => {
-          const subtypeStr = String(d.subtype || '').toLowerCase();
-          const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
-          const totalAuthors = Number(d.total_authors) || 1;
-          return isArticle && totalAuthors > 1 && !d.is_corresponding_confirmed;
-        });
+        result = result.filter((d) => !d.is_sinta_confirmed);
       } else if (scopusFilter === 'confirmed') {
-        result = result.filter((d) => {
-          const subtypeStr = String(d.subtype || '').toLowerCase();
-          const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
-          const totalAuthors = Number(d.total_authors) || 1;
-          return !isArticle || totalAuthors <= 1 || d.is_corresponding_confirmed;
-        });
+        result = result.filter((d) => !!d.is_sinta_confirmed);
       }
     }
 
@@ -451,6 +448,7 @@ export function usePublication(user: UserSession) {
     isBulkCorrespondenceModalOpen,
     setIsBulkCorrespondenceModalOpen,
     unconfirmedCorrespondenceDocs,
+    unconfirmedSintaDocs,
     crossIndexedCount,
     filteredDocuments,
     availableYears,

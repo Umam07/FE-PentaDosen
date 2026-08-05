@@ -52,21 +52,14 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
     );
   }, [documents]);
 
-  // Penghitungan status korespondensi
-  const correspondenceCounts = useMemo(() => {
+  // Penghitungan status konfirmasi SINTA
+  const sintaConfirmationCounts = useMemo(() => {
     const total = jnDocs.length;
     let unconfirmed = 0;
     let confirmed = 0;
 
     jnDocs.forEach((d: any) => {
-      const subtypeStr = String(d.subtype || '').toLowerCase();
-      const isArticle =
-        !d.subtype ||
-        subtypeStr === 'ar' ||
-        subtypeStr === 'article';
-      const totalAuthors = Number(d.total_authors) || 1;
-
-      if (isArticle && totalAuthors > 1 && !d.is_corresponding_confirmed) {
+      if (!d.is_sinta_confirmed) {
         unconfirmed++;
       } else {
         confirmed++;
@@ -121,11 +114,11 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
   // Data opsi untuk masing-masing dropdown filter
   const statusOptions: FilterOption[] = useMemo(
     () => [
-      { id: 'all', label: 'Semua', count: correspondenceCounts.total },
-      { id: 'unconfirmed', label: 'Perlu Konfirmasi', count: correspondenceCounts.unconfirmed, isUrgent: true },
-      { id: 'confirmed', label: 'Terkonfirmasi', count: correspondenceCounts.confirmed },
+      { id: 'all', label: 'Semua Status', count: sintaConfirmationCounts.total },
+      { id: 'unconfirmed', label: 'Perlu Konfirmasi SINTA', count: sintaConfirmationCounts.unconfirmed, isUrgent: true },
+      { id: 'confirmed', label: 'Terkonfirmasi SINTA', count: sintaConfirmationCounts.confirmed },
     ],
-    [correspondenceCounts]
+    [sintaConfirmationCounts]
   );
 
   const sintaOptions: FilterOption[] = useMemo(
@@ -184,7 +177,7 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
       {/* Baris Atas: Judul Singkat & 3 Tombol Aksi Rata Kanan */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-zinc-800/80">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/30 rounded-2xl text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 shrink-0">
+          <div className="p-2.5 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shrink-0">
             <BookOpen className="w-5 h-5" />
           </div>
           <div>
@@ -209,7 +202,7 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
           <button
             type="button"
             onClick={onUploadClick}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
           >
             Unggah Publikasi Baru
           </button>
@@ -240,9 +233,9 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
           {/* Container Filter Dropdown */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* 1. Dropdown Status Korespondensi */}
+            {/* 1. Dropdown Status SINTA */}
             <FilterDropdown
-              categoryLabel="Status"
+              categoryLabel="Status SINTA"
               options={statusOptions}
               activeValue={correspondenceFilter}
               isOpen={openDropdownId === 'status'}

@@ -6,28 +6,40 @@ interface BulkCorrespondenceModalProps {
   isOpen: boolean;
   onClose: () => void;
   unconfirmedDocs: any[];
-  onSaveBulk: (selections: Record<string | number, boolean>) => Promise<void>;
+  onSaveBulk: (selections: Record<string | number, boolean | string>) => Promise<void>;
+  isNationalJournal?: boolean;
 }
+
+const SINTA_RANKS = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'Non-SINTA'];
 
 export default function BulkCorrespondenceModal({
   isOpen,
   onClose,
   unconfirmedDocs,
   onSaveBulk,
+  isNationalJournal = false,
 }: BulkCorrespondenceModalProps) {
   const [selections, setSelections] = useState<Record<string | number, boolean>>({});
+  const [sintaSelections, setSintaSelections] = useState<Record<string | number, string>>({});
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isOpen && unconfirmedDocs) {
-      // Default to false for all unconfirmed publications (since most co-authored papers are non-corresponding)
-      const initial: Record<string | number, boolean> = {};
-      unconfirmedDocs.forEach((doc) => {
-        initial[doc.id] = doc.is_corresponding || false;
-      });
-      setSelections(initial);
+      if (isNationalJournal) {
+        const initialSinta: Record<string | number, string> = {};
+        unconfirmedDocs.forEach((doc) => {
+          initialSinta[doc.id] = doc.sinta_rank || 'Non-SINTA';
+        });
+        setSintaSelections(initialSinta);
+      } else {
+        const initial: Record<string | number, boolean> = {};
+        unconfirmedDocs.forEach((doc) => {
+          initial[doc.id] = doc.is_corresponding || false;
+        });
+        setSelections(initial);
+      }
     }
-  }, [isOpen, unconfirmedDocs]);
+  }, [isOpen, unconfirmedDocs, isNationalJournal]);
 
   if (!isOpen) return null;
 
@@ -39,14 +51,26 @@ export default function BulkCorrespondenceModal({
     setSelections(next);
   };
 
+  const handleSetAllSinta = (rank: string) => {
+    const next: Record<string | number, string> = {};
+    unconfirmedDocs.forEach((doc) => {
+      next[doc.id] = rank;
+    });
+    setSintaSelections(next);
+  };
+
   const handleToggleDoc = (docId: string | number, val: boolean) => {
     setSelections((prev) => ({ ...prev, [docId]: val }));
+  };
+
+  const handleSetSintaDoc = (docId: string | number, rank: string) => {
+    setSintaSelections((prev) => ({ ...prev, [docId]: rank }));
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onSaveBulk(selections);
+      await onSaveBulk(isNationalJournal ? sintaSelections : selections);
       onClose();
     } finally {
       setIsSaving(false);
@@ -56,6 +80,9 @@ export default function BulkCorrespondenceModal({
   const totalCount = unconfirmedDocs.length;
   const correspondingCount = Object.values(selections).filter(Boolean).length;
   const nonCorrespondingCount = totalCount - correspondingCount;
+
+  const sintaConfirmedCount = Object.values(sintaSelections).filter((r) => r !== 'Non-SINTA').length;
+  const sintaNonCount = totalCount - sintaConfirmedCount;
 
   return (
     <AnimatePresence>
@@ -84,10 +111,12 @@ export default function BulkCorrespondenceModal({
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-zinc-100 uppercase tracking-tight">
-                  Konfirmasi Massal Kepenulisan Korespondensi
+                  {isNationalJournal ? 'Konfirmasi Massal Akreditasi SINTA' : 'Konfirmasi Massal Kepenulisan Korespondensi'}
                 </h3>
                 <p className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mt-0.5">
-                  Verifikasi {totalCount} publikasi beranggota majemuk dalam satu tampilan cepat.
+                  {isNationalJournal
+                    ? `Verifikasi ${totalCount} publikasi Jurnal Nasional (Google Scholar) dalam satu tampilan cepat.`
+                    : `Verifikasi ${totalCount} publikasi beranggota majemuk dalam satu tampilan cepat.`}
                 </p>
               </div>
             </div>
@@ -102,26 +131,56 @@ export default function BulkCorrespondenceModal({
           {/* Quick Presets Bar */}
           <div className="px-5 py-3 bg-slate-50 dark:bg-zinc-800/40 border-b border-slate-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
             <div className="text-xs font-bold text-slate-600 dark:text-zinc-300">
-              Ringkasan Pilihan: <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{correspondingCount} Ya</span> (Corresponding),{' '}
-              <span className="text-slate-500 dark:text-zinc-400 font-extrabold">{nonCorrespondingCount} Tidak</span>
+              {isNationalJournal ? (
+                <>
+                  Ringkasan Pilihan: <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{sintaConfirmedCount} Terkonfirmasi SINTA</span>,{' '}
+                  <span className="text-slate-500 dark:text-zinc-400 font-extrabold">{sintaNonCount} Non-SINTA</span>
+                </>
+              ) : (
+                <>
+                  Ringkasan Pilihan: <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{correspondingCount} Ya</span> (Corresponding),{' '}
+                  <span className="text-slate-500 dark:text-zinc-400 font-extrabold">{nonCorrespondingCount} Tidak</span>
+                </>
+              )}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-[10px] font-black uppercase text-slate-400 dark:text-zinc-500 tracking-wider">Set Serentak:</span>
-              <button
-                type="button"
-                onClick={() => handleSetAll(false)}
-                className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-slate-200/70 dark:bg-zinc-800 hover:bg-slate-300 text-slate-700 dark:text-zinc-300 transition-colors"
-              >
-                Semua TIDAK
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSetAll(true)}
-                className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 transition-colors"
-              >
-                Semua YA
-              </button>
+              {isNationalJournal ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleSetAllSinta('Non-SINTA')}
+                    className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-slate-200/70 dark:bg-zinc-800 hover:bg-slate-300 text-slate-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                  >
+                    Semua Non-SINTA
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSetAllSinta('S1')}
+                    className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors cursor-pointer"
+                  >
+                    Semua S1
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleSetAll(false)}
+                    className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-slate-200/70 dark:bg-zinc-800 hover:bg-slate-300 text-slate-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                  >
+                    Semua TIDAK
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSetAll(true)}
+                    className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 transition-colors cursor-pointer"
+                  >
+                    Semua YA
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -134,8 +193,10 @@ export default function BulkCorrespondenceModal({
               return (
                 <div
                   key={doc.id || idx}
-                  className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                    isCorresponding
+                  className={`p-4 rounded-2xl border transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-3 ${
+                    isNationalJournal
+                      ? 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
+                      : isCorresponding
                       ? 'bg-primary-50/30 dark:bg-primary-950/20 border-primary-200 dark:border-primary-800/40'
                       : 'bg-slate-50/50 dark:bg-zinc-800/40 border-slate-100 dark:border-zinc-800'
                   }`}
@@ -143,7 +204,7 @@ export default function BulkCorrespondenceModal({
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-slate-200 dark:bg-zinc-700 text-slate-600 dark:text-zinc-300">
-                        {doc.category || 'Jurnal Internasional'}
+                        {doc.category || 'Jurnal Nasional'}
                       </span>
                       {doc.quartile && (
                         <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700">
@@ -159,36 +220,67 @@ export default function BulkCorrespondenceModal({
                     </h4>
                   </div>
 
-                  {/* Toggle Option */}
-                  <div className="flex items-center gap-2 shrink-0 sm:self-center">
-                    <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 hidden sm:inline">
-                      Corresponding?
-                    </span>
-                    <div className="inline-flex p-1 bg-slate-200/80 dark:bg-zinc-800 rounded-xl border border-slate-300/40 dark:border-zinc-700">
-                      <button
-                        type="button"
-                        onClick={() => handleToggleDoc(doc.id, true)}
-                        className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
-                          isCorresponding
-                            ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
-                            : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
-                        }`}
-                      >
-                        Ya
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleToggleDoc(doc.id, false)}
-                        className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
-                          !isCorresponding
-                            ? 'bg-slate-700 text-white dark:bg-zinc-700 shadow-xs'
-                            : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
-                        }`}
-                      >
-                        Tidak
-                      </button>
+                  {/* Toggle / Selection Option */}
+                  {isNationalJournal ? (
+                    <div className="flex flex-col gap-1.5 shrink-0 lg:items-end">
+                      <span className="text-[10px] font-black uppercase text-slate-400 dark:text-zinc-500">
+                        Akreditasi SINTA:
+                      </span>
+                      <div className="flex flex-wrap items-center gap-1">
+                        {SINTA_RANKS.map((rank) => {
+                          const currentRank = sintaSelections[doc.id] || 'Non-SINTA';
+                          const isSelected = currentRank === rank;
+
+                          return (
+                            <button
+                              key={rank}
+                              type="button"
+                              onClick={() => handleSetSintaDoc(doc.id, rank)}
+                              className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                                isSelected
+                                  ? rank === 'Non-SINTA'
+                                    ? 'bg-slate-800 text-white dark:bg-zinc-200 dark:text-zinc-900 shadow-xs scale-105'
+                                    : 'bg-primary-600 text-white dark:bg-primary-500 shadow-xs scale-105'
+                                  : 'bg-white dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-700'
+                              }`}
+                            >
+                              {rank}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex items-center gap-2 shrink-0 sm:self-center">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 hidden sm:inline">
+                        Corresponding?
+                      </span>
+                      <div className="inline-flex p-1 bg-slate-200/80 dark:bg-zinc-800 rounded-xl border border-slate-300/40 dark:border-zinc-700">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleDoc(doc.id, true)}
+                          className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                            isCorresponding
+                              ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
+                              : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
+                          }`}
+                        >
+                          Ya
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleDoc(doc.id, false)}
+                          className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                            !isCorresponding
+                              ? 'bg-slate-700 text-white dark:bg-zinc-700 shadow-xs'
+                              : 'text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200'
+                          }`}
+                        >
+                          Tidak
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -199,7 +291,7 @@ export default function BulkCorrespondenceModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-xs font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 hover:bg-slate-200/50 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+              className="px-4 py-2.5 text-xs font-black uppercase tracking-wider text-slate-600 dark:text-zinc-400 hover:bg-slate-200/50 dark:hover:bg-zinc-800 rounded-xl transition-colors cursor-pointer"
             >
               Batal
             </button>
@@ -208,7 +300,7 @@ export default function BulkCorrespondenceModal({
               type="button"
               disabled={isSaving}
               onClick={handleSave}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-xs active:scale-95 transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-xs active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
             >
               {isSaving ? (
                 <>

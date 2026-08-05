@@ -277,21 +277,47 @@ export default function PublicationTable({
                                   Hyper
                                 </span>
                               )}
-                              {doc.is_corresponding && doc.is_corresponding_confirmed && (
-                                <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-200/60 dark:border-emerald-900/40 flex items-center gap-1">
-                                  ✓ Corresponding
-                                </span>
-                              )}
-                              {!doc.is_corresponding && doc.is_corresponding_confirmed && (
-                                <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-200/60 dark:border-emerald-900/40">
-                                  Non-Corresponding
-                                </span>
-                              )}
-                              {!doc.is_corresponding_confirmed && (doc.category === 'Jurnal Internasional' || doc.category === 'Jurnal Nasional') && Number(doc.total_authors || 1) > 1 && doc.source !== 'scholar' && (
-                                <span className="px-1.5 py-0.5 bg-orange-500 text-white dark:bg-orange-600 text-[8px] font-black uppercase rounded shadow-xs">
-                                  ⚠️ Perlu Konfirmasi
-                                </span>
-                              )}
+                               {/* Corresponding Author Status Badge for Jurnal Internasional */}
+                               {(doc.category === 'Jurnal Internasional' || doc.source === 'scopus') && (
+                                 <>
+                                   {doc.is_corresponding && doc.is_corresponding_confirmed && (
+                                     <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-200/60 dark:border-emerald-900/40 flex items-center gap-1">
+                                       ✓ Corresponding
+                                     </span>
+                                   )}
+                                   {!doc.is_corresponding && doc.is_corresponding_confirmed && (
+                                     <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-200/60 dark:border-emerald-900/40">
+                                       Non-Corresponding
+                                     </span>
+                                   )}
+                                   {!doc.is_corresponding_confirmed && Number(doc.total_authors || 1) > 1 && (
+                                     <span className="px-1.5 py-0.5 bg-orange-500 text-white dark:bg-orange-600 text-[8px] font-black uppercase rounded shadow-xs">
+                                       ⚠️ Perlu Konfirmasi
+                                     </span>
+                                   )}
+                                 </>
+                               )}
+
+                               {/* SINTA Status Badge for Jurnal Nasional */}
+                               {(doc.category === 'Jurnal Nasional' || doc.source === 'scholar') && (
+                                 <>
+                                   {doc.sinta_rank && doc.sinta_rank !== 'Non-SINTA' && (
+                                     <span className="px-1.5 py-0.5 bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-400 text-[8px] font-black uppercase rounded border border-sky-200/60 dark:border-sky-900/40 font-bold">
+                                       {doc.sinta_rank}
+                                     </span>
+                                   )}
+                                   {doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
+                                     <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded border border-slate-200 dark:border-zinc-700">
+                                       Non-SINTA
+                                     </span>
+                                   )}
+                                   {!doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
+                                     <span className="px-1.5 py-0.5 bg-blue-600 text-white dark:bg-blue-600 text-[8px] font-black uppercase rounded shadow-xs">
+                                       ⚠️ Perlu Konfirmasi SINTA
+                                     </span>
+                                   )}
+                                 </>
+                               )}
                             </div>
                           );
                         })()}
