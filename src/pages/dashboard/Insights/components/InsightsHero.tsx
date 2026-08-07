@@ -98,7 +98,8 @@ export default function InsightsHero({ stats, loading }: InsightsHeroProps) {
                 <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Akurasi Data</p>
                 <phantom-ui loading={loading} animation="shimmer" className="block mt-2">
                   <p className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tighter">
-                    99.9<span className="text-xl text-emerald-600 dark:text-emerald-400 font-bold ml-0.5">%</span>
+                    {stats?.data_accuracy !== undefined ? stats.data_accuracy.toFixed(1) : '100'}
+                    <span className="text-xl text-emerald-600 dark:text-emerald-400 font-bold ml-0.5">%</span>
                   </p>
                 </phantom-ui>
               </div>

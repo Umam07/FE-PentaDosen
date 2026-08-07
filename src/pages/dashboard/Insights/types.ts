@@ -14,6 +14,8 @@ export interface DashboardStats {
   kpi_score_3_years: number;
   kpi_score_this_year: number;
   top_performer?: TopPerformer;
+  approved_docs?: number;
+  data_accuracy?: number;
 }
 
 export interface LeaderboardUser {
