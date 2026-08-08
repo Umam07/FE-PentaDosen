@@ -250,7 +250,7 @@ export default function MyTicketsList({
                     id: `reply-${ticket.id}`,
                     sender: 'admin' as const,
                     sender_name: 'Tim Admin',
-                    sender_role: 'super admin',
+                    sender_role: 'admin penelitian',
                     message: ticket.admin_reply,
                     created_at: ticket.replied_at || ticket.created_at
                   }] : [])

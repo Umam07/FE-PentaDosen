@@ -41,7 +41,7 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
   React.useEffect(() => {
     const fetchPendingCount = async () => {
       try {
-        const res = await fetch(`/api/admin/support-tickets?status=menunggu&role=${encodeURIComponent(user?.role || 'super admin')}`);
+        const res = await fetch(`/api/admin/support-tickets?status=menunggu&role=${encodeURIComponent(user?.role || 'admin penelitian')}`);
         if (res.ok) {
           const data = await res.json();
           setPendingTicketCount(data.pending_count || data.counts?.menunggu || 0);
@@ -66,7 +66,7 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Super Admin CMS Panel</h3>
+            <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">CMS Admin Penelitian Panel</h3>
             <p className="text-xs font-bold text-gray-400 dark:text-zinc-505 uppercase tracking-widest mt-1">
               Pusat konfigurasi master data, pengumuman, panduan, berkas template, pesan masuk support, dan hak akses
             </p>

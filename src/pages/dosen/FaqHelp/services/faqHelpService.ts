@@ -238,7 +238,7 @@ export async function sendTicketReply(ticketId: number, formData: FormData): Pro
       sender: sender,
       sender_id: senderId,
       sender_name: sender === 'admin' ? 'Tim Admin' : 'Dosen',
-      sender_role: sender === 'admin' ? 'super admin' : 'dosen',
+      sender_role: sender === 'admin' ? 'admin penelitian' : 'dosen',
       message: message,
       image_url: imageUrl,
       created_at: new Date().toISOString()

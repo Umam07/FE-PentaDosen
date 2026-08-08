@@ -40,7 +40,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
     if (!isSilent) setLoading(true);
     let loadedTickets: SupportTicket[] = [];
     try {
-      const res = await fetch(`/api/admin/support-tickets?role=${encodeURIComponent(user?.role || 'super admin')}`);
+      const res = await fetch(`/api/admin/support-tickets?role=${encodeURIComponent(user?.role || 'admin penelitian')}`);
       if (res.ok) {
         const contentType = res.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
@@ -159,7 +159,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
             sender: 'admin',
             sender_id: user?.id || 1,
             sender_name: user?.name || 'Tim Admin',
-            sender_role: user?.role || 'super admin',
+            sender_role: user?.role || 'admin penelitian',
             message: replyText.trim(),
             created_at: new Date().toISOString()
           });
@@ -541,7 +541,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                           id: `reply-${selectedTicket.id}`,
                           sender: 'admin' as const,
                           sender_name: selectedTicket.replied_by_admin?.name || 'Tim Admin',
-                          sender_role: selectedTicket.replied_by_admin?.role || 'super admin',
+                          sender_role: selectedTicket.replied_by_admin?.role || 'admin penelitian',
                           message: selectedTicket.admin_reply,
                           created_at: selectedTicket.replied_at || selectedTicket.created_at
                         }] : [])

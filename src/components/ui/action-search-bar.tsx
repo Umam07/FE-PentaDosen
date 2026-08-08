@@ -64,6 +64,7 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
     { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ],
   "admin penelitian": [
+    { label: "Panel CMS (Master & User)", path: "/admin/cms", icon: <ShieldAlert className="h-4 w-4 text-red-500" />, category: "Administrator" },
     { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
     { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4 text-emerald-500" />, category: "Persetujuan" },
     { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4 text-violet-500" />, category: "Dokumen" },
@@ -79,10 +80,6 @@ const roleMenus: Record<string, { label: string; path: string; icon: React.React
     { label: "Daftar Dosen Fakultas", path: "/admin/lecturers", icon: <Users className="h-4 w-4 text-blue-500" />, category: "Keanggotaan" },
     { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4 text-rose-500" />, category: "Sistem Audit" },
     { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
-  ],
-  "super admin": [
-    { label: "Panel CMS (Manajemen User)", path: "/admin/cms", icon: <ShieldAlert className="h-4 w-4 text-red-500" />, category: "Administrator" },
-    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
   ]
 };
 
@@ -90,7 +87,6 @@ const roleLabels: Record<string, string> = {
   "dosen": "Dosen",
   "admin penelitian": "Admin Penelitian",
   "admin fakultas": "Admin Fak",
-  "super admin": "Super Admin",
 };
 
 function ActionSearchBar({ actions = [], onSelect, placeholder = "Cari menu/dosen...", className, user }: ActionSearchBarProps) {

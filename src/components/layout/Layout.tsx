@@ -117,13 +117,13 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       name: 'Panel CMS', 
       path: '/admin/cms', 
       icon: ShieldAlert, 
-      roles: ['super admin'] 
+      roles: ['admin penelitian'] 
     },
     { 
       name: 'Panduan & Bantuan', 
       path: '/help', 
       icon: HelpCircle, 
-      roles: ['dosen', 'admin penelitian', 'admin fakultas', 'super admin', 'staf', 'reviewer'] 
+      roles: ['dosen', 'admin penelitian', 'admin fakultas', 'staf', 'reviewer'] 
     },
   ];
 

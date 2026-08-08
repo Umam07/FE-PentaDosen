@@ -392,7 +392,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       if (storedUserStr) {
         try { currentUser = JSON.parse(storedUserStr); } catch (e) {}
       }
-      if (currentUser?.role === 'super admin' || currentUser?.role === 'admin') {
+      if (currentUser?.role === 'admin penelitian' || currentUser?.role === 'admin fakultas' || currentUser?.role === 'admin') {
         navigate('/admin/cms');
       } else {
         navigate('/help#kontak-support');
@@ -425,7 +425,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
 
     const isDosen = currentUser.role === 'dosen';
     const isAdmin = currentUser.role === 'admin penelitian' || currentUser.role === 'admin fakultas';
-    const isSuperAdmin = currentUser.role === 'super admin';
 
     const isResearch =
       typeLower.includes('penelitian') ||
@@ -496,8 +495,6 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
       } else {
         navigate(category ? `/publication?kategori=${encodeURIComponent(category)}` : '/publication');
       }
-    } else if (isSuperAdmin) {
-      navigate('/admin/cms');
     }
 
     setIsOpen(false);

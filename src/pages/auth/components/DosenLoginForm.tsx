@@ -26,7 +26,6 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
   const demoAccounts = [
     { email: 'dosen1@univ.edu', password: 'password', shortName: 'Chandra (Dosen FTI)', role: 'Dosen' },
     { email: 'nurul.huda@univ.edu', password: 'password', shortName: 'Nurul Huda (Dosen FEB)', role: 'Dosen' },
-    { email: 'superadmin@univ.edu', password: 'P3nt4D0s3nSuper@2026!', shortName: 'Super Admin', role: 'Super Admin' },
     { email: 'penelitian@univ.edu', password: 'password', shortName: 'Admin Penelitian', role: 'Admin' },
     { email: 'fakultas@univ.edu', password: 'password', shortName: 'Admin FTI', role: 'Admin' },
   ];

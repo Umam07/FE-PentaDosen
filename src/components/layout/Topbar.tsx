@@ -71,15 +71,15 @@ export default function Topbar({
     subtext?: string;
   }
 
-  const menuItems: TopbarSearchItem[] = user?.role === 'super admin' ? [
-    { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
-    { title: 'Panel CMS', path: '/admin/cms', icon: ShieldAlert, category: 'Menu' },
-  ] : (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') ? [
+  const menuItems: TopbarSearchItem[] = (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') ? [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Verifikasi Dokumen', path: '/admin/verify', icon: BadgeCheck, category: 'Menu' },
     { title: 'Kelola Dosen', path: '/admin/lecturers', icon: Users, category: 'Menu' },
     { title: 'Semua Dokumen', path: '/admin/documents/all', icon: BookOpen, category: 'Menu' },
-    { title: 'Sync Data API', path: '/admin/sync', icon: ArrowUpRight, category: 'Menu' },
+    ...(user?.role === 'admin penelitian' ? [
+      { title: 'Panel CMS', path: '/admin/cms', icon: ShieldAlert, category: 'Menu' },
+      { title: 'Sync Data API', path: '/admin/sync', icon: ArrowUpRight, category: 'Menu' },
+    ] : []),
   ] : [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Menu' },
     { title: 'Dokumen Saya', path: '/documents', icon: BookOpen, category: 'Menu' },
@@ -179,7 +179,7 @@ export default function Topbar({
             <div className="hidden md:block text-left">
               <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
               <p className="text-[10px] font-bold text-slate-650 dark:text-slate-400 uppercase tracking-widest">
-                {user?.role === 'super admin' ? 'Super Admin' : user?.role === 'admin penelitian' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
+                {user?.role === 'admin penelitian' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
               </p>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block`} />

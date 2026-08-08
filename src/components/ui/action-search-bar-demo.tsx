@@ -35,12 +35,6 @@ export function ActionSearchBarDemo() {
       role: "admin fakultas",
       avatar: "",
     },
-    "super admin": {
-      id: 4,
-      name: "Achmad Yusuf (Super Admin)",
-      role: "super admin",
-      avatar: "",
-    },
   };
 
   // Mock list of lecturer actions passed to topbar

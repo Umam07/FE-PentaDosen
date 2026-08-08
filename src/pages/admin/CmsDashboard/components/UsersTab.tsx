@@ -13,15 +13,13 @@ const ROLE_FILTER_OPTIONS = [
   { value: '', label: 'Semua Role' },
   { value: 'dosen', label: 'Dosen' },
   { value: 'admin fakultas', label: 'Admin Fakultas' },
-  { value: 'admin penelitian', label: 'Admin Penelitian' },
-  { value: 'super admin', label: 'Super Admin' }
+  { value: 'admin penelitian', label: 'Admin Penelitian' }
 ];
 
 const ROLE_EDIT_OPTIONS = [
   { value: 'dosen', label: 'Dosen' },
   { value: 'admin fakultas', label: 'Admin Fakultas' },
-  { value: 'admin penelitian', label: 'Admin Penelitian' },
-  { value: 'super admin', label: 'Super Admin' }
+  { value: 'admin penelitian', label: 'Admin Penelitian' }
 ];
 
 const PER_PAGE_OPTIONS = [
@@ -88,7 +86,7 @@ export default function UsersTab({ triggerMessage }: UsersTabProps) {
                 Manajemen User & Hak Akses
               </h3>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-                Super Admin • Kelola Pengguna & Hak Akses Sistem
+                Admin Penelitian • Kelola Pengguna & Hak Akses Sistem
               </p>
             </div>
           </div>
