@@ -28,19 +28,8 @@ export function useDosenLogin(setUser: (user: User) => void) {
     setLoading(true);
     try {
       const data = await authService.login(username, password);
-      const role = data.user.role;
-      const isAdminUser = ['super admin', 'admin penelitian', 'admin fakultas', 'reviewer'].includes(role);
-
-      if (isAdminUser) {
-        // Melakukan logout paksa jika akun admin mencoba login melalui portal dosen
-        await authService.logout(data.user.id);
-        setDosenError(
-          'Akses Ditolak: Akun Administrator tidak diizinkan masuk melalui halaman ini. Silakan gunakan Portal khusus Admin (/admin).'
-        );
-      } else {
-        setUser(data.user);
-        navigate('/dashboard');
-      }
+      setUser(data.user);
+      navigate('/dashboard');
     } catch (err: any) {
       // Menyesuaikan dengan pesan kesalahan aslinya
       if (err.message === 'Username atau password salah') {

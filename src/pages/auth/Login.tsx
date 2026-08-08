@@ -1,14 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { useLoginState } from './hooks/useLoginState';
 import { useAuthStats } from './hooks/useAuthStats';
 import { AuthBrandingPanel } from './components/AuthBrandingPanel';
 import { DosenLoginForm } from './components/DosenLoginForm';
-import { AdminLoginForm } from './components/AdminLoginForm';
 
 export default function Login({ setUser }: { setUser: any }) {
-  const { isAdmin, handleToggleMode } = useLoginState();
   const { totalDocs, totalDosen } = useAuthStats();
 
   return (
@@ -26,23 +23,13 @@ export default function Login({ setUser }: { setUser: any }) {
 
       {/* Panel Kiri: Informasi Branding & Statistik */}
       <AuthBrandingPanel 
-        isAdmin={isAdmin} 
         totalDocs={totalDocs} 
         totalDosen={totalDosen} 
       />
 
-      {/* Form Login Dosen */}
+      {/* Form Login Tunggal */}
       <DosenLoginForm 
-        isAdmin={isAdmin} 
         setUser={setUser} 
-        onToggleMode={handleToggleMode} 
-      />
-
-      {/* Form Login Admin */}
-      <AdminLoginForm 
-        isAdmin={isAdmin} 
-        setUser={setUser} 
-        onToggleMode={handleToggleMode} 
       />
 
     </main>

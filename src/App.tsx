@@ -14,7 +14,6 @@ import Toaster from './components/ui/toast';
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/auth/Login'));
-const AdminLogin = lazy(() => import('./pages/auth/AdminLogin'));
 const Insights = lazy(() => import('./pages/dashboard/Insights'));
 const Profile = lazy(() => import('./pages/profilediri/Profile'));
 const Publication = lazy(() => import('./pages/dosen/publication'));
@@ -60,19 +59,19 @@ function DashboardRedirect({ user }: { user: any }) {
   return <Navigate to="/lecturer-dashboard" />;
 }
 
-function AdminRedirect({ user, setUser }: { user: any; setUser: any }) {
+function AdminRedirect({ user }: { user: any }) {
   if (!user) {
-    return <AdminLogin setUser={setUser} />;
+    return <Navigate to="/login" replace />;
   }
 
   if (user.role === 'super admin') {
-    return <Navigate to="/admin/cms" />;
+    return <Navigate to="/admin/cms" replace />;
   }
   if (user.role === 'admin penelitian' || user.role === 'admin fakultas') {
-    return <Navigate to="/admin/verify" />;
+    return <Navigate to="/admin/verify" replace />;
   }
 
-  return <Navigate to="/dashboard" />;
+  return <Navigate to="/dashboard" replace />;
 }
 
 function LoadingFallback() {
@@ -226,7 +225,7 @@ export default function App() {
           <Route path="/lecturer/:id" element={<LecturerProfileInsights />} />
           <Route path="/developers" element={<Developers />} />
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
-          <Route path="/admin" element={<AdminRedirect user={user} setUser={setUser} />} />
+          <Route path="/admin" element={<AdminRedirect user={user} />} />
 
           <Route element={<Layout user={user} setUser={setUser} />}>
             <Route path="/dashboard" element={<DashboardRedirect user={user} />} />
