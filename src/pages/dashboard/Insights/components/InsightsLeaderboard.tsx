@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Trophy, ChevronRight, Crown } from 'lucide-react';
+import { Trophy, ChevronRight } from 'lucide-react';
 import { LeaderboardUser } from '../types';
 
 interface InsightsLeaderboardProps {
@@ -84,11 +84,6 @@ export default function InsightsLeaderboard({
                       </span>
                     )}
                   </div>
-                  {index === 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 z-10 rounded-full bg-white dark:bg-slate-900 border border-amber-500 items-center justify-center shadow-xs">
-                      <Crown className="w-3 h-3 text-amber-500 fill-amber-400" />
-                    </span>
-                  )}
                 </div>
                 <div className="flex-1 text-left min-w-0">
                   <p className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-tight">{user.name}</p>
