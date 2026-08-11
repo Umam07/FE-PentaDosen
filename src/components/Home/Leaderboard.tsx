@@ -39,120 +39,119 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
   ) : (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
       
-      {/* Top 3 Lecturers Podium/List */}
+      {/* Top 5 Lecturers List */}
       <motion.div 
-        initial={{ opacity: 0, x: -30 }}
+        initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="lg:col-span-6 bg-white dark:bg-slate-900 rounded-[3rem] shadow-xl border border-slate-200/50 dark:border-slate-800/50 p-8 lg:p-10 flex flex-col justify-between"
+        transition={{ duration: 0.5 }}
+        className="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 lg:p-8 flex flex-col justify-between shadow-sm"
       >
         <div>
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3">
-              <Trophy className="w-6 h-6 text-amber-500" />
-              <HeadingTag className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat Tahun Ini</HeadingTag>
+              <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50">
+                <Trophy className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <HeadingTag className="text-base font-bold text-slate-900 dark:text-white uppercase tracking-tight">Top 5 Peringkat Dosen</HeadingTag>
             </div>
             <button 
               onClick={() => navigate('/lecturers')}
-              className="text-xs font-black text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1 group"
+              className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 flex items-center gap-1 group"
             >
               LIHAT SEMUA
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
  
-          <div className="space-y-4">
+          <div className="space-y-3">
             {leaderboard.slice(0, 5).map((user: any, index: number) => (
               <button 
                 key={user.id}
                 onClick={() => navigate(`/lecturer/${user.id}`)}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                className="w-full flex items-center gap-3.5 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-all group border border-slate-100 dark:border-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700"
               >
-                    {/* Rank Number */}
-                    <div className={`w-6 text-center shrink-0 ${
-                      index === 0 ? 'text-amber-500 dark:text-amber-400 text-base font-black' : 
-                      index === 1 ? 'text-slate-400 dark:text-slate-300 text-sm font-black' : 
-                      index === 2 ? 'text-orange-400 dark:text-orange-300 text-sm font-black' :
-                      'text-slate-400 dark:text-slate-500 text-sm font-bold'
-                    }`}>
-                      {index + 1}
-                    </div>
-
-                    {/* Lecturer Photo / Avatar */}
-                    <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-sm relative shrink-0 border border-slate-200/60 dark:border-slate-800 shadow-sm">
-                      <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
-                        {user.thumbnail ? (
-                          <img src={user.thumbnail} alt={user.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-slate-500 dark:text-slate-400 uppercase">
-                            {user.name?.charAt(0)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-tight">{user.name}</p>
-                  <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400 truncate">{user.program_studi}</p>
+                {/* Rank Badge */}
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 font-mono text-xs font-extrabold ${
+                  index === 0 ? 'bg-amber-500 text-white' : 
+                  index === 1 ? 'bg-slate-300 dark:bg-slate-700 text-slate-900 dark:text-white' : 
+                  index === 2 ? 'bg-amber-700 text-white' :
+                  'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}>
+                  {index + 1}
                 </div>
+
+                {/* Lecturer Photo / Avatar */}
+                <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  {user.thumbnail ? (
+                    <img src={user.thumbnail} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-slate-600 dark:text-slate-300 uppercase">
+                      {user.name?.charAt(0)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex-1 text-left min-w-0">
+                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-tight">{user.name}</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{user.program_studi}</p>
+                </div>
+                
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-black text-slate-900 dark:text-white">{Math.round(user.total_kpi_points).toLocaleString()}</p>
-                  <p className="text-[8px] font-black text-slate-600 dark:text-slate-400 uppercase">Poin KPI</p>
+                  <p className="text-sm font-mono font-bold text-slate-900 dark:text-white">{Math.round(user.total_kpi_points).toLocaleString()}</p>
+                  <p className="text-[9px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase">Poin KPI</p>
                 </div>
               </button>
             ))}
           </div>
         </div>
-
-
       </motion.div>
 
       {/* Global Productivity Stats */}
       <motion.div 
-        initial={{ opacity: 0, x: 30 }}
+        initial={{ opacity: 0, x: 20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="lg:col-span-6 bg-[#0F172A] dark:bg-slate-900 rounded-[3rem] shadow-xl border border-white/5 p-8 lg:p-10 text-white flex flex-col justify-between relative overflow-hidden"
+        transition={{ duration: 0.5 }}
+        className="lg:col-span-6 bg-slate-900 dark:bg-slate-900 rounded-2xl border border-slate-800 p-6 lg:p-8 text-white flex flex-col justify-between shadow-sm"
       >
-        {/* Absract Ornament */}
-        <Zap className="absolute -right-8 -bottom-8 w-64 h-64 opacity-5 -rotate-12 pointer-events-none" />
-        
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-white/10">
-            <Sparkles className="w-6 h-6 text-primary-400" />
-            <HeadingTag className="text-lg font-black uppercase tracking-wider">Statistik Produktivitas</HeadingTag>
+        <div>
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
+            <div className="p-2 rounded-lg bg-primary-950/60 border border-primary-800/50">
+              <Sparkles className="w-5 h-5 text-primary-400" />
+            </div>
+            <HeadingTag className="text-base font-bold uppercase tracking-tight text-white">Statistik Produktivitas</HeadingTag>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3.5">
             {[
-              { label: 'Total Dokumen', val: (stats?.total_docs || 0) + (stats?.total_research || 0) + (stats?.total_scholar || 0) + (stats?.total_scopus || 0), icon: BookOpen, color: 'text-indigo-400 bg-indigo-500/10', colSpan: 'col-span-2' },
-              { label: 'Total Sitasi', val: stats?.total_citations || 0, icon: FileText, color: 'text-emerald-400 bg-emerald-500/10' },
-              { label: 'Dosen Aktif', val: stats?.total_dosen || 0, icon: Users, color: 'text-blue-400 bg-blue-500/10' }
+              { label: 'Total Dokumen', val: (stats?.total_docs || 0) + (stats?.total_research || 0) + (stats?.total_scholar || 0) + (stats?.total_scopus || 0), icon: BookOpen, color: 'text-indigo-400 bg-indigo-950/50 border-indigo-900/50', colSpan: 'col-span-2' },
+              { label: 'Total Sitasi', val: stats?.total_citations || 0, icon: FileText, color: 'text-emerald-400 bg-emerald-950/50 border-emerald-900/50' },
+              { label: 'Dosen Aktif', val: stats?.total_dosen || 0, icon: Users, color: 'text-blue-400 bg-blue-950/50 border-blue-900/50' }
             ].map((item, i) => (
-              <div key={i} className={`bg-white/5 border border-white/10 p-5 rounded-3xl flex items-center gap-4 ${item.colSpan || ''}`}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.color}`}>
-                  <item.icon className="w-5 h-5" />
+              <div key={i} className={`bg-slate-950/60 border border-slate-800 p-4 rounded-xl flex items-center gap-3.5 ${item.colSpan || ''}`}>
+                <div className={`w-9 h-9 rounded-lg border flex items-center justify-center ${item.color}`}>
+                  <item.icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{item.label}</p>
-                  <div className="text-lg font-black text-white">{item.val.toLocaleString()}</div>
+                  <p className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">{item.label}</p>
+                  <div className="text-base font-mono font-bold text-white">{item.val.toLocaleString()}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/10 relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-6 pt-5 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
-            <h4 className="text-sm font-black mb-1">Rerata Nilai KPI Dosen</h4>
-            <p className="text-xs text-slate-300">Total Poin KPI / Jumlah Dosen Terdaftar</p>
+            <h4 className="text-xs font-bold text-slate-200">Rerata Nilai KPI Dosen</h4>
+            <p className="text-[11px] text-slate-400">Total Poin KPI / Jumlah Dosen Terdaftar</p>
           </div>
-          <div className="bg-white/10 px-5 py-3 rounded-2xl border border-white/10 text-center sm:text-right min-w-[120px]">
-            <p className="text-xl font-black text-primary-400">
+          <div className="bg-slate-950 px-4 py-2.5 rounded-xl border border-slate-800 text-center sm:text-right min-w-[110px]">
+            <p className="text-lg font-mono font-bold text-primary-400">
               {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
             </p>
-            <p className="text-[8px] font-black uppercase text-slate-300 tracking-wider">Poin Rerata</p>
+            <p className="text-[9px] font-mono font-bold uppercase text-slate-400 tracking-wider">Poin Rerata</p>
           </div>
         </div>
       </motion.div>
@@ -161,15 +160,14 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
   );
 
   if (isHero) {
-    return <div className="font-mono">{content}</div>;
+    return <div>{content}</div>;
   }
 
   return (
-    <section id="leaderboard" className="py-20 md:py-32 bg-[#F8FAFC] dark:bg-slate-950 relative overflow-hidden font-mono">
-      {/* Background Decor */}
-      <div className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary-300 dark:bg-primary-900 rounded-full filter blur-[120px] animate-pulse" />
-        <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-blue-300 dark:bg-blue-900 rounded-full filter blur-[120px]" />
+    <section id="leaderboard" className="py-20 md:py-32 bg-slate-50 dark:bg-slate-950 relative overflow-hidden">
+      {/* Structural Line Grid Pattern (No glows, no gradients) */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]">
+        <div className="h-full w-full bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:3rem_3rem]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -177,14 +175,14 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
         {/* Header Section */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 mb-6"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 mb-6"
           >
-            <Trophy className="w-4 h-4 text-amber-500" />
-            <span className="text-[10px] md:text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-[0.2em]">
-              Prestasi Akademik
+            <Trophy className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <span className="text-xs font-mono font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+              PRESTASI AKADEMIK
             </span>
           </motion.div>
           
@@ -193,9 +191,9 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-4xl md:text-6xl font-black text-gray-900 dark:text-white tracking-tight leading-none mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-4"
           >
-            Leaderboard <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400">Dosen Terbaik Tahun Ini</span>
+            Leaderboard Dosen <span className="text-amber-600 dark:text-amber-400">Terbaik Tahun Ini</span>
           </motion.h2>
           
           <motion.p
@@ -203,7 +201,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg md:text-xl font-medium text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed"
+            className="text-base md:text-lg font-medium text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
           >
             Apresiasi performa dosen dengan poin KPI tertinggi dan kontribusi riset teraktif pada tahun ini.
           </motion.p>

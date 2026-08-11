@@ -26,11 +26,7 @@ export default function Footer() {
 
   return (
     <footer id="contact" className="bg-[#0B0F19] text-gray-400 pt-20 pb-2 relative overflow-hidden border-t border-gray-900">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-1/4 -translate-x-1/2 w-96 h-96 bg-primary-500/5 rounded-full filter blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 translate-x-1/2 w-96 h-96 bg-indigo-500/5 rounded-full filter blur-[120px] pointer-events-none" />
-      
-      {/* Grid Pattern Background */}
+      {/* Grid Pattern Background (No gradients) */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293708_1px,transparent_1px),linear-gradient(to_bottom,#1f293708_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -48,7 +44,7 @@ export default function Footer() {
               <div className="flex items-center gap-2">
                 <PentaDosenLogo className="w-9 h-9" />
                 <span className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase">
-                  Penta<span className="text-primary-400 bg-clip-text bg-gradient-to-r from-primary-400 to-primary-300">Dosen</span>
+                  Penta<span className="text-primary-400">Dosen</span>
                 </span>
               </div>
             </Link>
@@ -102,8 +98,7 @@ export default function Footer() {
                   </DialogTrigger>
                   <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,85vh)] sm:max-w-xl [&>button:last-child]:top-4.5 bg-[#0B0F19] border border-gray-900 rounded-3xl text-gray-300 shadow-2xl shadow-black/50 overflow-hidden">
                     <DialogHeader className="contents space-y-0 text-left">
-                      <div className="relative border-b border-gray-900 px-6 py-5 bg-gradient-to-b from-gray-950/40 to-transparent">
-                        <div className="absolute top-0 left-1/4 -translate-x-1/2 w-48 h-2 bg-primary-500/20 rounded-full filter blur-md" />
+                      <div className="relative border-b border-gray-900 px-6 py-5 bg-gray-950/80">
                         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-[10px] font-black text-primary-400 uppercase tracking-widest mb-2.5 w-fit">
                           Last Updated: July 2026
                         </div>
@@ -177,8 +172,7 @@ export default function Footer() {
                   </DialogTrigger>
                   <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,85vh)] sm:max-w-xl [&>button:last-child]:top-4.5 bg-[#0B0F19] border border-gray-900 rounded-3xl text-gray-300 shadow-2xl shadow-black/50 overflow-hidden">
                     <DialogHeader className="contents space-y-0 text-left">
-                      <div className="relative border-b border-gray-900 px-6 py-5 bg-gradient-to-b from-gray-950/40 to-transparent">
-                        <div className="absolute top-0 left-1/4 -translate-x-1/2 w-48 h-2 bg-primary-500/20 rounded-full filter blur-md" />
+                      <div className="relative border-b border-gray-900 px-6 py-5 bg-gray-950/80">
                         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-[10px] font-black text-primary-400 uppercase tracking-widest mb-2.5 w-fit">
                           Ketentuan Penggunaan
                         </div>

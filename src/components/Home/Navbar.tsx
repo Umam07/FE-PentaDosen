@@ -115,28 +115,28 @@ export default function Navbar() {
               {user ? (
                 <Link 
                   to="/dashboard"
-                  className="flex items-center gap-2 text-sm font-black text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 px-6 py-2.5 rounded-xl transition-all duration-300 group"
+                  className="flex items-center gap-2 text-sm font-black text-white bg-primary-600 hover:bg-primary-700 active:scale-[0.98] px-6 py-2.5 rounded-xl transition-all duration-200 group shadow-sm"
                 >
-                      Insights
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  ) : (
-                      <>
-                        <Link 
-                          to="/login"
-                          className="text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-xl transition-all"
-                        >
-                          Masuk
-                        </Link>
-                        <Link 
-                          to="/insights"
-                          className="flex items-center gap-2 text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 px-5 py-2.5 rounded-xl transition-all duration-300 group"
-                        >
-                          Insights
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                  </>
-               )}
+                  Insights
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              ) : (
+                <>
+                  <Link 
+                    to="/login"
+                    className="text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-xl transition-all"
+                  >
+                    Masuk
+                  </Link>
+                  <Link 
+                    to="/insights"
+                    className="flex items-center gap-2 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 active:scale-[0.98] px-5 py-2.5 rounded-xl transition-all duration-200 group shadow-sm"
+                  >
+                    Insights
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Actions */}
@@ -252,7 +252,7 @@ export default function Navbar() {
                   <Link
                     to="/dashboard"
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-black text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:from-primary-700 hover:to-primary-600 transition-all shadow-lg shadow-primary-500/10 hover:shadow-primary-500/25"
+                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-black text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-sm"
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
@@ -270,7 +270,7 @@ export default function Navbar() {
                     <Link
                       to="/insights"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all"
+                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-sm"
                     >
                       Insights
                       <ArrowRight className="w-4 h-4" />
