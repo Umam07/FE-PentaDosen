@@ -78,9 +78,9 @@ export default function ResearchTable({
     doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
 
   return (
-    <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
-      <div className="px-6 py-5 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
-        <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">
+    <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
+      <div className="p-5 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+        <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
           Riwayat Penelitian
         </h3>
       </div>
@@ -93,39 +93,39 @@ export default function ResearchTable({
       />
 
       <div className="w-full overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800 text-sm">
-          <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
+          <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
             <tr>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Informasi Penelitian
               </th>
-              <th className="hidden lg:table-cell px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Program & Skema
               </th>
-              <th className="hidden md:table-cell px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="hidden md:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Tanggal Pelaksanaan
               </th>
-              <th className="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Dana
               </th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Dokumen
               </th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="px-6 py-3.5 text-right text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Poin
               </th>
-              <th className="px-6 py-4 w-12 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="px-6 py-3.5 w-12 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Detail
               </th>
-              <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="px-6 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Aksi
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50 dark:divide-zinc-800">
+          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
             {isTableLoading ? (
               <phantom-ui loading={true} animation="shimmer" className="contents">
                 {[1, 2, 3].map((i) => (
@@ -138,7 +138,7 @@ export default function ResearchTable({
               currentItems.map((res: any) => {
                 const SchemaIcon = getResearchSchemaIcon(res.program, res.skema);
                 return (
-                  <tr key={res.id} className="hover:bg-primary-50/20 transition-colors group">
+                  <tr key={res.id} className="hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors group">
                     <td className="px-6 py-4 cursor-pointer" onClick={() => onViewDetail(res)}>
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 transition-colors flex-shrink-0">
@@ -304,18 +304,14 @@ export default function ResearchTable({
 
       {/* Pagination */}
       {!isTableLoading && researchList.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="relative z-10 px-8 py-8 border-t border-gray-50 dark:border-zinc-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6"
-        >
+        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-[0.2em]">
-              Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, researchList.length)} of {researchList.length}
+            <span className="text-xs text-gray-500 dark:text-zinc-400">
+              Menampilkan <span className="font-semibold text-gray-800 dark:text-zinc-200">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, researchList.length)}</span> dari <span className="font-semibold text-gray-800 dark:text-zinc-200">{researchList.length}</span> Penelitian
             </span>
-            <div className="h-5 w-px bg-gray-200 dark:bg-zinc-700 hidden sm:block" />
+            <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 hidden sm:block" />
             <div className="hidden sm:flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase text-gray-300 tracking-widest">Limit:</span>
+              <span className="text-xs text-gray-400">Limit:</span>
               <DropdownSelect
                 value={itemsPerPage}
                 onChange={(val) => {
@@ -335,29 +331,29 @@ export default function ResearchTable({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="p-3 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1)
                 .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
                 .map((p, index, array) => (
                   <React.Fragment key={p}>
                     {index > 0 && array[index - 1] !== p - 1 && (
-                      <span className="px-2 text-gray-300 font-bold">...</span>
+                      <span className="px-1 text-gray-300 dark:text-zinc-600 text-xs">...</span>
                     )}
                     <button
                       onClick={() => setCurrentPage(p)}
-                      className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                      className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-all ${
                         currentPage === p
-                          ? 'bg-primary-600 text-white shadow-sm'
-                          : 'bg-white dark:bg-zinc-900 text-gray-500 border border-gray-100 dark:border-zinc-800 hover:bg-slate-50 hover:text-primary-600 shadow-sm'
+                          ? 'bg-primary-600 text-white shadow-xs'
+                          : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
                       }`}
                     >
                       {p}
@@ -369,12 +365,12 @@ export default function ResearchTable({
             <button
               disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              className="p-3 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-        </motion.div>
+        </div>
       )}
     </section>
   );

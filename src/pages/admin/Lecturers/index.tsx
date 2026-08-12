@@ -38,7 +38,7 @@ export default function AdminLecturers() {
       />
 
       {/* Bagian Utama Database Dosen */}
-      <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.03)] rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
         {/* Kolom Pencarian dan Dropdown Fakultas */}
         <LecturersFilter
           searchTerm={searchTerm}

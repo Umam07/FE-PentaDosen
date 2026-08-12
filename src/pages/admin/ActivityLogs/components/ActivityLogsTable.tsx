@@ -17,17 +17,17 @@ export default function ActivityLogsTable({
 }: ActivityLogsTableProps) {
   return (
     <div className="hidden md:block overflow-x-auto scrollbar-hide">
-      <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800">
-        <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
+        <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
           <tr>
             {['Waktu', 'Pengguna', 'Aksi', 'Deskripsi Detail'].map((h) => (
-              <th key={h} className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">
+              <th key={h} className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 {h}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
+        <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
           <AnimatePresence>
             {logs.map((log, idx) => {
               const cfg = getActionConfig(log.action);
@@ -38,10 +38,10 @@ export default function ActivityLogsTable({
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.02 }}
-                  className="group hover:bg-primary-50/[0.02] dark:hover:bg-primary-900/[0.02] transition-colors duration-150"
+                  className="group hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors"
                 >
                   {/* Time Column */}
-                  <td className="px-6 py-5 whitespace-nowrap align-top">
+                  <td className="px-6 py-4 whitespace-nowrap align-top">
                     <div className="flex items-center gap-2.5">
                       <div className="relative flex items-center justify-center shrink-0 w-2.5 h-2.5">
                         {recent && (
@@ -62,7 +62,7 @@ export default function ActivityLogsTable({
                   </td>
 
                   {/* User Column with Initials Avatar */}
-                  <td className="px-6 py-5 align-top">
+                  <td className="px-6 py-4 align-top">
                     <div className="flex items-center gap-3">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-black text-[11px] ${getUserBg(log.user?.role || '')} shadow-sm transition-transform duration-200 group-hover:scale-105`}>
                         {getInitials(log.user?.name || '')}
@@ -79,7 +79,7 @@ export default function ActivityLogsTable({
                   </td>
 
                   {/* Action Badge Column */}
-                  <td className="px-6 py-5 whitespace-nowrap align-top">
+                  <td className="px-6 py-4 whitespace-nowrap align-top">
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black rounded-full uppercase tracking-widest border ${cfg.badge} transition-all duration-200`}>
                       {cfg.icon}
                       {log.action}
@@ -87,7 +87,7 @@ export default function ActivityLogsTable({
                   </td>
 
                   {/* Description Column with Improved Copy Button */}
-                  <td className="px-6 py-5 align-top max-w-[360px] group/desc relative">
+                  <td className="px-6 py-4 align-top max-w-[360px] group/desc relative">
                     <p className="text-[11px] font-bold text-gray-600 dark:text-zinc-400 leading-relaxed pr-8">
                       {log.description}
                     </p>

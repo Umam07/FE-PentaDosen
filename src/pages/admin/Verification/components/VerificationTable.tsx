@@ -17,13 +17,13 @@ export default function VerificationTable({
 }: VerificationTableProps) {
   return (
     <div className="hidden md:block overflow-x-auto scrollbar-hide">
-      <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800">
-        <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
+        <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
           <tr>
             {['Nama Dosen', 'Fakultas / Prodi', 'Informasi Detail', 'Program / Kategori', activeTab === 'penelitian' ? 'Dana' : 'Status Performa', 'Aksi'].map((h, i) => (
               <th 
                 key={i} 
-                className={`px-6 py-5 text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em] ${
+                className={`px-6 py-3.5 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider ${
                   ['Program / Kategori', 'Dana', 'Status Performa', 'Aksi'].includes(h) ? 'text-center' : 'text-left'
                 }`}
               >
@@ -32,11 +32,11 @@ export default function VerificationTable({
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
+        <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
           {items.map((item: any) => (
-            <tr key={item.id} className="group hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/10 transition-all duration-200">
+            <tr key={item.id} className="group hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors">
               {/* Nama Dosen Column */}
-              <td className="px-6 py-6 align-top text-left">
+              <td className="px-6 py-4 align-top text-left">
                 <div className="flex flex-col">
                   <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight group-hover:text-primary-600 transition-colors">
                      {activeTab === 'penelitian' ? item.user?.name : (item.user?.name || item.user_name)}
@@ -49,7 +49,7 @@ export default function VerificationTable({
               </td>
 
               {/* Fakultas / Prodi Column */}
-              <td className="px-6 py-6 align-top text-left">
+              <td className="px-6 py-4 align-top text-left">
                 <div className="flex flex-col">
                   <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
                     {(activeTab === 'penelitian' ? item.user?.program_studi : item.user?.program_studi) || 'N/A'}
@@ -68,7 +68,7 @@ export default function VerificationTable({
               </td>
 
               {/* Informasi Detail Column */}
-              <td className="px-6 py-6">
+              <td className="px-6 py-4">
                 <div className="flex items-center gap-5">
                   <div className="shrink-0 p-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl group-hover:bg-primary-100/50 transition-colors border border-gray-100 dark:border-zinc-800">
                     {activeTab === 'penelitian' ? <Beaker className="h-6 w-6 text-gray-400 group-hover:text-primary-600" /> : <FileText className="h-6 w-6 text-gray-400 group-hover:text-primary-600" />}
@@ -98,7 +98,7 @@ export default function VerificationTable({
               </td>
 
               {/* Program / Kategori Column */}
-              <td className="px-6 py-6 align-top text-center">
+              <td className="px-6 py-4 align-top text-center">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-primary-50 dark:bg-primary-950/20 text-primary-700 dark:text-primary-400 rounded-xl border border-primary-100 dark:border-primary-900/30 text-[10px] font-black uppercase tracking-widest shadow-sm">
                    {activeTab === 'penelitian' ? (
                      <>
@@ -115,7 +115,7 @@ export default function VerificationTable({
               </td>
 
               {/* Dana / Status Performa Column */}
-              <td className="px-6 py-6 align-top text-center">
+              <td className="px-6 py-4 align-top text-center">
                 {activeTab === 'penelitian' ? (
                   <div className="flex flex-col gap-1 items-center">
                      <div className="flex items-center gap-2 text-emerald-600">
@@ -145,7 +145,7 @@ export default function VerificationTable({
               </td>
 
               {/* Action Column */}
-              <td className="px-6 py-6 text-center align-top">
+              <td className="px-6 py-4 text-center align-top">
                 <div className="inline-flex items-center gap-0.5 p-1 bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100 dark:border-zinc-800">
                   {/* Preview Button */}
                   {(() => {

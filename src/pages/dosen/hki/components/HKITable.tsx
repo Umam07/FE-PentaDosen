@@ -59,9 +59,9 @@ export default function HKITable({
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
 
   return (
-    <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 overflow-hidden">
-      <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-6 border-b border-gray-50 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50">
-        <h3 className="text-lg lg:text-xl font-black text-gray-900 dark:text-zinc-100 tracking-tight uppercase">Riwayat Dokumen HKI</h3>
+    <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
+      <div className="p-5 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+        <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Riwayat Dokumen HKI</h3>
       </div>
 
       {/* Year Filter */}
@@ -72,22 +72,22 @@ export default function HKITable({
       />
 
       <div className="w-full overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800">
-          <thead className="bg-gray-50/30 dark:bg-zinc-800/30">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
+          <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
             <tr>
-              <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Informasi HKI</th>
-              <th className="hidden lg:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Kategori HKI</th>
-              <th className="hidden md:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Tanggal Perolehan</th>
-              <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Dokumen</th>
-              <th className="px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Status</th>
-              <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Klasifikasi</th>
-              <th className="px-4 lg:px-8 py-4 text-right sm:text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Poin</th>
-              <th className="hidden sm:table-cell px-4 lg:px-8 py-4 text-right sm:text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Penelitian Asal</th>
-              <th className="px-4 py-4 w-12 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Detail</th>
-              <th className="px-4 py-4 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em]">Aksi</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Informasi HKI</th>
+              <th className="hidden lg:table-cell px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Kategori HKI</th>
+              <th className="hidden md:table-cell px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Tanggal Perolehan</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Dokumen</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Status</th>
+              <th className="hidden sm:table-cell px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Klasifikasi</th>
+              <th className="px-4 lg:px-6 py-3.5 text-right sm:text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Poin</th>
+              <th className="hidden sm:table-cell px-4 lg:px-6 py-3.5 text-right sm:text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Penelitian Asal</th>
+              <th className="px-4 py-3.5 w-12 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Detail</th>
+              <th className="px-4 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Aksi</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
+          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
             {isTableLoading ? (
               <phantom-ui loading={true} animation="shimmer" className="contents">
                 {[1, 2, 3].map((i) => (
@@ -118,7 +118,7 @@ export default function HKITable({
                 const catConfig = HKI_CATEGORIES.find(c => c.id === doc.category);
                 const DocIcon = catConfig ? catConfig.icon : Shield;
                 return (
-                  <tr key={doc.id} className="hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-colors group">
+                  <tr key={doc.id} className="hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors group">
                     <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors shrink-0">

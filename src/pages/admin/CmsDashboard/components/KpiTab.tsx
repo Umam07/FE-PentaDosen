@@ -292,20 +292,20 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                     {/* Content Accordion Table */}
                     {isOpen && (
                       <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800 text-xs">
-                          <thead className="bg-gray-50/40 dark:bg-zinc-850/40 text-gray-500 font-semibold">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
+                          <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
                             <tr>
-                              <th className="px-4 py-2.5 text-left tracking-wide">Kategori</th>
-                              <th className="px-3 py-2.5 text-center w-36 tracking-wide">First Author / Single</th>
-                              <th className="px-3 py-2.5 text-center w-36 tracking-wide">Member Author</th>
-                              <th className="px-3 py-2.5 text-right w-16 tracking-wide">Aksi</th>
+                              <th className="px-4 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Kategori</th>
+                              <th className="px-3 py-3.5 text-center w-36 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">First Author / Single</th>
+                              <th className="px-3 py-3.5 text-center w-36 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Member Author</th>
+                              <th className="px-3 py-3.5 text-right w-16 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Aksi</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/60">
+                          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
                             {group.items.map((row) => (
                               <tr 
                                 key={row.baseName}
-                                className="even:bg-gray-50/40 dark:even:bg-zinc-800/20 hover:bg-gray-100/50 dark:hover:bg-zinc-800/40 transition-colors"
+                                className="hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors"
                               >
                                 {/* Kolom Kategori */}
                                 <td className="px-4 py-3 font-medium text-gray-900 dark:text-zinc-100">

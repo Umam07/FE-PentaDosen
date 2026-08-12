@@ -9,13 +9,13 @@ export default function LecturersTable({
 }: LecturersTableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-50 dark:divide-zinc-800 whitespace-nowrap">
-        <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs whitespace-nowrap">
+        <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
           <tr>
             {['Nama Dosen', 'Fakultas / Prodi', 'ID Scholar', 'ID Scopus', 'Total KPI'].map((h, i) => (
               <th 
                 key={i} 
-                className={`px-6 py-5 text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.15em] ${
+                className={`px-6 py-3.5 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider ${
                   h === 'Total KPI' ? 'text-right pr-16' :
                   h === 'ID Scholar' || h === 'ID Scopus' ? 'text-center' : 'text-left'
                 }`}
@@ -25,18 +25,18 @@ export default function LecturersTable({
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-zinc-100/0 divide-y divide-gray-50 dark:divide-zinc-800">
+        <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
           {items.map((lecturer, index) => (
             <motion.tr 
               key={lecturer.id} 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05, duration: 0.2 }}
-              className="group transition-all hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/[0.03] cursor-pointer"
+              className="group transition-colors hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 cursor-pointer"
               onClick={() => onItemClick(lecturer.id)}
             >
               {/* Nama Dosen Column */}
-              <td className="px-6 py-6">
+              <td className="px-6 py-4">
                 <div className="flex items-center gap-4">
                   {lecturer.thumbnail ? (
                     <img 
@@ -63,7 +63,7 @@ export default function LecturersTable({
               </td>
 
               {/* Fakultas / Prodi Column */}
-              <td className="px-6 py-6">
+              <td className="px-6 py-4">
                 <div className="flex flex-col">
                   <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
                     {lecturer.program_studi || 'N/A'}
@@ -77,7 +77,7 @@ export default function LecturersTable({
               </td>
 
               {/* Scholar ID Column */}
-              <td className="px-6 py-6 text-center">
+              <td className="px-6 py-4 text-center">
                 {lecturer.scholar_id ? (
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest shadow-sm">
                     <BookOpen className="h-3.5 w-3.5 text-blue-500" />
@@ -91,7 +91,7 @@ export default function LecturersTable({
               </td>
 
               {/* Scopus ID Column */}
-              <td className="px-6 py-6 text-center">
+              <td className="px-6 py-4 text-center">
                 {lecturer.scopus_id ? (
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-50/80 dark:bg-orange-950/20 border border-orange-100/50 dark:border-orange-900/30 text-orange-700 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest shadow-sm">
                     <GraduationCap className="h-3.5 w-3.5 text-orange-500" />
@@ -105,7 +105,7 @@ export default function LecturersTable({
               </td>
 
               {/* Total KPI Column */}
-              <td className="px-6 py-6 text-right">
+              <td className="px-6 py-4 text-right">
                 <div className="flex items-center justify-end gap-3 group/pts">
                   <div className="text-right">
                     <span className="inline-flex items-center px-3.5 py-1.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-xs uppercase tracking-wider border border-emerald-500/20 shadow-inner tabular-nums">

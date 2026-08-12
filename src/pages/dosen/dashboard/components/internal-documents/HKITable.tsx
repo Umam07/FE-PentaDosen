@@ -17,23 +17,23 @@ export default function HKITable({
   isPublic = false,
 }: DocTableBaseProps) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
       <div className="w-full overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-          <thead className="bg-slate-50/50 dark:bg-slate-800/30">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
+          <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
             <tr>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Informasi HKI</th>
-              <th className="hidden lg:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Kategori HKI</th>
-              <th className="hidden md:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Tanggal Perolehan</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Dokumen</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Status</th>
-              <th className="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Klasifikasi</th>
-              <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Poin</th>
-              <th className="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Penelitian Asal</th>
-              <th className="px-6 py-4 w-12 text-center text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.15em]">Detail</th>
+              <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Informasi HKI</th>
+              <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Kategori HKI</th>
+              <th className="hidden md:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Tanggal Perolehan</th>
+              <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Dokumen</th>
+              <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Status</th>
+              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Klasifikasi</th>
+              <th className="px-6 py-3.5 text-right text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Poin</th>
+              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Penelitian Asal</th>
+              <th className="px-6 py-3.5 w-12 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Detail</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
             {filteredDocs
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
               .map((doc, idx) => {
@@ -46,7 +46,7 @@ export default function HKITable({
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.04 }}
-                    className="hover:bg-primary-50/20 dark:hover:bg-primary-900/10 transition-colors group"
+                    className="hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors group"
                   >
                     <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                       <div className="flex items-center gap-3">

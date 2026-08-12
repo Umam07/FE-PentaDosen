@@ -44,23 +44,23 @@ export default function AllDocumentsTable({
 
   return (
     <div className="hidden md:block overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-100 dark:divide-zinc-800">
-        <thead className="bg-gray-50/50 dark:bg-zinc-800/50">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
+        <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
           <tr>
-            <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">
+            <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
               {activeTab === 'penelitian' ? 'Penelitian & Program' : 'Dokumen & Kategori'}
             </th>
-            <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Kontributor</th>
-            <th className="px-6 py-5 text-left text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Tanggal</th>
-            <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Status</th>
-            <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">
+            <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Kontributor</th>
+            <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Tanggal</th>
+            <th className="px-6 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Status</th>
+            <th className="px-6 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
               {activeTab === 'penelitian' ? 'Dana' : 'Sumber'}
             </th>
-            <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Poin</th>
-            <th className="px-6 py-5 text-center text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-[0.2em]">Aksi</th>
+            <th className="px-6 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Poin</th>
+            <th className="px-6 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Aksi</th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-50 dark:divide-zinc-800">
+        <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
           {items.map((doc) => {
             const title = activeTab === 'penelitian' ? doc.judul_penelitian : doc.title;
             const author = activeTab === 'penelitian' ? doc.user?.name : doc.user_name;
@@ -69,8 +69,8 @@ export default function AllDocumentsTable({
             const dateVal = activeTab === 'penelitian' ? doc.tahun : doc.published_at;
 
             return (
-              <tr key={doc.id} className="group hover:bg-primary-50/[0.03] dark:hover:bg-primary-900/[0.03] transition-colors">
-                <td className="px-6 py-6 max-w-[300px]">
+              <tr key={doc.id} className="group hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors">
+                <td className="px-6 py-4 max-w-[300px]">
                   <div className="flex flex-col">
                     <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight line-clamp-2">{title}</span>
                     <span className="mt-1.5 text-[9px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-widest">{category}</span>
@@ -81,7 +81,7 @@ export default function AllDocumentsTable({
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-6">
+                <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-[10px] font-black text-gray-500">
                       {(author || 'D').charAt(0)}
@@ -89,16 +89,16 @@ export default function AllDocumentsTable({
                     <span className="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-tight">{author}</span>
                   </div>
                 </td>
-                <td className="px-6 py-6 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center text-[11px] font-bold text-gray-500 dark:text-zinc-500 italic">
                     <CalendarDays className="h-4 w-4 mr-1.5 text-gray-300" />
                     {dateVal ? new Date(dateVal).toLocaleDateString('id-ID') : '-'}
                   </div>
                 </td>
-                <td className="px-6 py-6 whitespace-nowrap text-center">
+                <td className="px-6 py-4 whitespace-nowrap text-center">
                   {getStatusBadge(doc.status)}
                 </td>
-                <td className="px-6 py-6 whitespace-nowrap text-center">
+                <td className="px-6 py-4 whitespace-nowrap text-center">
                   {activeTab === 'penelitian' ? (
                     <span className="text-xs font-black text-emerald-600 tabular-nums">
                       {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(doc.dana_disetujui || 0)}
@@ -117,13 +117,13 @@ export default function AllDocumentsTable({
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-6 whitespace-nowrap text-center">
+                <td className="px-6 py-4 whitespace-nowrap text-center">
                   <div className="flex flex-col items-center">
                     <span className="text-sm font-black text-gray-900 dark:text-zinc-100">{Math.round(doc.awarded_points || 0)}</span>
                     {activeTab !== 'penelitian' && doc.is_kpi_counted && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">KPI Verified</span>}
                   </div>
                 </td>
-                <td className="px-6 py-6 whitespace-nowrap text-center">
+                <td className="px-6 py-4 whitespace-nowrap text-center">
                   {doc.file_url && doc.file_url !== '-' && doc.file_url !== '' ? (
                     <div className="inline-flex items-center gap-0.5 p-1 bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100 dark:border-zinc-800">
                       <button
