@@ -6,6 +6,7 @@ import { useInsights } from './hooks/useInsights';
 import InsightsHero from './components/InsightsHero';
 import InsightsStatsHighlights from './components/InsightsStatsHighlights';
 import InsightsMetricsRow from './components/InsightsMetricsRow';
+import ResearchDistributionCard from './components/ResearchDistributionCard';
 import FakultasPieChart from './components/FakultasPieChart';
 import InsightsLeaderboard from './components/InsightsLeaderboard';
 
@@ -14,6 +15,7 @@ export default function Insights() {
   const {
     leaderboard,
     stats,
+    periodKpiValues,
     loading,
     searchQuery,
     setSearchQuery,
@@ -24,32 +26,56 @@ export default function Insights() {
     totalFakultasPoints,
     sortedAndFilteredData,
     activeDataIndex,
-    setActiveIndex
+    setActiveIndex,
+    chartViewMode,
+    setChartViewMode,
+    timePeriod,
+    setTimePeriod
   } = useInsights();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-all duration-500 font-sans">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 transition-colors duration-300 font-sans antialiased text-slate-900 dark:text-slate-100">
       <Navbar />
       
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
+      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
         
         {/* Premium Hero Section */}
-        <InsightsHero stats={stats} loading={loading} />
+        <InsightsHero 
+          stats={stats} 
+          loading={loading} 
+          timePeriod={timePeriod}
+          setTimePeriod={setTimePeriod}
+          onExploreClick={() => {
+            const chartElem = document.getElementById('fakultas-analytics');
+            if (chartElem) {
+              chartElem.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        />
 
-        {/* Statistics highlights and metrics intelligence */}
-        <div className="space-y-10">
-          <InsightsStatsHighlights stats={stats} loading={loading} />
-          
-          <InsightsMetricsRow 
-            stats={stats} 
-            loading={loading}
-            onLecturersClick={() => navigate('/lecturers')}
-            onDepartmentsClick={() => navigate('/departments')}
-          />
-        </div>
+        {/* Statistics highlights */}
+        <InsightsStatsHighlights stats={stats} loading={loading} periodKpiValues={periodKpiValues} />
+
+        {/* Personnel Metrics Row & Top Performer Spotlight */}
+        <InsightsMetricsRow 
+          stats={stats} 
+          loading={loading}
+          onLecturersClick={() => navigate('/lecturers')}
+          onDepartmentsClick={() => navigate('/departments')}
+          onTopPerformerClick={() => {
+            if (stats?.top_performer?.id) {
+              navigate(`/lecturer/${stats.top_performer.id}`);
+            } else {
+              navigate('/lecturers');
+            }
+          }}
+        />
+
+        {/* Publication & Research Source Channel Distribution */}
+        <ResearchDistributionCard stats={stats} loading={loading} />
 
         {/* Analytics visualisations and Leaderboard ranking */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div id="fakultas-analytics" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <FakultasPieChart 
             loading={loading}
             searchQuery={searchQuery}
@@ -62,6 +88,8 @@ export default function Insights() {
             activeDataIndex={activeDataIndex}
             setActiveIndex={setActiveIndex}
             totalFakultasPoints={totalFakultasPoints}
+            chartViewMode={chartViewMode}
+            setChartViewMode={setChartViewMode}
             onFakultasClick={(fullName) => {
               navigate(`/departments?search=${encodeURIComponent(fullName)}`);
             }}
