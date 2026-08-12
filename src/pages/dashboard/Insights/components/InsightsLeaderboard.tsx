@@ -18,86 +18,104 @@ export default function InsightsLeaderboard({
 }: InsightsLeaderboardProps) {
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl shadow-xs border border-slate-200/60 dark:border-slate-800 p-8 lg:p-10 flex flex-col justify-between"
+      className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl shadow-xs border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 flex flex-col justify-between"
     >
       <div>
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-3">
-            <Trophy className="w-6 h-6 text-amber-500" />
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wider">Top 5 Peringkat Tahun Ini</h2>
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
+              <Trophy className="w-5 h-5" />
+            </div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Top 5 Peringkat Dosen</h2>
           </div>
           <button 
             onClick={onViewAllClick}
-            className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1 group cursor-pointer"
+            className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-0.5 transition-colors cursor-pointer"
           >
-            LIHAT SEMUA
-            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <span>Lihat Semua</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {loading ? (
-            <phantom-ui loading={true} animation="shimmer" className="block space-y-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-4 rounded-2xl border border-transparent">
-                  <div className="w-6 h-4 bg-slate-200 dark:bg-slate-800 rounded" />
-                  <div className="w-12 h-12 bg-slate-200 dark:bg-slate-800 rounded-xl shrink-0" />
-                  <div className="flex-1 space-y-2 text-left">
-                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
-                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2" />
-                  </div>
-                  <div className="space-y-1.5 text-right">
-                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-10 ml-auto" />
-                    <div className="h-2.5 bg-slate-200 dark:bg-slate-800 rounded w-8 ml-auto" />
-                  </div>
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 rounded-2xl animate-pulse">
+                <div className="w-6 h-6 bg-slate-200 dark:bg-slate-800 rounded" />
+                <div className="w-10 h-10 bg-slate-200 dark:bg-slate-800 rounded-xl shrink-0" />
+                <div className="flex-1 space-y-1.5 text-left">
+                  <div className="h-3.5 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
+                  <div className="h-2.5 bg-slate-200 dark:bg-slate-800 rounded w-1/2" />
                 </div>
-              ))}
-            </phantom-ui>
+                <div className="w-12 h-4 bg-slate-200 dark:bg-slate-800 rounded shrink-0" />
+              </div>
+            ))
           ) : leaderboard.length > 0 ? (
-            leaderboard.slice(0, 5).map((user, index) => (
-              <button 
-                key={user.id}
-                onClick={() => onUserClick(user.id)}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group border border-transparent hover:border-slate-200 dark:hover:border-slate-700 cursor-pointer"
-              >
-                {/* Rank Number */}
-                <div className={`w-6 text-center shrink-0 ${
-                  index === 0 ? 'text-amber-500 dark:text-amber-400 text-base font-bold' : 
-                  index === 1 ? 'text-slate-400 dark:text-slate-300 text-sm font-bold' : 
-                  index === 2 ? 'text-orange-400 dark:text-orange-300 text-sm font-bold' :
-                  'text-slate-400 dark:text-slate-505 text-sm font-bold'
-                }`}>
-                  {index + 1}
-                </div>
+            leaderboard.slice(0, 5).map((user, index) => {
+              const isFirst = index === 0;
+              const isSecond = index === 1;
+              const isThird = index === 2;
 
-                {/* Lecturer Photo / Avatar */}
-                <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-sm relative shrink-0 border border-slate-200/60 dark:border-slate-800 shadow-xs">
-                  <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
+              return (
+                <button 
+                  key={user.id}
+                  onClick={() => onUserClick(user.id)}
+                  className={`w-full flex items-center gap-3.5 p-3 rounded-2xl transition-all group border text-left cursor-pointer focus:outline-none ${
+                    isFirst 
+                      ? 'bg-amber-500/5 dark:bg-amber-500/10 border-amber-200/80 dark:border-amber-500/30' 
+                      : 'bg-slate-50/50 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600'
+                  }`}
+                >
+                  {/* Rank Badge */}
+                  <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 font-extrabold text-xs">
+                    {isFirst ? (
+                      <span className="w-full h-full rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">1</span>
+                    ) : isSecond ? (
+                      <span className="w-full h-full rounded-xl bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-white flex items-center justify-center">2</span>
+                    ) : isThird ? (
+                      <span className="w-full h-full rounded-xl bg-amber-700/80 text-white flex items-center justify-center">3</span>
+                    ) : (
+                      <span className="text-slate-400 dark:text-slate-500">{index + 1}</span>
+                    )}
+                  </div>
+
+                  {/* Lecturer Thumbnail / Avatar */}
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-xs shrink-0 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
                     {user.thumbnail ? (
                       <img src={user.thumbnail} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-slate-500 dark:text-slate-400 uppercase">
+                      <span className="text-slate-600 dark:text-slate-300">
                         {user.name?.charAt(0)}
                       </span>
                     )}
                   </div>
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors uppercase tracking-tight">{user.name}</p>
-                  <p className="text-[10px] font-bold text-slate-500 truncate">{user.program_studi}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white">{Math.round(user.total_kpi_points).toLocaleString()}</p>
-                  <p className="text-[8px] font-bold text-slate-500 uppercase">Poin KPI</p>
-                </div>
-              </button>
-            ))
+
+                  {/* Name and Program Studi */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                      {user.name}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                      {user.program_studi}
+                    </p>
+                  </div>
+
+                  {/* Score */}
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-extrabold text-slate-900 dark:text-white">
+                      {Math.round(user.total_kpi_points).toLocaleString()}
+                    </p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500">Poin</p>
+                  </div>
+                </button>
+              );
+            })
           ) : (
             <div className="text-center py-8 text-slate-400">
-              <p className="text-xs">Tidak ada data peringkat</p>
+              <p className="text-xs font-medium">Tidak ada data peringkat</p>
             </div>
           )}
         </div>

@@ -1,6 +1,11 @@
 export interface TopPerformer {
+  id?: string | number;
   name: string;
   total_kpi_points: number;
+  program_studi?: string;
+  thumbnail?: string;
+  scopus_count?: number;
+  citations_count?: number;
 }
 
 export interface DashboardStats {
@@ -24,6 +29,8 @@ export interface LeaderboardUser {
   thumbnail?: string;
   program_studi: string;
   total_kpi_points: number;
+  faculty_name?: string;
+  rank_change?: number;
 }
 
 export interface FakultasRawItem {

@@ -1,9 +1,9 @@
-export const PRODI_COLORS = ['#14b8a6', '#0d9488', '#0f766e', '#115e59', '#134e4a'];
+export const PRODI_COLORS = ['#0284c7', '#0d9488', '#4f46e5', '#7c3aed', '#d97706', '#e11d48'];
 
 export const FAKULTAS_COLORS: Record<string, string> = {
   'kedokteran': '#10b981', // Emerald
   'kedokterangigi': '#8b5cf6', // Violet
-  'teknologiinformasi': '#0ea5e9', // Sky
+  'teknologiinformasi': '#0284c7', // Sky / Cyan
   'ekonomibisnis': '#f59e0b', // Amber
   'ekonomidanbisnis': '#f59e0b', // Amber
   'hukum': '#ef4444', // Red
@@ -13,9 +13,9 @@ export const FAKULTAS_COLORS: Record<string, string> = {
 export const FAKULTAS_SHORT: Record<string, string> = {
   'kedokteran': 'Kedokteran',
   'kedokterangigi': 'Ked. Gigi',
-  'teknologiinformasi': 'Tek. Informasi',
-  'ekonomibisnis': 'Eko. Bisnis',
-  'ekonomidanbisnis': 'Eko. Bisnis',
+  'teknologiinformasi': 'Teknologi Informasi',
+  'ekonomibisnis': 'Ekonomi & Bisnis',
+  'ekonomidanbisnis': 'Ekonomi & Bisnis',
   'hukum': 'Hukum',
   'psikologi': 'Psikologi',
 };
