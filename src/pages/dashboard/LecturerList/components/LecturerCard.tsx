@@ -51,7 +51,7 @@ export default function LecturerCard({
               {lecturer.name}
             </h3>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className={`text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${theme.badgeClass}`}>
+              <span className={`text-[9px] font-bold tracking-wider px-2.5 py-0.5 rounded-md border ${theme.badgeClass}`}>
                 {lecturer.fakultas || 'N/A'}
               </span>
               {lecturer.program_studi && (

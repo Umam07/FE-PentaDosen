@@ -50,12 +50,12 @@ export default function LecturersTable({
                     </div>
                   )}
                   <div>
-                    <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight group-hover:text-primary-600 transition-colors flex items-center gap-1.5">
+                    <p className="text-sm font-bold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 transition-colors flex items-center gap-1.5">
                       {lecturer.name}
                       {lecturer.total_kpi_points > 100 && <BadgeCheck className="w-3.5 h-3.5 text-primary-500" />}
                     </p>
-                    <div className="flex items-center text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase mt-1 tracking-widest">
-                      <Mail className="w-3 h-3 mr-1.5 text-primary-400/70" />
+                    <div className="flex items-center text-xs font-medium text-gray-500 dark:text-zinc-400 mt-1">
+                      <Mail className="w-3.5 h-3.5 mr-1.5 text-primary-400/70" />
                       {lecturer.email}
                     </div>
                   </div>
@@ -65,11 +65,11 @@ export default function LecturersTable({
               {/* Fakultas / Prodi Column */}
               <td className="px-6 py-4">
                 <div className="flex flex-col">
-                  <span className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                  <span className="text-sm font-bold text-gray-900 dark:text-zinc-100">
                     {lecturer.program_studi || 'N/A'}
                   </span>
                   {lecturer.fakultas && (
-                    <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1.5">
+                    <span className="text-xs font-medium text-gray-500 dark:text-zinc-400 mt-1">
                       {lecturer.fakultas}
                     </span>
                   )}

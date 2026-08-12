@@ -177,10 +177,7 @@ export default function Topbar({
               )}
             </div>
             <div className="hidden md:block text-left">
-              <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">{user?.name}</p>
-              <p className="text-[10px] font-bold text-slate-650 dark:text-slate-400 uppercase tracking-widest">
-                {user?.role === 'admin penelitian' ? 'Admin Penelitian' : user?.role === 'admin fakultas' ? 'Admin Fakultas' : user?.role}
-              </p>
+              <p className="text-sm font-bold text-gray-900 dark:text-zinc-100">{user?.name}</p>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block`} />
           </button>
