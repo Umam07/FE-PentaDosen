@@ -16,6 +16,7 @@ export interface DropdownSelectProps<T extends string | number = string | number
   size?: "sm" | "md";
   position?: "top" | "bottom";
   disabled?: boolean;
+  variant?: "default" | "borderless";
 }
 
 export function DropdownSelect<T extends string | number = string | number>({
@@ -26,10 +27,28 @@ export function DropdownSelect<T extends string | number = string | number>({
   className = "",
   size = "md",
   position = "bottom",
-  disabled = false
+  disabled = false,
+  variant = "default"
 }: DropdownSelectProps<T>) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [dropPosition, setDropPosition] = React.useState<"top" | "bottom">(position);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      if (position === "bottom" && spaceBelow < 260 && spaceAbove > 200) {
+        setDropPosition("top");
+      } else if (position === "top" && spaceAbove < 260 && spaceBelow > 200) {
+        setDropPosition("bottom");
+      } else {
+        setDropPosition(position);
+      }
+    }
+  }, [isOpen, position]);
 
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -43,13 +62,21 @@ export function DropdownSelect<T extends string | number = string | number>({
 
   const selectedOption = options.find((opt) => opt.value === value) || options[0];
 
-  const buttonClasses = size === "sm"
-    ? `w-full flex items-center justify-between px-3 py-1.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
-        disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
-      }`
-    : `w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
-        disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
+  const getButtonClasses = () => {
+    if (variant === "borderless") {
+      return `w-full h-11 flex items-center justify-between px-4 bg-transparent text-[11px] font-black uppercase tracking-widest outline-none text-gray-700 dark:text-zinc-200 transition-colors ${
+        disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50/80 dark:hover:bg-zinc-700/40 cursor-pointer"
       }`;
+    }
+    if (size === "sm") {
+      return `w-full flex items-center justify-between px-3 py-1.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
+        disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
+      }`;
+    }
+    return `w-full h-11 flex items-center justify-between px-5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
+      disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
+    }`;
+  };
 
   const optionClasses = size === "sm"
     ? "w-full text-left px-3.5 py-2 text-[9px] font-extrabold uppercase tracking-wider transition-all duration-150 flex items-center justify-between cursor-pointer"
@@ -61,9 +88,10 @@ export function DropdownSelect<T extends string | number = string | number>({
         type="button"
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={buttonClasses}
+        className={getButtonClasses()}
+        title={selectedOption?.label}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           {icon && <span className="text-gray-400 dark:text-zinc-500 shrink-0">{icon}</span>}
           <span className="truncate">{selectedOption?.label}</span>
         </div>
@@ -79,12 +107,12 @@ export function DropdownSelect<T extends string | number = string | number>({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: position === "top" ? 8 : -8, scale: 0.96 }}
+            initial={{ opacity: 0, y: dropPosition === "top" ? 8 : -8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: position === "top" ? 8 : -8, scale: 0.96 }}
+            exit={{ opacity: 0, y: dropPosition === "top" ? 8 : -8, scale: 0.96 }}
             transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className={`absolute left-0 right-0 z-50 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden py-1.5 max-h-[250px] overflow-y-auto ${
-              position === "top" ? "bottom-full mb-2" : "top-full mt-2"
+            className={`absolute left-0 min-w-full z-50 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden py-1.5 max-h-[250px] overflow-y-auto ${
+              dropPosition === "top" ? "bottom-full mb-2" : "top-full mt-2"
             }`}
           >
             {options.map((opt) => {
@@ -102,6 +130,7 @@ export function DropdownSelect<T extends string | number = string | number>({
                       ? "bg-primary-50/70 dark:bg-primary-950/20 text-primary-600 dark:text-primary-400"
                       : "text-gray-600 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800/60 hover:text-gray-900 dark:hover:text-zinc-100"
                   }`}
+                  title={opt.label}
                 >
                   <span className="truncate">{opt.label}</span>
                   {isSelected && (
@@ -116,3 +145,4 @@ export function DropdownSelect<T extends string | number = string | number>({
     </div>
   );
 }
+

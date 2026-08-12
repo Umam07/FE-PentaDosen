@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import { Search, Edit, X, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import { Edit, X, ChevronLeft, ChevronRight, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useUsersTab, FAKULTAS_PRODI_MAP } from '../hooks/useUsersTab';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
+import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
 import { getRoleBadgeStyle, getRoleAvatarStyle } from '../../../../lib/roleColors';
 
 interface UsersTabProps {
@@ -70,55 +71,36 @@ export default function UsersTab({ triggerMessage }: UsersTabProps) {
     ...((editFakultas && FAKULTAS_PRODI_MAP[editFakultas]) || []).map(p => ({ value: p, label: p }))
   ], [editFakultas]);
 
+  const hasActiveFilter = Boolean(search || selectedRole);
+
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
+    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
       {/* Search and Filters Bar */}
-      <div className="p-5 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col xl:flex-row items-center justify-between gap-4">
-
-        {/* Left: Sub-header */}
-        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-          <div className="hidden md:flex p-2.5 bg-primary-50 dark:bg-primary-950/40 rounded-xl text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/40">
-            <Users className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
-              Manajemen User & Hak Akses
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
-              Kelola hak akses pengguna, peranan sistem, serta unit fakultas & prodi.
-            </p>
-          </div>
-        </div>
-
-        {/* Right: Search + Filter Role */}
-        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-          <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full xl:w-[360px]">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-zinc-500" />
-              <input
-                type="text"
-                placeholder="Cari user (nama, email, NIDN)..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="block w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-800/80 border border-gray-200 dark:border-zinc-700 rounded-xl text-xs font-medium text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
-              />
-            </div>
-            <button 
-              type="submit" 
-              className="px-4 py-2 bg-primary-600 hover:bg-primary-700 active:scale-98 text-white rounded-xl text-xs font-semibold tracking-wide shadow-xs transition-all shrink-0 cursor-pointer"
-            >
-              Cari
-            </button>
-          </form>
-
+      <TableFilterHeader
+        icon={Users}
+        title="Manajemen User & Hak Akses"
+        description="Kelola hak akses pengguna, peranan sistem, serta unit fakultas & prodi."
+        showSearch
+        searchTerm={search}
+        onSearchChange={setSearch}
+        onSearchSubmit={handleSearchSubmit}
+        searchPlaceholder="Cari user (nama, email, NIDN)..."
+        searchWidthClassName="w-full sm:w-[280px] md:w-[320px] xl:w-[360px]"
+        hasActiveFilter={hasActiveFilter}
+        onResetFilters={() => {
+          setSearch('');
+          setSelectedRole('');
+          setPage(1);
+        }}
+      >
+        <div className="w-full sm:w-[200px] shrink-0">
           <DropdownSelect
             value={selectedRole}
             onChange={(val) => { setSelectedRole(String(val)); setPage(1); }}
             options={ROLE_FILTER_OPTIONS}
-            className="w-full sm:w-[200px]"
           />
         </div>
-      </div>
+      </TableFilterHeader>
 
       {/* Users Table */}
       <div className="overflow-x-auto w-full">

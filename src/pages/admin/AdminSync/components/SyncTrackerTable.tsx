@@ -3,8 +3,8 @@ import {
   Search, Users, GraduationCap, ChevronRight,
   ChevronLeft, Mail, Loader2
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
+import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
 import type { SyncTrackerTableProps } from '../types/adminSync.types';
 
 export default function SyncTrackerTable({
@@ -27,36 +27,28 @@ export default function SyncTrackerTable({
   onItemsPerPageChange,
 }: SyncTrackerTableProps) {
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
+    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
       
       {/* Table Header Filter controls */}
-      <div className="p-5 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col xl:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-4 w-full xl:w-auto">
-          <div className="hidden md:flex p-2.5 bg-primary-50 dark:bg-primary-950/40 rounded-xl text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/40">
-             <Users className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Tracker Kesiapan Data</h3>
-            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">Status integrasi sistem eksternal per individu.</p>
-          </div>
-        </div>
-        
-        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-          <div className="relative w-full xl:w-[360px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-zinc-500" />
-            <input 
-              type="text" 
-              placeholder="Cari nama dosen atau email..." 
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="block w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-800/80 border border-gray-200 dark:border-zinc-700 rounded-xl text-xs font-medium text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
-            />
-          </div>
-          
-          {userRole === 'admin penelitian' && (
+      <TableFilterHeader
+        icon={Users}
+        title="Tracker Kesiapan Data"
+        description="Status integrasi sistem eksternal per individu"
+        showSearch
+        searchTerm={searchTerm}
+        onSearchChange={onSearchChange}
+        searchPlaceholder="Cari nama atau email dosen..."
+        hasActiveFilter={Boolean(searchTerm || selectedFakultas)}
+        onResetFilters={() => {
+          onSearchChange('');
+          onFakultasChange('');
+        }}
+      >
+        {userRole === 'admin penelitian' && (
+          <div className="w-full sm:w-[210px] md:w-[230px] shrink-0">
             <DropdownSelect
               value={selectedFakultas}
-              onChange={(val) => onFakultasChange(val)}
+              onChange={(val) => onFakultasChange(String(val))}
               options={[
                 { value: "", label: "Semua Fakultas" },
                 { value: "Fakultas Kedokteran", label: "Kedokteran" },
@@ -67,11 +59,10 @@ export default function SyncTrackerTable({
                 { value: "Fakultas Psikologi", label: "Psikologi" },
               ]}
               icon={<GraduationCap className="w-4 h-4" />}
-              className="w-full sm:w-[200px]"
             />
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </TableFilterHeader>
 
       {/* Table Rendering */}
       <div className="overflow-x-auto scrollbar-hide">
@@ -91,111 +82,136 @@ export default function SyncTrackerTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
-            {currentLecturers.map((l) => {
-              const isCurrentlySyncing = currentSyncingId === l.id;
-              
-              return (
-                <tr 
-                  key={l.id} 
-                  className={`group transition-colors 
-                    ${selectedLecturerId === l.id ? 'bg-primary-50/20 dark:bg-primary-950/40' : 'hover:bg-gray-50/70 dark:hover:bg-zinc-800/40'}
-                    ${isCurrentlySyncing ? 'bg-emerald-50/10 dark:bg-emerald-950/5 border-l-4 border-l-emerald-500' : ''}
-                  `}
-                >
-                  <td className="px-6 py-4 text-left">
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-gray-400 dark:text-zinc-500 font-bold text-xs border border-gray-200 dark:border-zinc-700 shadow-xs group-hover:scale-105 transition-transform overflow-hidden shrink-0">
-                        {l.thumbnail ? (
-                          <img src={l.thumbnail} alt={l.name} className="w-full h-full object-cover" />
-                        ) : (
-                          l.name.charAt(0)
-                        )}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-xs font-bold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 transition-colors">
-                            {l.name}
-                          </p>
-                          {isCurrentlySyncing && (
-                            <span className="flex items-center text-[8px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-md uppercase tracking-widest animate-pulse border border-emerald-100/20 shrink-0">
-                              <Loader2 className="w-2.5 h-2.5 animate-spin mr-1 text-emerald-500" />
-                              Syncing
-                            </span>
+            {currentLecturers.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center">
+                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-3">
+                    <div className="p-3 bg-gray-100 dark:bg-zinc-800 rounded-2xl text-gray-400 dark:text-zinc-500">
+                      <Search className="w-6 h-6" />
+                    </div>
+                    <p className="text-sm font-bold text-gray-800 dark:text-zinc-200">Tidak ada dosen ditemukan</p>
+                    <p className="text-xs text-gray-400 dark:text-zinc-500">Coba ubah kata kunci pencarian atau sesuaikan filter fakultas yang dipilih.</p>
+                    {(searchTerm || selectedFakultas) && (
+                      <button
+                        onClick={() => {
+                          onSearchChange('');
+                          onFakultasChange('');
+                        }}
+                        className="mt-2 px-4 py-2 bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 text-xs font-bold rounded-xl border border-primary-200/60 dark:border-primary-800/40 hover:bg-primary-100 transition-colors cursor-pointer"
+                      >
+                        Reset Filter &amp; Pencarian
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              currentLecturers.map((l) => {
+                const isCurrentlySyncing = currentSyncingId === l.id;
+                
+                return (
+                  <tr 
+                    key={l.id} 
+                    className={`group transition-colors 
+                      ${selectedLecturerId === l.id ? 'bg-primary-50/20 dark:bg-primary-950/40' : 'hover:bg-gray-50/70 dark:hover:bg-zinc-800/40'}
+                      ${isCurrentlySyncing ? 'bg-emerald-50/10 dark:bg-emerald-950/5 border-l-4 border-l-emerald-500' : ''}
+                    `}
+                  >
+                    <td className="px-6 py-4 text-left">
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-gray-400 dark:text-zinc-500 font-bold text-xs border border-gray-200 dark:border-zinc-700 shadow-xs group-hover:scale-105 transition-transform overflow-hidden shrink-0">
+                          {l.thumbnail ? (
+                            <img src={l.thumbnail} alt={l.name} className="w-full h-full object-cover" />
+                          ) : (
+                            l.name.charAt(0)
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-zinc-400 flex items-center gap-1.5 mt-0.5">
-                           <Mail className="w-3.5 h-3.5 text-primary-400/70" />
-                           {l.email || 'N/A'}
-                        </p>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-xs font-bold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 transition-colors">
+                              {l.name}
+                            </p>
+                            {isCurrentlySyncing && (
+                              <span className="flex items-center text-[8px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-md uppercase tracking-widest animate-pulse border border-emerald-100/20 shrink-0">
+                                <Loader2 className="w-2.5 h-2.5 animate-spin mr-1 text-emerald-500" />
+                                Syncing
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-zinc-400 flex items-center gap-1.5 mt-0.5">
+                             <Mail className="w-3.5 h-3.5 text-primary-400/70" />
+                             {l.email || 'N/A'}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  
-                  <td className="px-6 py-4 text-left">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-semibold text-gray-900 dark:text-zinc-100">
-                        {l.program_studi || 'N/A'}
-                      </span>
-                      <span className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
-                        {l.fakultas || 'N/A'}
-                      </span>
-                    </div>
-                  </td>
-                  
-                  <td className="px-6 py-4 text-center">
-                    {l.scholar_id ? (
-                      <div className="space-y-1">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40">
-                           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                           Scholar Connected
+                    </td>
+                    
+                    <td className="px-6 py-4 text-left">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-900 dark:text-zinc-100">
+                          {l.program_studi || 'N/A'}
                         </span>
-                        <p className="text-xs text-gray-500 dark:text-zinc-400 font-mono">
-                          ID: {l.scholar_id}
-                        </p>
-                      </div>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md border border-gray-200/60 dark:border-zinc-700/60 font-mono">
-                         Belum Terhubung
-                      </span>
-                    )}
-                  </td>
-                  
-                  <td className="px-6 py-4 text-center">
-                    {l.scopus_id ? (
-                      <div className="space-y-1">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40">
-                           <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></div>
-                           Scopus Connected
+                        <span className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+                          {l.fakultas || 'N/A'}
                         </span>
-                        <p className="text-xs text-gray-500 dark:text-zinc-400 font-mono">
-                          ID: {l.scopus_id}
-                        </p>
                       </div>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md border border-gray-200/60 dark:border-zinc-700/60 font-mono">
-                         Belum Terhubung
-                      </span>
-                    )}
-                  </td>
-                  
-                  <td className="px-6 py-4 text-center">
-                     <button
-                       onClick={() => onSelectLecturer(l.id)}
-                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/40 hover:bg-primary-100 dark:hover:bg-primary-900/60 border border-primary-200/60 dark:border-primary-800/40 rounded-xl transition-all cursor-pointer shadow-xs group/btn"
-                     >
-                       Kelola <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
-                     </button>
-                  </td>
-                </tr>
-              );
-            })}
+                    </td>
+                    
+                    <td className="px-6 py-4 text-center">
+                      {l.scholar_id ? (
+                        <div className="space-y-1">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40">
+                             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                             Scholar Connected
+                          </span>
+                          <p className="text-xs text-gray-500 dark:text-zinc-400 font-mono">
+                            ID: {l.scholar_id}
+                          </p>
+                        </div>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md border border-gray-200/60 dark:border-zinc-700/60 font-mono">
+                           Belum Terhubung
+                        </span>
+                      )}
+                    </td>
+                    
+                    <td className="px-6 py-4 text-center">
+                      {l.scopus_id ? (
+                        <div className="space-y-1">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40">
+                             <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></div>
+                             Scopus Connected
+                          </span>
+                          <p className="text-xs text-gray-500 dark:text-zinc-400 font-mono">
+                            ID: {l.scopus_id}
+                          </p>
+                        </div>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md border border-gray-200/60 dark:border-zinc-700/60 font-mono">
+                           Belum Terhubung
+                        </span>
+                      )}
+                    </td>
+                    
+                    <td className="px-6 py-4 text-center">
+                       <button
+                         onClick={() => onSelectLecturer(l.id)}
+                         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/40 hover:bg-primary-100 dark:hover:bg-primary-900/60 border border-primary-200/60 dark:border-primary-800/40 rounded-xl transition-all cursor-pointer shadow-xs group/btn"
+                       >
+                         Kelola <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                       </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
       {filteredCount > 0 && (
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 rounded-b-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <span className="text-xs text-gray-500 dark:text-zinc-400">
               Menampilkan <span className="font-semibold text-gray-800 dark:text-zinc-200">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredCount)}</span> dari <span className="font-semibold text-gray-800 dark:text-zinc-200">{filteredCount}</span> Dosen
