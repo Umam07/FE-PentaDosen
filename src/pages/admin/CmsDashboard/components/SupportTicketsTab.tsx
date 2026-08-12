@@ -305,10 +305,10 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Pesan Masuk Support</h3>
+              <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Pesan Masuk Support</h3>
             </div>
-            <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider mt-0.5">
-              Kelola dan balas obrolan interaktif serta kendala teknis dosen tanpa pop-up
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+              Kelola dan respon obrolan serta kendala teknis dari civitas dosen.
             </p>
           </div>
         </div>

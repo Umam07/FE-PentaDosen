@@ -65,12 +65,12 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
       {/* Top Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Daftar Tanya Jawab / Panduan</p>
-          <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 mt-0.5">Kelola isi dan file panduan untuk dosen</p>
+          <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Daftar Tanya Jawab & Panduan</h3>
+          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">Kelola isi dan lampiran file panduan untuk civitas dosen.</p>
         </div>
         <button
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-98 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           Tambah Panduan / FAQ
