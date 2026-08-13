@@ -6,83 +6,86 @@ import { DashboardStats } from '../types';
 interface InsightsHeroProps {
   stats: DashboardStats | null;
   loading: boolean;
-  timePeriod: 'this_year' | '3_years' | 'all';
-  setTimePeriod: (val: 'this_year' | '3_years' | 'all') => void;
   onExploreClick?: () => void;
 }
 
-export default function InsightsHero({
-  stats,
-  loading,
-  timePeriod,
-  setTimePeriod,
-  onExploreClick
-}: InsightsHeroProps) {
-  const totalDocs = stats
-    ? (stats.total_docs || 0) + (stats.total_research || 0) + (stats.total_scholar || 0) + (stats.total_scopus || 0)
+export default function InsightsHero({ stats, loading, onExploreClick }: InsightsHeroProps) {
+  const totalDocs =
+    (stats?.total_docs || 0) +
+    (stats?.total_research || 0) +
+    (stats?.total_scholar || 0) +
+    (stats?.total_scopus || 0);
+
+  const avgKpi = stats?.total_dosen
+    ? Math.round(stats.total_points / stats.total_dosen)
     : 0;
 
+  const metrics = [
+    {
+      label: 'Total Publikasi',
+      value: totalDocs.toLocaleString(),
+      sub: 'Dokumen terindeks',
+      icon: FileText,
+      iconColor: 'text-blue-600 dark:text-blue-400',
+      iconBg: 'bg-blue-50 dark:bg-blue-950/40',
+      accentLine: 'bg-blue-500',
+    },
+    {
+      label: 'Sitasi Global',
+      value: (stats?.total_citations || 0).toLocaleString(),
+      sub: 'Kutipan riset aktif',
+      icon: Sparkles,
+      iconColor: 'text-sky-600 dark:text-sky-400',
+      iconBg: 'bg-sky-50 dark:bg-sky-950/40',
+      accentLine: 'bg-sky-500',
+    },
+    {
+      label: 'Rerata Poin KPI',
+      value: avgKpi.toLocaleString(),
+      sub: 'Per dosen aktif',
+      icon: BarChart3,
+      iconColor: 'text-amber-600 dark:text-amber-400',
+      iconBg: 'bg-amber-50 dark:bg-amber-950/40',
+      accentLine: 'bg-amber-500',
+    },
+    {
+      label: 'Akurasi Data',
+      value: `${stats?.data_accuracy !== undefined ? stats.data_accuracy.toFixed(1) : '100'}%`,
+      sub: 'Tervalidasi LPPM',
+      icon: ShieldCheck,
+      iconColor: 'text-emerald-600 dark:text-emerald-400',
+      iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
+      accentLine: 'bg-emerald-500',
+    },
+  ];
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="p-8 sm:p-10 lg:p-12 rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
     >
-      <div className="flex flex-col gap-10">
-        {/* Top Control Bar: Period Filters */}
-        <div className="flex items-center justify-end pb-6 border-b border-slate-100 dark:border-slate-800">
-          <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 text-xs font-medium">
-            <button
-              onClick={() => setTimePeriod('this_year')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
-                timePeriod === 'this_year'
-                  ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 font-bold shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Tahun 2026
-            </button>
-            <button
-              onClick={() => setTimePeriod('3_years')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
-                timePeriod === '3_years'
-                  ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 font-bold shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Batch 3-Tahun
-            </button>
-            <button
-              onClick={() => setTimePeriod('all')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
-                timePeriod === 'all'
-                  ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 font-bold shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Semua Periode
-            </button>
-          </div>
-        </div>
+      <div className="p-8 sm:p-10 lg:p-12">
+        {/* Hero Title Row */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-10">
 
-        {/* Main Hero Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <div className="space-y-3">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05]">
-                Penta<span className="text-primary-600 dark:text-primary-400">Insights</span>
-              </h1>
-              <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg font-normal leading-relaxed max-w-xl">
-                Pantau distribusi capaian KPI, publisitas riset, dan performa akademis dosen lintas fakultas secara presisi.
-              </p>
-            </div>
+          {/* Left: Headline */}
+          <div className="space-y-4 max-w-xl">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.05]">
+              Penta<span className="text-primary-600 dark:text-primary-400">Insights</span>
+            </h1>
+
+            <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-normal leading-relaxed">
+              Pantau distribusi capaian KPI, publisitas riset, dan performa akademis
+              dosen lintas fakultas secara presisi dan real-time.
+            </p>
 
             {onExploreClick && (
-              <div className="pt-2">
+              <div className="pt-1">
                 <button
                   onClick={onExploreClick}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white font-bold text-sm transition-all duration-200 shadow-sm cursor-pointer"
                 >
                   <span>Jelajahi Peringkat Fakultas</span>
                   <ArrowUpRight className="w-4 h-4" />
@@ -91,82 +94,52 @@ export default function InsightsHero({
             )}
           </div>
 
-          {/* Quick Metrics Grid */}
-          <div className="lg:col-span-6">
-            <div className="grid grid-cols-2 gap-4 sm:gap-5">
-              {/* Metric 1: Total Dokumen */}
-              <div className="p-5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-600">
+          {/* Right: Modern Metric Cards (No Glow / No Gradient) */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:w-[420px] xl:w-[460px] shrink-0">
+            {metrics.map((m, i) => (
+              <motion.div
+                key={m.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 + i * 0.06, duration: 0.4, ease: 'easeOut' }}
+                className="group relative p-5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 flex flex-col justify-between"
+              >
+                {/* Top Row: Icon & Label */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total Publikasi</span>
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                    <FileText className="w-4 h-4" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
+                    {m.label}
+                  </span>
+                  <div className={`w-8 h-8 rounded-xl ${m.iconBg} flex items-center justify-center`}>
+                    <m.icon className={`w-4 h-4 ${m.iconColor}`} />
                   </div>
                 </div>
-                {loading ? (
-                  <div className="h-8 w-24 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-md" />
-                ) : (
-                  <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {totalDocs.toLocaleString()}
-                  </p>
-                )}
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Dokumen terindeks</span>
-              </div>
 
-              {/* Metric 2: Total Sitasi */}
-              <div className="p-5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-600">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Sitasi Global</span>
-                  <div className="w-8 h-8 rounded-lg bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
+                {/* Value & Subtitle */}
+                <div>
+                  {loading ? (
+                    <div className="h-8 w-20 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg" />
+                  ) : (
+                    <p className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white tabular-nums">
+                      {m.value}
+                    </p>
+                  )}
+                  <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-1 block">
+                    {m.sub}
+                  </span>
                 </div>
-                {loading ? (
-                  <div className="h-8 w-24 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-md" />
-                ) : (
-                  <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {(stats?.total_citations || 0).toLocaleString()}
-                  </p>
-                )}
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Kutipan riset</span>
-              </div>
 
-              {/* Metric 3: Rerata KPI */}
-              <div className="p-5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-600">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Rerata Poin KPI</span>
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                    <BarChart3 className="w-4 h-4" />
-                  </div>
-                </div>
-                {loading ? (
-                  <div className="h-8 w-24 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-md" />
-                ) : (
-                  <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
-                  </p>
-                )}
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Per dosen aktif</span>
-              </div>
-
-              {/* Metric 4: Akurasi Data */}
-              <div className="p-5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-600">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Akurasi Data</span>
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                </div>
-                {loading ? (
-                  <div className="h-8 w-24 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-md" />
-                ) : (
-                  <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {stats?.data_accuracy !== undefined ? stats.data_accuracy.toFixed(1) : '100'}%
-                  </p>
-                )}
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Tervalidasi LPPM</span>
-              </div>
-            </div>
+                {/* Subtle Left Accent Line on Hover */}
+                <div className={`absolute left-0 top-3 bottom-3 w-1 rounded-r-full ${m.accentLine} opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
+              </motion.div>
+            ))}
           </div>
+        </div>
+
+        {/* Bottom Info Bar */}
+        <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
+          <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+            Data bersumber dari Google Scholar, Scopus, dan Dokumen Internal.
+          </span>
         </div>
       </div>
     </motion.div>

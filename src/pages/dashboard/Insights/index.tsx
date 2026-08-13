@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/Home/Navbar';
 import Footer from '../../../components/Home/Footer';
@@ -29,22 +30,18 @@ export default function Insights() {
     setActiveIndex,
     chartViewMode,
     setChartViewMode,
-    timePeriod,
-    setTimePeriod
   } = useInsights();
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 transition-colors duration-300 font-sans antialiased text-slate-900 dark:text-slate-100">
       <Navbar />
-      
+
       <main className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
-        
+
         {/* Premium Hero Section */}
-        <InsightsHero 
-          stats={stats} 
-          loading={loading} 
-          timePeriod={timePeriod}
-          setTimePeriod={setTimePeriod}
+        <InsightsHero
+          stats={stats}
+          loading={loading}
           onExploreClick={() => {
             const chartElem = document.getElementById('fakultas-analytics');
             if (chartElem) {
@@ -53,12 +50,12 @@ export default function Insights() {
           }}
         />
 
-        {/* Statistics highlights */}
+        {/* KPI Period Highlights */}
         <InsightsStatsHighlights stats={stats} loading={loading} periodKpiValues={periodKpiValues} />
 
         {/* Personnel Metrics Row & Top Performer Spotlight */}
-        <InsightsMetricsRow 
-          stats={stats} 
+        <InsightsMetricsRow
+          stats={stats}
           loading={loading}
           onLecturersClick={() => navigate('/lecturers')}
           onDepartmentsClick={() => navigate('/departments')}
@@ -76,7 +73,7 @@ export default function Insights() {
 
         {/* Analytics visualisations and Leaderboard ranking */}
         <div id="fakultas-analytics" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <FakultasPieChart 
+          <FakultasPieChart
             loading={loading}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -95,7 +92,7 @@ export default function Insights() {
             }}
           />
 
-          <InsightsLeaderboard 
+          <InsightsLeaderboard
             leaderboard={leaderboard}
             loading={loading}
             onUserClick={(userId) => navigate(`/lecturer/${userId}`)}

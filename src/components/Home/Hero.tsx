@@ -11,14 +11,6 @@ export default function Hero() {
         <div className="h-full w-full bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
-      {/* Decorative Structural Corner Accents */}
-      <div className="absolute top-20 left-8 hidden lg:block text-slate-300 dark:text-slate-800 text-[10px] font-mono uppercase tracking-widest pointer-events-none select-none">
-        // PENTA-DOSEN v2.0
-      </div>
-      <div className="absolute top-20 right-8 hidden lg:block text-slate-300 dark:text-slate-800 text-[10px] font-mono uppercase tracking-widest pointer-events-none select-none">
-        UNIVERSITAS YARSI
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-4xl mx-auto mb-14 md:mb-20 relative">
           
