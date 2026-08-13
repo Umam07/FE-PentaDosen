@@ -114,7 +114,7 @@ export default function Topbar({
   };
 
   return (
-    <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6 lg:px-10 sticky top-0 z-20 shadow-sm">
+    <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6 lg:px-6 sticky top-0 z-20 shadow-sm">
       <div className="flex items-center gap-2 sm:gap-4 min-w-0">
            {isMobile && (
              <button 
@@ -131,7 +131,7 @@ export default function Topbar({
            </div>
       </div>
 
-      <div className="flex items-center gap-2 xs:gap-4 lg:gap-5 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* Interactive Search Bar dengan Dropdown */}
         <div className="hidden sm:block w-48 lg:w-72" ref={searchRef}>
           <ActionSearchBar 
@@ -160,11 +160,12 @@ export default function Topbar({
         </button>
 
         {/* User Profile & Dropdown */}
-        <div className="relative flex items-center gap-1.5 xs:gap-3 pl-1.5 xs:pl-3 border-l border-gray-200" ref={dropdownRef}>
-          <button             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 p-1.5 rounded-xl transition-all duration-200"
+        <div className="relative flex items-center gap-1.5 xs:gap-3 pl-1.5 xs:pl-3 border-l border-gray-200 dark:border-zinc-800" ref={dropdownRef}>
+          <button 
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex items-center gap-2 hover:bg-gray-100/80 dark:hover:bg-zinc-800/60 p-1.5 rounded-xl transition-colors duration-150"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white shadow-lg flex-shrink-0 overflow-hidden">
+            <div className="w-9 h-9 rounded-lg bg-primary-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden">
               {user?.avatar ? (
                 <img 
                   src={user.avatar} 
@@ -173,101 +174,71 @@ export default function Topbar({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-lg font-black">{user?.name?.charAt(0) || 'U'}</span>
+                <span>{user?.name?.charAt(0) || 'U'}</span>
               )}
             </div>
-            <div className="hidden md:block text-left">
-              <p className="text-sm font-bold text-gray-900 dark:text-zinc-100">{user?.name}</p>
+            <div className="hidden md:block text-left min-w-0">
+              <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 leading-tight truncate">{user?.name}</p>
+              {user?.role && (
+                <p className="text-[11px] font-medium text-gray-400 dark:text-zinc-400 capitalize truncate">{user.role}</p>
+              )}
             </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block`} />
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-150 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block shrink-0`} />
           </button>
 
-          {/* Dropdown Menu — Redesigned Premium */}
+          {/* Dropdown Menu — Minimalist Single-Line List */}
           <AnimatePresence>
-            {isDropdownOpen && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: -8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -8 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                className="absolute right-0 top-full mt-3 w-60 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl rounded-3xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5)] border border-white/60 dark:border-zinc-700/60 z-30 overflow-hidden"
-              >
-                {/* ── Menu Items ── */}
-                <div className="px-3 pt-3 pb-1.5 space-y-0.5">
-                  <motion.button
-                    whileHover={{ x: 3 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    onClick={() => { navigate('/profile'); setIsDropdownOpen(false); }}
-                    className="group flex items-center gap-3 w-full px-3 py-2.5 rounded-2xl hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors duration-150"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-500/20 dark:to-primary-600/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-150">
-                      <Settings className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-[11px] font-extrabold text-gray-800 dark:text-zinc-200 uppercase tracking-widest">Pengaturan Profil</p>
-                      <p className="text-[9px] text-gray-400 dark:text-zinc-500 font-medium">Kelola akun & preferensi</p>
-                    </div>
-                  </motion.button>
-                </div>
+                  {isDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                      className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-zinc-900 rounded-xl shadow-lg border border-gray-200/90 dark:border-zinc-800 z-50 p-1 space-y-0.5 overflow-hidden"
+                    >
+                      <button
+                        onClick={() => { navigate('/profile'); setIsDropdownOpen(false); }}
+                        className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-zinc-800/80 transition-colors duration-150 text-left"
+                      >
+                        <div className="w-7 h-7 rounded-md bg-gray-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 text-gray-600 dark:text-zinc-300">
+                          <Settings className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-semibold text-gray-800 dark:text-zinc-200">
+                          Pengaturan Profil
+                        </span>
+                      </button>
 
-                {/* ── Logout Section ── */}
-                <div className="px-3 pb-3">
-                  <div className="mx-1 mb-2 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-zinc-700 to-transparent" />
-                  <motion.button
-                    whileHover={{ x: 3 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    onClick={handleLogout}
-                    data-logout-trigger
-                    className="group flex items-center gap-3 w-full px-3 py-2.5 rounded-2xl hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors duration-150"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-100 to-red-200 dark:from-red-500/20 dark:to-red-600/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-150">
-                      <LogOut className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-[11px] font-extrabold text-red-600 dark:text-red-400 uppercase tracking-widest">Keluar Sistem</p>
-                      <p className="text-[9px] text-red-400/70 dark:text-red-500/60 font-medium">Akhiri sesi sekarang</p>
-                    </div>
-                  </motion.button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                      <div className="my-1 border-t border-gray-100 dark:border-zinc-800/80" />
+
+                      <button
+                        onClick={handleLogout}
+                        data-logout-trigger
+                        className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-150 text-left"
+                      >
+                        <div className="w-7 h-7 rounded-md bg-red-50 dark:bg-red-950/50 flex items-center justify-center flex-shrink-0 text-red-600 dark:text-red-400">
+                          <LogOut className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-semibold text-red-600 dark:text-red-400">
+                          Keluar Sistem
+                        </span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
         </div>
 
 
 
-        {/* Mobile Search Modal */}
-        {typeof document !== 'undefined' && createPortal(
-          <AnimatePresence>
-            {isMobileSearchOpen && (
-              <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[100] bg-white dark:bg-zinc-950 flex flex-col sm:hidden"
-              >
-                {/* Results area - using ActionSearchBar internal logic */}
-                <div className="flex-1 overflow-y-auto p-6">
-                   <ActionSearchBar 
-                    actions={searchActions} 
-                    onSelect={handleActionSelect}
-                    placeholder="Cari menu/dosen..."
-                    className="max-w-full"
-                    user={user}
-                  />
-                  <button 
-                    onClick={() => setIsMobileSearchOpen(false)}
-                    className="mt-4 w-full py-4 rounded-2xl bg-gray-50 dark:bg-zinc-900 text-gray-500 font-bold uppercase tracking-widest text-[10px] border border-gray-200 dark:border-zinc-800"
-                  >
-                    Tutup Pencarian
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
+        {/* Mobile Search Modal (Direct Command Dialog Popup) */}
+        <ActionSearchBar 
+          actions={searchActions} 
+          onSelect={handleActionSelect}
+          placeholder="Cari menu/dosen..."
+          user={user}
+          open={isMobileSearchOpen}
+          onOpenChange={setIsMobileSearchOpen}
+          hideTrigger
+        />
       </div>
     </header>
   );

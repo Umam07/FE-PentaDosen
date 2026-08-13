@@ -227,7 +227,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
           hideLiveBadge={isLecturerPage}
         />
 
-        <div className="p-4 sm:p-6 lg:p-10 flex-1">
+        <div className="p-4 sm:p-6 lg:p-6 flex-1">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

@@ -51,6 +51,9 @@ interface ActionSearchBarProps {
     role?: string;
     avatar?: string;
   };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
 }
 
 const roleMenus: Record<string, { label: string; path: string; icon: React.ReactNode; category: string }[]> = {
@@ -89,9 +92,30 @@ const roleLabels: Record<string, string> = {
   "admin fakultas": "Admin Fak",
 };
 
-function ActionSearchBar({ actions = [], onSelect, placeholder = "Cari menu/dosen...", className, user }: ActionSearchBarProps) {
-  const [open, setOpen] = useState(false);
+function ActionSearchBar({ 
+  actions = [], 
+  onSelect, 
+  placeholder = "Cari menu/dosen...", 
+  className, 
+  user,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false
+}: ActionSearchBarProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const isControlled = typeof controlledOpen !== 'undefined';
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const setOpen = (val: boolean | ((prev: boolean) => boolean)) => {
+    const nextVal = typeof val === 'function' ? val(open) : val;
+    if (isControlled && onOpenChange) {
+      onOpenChange(nextVal);
+    } else {
+      setInternalOpen(nextVal);
+    }
+  };
 
   // Tentukan role user yang sedang login (default: dosen)
   const userRole = user?.role?.toLowerCase() || "dosen";
@@ -104,7 +128,7 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Cari menu/dose
       // Toggle dialog: Ctrl+K
       if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setOpen((prev) => !prev);
       }
 
       // Navigate to profile: Ctrl+I
@@ -139,20 +163,22 @@ function ActionSearchBar({ actions = [], onSelect, placeholder = "Cari menu/dose
   const lecturerActions = actions.filter((act) => act.end === "LECTURER");
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full ${className || ''}`}>
       {/* Search Trigger Button */}
-      <button
-        onClick={() => setOpen(true)}
-        className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 hover:bg-gray-100/60 dark:hover:bg-zinc-800/60 transition-all text-gray-400 dark:text-zinc-500 shadow-inner group overflow-hidden"
-      >
-        <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-          <Search className="h-4 w-4 text-gray-400 group-hover:text-primary-500 transition-colors shrink-0" />
-          <span className="truncate">{placeholder}</span>
-        </div>
-        <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 font-mono text-[9px] font-bold text-gray-400 dark:text-zinc-500 shadow-sm shrink-0">
-          Ctrl+K
-        </kbd>
-      </button>
+      {!hideTrigger && (
+        <button
+          onClick={() => setOpen(true)}
+          className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 hover:bg-gray-100/60 dark:hover:bg-zinc-800/60 transition-all text-gray-400 dark:text-zinc-500 shadow-inner group overflow-hidden"
+        >
+          <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
+            <Search className="h-4 w-4 text-gray-400 group-hover:text-primary-500 transition-colors shrink-0" />
+            <span className="truncate">{placeholder}</span>
+          </div>
+          <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 font-mono text-[9px] font-bold text-gray-400 dark:text-zinc-500 shadow-sm shrink-0">
+            Ctrl+K
+          </kbd>
+        </button>
+      )}
 
       {/* Command Dialog Modal */}
       <CommandDialog open={open} onOpenChange={setOpen}>

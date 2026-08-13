@@ -196,13 +196,13 @@ export default function Sidebar({
                           toggleGroup(item.name);
                         }
                       }}
-                      className={`group relative w-full flex items-center text-sm rounded-xl transition-all duration-300 ${
+                      className={`group relative w-full flex items-center text-sm rounded-xl transition-all duration-200 ${
                         parentActive
-                          ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20'
-                          : 'text-gray-500 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 hover:shadow-md border border-transparent hover:border-gray-100 dark:hover:border-zinc-700'
+                          ? 'bg-primary-600 text-white'
+                          : 'text-gray-500 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 border border-transparent hover:border-gray-200/80 dark:hover:border-zinc-700'
                       } ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
                     >
-                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentActive ? 'text-white' : 'text-gray-400 group-hover:text-primary-600 group-hover:scale-110'}`} />
+                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentActive ? 'text-white' : 'text-gray-400 group-hover:text-primary-600'}`} />
                       
                       {showLabels ? (
                         <>
@@ -223,7 +223,7 @@ export default function Sidebar({
                         </>
                       ) : (
                         // Modern Tooltip when collapsed
-                        <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-xl pointer-events-none border border-zinc-800 dark:border-zinc-200 flex items-center">
+                        <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-md pointer-events-none border border-zinc-800 dark:border-zinc-200 flex items-center">
                           {item.name}
                           <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-900 dark:bg-zinc-100 rotate-45" />
                         </div>
@@ -251,10 +251,10 @@ export default function Sidebar({
                                   className={`group w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wide transition-all duration-200 ${
                                     childActive
                                       ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
-                                      : 'text-gray-400 dark:text-zinc-500 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 dark:hover:text-primary-400 hover:shadow-sm'
+                                      : 'text-gray-400 dark:text-zinc-500 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 dark:hover:text-primary-400'
                                   }`}
                                 >
-                                  <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-transform group-hover:scale-110 ${childActive ? 'text-primary-600 dark:text-primary-400' : ''}`} />
+                                  <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-transform ${childActive ? 'text-primary-600 dark:text-primary-400' : ''}`} />
                                   <span className="truncate">{child.name}</span>
                                   {child.points !== undefined && (
                                     <div className={`ml-auto px-1.5 py-0.5 rounded text-[8px] font-black tracking-widest flex-shrink-0 ${childActive ? 'bg-primary-50 text-primary-600 dark:bg-primary-950/40 dark:text-primary-400' : 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400 group-hover:bg-primary-50 group-hover:text-primary-600'}`}>
@@ -285,13 +285,13 @@ export default function Sidebar({
                   key={item.name}
                   to={item.path}
                   onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                  className={`group relative flex items-center text-sm rounded-xl transition-all duration-300 ${
+                  className={`group relative flex items-center text-sm rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20'
-                      : 'text-gray-500 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 hover:shadow-md border border-transparent hover:border-gray-100 dark:hover:border-zinc-700'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-gray-500 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 border border-transparent hover:border-gray-200/80 dark:hover:border-zinc-700'
                   } ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
                 >
-                  <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary-600 group-hover:scale-110'}`} />
+                  <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary-600'}`} />
                   {showLabels ? (
                     <motion.span 
                       initial={{ opacity: 0, x: -10 }}
