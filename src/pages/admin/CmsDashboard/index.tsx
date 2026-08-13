@@ -70,7 +70,7 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
   ];
 
   return (
-    <div className="max-w-none space-y-6 lg:space-y-8 pb-12">
+    <div className="w-full space-y-6 lg:space-y-8 pb-12">
       {/* Header Panel */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}

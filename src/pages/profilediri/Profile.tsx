@@ -54,7 +54,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
   };
 
   return (
-    <div className="mx-auto min-h-screen max-w-[1600px] px-4 py-6 sm:px-6 lg:px-10">
+    <div className="w-full min-h-screen pb-20">
       {/* Warning Modal */}
       <AnimatePresence>
         {showWarningModal && (

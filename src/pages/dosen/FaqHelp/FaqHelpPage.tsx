@@ -28,7 +28,7 @@ export default function FaqHelp({ user }: { user: UserSession }) {
   }, [faqState.toast]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8 space-y-6 pb-20">
+    <div className="w-full min-h-screen space-y-6 pb-20">
 
       {/* Toast Notification */}
       <Toaster ref={toasterRef} defaultPosition="bottom-right" />

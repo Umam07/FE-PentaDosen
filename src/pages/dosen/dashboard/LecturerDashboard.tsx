@@ -142,7 +142,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
   ];
 
   return (
-    <div className="max-w-[1600px] mx-auto space-y-8 pb-20">
+    <div className="w-full space-y-8 pb-20">
 
       {/* Information Notice — minimalist inline */}
       <div className="flex items-start gap-2.5 px-4 py-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl">

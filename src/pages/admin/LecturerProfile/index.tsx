@@ -50,7 +50,7 @@ export default function AdminLecturerProfile() {
   }
 
   return (
-    <div className="space-y-6 max-w-none pb-12 transition-all duration-300">
+    <div className="w-full space-y-6 pb-12 transition-all duration-300">
       <button 
         onClick={() => navigate('/admin/lecturers')}
         className="group flex items-center text-sm text-gray-500 hover:text-primary-600 font-medium transition-colors"

@@ -41,7 +41,7 @@ export default function AdminActivityLogs() {
   } = useActivityLogs(user);
 
   return (
-    <div className="max-w-none space-y-8 pb-12">
+    <div className="w-full space-y-8 pb-12">
       {/* Header Halaman */}
       <ActivityLogsHeader
         totalItems={totalItems}

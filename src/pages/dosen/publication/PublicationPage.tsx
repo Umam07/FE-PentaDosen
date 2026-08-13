@@ -89,7 +89,7 @@ export default function Publication({ user }: { user: UserSession }) {
   }, [pub.message, pub.messageType]);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="w-full space-y-8 pb-12">
 
       {/* Header Halaman */}
       <PublicationHeader

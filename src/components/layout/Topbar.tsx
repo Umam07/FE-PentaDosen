@@ -114,7 +114,7 @@ export default function Topbar({
   };
 
   return (
-    <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6 lg:px-6 sticky top-0 z-20 shadow-sm">
+    <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-20 shadow-sm">
       <div className="flex items-center gap-2 sm:gap-4 min-w-0">
            {isMobile && (
              <button 
@@ -226,20 +226,18 @@ export default function Topbar({
                   )}
                 </AnimatePresence>
         </div>
-
-
-
-        {/* Mobile Search Modal (Direct Command Dialog Popup) */}
-        <ActionSearchBar 
-          actions={searchActions} 
-          onSelect={handleActionSelect}
-          placeholder="Cari menu/dosen..."
-          user={user}
-          open={isMobileSearchOpen}
-          onOpenChange={setIsMobileSearchOpen}
-          hideTrigger
-        />
       </div>
+
+      {/* Mobile Search Modal (Direct Command Dialog Popup) */}
+      <ActionSearchBar 
+        actions={searchActions} 
+        onSelect={handleActionSelect}
+        placeholder="Cari menu/dosen..."
+        user={user}
+        open={isMobileSearchOpen}
+        onOpenChange={setIsMobileSearchOpen}
+        hideTrigger
+      />
     </header>
   );
 }

@@ -29,7 +29,7 @@ export default function AdminLecturers() {
   } = useLecturers(user);
 
   return (
-    <div className="max-w-none space-y-8 pb-12">
+    <div className="w-full space-y-8 pb-12">
       {/* Header Halaman */}
       <LecturersHeader
         loading={loading}

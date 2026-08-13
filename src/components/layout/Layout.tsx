@@ -212,7 +212,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
 
       {/* Main Content */}
       <motion.main 
-        animate={{ marginLeft: isMobile ? 0 : (isCollapsed ? 88 : 288) }}
+        animate={{ paddingLeft: isMobile ? 0 : (isCollapsed ? 88 : 288) }}
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
         className="flex-1 flex flex-col min-h-screen min-w-0 relative"
       >
@@ -227,7 +227,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
           hideLiveBadge={isLecturerPage}
         />
 
-        <div className="p-4 sm:p-6 lg:p-6 flex-1">
+        <div className="p-4 sm:p-6 lg:p-8 flex-1">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

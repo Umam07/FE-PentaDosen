@@ -162,23 +162,89 @@ function ActionSearchBar({
   // Split lecturers actions from menu actions
   const lecturerActions = actions.filter((act) => act.end === "LECTURER");
 
+  if (hideTrigger) {
+    return (
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Ketik perintah atau cari halaman..." />
+
+        <CommandList>
+          <CommandEmpty>Hasil pencarian tidak ditemukan.</CommandEmpty>
+
+          {/* Menu sesuai role user yang login */}
+          {roleMenus[resolvedRole] && (
+            <CommandGroup heading={`Menu ${roleLabels[resolvedRole]}`}>
+              {roleMenus[resolvedRole].map((menu, idx) => (
+                <CommandItem
+                  key={`menu-${idx}`}
+                  value={menu.label}
+                  onSelect={() => handleItemSelect(menu.path)}
+                >
+                  <div className="flex items-center gap-4 w-full">
+                    <div className="p-2 rounded-xl bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350 shrink-0">
+                      {menu.icon}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-semibold text-gray-900 dark:text-zinc-100 text-sm">
+                        {menu.label}
+                      </span>
+                      <span className="text-xs text-gray-400 dark:text-zinc-500">
+                        {menu.category}
+                      </span>
+                    </div>
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+
+          {/* Section Akses Cepat Dosen */}
+          {lecturerActions.length > 0 && (
+            <CommandGroup heading="Daftar Dosen">
+              {lecturerActions.map((act) => (
+                <CommandItem
+                  key={act.id}
+                  value={act.label}
+                  onSelect={() => handleItemSelect(act.path || "", act)}
+                >
+                  <div className="flex items-center gap-3 w-full">
+                    <div className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 shrink-0">
+                      {act.icon}
+                    </div>
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="font-semibold text-gray-900 dark:text-zinc-100 text-sm">
+                        {act.label}
+                      </span>
+                      {act.description && (
+                        <span className="text-xs text-gray-400 dark:text-zinc-500">
+                          {act.description}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </CommandDialog>
+    );
+  }
+
   return (
     <div className={`w-full ${className || ''}`}>
       {/* Search Trigger Button */}
-      {!hideTrigger && (
-        <button
-          onClick={() => setOpen(true)}
-          className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 hover:bg-gray-100/60 dark:hover:bg-zinc-800/60 transition-all text-gray-400 dark:text-zinc-500 shadow-inner group overflow-hidden"
-        >
-          <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-            <Search className="h-4 w-4 text-gray-400 group-hover:text-primary-500 transition-colors shrink-0" />
-            <span className="truncate">{placeholder}</span>
-          </div>
-          <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 font-mono text-[9px] font-bold text-gray-400 dark:text-zinc-500 shadow-sm shrink-0">
-            Ctrl+K
-          </kbd>
-        </button>
-      )}
+      <button
+        onClick={() => setOpen(true)}
+        className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 hover:bg-gray-100/60 dark:hover:bg-zinc-800/60 transition-all text-gray-400 dark:text-zinc-500 shadow-inner group overflow-hidden"
+      >
+        <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
+          <Search className="h-4 w-4 text-gray-400 group-hover:text-primary-500 transition-colors shrink-0" />
+          <span className="truncate">{placeholder}</span>
+        </div>
+        <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 font-mono text-[9px] font-bold text-gray-400 dark:text-zinc-500 shadow-sm shrink-0">
+          Ctrl+K
+        </kbd>
+      </button>
 
       {/* Command Dialog Modal */}
       <CommandDialog open={open} onOpenChange={setOpen}>

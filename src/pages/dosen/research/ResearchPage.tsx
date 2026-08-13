@@ -34,7 +34,7 @@ export default function Research({ user }: { user: UserSession }) {
   const currentItems = res.filteredResearchList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="w-full space-y-8 pb-12">
       {/* Header Halaman */}
       <ResearchHeader
         onOpenMetricsModal={() => res.setIsMetricsModalOpen(true)}
