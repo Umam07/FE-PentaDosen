@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -106,16 +106,22 @@ function ActionSearchBar({
   const navigate = useNavigate();
 
   const isControlled = typeof controlledOpen !== 'undefined';
-  const open = isControlled ? controlledOpen : internalOpen;
+  const open = isControlled ? Boolean(controlledOpen) : internalOpen;
 
-  const setOpen = (val: boolean | ((prev: boolean) => boolean)) => {
-    const nextVal = typeof val === 'function' ? val(open) : val;
+  const openRef = useRef(open);
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
+  const setOpen = useCallback((val: boolean | ((prev: boolean) => boolean)) => {
+    const current = openRef.current;
+    const nextVal = typeof val === 'function' ? val(current) : val;
     if (isControlled && onOpenChange) {
       onOpenChange(nextVal);
     } else {
       setInternalOpen(nextVal);
     }
-  };
+  }, [isControlled, onOpenChange]);
 
   // Tentukan role user yang sedang login (default: dosen)
   const userRole = user?.role?.toLowerCase() || "dosen";
@@ -148,7 +154,7 @@ function ActionSearchBar({
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [navigate]);
+  }, [navigate, setOpen]);
 
   const handleItemSelect = (path: string, originalAction?: Action) => {
     setOpen(false);

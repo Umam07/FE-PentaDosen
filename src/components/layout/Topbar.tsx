@@ -29,7 +29,7 @@ export default function Topbar({
   hideLiveBadge
 }: TopbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [lecturers, setLecturers] = useState<any[]>([]);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -109,7 +109,7 @@ export default function Topbar({
   const handleActionSelect = (action: Action) => {
     if (action.path) {
       navigate(action.path);
-      setIsMobileSearchOpen(false);
+      setIsSearchOpen(false);
     }
   };
 
@@ -132,13 +132,15 @@ export default function Topbar({
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {/* Interactive Search Bar dengan Dropdown */}
+        {/* Interactive Search Bar Desktop / Global Command Palette */}
         <div className="hidden sm:block w-48 lg:w-72" ref={searchRef}>
           <ActionSearchBar 
             actions={searchActions} 
             onSelect={handleActionSelect}
             placeholder="Cari menu/dosen..."
             user={user}
+            open={isSearchOpen}
+            onOpenChange={setIsSearchOpen}
           />
         </div>
 
@@ -153,7 +155,7 @@ export default function Topbar({
         
         {/* Mobile Search Button */}
         <button 
-          onClick={() => setIsMobileSearchOpen(true)}
+          onClick={() => setIsSearchOpen(true)}
           className="flex sm:hidden items-center justify-center w-9 h-9 bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 text-gray-400 hover:text-primary-600 rounded-xl transition-all border border-gray-100 dark:border-zinc-700 flex-shrink-0"
         >
            <Search className="w-4 h-4" />
@@ -227,17 +229,6 @@ export default function Topbar({
                 </AnimatePresence>
         </div>
       </div>
-
-      {/* Mobile Search Modal (Direct Command Dialog Popup) */}
-      <ActionSearchBar 
-        actions={searchActions} 
-        onSelect={handleActionSelect}
-        placeholder="Cari menu/dosen..."
-        user={user}
-        open={isMobileSearchOpen}
-        onOpenChange={setIsMobileSearchOpen}
-        hideTrigger
-      />
     </header>
   );
 }
