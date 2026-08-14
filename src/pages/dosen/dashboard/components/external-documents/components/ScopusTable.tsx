@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ChevronDown, ChevronUp, AlertTriangle, Check, Globe } from 'lucide-react';
 import { calculateScopusBreakdown } from '../utils/calculations';
 import { externalDocumentsService } from '../services/externalDocumentsService';
-import PointBreakdownBox from '../../../../publication/components/PointBreakdownBox';
 
 interface ScopusTableProps {
   documents: any[];
@@ -41,7 +40,9 @@ export default function ScopusTable({
 
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
-      <div className="w-full overflow-x-auto">
+      
+      {/* ── 1. Desktop / Tablet Table View (md and above) ── */}
+      <div className="hidden md:block w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
           <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
             <tr>
@@ -51,7 +52,7 @@ export default function ScopusTable({
               <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Kategori &amp; Peran
               </th>
-              <th className="hidden md:table-cell px-6 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
+              <th className="px-6 py-3.5 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
                 Tahun &amp; Sitasi
               </th>
               <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
@@ -112,23 +113,6 @@ export default function ScopusTable({
                               </>
                             )}
                           </div>
-
-                          {/* Mobile info badges */}
-                          <div className="flex flex-wrap items-center gap-1.5 mt-2 lg:hidden">
-                            {bd.q && bd.q !== 'None' && (
-                              <span className="px-1.5 py-0.5 rounded bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 font-bold text-[9px] border border-orange-200/50">
-                                {bd.q}
-                              </span>
-                            )}
-                            <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold text-[9px]">
-                              {bd.role}
-                            </span>
-                            {isAlsoScholar && (
-                              <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 font-semibold text-[9px] border border-emerald-200/50">
-                                ✓ Scholar
-                              </span>
-                            )}
-                          </div>
                         </div>
                       </div>
                     </td>
@@ -162,7 +146,7 @@ export default function ScopusTable({
                     </td>
 
                     {/* Tahun & Sitasi */}
-                    <td className="hidden md:table-cell px-6 py-4 text-center">
+                    <td className="px-6 py-4 text-center">
                       <div className="space-y-1">
                         <span className="inline-block px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs">
                           {doc.year || '—'}
@@ -289,6 +273,161 @@ export default function ScopusTable({
           </tbody>
         </table>
       </div>
+
+      {/* ── 2. Mobile Responsive Stack Cards View (< md) ── */}
+      <div className="block md:hidden divide-y divide-gray-100 dark:divide-zinc-800">
+        {documents.map((doc, idx) => {
+          const bd = calculateScopusBreakdown(doc);
+          const isAlsoScholar = isAlsoScholarCheck(doc.title);
+          const isExpanded = expandedRow === (doc.id || idx);
+          const subtypeLabel = bd.isArticle ? 'Article' : (doc.subtype_description || doc.subtype || 'Non-Article');
+          const showCorrespondingControls = bd.isArticle && bd.totalAuthors > 1;
+          const linkUrl = doc.link || `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`;
+
+          return (
+            <div key={doc.id || idx} className="p-4 space-y-3 bg-white dark:bg-zinc-900">
+              
+              {/* Header: Title & External Link */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                  <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-slate-400 shrink-0 mt-0.5">
+                    <Globe className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <a
+                      href={linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tight line-clamp-2 leading-snug hover:text-primary-600"
+                    >
+                      {doc.title}
+                    </a>
+                    {(doc.source_name || doc.journal) && (
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 italic mt-0.5 truncate">
+                        {doc.source_name || doc.journal}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <a
+                  href={linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 shrink-0 hover:bg-slate-200"
+                  title="Buka di Scopus"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Chips / Badges Row */}
+              <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                {bd.q && bd.q !== 'None' ? (
+                  <span className="px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 font-bold border border-orange-200/50">
+                    {bd.q}
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
+                    Non-Q
+                  </span>
+                )}
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">
+                  {subtypeLabel}
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">
+                  {bd.role}
+                </span>
+                {doc.year && (
+                  <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">
+                    {doc.year}
+                  </span>
+                )}
+                <span className="px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-800/60 text-slate-500 font-medium tabular-nums">
+                  {bd.citations} Sitasi
+                </span>
+                {isAlsoScholar && (
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 font-bold border border-emerald-200/50">
+                    ✓ Scholar
+                  </span>
+                )}
+              </div>
+
+              {/* Status and Action Buttons */}
+              {!isPublic && showCorrespondingControls && !bd.isCorrespondingConfirmed && (
+                <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" /> Konfirmasi Penulis:
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleToggleCorresponding(doc.id, true)}
+                      disabled={updatingId === doc.id}
+                      className="px-2 py-1 bg-emerald-600 text-white rounded text-[9px] font-bold disabled:opacity-50"
+                    >
+                      Koresponden
+                    </button>
+                    <button
+                      onClick={() => handleToggleCorresponding(doc.id, false)}
+                      disabled={updatingId === doc.id}
+                      className="px-2 py-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded text-[9px] font-bold disabled:opacity-50"
+                    >
+                      Bukan
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Row: Score & Detail Toggle */}
+              <div className="flex items-center justify-between pt-1">
+                <div className="text-xs">
+                  <span className="text-slate-400">Poin SINTA: </span>
+                  <strong className="text-slate-900 dark:text-white font-extrabold tabular-nums">
+                    +{Math.round(bd.totalPoints)} pts
+                  </strong>
+                </div>
+
+                <button
+                  onClick={() => toggleRow(doc.id || idx)}
+                  className="flex items-center gap-1 text-[10px] font-bold text-primary-600 dark:text-primary-400 py-1 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"
+                >
+                  <span>{isExpanded ? 'Tutup Rincian' : 'Lihat Rincian'}</span>
+                  {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+              </div>
+
+              {/* Mobile Expandable Breakdown Box */}
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden pt-2"
+                  >
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-2 text-[11px]">
+                      <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-1.5">
+                        <span className="font-semibold text-slate-500">Base Score ({bd.q}):</span>
+                        <strong className="text-slate-900 dark:text-white">{bd.basePoints} pts</strong>
+                      </div>
+                      <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-1.5">
+                        <span className="font-semibold text-slate-500">Bobot Peran:</span>
+                        <strong className="text-slate-900 dark:text-white">{bd.pctStr || '-'}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold text-slate-500">Skenario:</span>
+                        <strong className="text-slate-900 dark:text-white">{bd.detailStr || '-'}</strong>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+            </div>
+          );
+        })}
+      </div>
+
     </div>
   );
 }
