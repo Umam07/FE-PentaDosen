@@ -1,64 +1,152 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Copy, Check, ExternalLink, ArrowUpRight } from 'lucide-react';
 import { IdentityBadgeProps } from '../types/detailInformasi.types';
 
-const TONES = {
-  blue: {
-    bg: 'bg-blue-50 dark:bg-blue-950/20',
-    border: 'border-blue-100 dark:border-blue-900/40',
-    icon: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300',
-    label: 'text-blue-700 dark:text-blue-300',
-    value: 'text-blue-900 dark:text-blue-100',
-  },
-  rose: {
-    bg: 'bg-rose-50 dark:bg-rose-950/20',
-    border: 'border-rose-100 dark:border-rose-900/40',
-    icon: 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300',
-    label: 'text-rose-700 dark:text-rose-300',
-    value: 'text-rose-900 dark:text-rose-100',
-  },
-  orange: {
-    bg: 'bg-orange-50 dark:bg-orange-950/20',
-    border: 'border-orange-100 dark:border-orange-900/40',
-    icon: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300',
-    label: 'text-orange-700 dark:text-orange-300',
-    value: 'text-orange-900 dark:text-orange-100',
-  },
-
-  emerald: {
-    bg: 'bg-emerald-50 dark:bg-emerald-950/20',
-    border: 'border-emerald-100 dark:border-emerald-900/40',
-    icon: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300',
-    label: 'text-emerald-700 dark:text-emerald-300',
-    value: 'text-emerald-900 dark:text-emerald-100',
-  },
-  violet: {
-    bg: 'bg-violet-50 dark:bg-violet-950/20',
-    border: 'border-violet-100 dark:border-violet-900/40',
-    icon: 'bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300',
-    label: 'text-violet-700 dark:text-violet-300',
-    value: 'text-violet-900 dark:text-violet-100',
-  },
-} as const;
-
 export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
+  platform,
   label,
+  description,
   value,
   icon: Icon,
-  tone,
+  onNavigateTab,
 }) => {
-  const t = TONES[tone];
+  const [copied, setCopied] = useState(false);
+  const isConnected = Boolean(value && value.trim() !== '');
+
+  const getProfileUrl = () => {
+    if (!isConnected || !value) return null;
+    if (platform === 'scholar') {
+      return `https://scholar.google.com/citations?user=${value.trim()}`;
+    }
+    if (platform === 'scopus') {
+      return `https://www.scopus.com/authid/detail.uri?authorId=${value.trim()}`;
+    }
+    return null;
+  };
+
+  const handleCopy = async () => {
+    if (!isConnected || !value) return;
+    try {
+      await navigator.clipboard.writeText(value.trim());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
+  const profileUrl = getProfileUrl();
 
   return (
-    <div className={`flex items-center gap-4 rounded-2xl border p-4 transition-all hover:shadow-sm ${t.bg} ${t.border}`}>
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${t.icon}`}>
-        <Icon className="h-4 w-4" />
+    <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 transition-all hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
+      <div>
+        {/* Top Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                platform === 'scholar'
+                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400'
+                  : 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400'
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                {label}
+              </h4>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                {description}
+              </p>
+            </div>
+          </div>
+
+          {/* Status Badge */}
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+              isConnected
+                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isConnected ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-slate-500'
+              }`}
+            />
+            {isConnected ? 'Terhubung' : 'Belum Dihubungkan'}
+          </span>
+        </div>
+
+        {/* Value Box */}
+        <div className="mt-4 rounded-xl border border-slate-200/60 bg-slate-50/70 p-3 dark:border-slate-800 dark:bg-slate-800/40">
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                {platform === 'scholar' ? 'Google Scholar ID' : 'Scopus Author ID'}
+              </span>
+              <p
+                className={`mt-0.5 truncate font-mono text-sm font-semibold ${
+                  isConnected
+                    ? 'text-slate-900 dark:text-slate-100'
+                    : 'italic text-slate-400 dark:text-slate-500 font-normal'
+                }`}
+                title={value || 'Belum dikonfigurasi'}
+              >
+                {value || 'Belum dikonfigurasi'}
+              </p>
+            </div>
+
+            {isConnected && (
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  title={copied ? 'Tersalin!' : 'Salin ID'}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-xs dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+
+                {profileUrl && (
+                  <a
+                    href={profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`Buka profil ${label}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-xs dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <p className={`text-[10px] font-black uppercase tracking-widest ${t.label}`}>{label}</p>
-        <p className={`mt-0.5 truncate font-mono text-sm font-black ${t.value}`} title={value || 'Belum diisi'}>
-          {value || 'Belum diisi'}
-        </p>
-      </div>
+
+      {/* Action Footer */}
+      {onNavigateTab && (
+        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+          <span className="text-[11px] text-slate-400 dark:text-slate-500">
+            {isConnected ? 'Sinkronisasi otomatis aktif' : 'Hubungkan untuk menarik data riset'}
+          </span>
+          <button
+            type="button"
+            onClick={() => onNavigateTab('integrasi')}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors cursor-pointer"
+          >
+            <span>{isConnected ? 'Kelola ID' : 'Hubungkan Sekarang'}</span>
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
+

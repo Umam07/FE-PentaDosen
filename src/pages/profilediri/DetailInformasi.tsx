@@ -5,7 +5,11 @@ import { ProfileCompletion } from './DetailInformasi/components/ProfileCompletio
 import { AcademicInfo } from './DetailInformasi/components/AcademicInfo';
 import { PublicationIdentity } from './DetailInformasi/components/PublicationIdentity';
 
-export default function DetailInformasi({ user, tabVariants }: DetailInformasiProps) {
+export default function DetailInformasi({
+  user,
+  tabVariants,
+  onNavigateTab,
+}: DetailInformasiProps) {
   // Menggunakan custom hook untuk menghitung data kelengkapan profil
   const { completionItems, completionPercent } = useDetailInformasi(user);
 
@@ -22,16 +26,18 @@ export default function DetailInformasi({ user, tabVariants }: DetailInformasiPr
       <ProfileCompletion
         completionPercent={completionPercent}
         completionItems={completionItems}
+        onNavigateTab={onNavigateTab}
       />
 
       {/* Grid Informasi Utama */}
       <div className="space-y-6">
-        {/* Informasi Akademik */}
+        {/* Informasi Akademik & Identitas Dosen */}
         <AcademicInfo user={user} />
 
-        {/* Identitas Publikasi */}
-        <PublicationIdentity user={user} />
+        {/* Identitas Publikasi & Riset Ilmiah (Google Scholar & Scopus only) */}
+        <PublicationIdentity user={user} onNavigateTab={onNavigateTab} />
       </div>
     </motion.div>
   );
 }
+

@@ -94,7 +94,11 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
             className="w-full"
           >
             {activeTab === 'info' ? (
-              <DetailInformasi user={user} tabVariants={tabVariants} />
+              <DetailInformasi
+                user={user}
+                tabVariants={tabVariants}
+                onNavigateTab={(tab) => setActiveTab(tab)}
+              />
             ) : (
               <Konfigurasi
                 user={user}

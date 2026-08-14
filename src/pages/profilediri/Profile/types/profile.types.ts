@@ -8,6 +8,9 @@ export interface ProfileUser {
   scholar_id?: string | null;
   scopus_id?: string | null;
   program_studi?: string;
+  fakultas?: string;
+  nidn?: string;
+  email?: string;
   penta_id?: string | null;
   [key: string]: any;
 }
