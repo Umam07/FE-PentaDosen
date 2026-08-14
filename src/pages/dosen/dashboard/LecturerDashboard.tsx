@@ -460,7 +460,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
 
       {/* View Switcher Tabs & Refresh Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
-        <div className="flex w-full sm:w-auto p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-x-auto no-scrollbar">
+        <div className="grid grid-cols-2 sm:flex w-full sm:w-auto p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 gap-1">
           {[
             { id: 'external', label: 'Dokumen Eksternal (API)', icon: Globe },
             { id: 'internal', label: 'Dokumen Internal', icon: FileText },
@@ -468,14 +468,14 @@ export default function LecturerDashboard({ user }: { user: any }) {
             <button
               key={view.id}
               onClick={() => { setActiveView(view.id as any); setCurrentPage(1); }}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+              className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-semibold tracking-tight sm:tracking-wide transition-all ${
                 activeView === view.id 
                   ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm font-bold' 
                   : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
               }`}
             >
-              <view.icon className={`w-4 h-4 shrink-0 ${activeView === view.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
-              <span className="whitespace-nowrap">{view.label}</span>
+              <view.icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${activeView === view.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+              <span className="truncate">{view.label}</span>
             </button>
           ))}
         </div>

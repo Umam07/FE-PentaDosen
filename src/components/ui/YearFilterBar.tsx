@@ -59,7 +59,7 @@ export default function YearFilterBar({
   const containerCls =
     variant === 'slate'
       ? 'flex items-center gap-3 py-2 px-1 mb-2 bg-slate-500/5 dark:bg-slate-900/10 rounded-xl p-2 border border-slate-150 dark:border-slate-800/50'
-      : 'px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-3 border-b border-gray-100 dark:border-zinc-850 bg-gray-50/20 dark:bg-zinc-900/20';
+      : 'px-3.5 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between sm:justify-start gap-3 bg-gray-50/20 dark:bg-zinc-900/20';
 
   const labelCls =
     'flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-zinc-500 shrink-0';
@@ -86,7 +86,7 @@ export default function YearFilterBar({
             isFiltered
               ? 'border-primary-500/60 dark:border-primary-500/60 text-primary-700 dark:text-primary-300 bg-primary-50/40 dark:bg-primary-950/20 font-black'
               : 'border-slate-200 dark:border-zinc-700 text-slate-800 dark:text-zinc-100 font-extrabold'
-          } rounded-xl text-[11px] uppercase tracking-wider outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 hover:border-primary-400 dark:hover:border-primary-500/60 transition-all cursor-pointer min-w-[150px] shadow-2xs`}
+          } rounded-xl text-[11px] uppercase tracking-wider outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 hover:border-primary-400 dark:hover:border-primary-500/60 transition-all cursor-pointer min-w-[130px] sm:min-w-[150px] shadow-2xs`}
         >
           <span className="truncate">
             {selectedYear !== null ? `Tahun ${selectedYear}` : 'Semua Tahun'}
