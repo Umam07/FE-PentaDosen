@@ -59,7 +59,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
           {/* Username field */}
           <div className="space-y-2">
             <label htmlFor="username" className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Email / Username
+              Username
             </label>
             <div className="relative group flex items-center border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 focus-within:border-primary-600 dark:focus-within:border-primary-500 focus-within:bg-white dark:focus-within:bg-slate-950 transition-all duration-200">
               <div className="absolute left-3.5 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-500 transition-colors pointer-events-none">
@@ -72,7 +72,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 outline-none border-none font-medium"
-                placeholder="username@univ.edu"
+                placeholder="username"
               />
             </div>
           </div>

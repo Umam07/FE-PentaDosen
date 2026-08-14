@@ -133,8 +133,10 @@ export function useVerification(user: SessionUser) {
     });
 
     return filtered.sort((a, b) => {
-      const dateA = new Date(activeTab === 'penelitian' ? a.tahun : a.published_at).getTime();
-      const dateB = new Date(activeTab === 'penelitian' ? b.tahun : b.published_at).getTime();
+      const itemA = a as any;
+      const itemB = b as any;
+      const dateA = new Date(activeTab === 'penelitian' ? itemA.tahun : itemA.published_at).getTime();
+      const dateB = new Date(activeTab === 'penelitian' ? itemB.tahun : itemB.published_at).getTime();
       return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
     });
   }, [activeTab, filteredDocsByTab, searchTerm, selectedFakultas, sortOrder]);

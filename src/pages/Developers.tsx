@@ -16,9 +16,9 @@ interface TeamMember {
 
 const supervisor: TeamMember = {
   name: "Nurmaya, S.Kom, M.Eng, Ph.D",
-  role: "Pembimbing / Mentor Tim",
+  role: "Pembimbing",
   initials: "N",
-  photoUrl: "/team/nurmaya.png",
+  photoUrl: "/team/nurmaya.jpg",
 };
 
 const developers: TeamMember[] = [
@@ -53,7 +53,7 @@ function MemberAvatar({ name, initials, photoUrl, size = "normal" }: { name: str
 
   if (size === "large") {
     return (
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 overflow-hidden flex-shrink-0 flex items-center justify-center">
+      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm">
         {imageFailed || !photoUrl ? (
           <span className="text-2xl font-medium text-slate-600 dark:text-slate-400 font-mono">
             {initials}
@@ -62,8 +62,10 @@ function MemberAvatar({ name, initials, photoUrl, size = "normal" }: { name: str
           <img
             src={photoUrl}
             alt={name}
+            loading="eager"
+            decoding="async"
             onError={() => setImageFailed(true)}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
           />
         )}
       </div>
@@ -71,7 +73,7 @@ function MemberAvatar({ name, initials, photoUrl, size = "normal" }: { name: str
   }
 
   return (
-    <div className="w-full aspect-[4/5] rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 overflow-hidden flex items-center justify-center mb-5">
+    <div className="w-full aspect-square rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 overflow-hidden flex items-center justify-center mb-5">
       {imageFailed || !photoUrl ? (
         <span className="text-3xl font-medium text-slate-400 dark:text-slate-600 font-mono">
           {initials}
@@ -80,8 +82,10 @@ function MemberAvatar({ name, initials, photoUrl, size = "normal" }: { name: str
         <img
           src={photoUrl}
           alt={name}
+          loading="eager"
+          decoding="async"
           onError={() => setImageFailed(true)}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
         />
       )}
     </div>
@@ -127,7 +131,7 @@ export default function Developers() {
             DUK Team — PentaDosen
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
-            Profil Pembimbing / Mentor Tim dan Tim Pengembang di balik pembangunan platform tata kelola publikasi ilmiah PentaDosen Universitas YARSI.
+            Profil Pembimbing dan Tim Pengembang di balik pembangunan platform tata kelola publikasi ilmiah PentaDosen Universitas YARSI.
           </p>
         </div>
 
@@ -136,7 +140,7 @@ export default function Developers() {
           <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
             <GraduationCap className="w-4 h-4 text-slate-500" />
             <h2 className="text-xs font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase font-semibold">
-              Pembimbing / Mentor Tim
+              Pembimbing
             </h2>
           </div>
 
@@ -160,7 +164,7 @@ export default function Developers() {
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 text-xs font-mono border border-slate-200 dark:border-slate-700">
               <GraduationCap className="w-3.5 h-3.5 text-slate-500" />
-              <span>Pembimbing / Mentor Tim</span>
+              <span>Pembimbing</span>
             </div>
           </div>
         </section>

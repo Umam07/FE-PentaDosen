@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { TrendingUp, Zap, Database } from 'lucide-react';
 
 interface StatItem {
@@ -26,12 +26,12 @@ export default function PerformanceSummary({
   const internalPct = grandTotal > 0 ? (internalPoints / grandTotal) * 100 : 0;
   const apiPct = grandTotal > 0 ? (apiPointsTotal / grandTotal) * 100 : 0;
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.08 } },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 24 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
   };

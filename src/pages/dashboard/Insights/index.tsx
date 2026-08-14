@@ -53,19 +53,12 @@ export default function Insights() {
         {/* KPI Period Highlights */}
         <InsightsStatsHighlights stats={stats} loading={loading} periodKpiValues={periodKpiValues} />
 
-        {/* Personnel Metrics Row & Top Performer Spotlight */}
+        {/* Institutional Capacity & Academic Productivity Metrics */}
         <InsightsMetricsRow
           stats={stats}
           loading={loading}
           onLecturersClick={() => navigate('/lecturers')}
           onDepartmentsClick={() => navigate('/departments')}
-          onTopPerformerClick={() => {
-            if (stats?.top_performer?.id) {
-              navigate(`/lecturer/${stats.top_performer.id}`);
-            } else {
-              navigate('/lecturers');
-            }
-          }}
         />
 
         {/* Publication & Research Source Channel Distribution */}

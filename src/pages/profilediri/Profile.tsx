@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 import DetailInformasi from './DetailInformasi';
 import Konfigurasi from './Konfigurasi';
 import { useProfile } from './Profile/hooks/useProfile';
@@ -47,7 +47,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     handleSyncAll,
   } = useProfile(user, setUser);
 
-  const tabVariants = {
+  const tabVariants: Variants = {
     hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
     exit: { opacity: 0, y: -15, transition: { duration: 0.2, ease: "easeIn" } }

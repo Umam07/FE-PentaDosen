@@ -21,23 +21,23 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
       count: scopus,
       percentage: total > 0 ? ((scopus / total) * 100).toFixed(1) : '0',
       icon: Award,
-      color: '#0284c7', // Sky
-      bgColor: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
+      color: '#f97316', // Scopus Orange
+      bgColor: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
     },
     {
       name: 'Google Scholar',
       count: scholar,
       percentage: total > 0 ? ((scholar / total) * 100).toFixed(1) : '0',
       icon: GraduationCap,
-      color: '#2563eb', // Blue Primary
-      bgColor: 'bg-primary-500/10 text-primary-600 dark:text-primary-400',
+      color: '#2563eb', // Scholar Blue
+      bgColor: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
     },
     {
       name: 'Riset & Pengabdian Internal',
       count: research,
       percentage: total > 0 ? ((research / total) * 100).toFixed(1) : '0',
       icon: BookOpen,
-      color: '#10b981', // Emerald
+      color: '#10b981', // Emerald Green
       bgColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
     },
   ];
