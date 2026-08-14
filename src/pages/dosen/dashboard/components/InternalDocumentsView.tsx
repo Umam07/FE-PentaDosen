@@ -77,10 +77,10 @@ export default function InternalDocumentsView({
   return (
     <div className="space-y-8">
       {/* Card wrapper */}
-      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-8 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-5 sm:p-8 shadow-sm">
 
         {/* ── Top Tab Bar: Dokumen | Metriks Penilaian ── */}
-        <div className="flex items-center gap-8 pb-3 border-b border-slate-100 dark:border-slate-800 mb-8 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-5 sm:gap-8 pb-3 border-b border-slate-100 dark:border-slate-800 mb-8 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
           {([
             { id: 'dokumen', label: 'Dokumen Internal', icon: FileText  },
             { id: 'metriks', label: 'Metriks Penilaian', icon: BarChart2 },
@@ -88,7 +88,7 @@ export default function InternalDocumentsView({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`group/tab relative pb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
+              className={`group/tab relative pb-3 flex items-center gap-2 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest whitespace-nowrap shrink-0 transition-colors ${
                 activeTab === tab.id
                   ? 'text-primary-600 dark:text-primary-400'
                   : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'

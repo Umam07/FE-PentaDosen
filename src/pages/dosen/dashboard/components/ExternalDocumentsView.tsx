@@ -70,12 +70,12 @@ export default function ExternalDocumentsView({
       className="space-y-8"
     >
       {/* Main Content Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-8 sm:p-10 shadow-sm min-h-[500px] relative overflow-hidden">
-        <div className="space-y-10 relative z-10">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-5 sm:p-8 lg:p-10 shadow-sm min-h-[500px] relative overflow-hidden">
+        <div className="space-y-8 sm:space-y-10 relative z-10">
           {/* Nested Publication Sub-tabs - Underline Style */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-2">
             {/* pb-3 on inner div so overflow-x-auto doesn't clip bottom-0 underlines */}
-            <div className="flex items-center gap-8 pb-3 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-5 sm:gap-8 pb-3 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
               {[
                 { id: 'scopus', label: 'Scopus Indexed' },
                 { id: 'scholar', label: 'Google Scholar' },
@@ -85,7 +85,7 @@ export default function ExternalDocumentsView({
                 <button
                   key={sub.id}
                   onClick={() => setPublicationSubTab(sub.id as any)}
-                  className={`group/tab relative pb-3 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${publicationSubTab === sub.id
+                  className={`group/tab relative pb-3 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest whitespace-nowrap shrink-0 transition-colors ${publicationSubTab === sub.id
                       ? 'text-primary-600 dark:text-primary-400'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                     }`}
@@ -217,22 +217,45 @@ export default function ExternalDocumentsView({
 
                         return (
                           <div className="bg-slate-50 dark:bg-slate-800/40 p-4 sm:p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 space-y-4">
-                            {/* Baris 1: Notice Ringkas / Title + Formula Tooltip + Action Button */}
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200/60 dark:border-slate-800/60 pb-3">
-                              <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                                {unconfirmedScopusCount > 0 ? (
-                                  <div className="flex items-center gap-2">
-                                    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
-                                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                                      <strong className="text-amber-600 dark:text-amber-400 font-extrabold">{unconfirmedScopusCount} Publikasi</strong> perlu konfirmasi status korespondensi
-                                    </span>
+                            {/* Baris 1: Alert Banner jika ada dokumen butuh konfirmasi */}
+                            {unconfirmedScopusCount > 0 && (
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-3.5 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 rounded-2xl">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+                                    <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                                   </div>
-                                ) : (
-                                  <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                                    Dokumen Scopus Indexed
-                                  </span>
-                                )}
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+                                      <span className="font-black text-amber-600 dark:text-amber-400">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi
+                                    </p>
+                                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block">
+                                      Konfirmasi status korespondensi untuk kalkulasi poin SINTA
+                                    </p>
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setScopusFilter(scopusFilter === 'unconfirmed' ? 'all' : 'unconfirmed');
+                                    setCurrentPage(1);
+                                  }}
+                                  className={`w-full sm:w-auto px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer text-center shrink-0 shadow-xs ${
+                                    scopusFilter === 'unconfirmed'
+                                      ? 'bg-amber-700 text-white'
+                                      : 'bg-amber-600 hover:bg-amber-700 text-white'
+                                  }`}
+                                >
+                                  {scopusFilter === 'unconfirmed' ? 'Tampilkan Semua' : 'Filter Perlu Update'}
+                                </button>
+                              </div>
+                            )}
 
+                            {/* Baris 2: Judul & Info Tooltip */}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                                  Dokumen Scopus Indexed
+                                </span>
                                 {/* Info Tooltip Formula Penilaian Scopus */}
                                 <div className="relative group inline-block">
                                   <button
@@ -240,7 +263,7 @@ export default function ExternalDocumentsView({
                                     aria-label="Info Formula Penilaian Scopus"
                                     className="p-1 rounded-lg text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                                   >
-                                    <Info className="w-4 h-4" />
+                                    <Info className="w-3.5 h-3.5" />
                                   </button>
                                   <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block group-focus-within:block w-72 p-3 bg-slate-900 text-white dark:bg-slate-800 text-[10px] rounded-xl shadow-xl border border-slate-800 dark:border-slate-700 z-50 pointer-events-none">
                                     <p className="font-bold text-amber-400 mb-1">Formula Penilaian Scopus SINTA</p>
@@ -250,62 +273,58 @@ export default function ExternalDocumentsView({
                                   </div>
                                 </div>
                               </div>
-
-                              {unconfirmedScopusCount > 0 && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setScopusFilter('unconfirmed');
-                                    setCurrentPage(1);
-                                  }}
-                                  className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 dark:bg-amber-600/90 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap cursor-pointer shrink-0"
-                                >
-                                  Filter Perlu Update ({unconfirmedScopusCount})
-                                </button>
-                              )}
                             </div>
 
-                            {/* Baris 2: Filter Chip (Korespondensi, Tipe Dokumen, Tahun) dalam satu container */}
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                              <div className="flex flex-wrap items-center gap-2">
+                            {/* Baris 3: Filter Chips & Filter Tahun */}
+                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                                 {/* Filter Korespondensi */}
-                                <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800/80">
+                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-2xs">
                                   {[
-                                    { id: 'all', label: 'Semua Status' },
-                                    { id: 'unconfirmed', label: 'Perlu Konfirmasi', count: unconfirmedScopusCount },
-                                    { id: 'confirmed', label: 'Selesai' }
+                                    { id: 'all', label: 'Semua', fullLabel: 'Semua Status' },
+                                    { id: 'unconfirmed', label: 'Perlu Update', fullLabel: 'Perlu Update', count: unconfirmedScopusCount },
+                                    { id: 'confirmed', label: 'Selesai', fullLabel: 'Selesai' }
                                   ].map((opt) => (
                                     <button
                                       key={opt.id}
                                       onClick={() => { setScopusFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                                      className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-tight transition-all cursor-pointer text-center ${
                                         scopusFilter === opt.id
-                                          ? 'bg-amber-600 dark:bg-amber-600/90 text-white shadow-xs'
-                                          : 'text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                          ? 'bg-amber-600 dark:bg-amber-600 text-white shadow-xs'
+                                          : 'text-slate-600 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                                       }`}
                                     >
-                                      {opt.label} {opt.count !== undefined && opt.count > 0 ? `(${opt.count})` : ''}
+                                      <span>{opt.label}</span>
+                                      {opt.count !== undefined && opt.count > 0 && (
+                                        <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-black ${
+                                          scopusFilter === opt.id
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
+                                        }`}>
+                                          {opt.count}
+                                        </span>
+                                      )}
                                     </button>
                                   ))}
                                 </div>
 
                                 {/* Filter Tipe Dokumen */}
-                                <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800/80">
+                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-2xs">
                                   {[
-                                    { id: 'all', label: 'Semua Tipe' },
+                                    { id: 'all', label: 'Semua' },
                                     { id: 'article', label: 'Article' },
                                     { id: 'non-article', label: 'Non-Article' }
                                   ].map((opt) => (
                                     <button
                                       key={opt.id}
                                       onClick={() => { setArticleFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                                      className={`flex items-center justify-center px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-tight transition-all cursor-pointer text-center ${
                                         articleFilter === opt.id
-                                          ? 'bg-amber-600 dark:bg-amber-600/90 text-white shadow-xs'
-                                          : 'text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                          ? 'bg-amber-600 dark:bg-amber-600 text-white shadow-xs'
+                                          : 'text-slate-600 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                                       }`}
                                     >
-                                      {opt.label}
+                                      <span>{opt.label}</span>
                                     </button>
                                   ))}
                                 </div>
@@ -313,12 +332,12 @@ export default function ExternalDocumentsView({
 
                               {/* Year Filter */}
                               {availableYearsScopus.length > 0 && (
-                                <div className="shrink-0">
+                                <div className="w-full sm:w-auto shrink-0 relative z-30">
                                   <YearFilterBar
                                     availableYears={availableYearsScopus}
                                     selectedYear={filterYearExt}
                                     onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                    className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80"
+                                    className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-2xs w-full sm:w-auto"
                                   />
                                 </div>
                               )}
@@ -437,11 +456,11 @@ export default function ExternalDocumentsView({
                     </div>
 
                     {/* Document List Table */}
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-5">
                       {/* Skema poin GS banner */}
                       <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-2xl">
                         <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-blue-600 text-[10px] font-black">i</span>
+                          <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black">i</span>
                         </div>
                         <div>
                           <p className="text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">Skema Poin Google Scholar</p>
@@ -452,13 +471,13 @@ export default function ExternalDocumentsView({
                       </div>
 
                       {/* Year Filter for Scholar */}
-                      {!isPublic && (
-                        <div className="mt-0 mb-0 relative z-50">
+                      {!isPublic && availableYearsScholar.length > 0 && (
+                        <div className="relative z-30">
                           <YearFilterBar
                             availableYears={availableYearsScholar}
                             selectedYear={filterYearExt}
                             onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                            className="rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-xs"
+                            className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs"
                           />
                         </div>
                       )}
@@ -526,22 +545,28 @@ export default function ExternalDocumentsView({
                   transition={{ duration: 0.15 }}
                   className="space-y-6"
                 >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex flex-col">
-                    <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Daftar Publikasi Terindeks Ganda</h4>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Poin diambil dari Scopus (lebih besar)</p>
+                    <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                      Daftar Publikasi Terindeks Ganda
+                    </h4>
+                    <p className="text-[10px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider sm:tracking-widest mt-1">
+                      Poin diambil dari Scopus (lebih besar)
+                    </p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Poin</p>
-                      <p className="text-lg font-black text-emerald-600">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 bg-slate-50 dark:bg-slate-800/60 sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-2xl sm:rounded-none border border-slate-100 dark:border-slate-800/80 sm:border-none">
+                    <div className="text-left sm:text-right">
+                      <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">
+                        Total Poin
+                      </p>
+                      <p className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 mt-1">
                         {Math.round(crossIndexedDocs.reduce((acc: number, doc: any) => {
                           const sd = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                           return acc + calculateScopusBreakdown(sd || doc).totalPoints;
-                        }, 0))} pts
+                        }, 0))} <span className="text-xs font-bold text-slate-400 dark:text-slate-500">pts</span>
                       </p>
                     </div>
-                    <div className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">
+                    <div className="px-3.5 py-2 bg-emerald-600 dark:bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap shadow-sm shadow-emerald-600/20">
                       {filteredCrossIndexedDocs?.length || 0} Total
                     </div>
                   </div>
@@ -561,13 +586,13 @@ export default function ExternalDocumentsView({
                 </div>
 
                 {/* Year Filter for Cross-Indexed */}
-                {!isPublic && (
-                  <div className="relative z-50">
+                {!isPublic && availableYearsCross.length > 0 && (
+                  <div className="relative z-30">
                     <YearFilterBar
                       availableYears={availableYearsCross}
                       selectedYear={filterYearExt}
                       onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                      className="rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-xs"
+                      className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs"
                     />
                   </div>
                 )}
