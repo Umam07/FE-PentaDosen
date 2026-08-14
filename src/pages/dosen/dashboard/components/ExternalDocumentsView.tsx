@@ -11,9 +11,9 @@ import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { ExternalDocumentsViewProps } from './external-documents/external-documents.types';
 import { useExternalDocuments } from './external-documents/hooks/useExternalDocuments';
 import { calculateScopusBreakdown, normalizeTitle } from './external-documents/utils/calculations';
-import ScholarDocRow from './external-documents/components/ScholarDocRow';
-import ScopusDocRow from './external-documents/components/ScopusDocRow';
-import CrossIndexedDocRow from './external-documents/components/CrossIndexedDocRow';
+import ScopusTable from './external-documents/components/ScopusTable';
+import ScholarTable from './external-documents/components/ScholarTable';
+import CrossIndexedTable from './external-documents/components/CrossIndexedTable';
 import Pagination from './external-documents/components/Pagination';
 import MetricsGuide from './external-documents/components/MetricsGuide';
 
@@ -175,11 +175,7 @@ export default function ExternalDocumentsView({
                 ) : scopusChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
-                      {/* Decorative Blobs */}
-                      <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/5 rounded-full blur-3xl group-hover/chart-container:bg-orange-500/10 transition-colors duration-700"></div>
-                      <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl group-hover/chart-container:bg-amber-500/10 transition-colors duration-700"></div>
-
-                      <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:shadow-orange-500/5 transition-all duration-500">
+                      <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm transition-all duration-500">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center border border-orange-500/20 shadow-inner">
@@ -331,31 +327,23 @@ export default function ExternalDocumentsView({
                         );
                       })()}
 
-                      <div className="grid grid-cols-1 gap-4">
-                        {filteredScopusList.length > 0 ? (
-                          (isPublic ? filteredScopusList.slice(0, 5) : filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc, idx) => {
-                            const isAlsoScholar = crossIndexedDocs.some((c) => normalizeTitle(c.title) === normalizeTitle(doc.title));
-                            return (
-                              <ScopusDocRow
-                                key={idx}
-                                doc={doc}
-                                isAlsoScholar={isAlsoScholar}
-                                idx={idx}
-                                onRefresh={onRefresh}
-                                isPublic={isPublic}
-                              />
-                            );
-                          })
-                        ) : (
-                          <div className="flex flex-col items-center justify-center py-12 text-slate-300 space-y-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-100 dark:border-slate-800/80 rounded-[2rem]">
-                            <Search className="w-6 h-6 opacity-30" />
-                            <div className="text-center">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tidak Ada Dokumen</p>
-                              <p className="text-[9px] font-bold text-slate-400/80 mt-1">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
-                            </div>
+                      {/* Standard Table View */}
+                      {filteredScopusList.length > 0 ? (
+                        <ScopusTable
+                          documents={isPublic ? filteredScopusList.slice(0, 5) : filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
+                          isAlsoScholarCheck={(title) => crossIndexedDocs.some((c) => normalizeTitle(c.title) === normalizeTitle(title))}
+                          onRefresh={onRefresh}
+                          isPublic={isPublic}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-12 text-slate-300 space-y-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-100 dark:border-slate-800/80 rounded-[2rem]">
+                          <Search className="w-6 h-6 opacity-30" />
+                          <div className="text-center">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tidak Ada Dokumen</p>
+                            <p className="text-[9px] font-bold text-slate-400/80 mt-1">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       {isPublic ? (
                         filteredScopusList.length > 5 && (
@@ -416,11 +404,7 @@ export default function ExternalDocumentsView({
                 ) : scholarChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
-                      {/* Decorative Blobs */}
-                      <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl group-hover/chart-container:bg-blue-500/10 transition-colors duration-700"></div>
-                      <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl group-hover/chart-container:bg-indigo-500/10 transition-colors duration-700"></div>
-
-                      <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500">
+                      <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm transition-all duration-500">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center border border-blue-500/20 shadow-inner">
@@ -452,7 +436,7 @@ export default function ExternalDocumentsView({
                       </div>
                     </div>
 
-                    {/* Document List */}
+                    {/* Document List Table */}
                     <div className="space-y-6">
                       {/* Skema poin GS banner */}
                       <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-2xl">
@@ -479,35 +463,22 @@ export default function ExternalDocumentsView({
                         </div>
                       )}
 
-                      <div className="grid grid-cols-1 gap-4">
-                        {filteredScholarList.length > 0 ? (
-                          (isPublic ? filteredScholarList.slice(0, 5) : filteredScholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc, idx) => {
-                            const docPoints = calculateScholarPoints(doc);
-                            const scopusMatch = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
-                            const isAlsoScopus = !!scopusMatch;
-                            const scopusQuartile = scopusMatch ? scopusMatch.quartile : null;
-                            return (
-                              <ScholarDocRow
-                                key={idx}
-                                doc={doc}
-                                docPoints={docPoints}
-                                isAlsoScopus={isAlsoScopus}
-                                scopusQuartile={scopusQuartile}
-                                idx={idx}
-                                normalizeTitle={normalizeTitle}
-                              />
-                            );
-                          })
-                        ) : (
-                          <div className="flex flex-col items-center justify-center py-12 text-slate-300 space-y-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-100 dark:border-slate-800/80 rounded-[2rem]">
-                            <Search className="w-6 h-6 opacity-30" />
-                            <div className="text-center">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tidak Ada Dokumen</p>
-                              <p className="text-[9px] font-bold text-slate-400/80 mt-1">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
-                            </div>
+                      {/* Standard Scholar Table */}
+                      {filteredScholarList.length > 0 ? (
+                        <ScholarTable
+                          documents={isPublic ? filteredScholarList.slice(0, 5) : filteredScholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
+                          scopusPublications={scopusPublications}
+                          isPublic={isPublic}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-12 text-slate-300 space-y-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-100 dark:border-slate-800/80 rounded-[2rem]">
+                          <Search className="w-6 h-6 opacity-30" />
+                          <div className="text-center">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tidak Ada Dokumen</p>
+                            <p className="text-[9px] font-bold text-slate-400/80 mt-1">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       {isPublic ? (
                         filteredScholarList.length > 5 && (
@@ -608,26 +579,21 @@ export default function ExternalDocumentsView({
                     ))}
                   </phantom-ui>
                 ) : (
-                  <div className="grid grid-cols-1 gap-4">
-                    {(isPublic ? filteredCrossIndexedDocs.slice(0, 5) : filteredCrossIndexedDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((doc, idx) => {
-                      const scopusDoc = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
-                      return (
-                        <CrossIndexedDocRow
-                          key={idx}
-                          doc={doc}
-                          scopusDoc={scopusDoc}
-                          idx={idx}
-                        />
-                      );
-                    })}
-                    {filteredCrossIndexedDocs.length === 0 && (
+                  <>
+                    {filteredCrossIndexedDocs.length > 0 ? (
+                      <CrossIndexedTable
+                        documents={isPublic ? filteredCrossIndexedDocs.slice(0, 5) : filteredCrossIndexedDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
+                        scopusPublications={scopusPublications}
+                        isPublic={isPublic}
+                      />
+                    ) : (
                       <div className="flex flex-col items-center justify-center py-24 text-slate-300 space-y-6">
                         <div className="text-center">
                           <p className="text-xs font-black uppercase tracking-widest text-slate-400">Belum Ada Publikasi Terindeks Ganda</p>
                         </div>
                       </div>
                     )}
-                  </div>
+                  </>
                 )}
                 {isPublic ? (
                   filteredCrossIndexedDocs.length > 5 && (
@@ -664,3 +630,4 @@ export default function ExternalDocumentsView({
     </motion.div>
   );
 }
+
