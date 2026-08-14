@@ -1,6 +1,5 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion } from 'motion/react';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 import { ActivityLogsPaginationProps } from '../types/activityLogs.types';
 

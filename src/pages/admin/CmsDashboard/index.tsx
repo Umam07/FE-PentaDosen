@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Users, Settings, Megaphone, HelpCircle, 
-  ShieldCheck, MessageSquare 
+  MessageSquare 
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -20,9 +20,8 @@ interface CmsDashboardProps {
 
 /**
  * CMS Dashboard Root Component
- * Design Read: Admin CMS Dashboard redesign for academic research administrators, 
- * with a refined modern SaaS language, clean layout hierarchy, smooth micro-interactions, 
- * subtle borders/elevations, and high readability.
+ * High-density, space-efficient control center with clean typography,
+ * crisp hairline borders, solid accents (no glows, no gradients), and streamlined tab navigation.
  */
 export default function CmsDashboard({ user }: CmsDashboardProps) {
   const [activeTab, setActiveTab] = useState<'users' | 'kpi' | 'announcements' | 'faq' | 'support'>('users');
@@ -70,79 +69,81 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
   ];
 
   return (
-    <div className="w-full space-y-6 lg:space-y-8 pb-12">
-      {/* Header Panel */}
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-200/80 dark:border-zinc-800/80 p-6 md:p-8 shadow-sm"
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-start md:items-center gap-4">
-            <div className="p-3.5 bg-primary-50 dark:bg-primary-950/40 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/40 shadow-sm shrink-0">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
-                CMS Control Center
-              </h2>
-              <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-                Pusat manajemen hak akses pengguna, konfigurasi bobot KPI, publikasi pengumuman, panduan FAQ, serta respon pesan dukungan.
-              </p>
-            </div>
-          </div>
+    <div className="w-full space-y-6 pb-12">
+      {/* Header Halaman (Clean, Minimal, Zero Wasted Space) */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+            CMS Control Center
+          </h1>
+          <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1.5">
+            Manajemen Hak Akses, Bobot KPI, Pengumuman, Panduan FAQ & Dukungan
+          </p>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-1.5 rounded-2xl border border-gray-200/70 dark:border-zinc-800/80 shadow-sm flex flex-wrap gap-1">
-        {navTabs.map((tab) => {
-          const isActive = activeTab === tab.id;
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`relative group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 outline-none select-none ${
-                isActive
-                  ? 'text-white font-bold'
-                  : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-gray-100/60 dark:hover:bg-zinc-800/60'
-              }`}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="active-cms-tab"
-                  transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                  className="absolute inset-0 bg-primary-600 dark:bg-primary-600 rounded-xl shadow-sm shadow-primary-600/25"
-                />
-              )}
-              <span className="relative z-10 flex items-center gap-2">
-                <Icon className={`w-4 h-4 transition-transform duration-200 ${isActive ? 'scale-105' : 'group-hover:scale-105'}`} />
-                {tab.label}
+      {/* Sub Menu / Navigation Tabs (Clean Border-Bottom Strip) */}
+      <div className="border-b border-gray-200 dark:border-zinc-800 pb-0 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-6 sm:gap-8 min-w-max">
+          {navTabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`group/tab relative pb-3.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer select-none ${
+                  isActive
+                    ? 'text-primary-600 dark:text-primary-400'
+                    : 'text-gray-500 hover:text-gray-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+                }`}
+              >
+                <Icon className={`w-4 h-4 transition-transform ${
+                  isActive 
+                    ? 'scale-105 text-primary-600 dark:text-primary-400' 
+                    : 'text-gray-400 dark:text-zinc-500 group-hover/tab:text-gray-700 dark:group-hover/tab:text-zinc-300'
+                }`} />
+                <span>{tab.label}</span>
+
+                {/* Badge Pending Ticket */}
                 {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-tight transition-colors ${
-                    isActive 
-                      ? 'bg-white text-primary-700' 
-                      : 'bg-rose-500 text-white shadow-sm'
-                  }`}>
+                  <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1.5 rounded-full bg-rose-500 text-white text-[10px] font-bold leading-none">
                     {tab.badge}
                   </span>
                 )}
-              </span>
-            </button>
-          );
-        })}
+
+                {/* Active Indicator Line */}
+                {isActive && (
+                  <motion.div
+                    layoutId="active-cms-tab-indicator"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary-600 dark:bg-primary-500 rounded-full"
+                  />
+                )}
+
+                {/* Hover Underline effect */}
+                {!isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gray-200 dark:bg-zinc-700 rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Dynamic Content Rendering */}
-      <div className="mt-4">
+      {/* Dynamic Tab Content */}
+      <motion.div 
+        key={activeTab}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18 }}
+      >
         {activeTab === 'users' && <UsersTab triggerMessage={triggerMessage} />}
         {activeTab === 'kpi' && <KpiTab triggerMessage={triggerMessage} />}
         {activeTab === 'announcements' && <AnnouncementsTab triggerMessage={triggerMessage} user={user} />}
         {activeTab === 'faq' && <FaqTab triggerMessage={triggerMessage} />}
         {activeTab === 'support' && <SupportTicketsTab triggerMessage={triggerMessage} user={user} />}
-      </div>
+      </motion.div>
     </div>
   );
 }

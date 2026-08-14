@@ -6,15 +6,15 @@ export default function ActivityLogsEmpty({
   hasFilters
 }: ActivityLogsEmptyProps) {
   return (
-    <div className="px-8 py-32 text-center flex flex-col items-center">
-      <div className="w-24 h-24 bg-primary-50/50 dark:bg-primary-900/10 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-inner ring-1 ring-primary-100/50 dark:ring-primary-900/20">
-        <Activity className="w-12 h-12 text-primary-400 opacity-40" />
+    <div className="p-20 text-center flex flex-col items-center">
+      <div className="w-16 h-16 bg-gray-50 dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-5 border border-gray-200/80 dark:border-zinc-700/80">
+        <Activity className="w-8 h-8 text-gray-300 dark:text-zinc-600" />
       </div>
-      <p className="text-xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-[0.2em] mb-2">
-        {hasFilters ? 'Tidak Ditemukan' : 'Belum Ada Log'}
+      <p className="text-sm font-bold text-gray-800 dark:text-zinc-200 mb-1">
+        {hasFilters ? 'Aktivitas Tidak Ditemukan' : 'Belum Ada Log Aktivitas'}
       </p>
-      <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest leading-relaxed">
-        {hasFilters ? 'Coba ubah kata kunci atau filter yang digunakan' : 'Aktivitas dosen & admin akan tercatat di sini'}
+      <p className="text-xs text-gray-400 dark:text-zinc-500 max-w-sm">
+        {hasFilters ? 'Coba sesuaikan kata kunci pencarian atau filter aksi' : 'Riwayat aktivitas sistem akan tercatat secara otomatis di sini'}
       </p>
     </div>
   );

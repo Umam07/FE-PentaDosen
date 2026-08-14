@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock, Copy, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'framer-motion';
 import { ActivityLogsMobileTimelineProps } from '../types/activityLogs.types';
 import { 
   getActionConfig, 
@@ -15,73 +15,69 @@ export default function ActivityLogsMobileTimeline({
   onCopy
 }: ActivityLogsMobileTimelineProps) {
   return (
-    <div className="md:hidden divide-y divide-gray-50 dark:divide-zinc-800/50">
+    <div className="md:hidden divide-y divide-gray-100 dark:divide-zinc-800/80">
       {logs.map((log, idx) => {
         const cfg = getActionConfig(log.action);
+        const isCopied = copiedId === log.id;
+
         return (
           <motion.div
             key={log.id}
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: idx * 0.03 }}
-            className="p-5 space-y-3 bg-white dark:bg-zinc-900 hover:bg-gray-50/50 dark:hover:bg-zinc-800/20 transition-all duration-150"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.03, duration: 0.2 }}
+            className="p-5 space-y-3.5 bg-white dark:bg-zinc-900"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-black text-[11px] bg-gradient-to-br ${getUserBg(log.user?.role || '')} shadow-sm`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs border shadow-xs ${getUserBg(log.user?.role || '')}`}>
                   {getInitials(log.user?.name || '')}
                 </div>
                 <div>
-                  <p className="text-sm font-black text-gray-950 dark:text-zinc-100 uppercase tracking-tight">
-                    {log.user?.name || 'Sistem'}
+                  <p className="text-sm font-bold text-gray-900 dark:text-zinc-100">
+                    {log.user?.name || 'Sistem / Anonim'}
                   </p>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{log.user?.role || 'System'}</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-zinc-400 capitalize">
+                    {log.user?.role || 'Sistem'}
+                  </p>
                 </div>
               </div>
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[9px] font-black rounded-full uppercase tracking-widest border ${cfg.badge} shrink-0`}>
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-bold rounded-xl uppercase tracking-wider border shadow-xs ${cfg.badge} shrink-0`}>
                 {cfg.icon}
                 {log.action}
               </span>
             </div>
 
-            <div className="bg-gray-50/50 dark:bg-zinc-800/50 rounded-2xl p-4 border border-gray-100/50 dark:border-zinc-800/50 space-y-2 relative">
-              <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 leading-relaxed pr-8">{log.description}</p>
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-zinc-800">
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
-                  <Clock className="w-3 h-3" />
-                  {new Date(log.created_at).toLocaleString('id-ID')}
+            <div className="bg-gray-50/70 dark:bg-zinc-800/50 rounded-xl p-3.5 border border-gray-200/60 dark:border-zinc-800 space-y-2.5">
+              <p className="text-xs text-gray-600 dark:text-zinc-300 leading-relaxed">{log.description}</p>
+              
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200/50 dark:border-zinc-700/50">
+                <div className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 dark:text-zinc-400">
+                  <Clock className="w-3.5 h-3.5 text-gray-400 dark:text-zinc-500" />
+                  <span>{new Date(log.created_at).toLocaleString('id-ID')}</span>
                 </div>
                 
-                <div className="flex items-center gap-1.5">
-                  <AnimatePresence mode="wait">
-                    {copiedId === log.id && (
-                      <motion.span
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider bg-emerald-50 dark:bg-emerald-900/20 px-2 py-0.5 rounded-md"
-                      >
-                        Tersalin!
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => onCopy(formatLogForCopy(log), log.id)}
-                    className={`p-1.5 rounded-lg border transition-all ${
-                      copiedId === log.id 
-                        ? 'bg-emerald-50 border-emerald-200 text-emerald-600 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400'
-                        : 'bg-white border-gray-100 text-gray-400 dark:bg-zinc-800 dark:border-zinc-700'
-                    }`}
-                    title="Salin deskripsi"
-                  >
-                    {copiedId === log.id ? (
-                      <Check className="w-3.5 h-3.5" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </motion.button>
-                </div>
+                <button
+                  onClick={() => onCopy(formatLogForCopy(log), log.id)}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer ${
+                    isCopied 
+                      ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-400'
+                      : 'bg-white border-gray-200 text-gray-600 hover:text-primary-600 hover:border-primary-200 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300'
+                  }`}
+                  title="Salin detail log ke clipboard"
+                >
+                  {isCopied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">Tersalin!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-gray-400 dark:text-zinc-400" />
+                      <span className="text-[10px] font-bold">Salin Detail</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </motion.div>
