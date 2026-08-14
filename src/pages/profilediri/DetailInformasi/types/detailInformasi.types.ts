@@ -9,7 +9,6 @@ export interface DetailInformasiUser {
   scopus_id?: string;
   phone?: string;
   nidn?: string;
-  nip?: string;
   penta_id?: string;
 }
 

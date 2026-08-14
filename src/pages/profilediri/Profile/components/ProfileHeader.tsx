@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Fingerprint } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { ProfileUser, ProfileStat } from '../types/profile.types';
 
 interface ProfileHeaderProps {
@@ -54,18 +54,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
             <h2 className="text-2xl font-black leading-tight tracking-tight text-slate-950 dark:text-white">
               {user?.name || 'User'}
             </h2>
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
-              <span>{user?.program_studi || 'Lecturer'}</span>
-              {user?.penta_id && (
-                <>
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
-                  <span className="inline-flex items-center gap-1 text-primary-600 dark:text-primary-400">
-                    <Fingerprint className="h-3.5 w-3.5" />
-                    <span className="font-black">{user.penta_id}</span>
-                  </span>
-                </>
-              )}
-            </div>
           </div>
         </div>
 

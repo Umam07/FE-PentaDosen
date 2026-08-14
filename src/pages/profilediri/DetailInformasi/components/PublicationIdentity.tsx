@@ -29,7 +29,7 @@ export const PublicationIdentity: React.FC<PublicationIdentityProps> = ({ user }
         <IdentityBadge label="Scopus" value={user?.scopus_id} icon={Hash} tone="orange" />
         <IdentityBadge label="Penta ID" value={user?.penta_id} icon={Fingerprint} tone="emerald" />
 
-        <IdentityBadge label="NIDN / NIP" value={user?.nidn || user?.nip} icon={User} tone="violet" />
+        <IdentityBadge label="NIDN" value={user?.nidn} icon={User} tone="violet" />
       </div>
     </div>
   );

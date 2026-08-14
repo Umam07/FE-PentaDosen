@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Mail, Phone, BookOpen, BadgeCheck, Hash } from 'lucide-react';
+import { GraduationCap, Mail, Phone, BookOpen, BadgeCheck, Fingerprint } from 'lucide-react';
 import { InfoTile } from './InfoTile';
 import { DetailInformasiUser } from '../types/detailInformasi.types';
 
@@ -30,7 +30,7 @@ export const AcademicInfo: React.FC<AcademicInfoProps> = ({ user }) => {
         <InfoTile label="Fakultas" value={user?.fakultas} icon={BookOpen} />
         <InfoTile label="Program Studi" value={user?.program_studi} icon={GraduationCap} />
         <InfoTile label="NIDN" value={user?.nidn} icon={BadgeCheck} />
-        <InfoTile label="NIP" value={user?.nip} icon={Hash} />
+        <InfoTile label="ID Penta Dosen" value={user?.penta_id} icon={Fingerprint} />
       </div>
     </div>
   );
