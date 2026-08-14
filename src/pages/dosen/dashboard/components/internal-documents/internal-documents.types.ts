@@ -44,6 +44,7 @@ export interface InternalDocument {
   is_hyperauthor?: boolean;
 
   // Relasi ke penelitian asal (HKI & Buku)
+  is_joint?: boolean;
   penelitian?: LinkedPenelitian | null;
 }
 
