@@ -16,6 +16,14 @@ const TONES = {
     label: 'text-rose-700 dark:text-rose-300',
     value: 'text-rose-900 dark:text-rose-100',
   },
+  orange: {
+    bg: 'bg-orange-50 dark:bg-orange-950/20',
+    border: 'border-orange-100 dark:border-orange-900/40',
+    icon: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300',
+    label: 'text-orange-700 dark:text-orange-300',
+    value: 'text-orange-900 dark:text-orange-100',
+  },
+
   emerald: {
     bg: 'bg-emerald-50 dark:bg-emerald-950/20',
     border: 'border-emerald-100 dark:border-emerald-900/40',

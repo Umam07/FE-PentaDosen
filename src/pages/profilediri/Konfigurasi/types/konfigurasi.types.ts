@@ -46,8 +46,9 @@ export interface KonfigurasiProps {
 export interface MetricTileProps {
   label: string;
   value: any;
-  icon: React.ComponentType<any>;
+  icon?: React.ComponentType<any>;
 }
+
 
 export interface AuthorPreviewProps {
   author: any;

@@ -16,6 +16,8 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
 }) => {
   if (!type) return null;
 
+  const platformName = type === 'scholar' ? 'Google Scholar' : 'Scopus';
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -24,35 +26,41 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
       className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
     >
       <motion.div
-        initial={{ scale: 0.96, opacity: 0, y: 12 }}
+        initial={{ scale: 0.96, opacity: 0, y: 8 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.96, opacity: 0, y: 12 }}
-        className="w-full max-w-md rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+        exit={{ scale: 0.96, opacity: 0, y: 8 }}
+        className="w-full max-w-sm rounded-2xl border border-slate-200/80 bg-white p-6 text-center shadow-xl dark:border-slate-800 dark:bg-slate-900"
       >
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-300">
-          <AlertCircle className="h-7 w-7" />
+        <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-600 dark:border-red-900/30 dark:bg-red-950/30 dark:text-red-400">
+          <AlertCircle className="h-5 w-5" />
         </div>
-        <h3 className="mt-5 text-xl font-black tracking-tight text-slate-950 dark:text-white">
-          Konfirmasi Hapus
+
+        <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
+          Hapus ID {platformName}?
         </h3>
-        <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
-          ID {type === 'scholar' ? 'Google Scholar' : 'Scopus'} akan dilepas dari profil dan data sinkronisasinya tidak lagi ditampilkan.
+
+        <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          ID {platformName} akan dilepas dari profil Anda dan data publikasi terkait tidak akan lagi disinkronkan secara otomatis.
         </p>
-        <div className="mt-6 grid grid-cols-2 gap-3">
+
+        <div className="mt-5 grid grid-cols-2 gap-2.5">
           <button
+            type="button"
             onClick={onClose}
-            className="min-h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="h-10 rounded-xl border border-slate-200 bg-slate-100 px-4 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           >
             Batal
           </button>
           <button
+            type="button"
             onClick={onConfirm}
-            className="min-h-11 rounded-xl bg-red-600 px-4 text-sm font-black text-white shadow-lg shadow-red-600/20 transition-colors hover:bg-red-700"
+            className="h-10 rounded-xl bg-red-600 px-4 text-xs font-bold text-white transition-colors hover:bg-red-700 active:bg-red-800"
           >
-            Hapus ID
+            Ya, Hapus
           </button>
         </div>
       </motion.div>
     </motion.div>
   );
 };
+

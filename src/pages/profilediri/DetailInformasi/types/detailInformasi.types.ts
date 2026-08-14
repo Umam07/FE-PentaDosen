@@ -24,7 +24,8 @@ export interface InfoTileProps {
   icon: React.ComponentType<any>;
 }
 
-export type IdentityBadgeTone = 'blue' | 'rose' | 'emerald' | 'violet';
+export type IdentityBadgeTone = 'blue' | 'rose' | 'orange' | 'emerald' | 'violet';
+
 
 export interface IdentityBadgeProps {
   label: string;

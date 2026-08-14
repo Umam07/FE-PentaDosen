@@ -26,8 +26,9 @@ export const PublicationIdentity: React.FC<PublicationIdentityProps> = ({ user }
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <IdentityBadge label="Google Scholar" value={user?.scholar_id} icon={Globe} tone="blue" />
-        <IdentityBadge label="Scopus" value={user?.scopus_id} icon={Hash} tone="rose" />
+        <IdentityBadge label="Scopus" value={user?.scopus_id} icon={Hash} tone="orange" />
         <IdentityBadge label="Penta ID" value={user?.penta_id} icon={Fingerprint} tone="emerald" />
+
         <IdentityBadge label="NIDN / NIP" value={user?.nidn || user?.nip} icon={User} tone="violet" />
       </div>
     </div>
