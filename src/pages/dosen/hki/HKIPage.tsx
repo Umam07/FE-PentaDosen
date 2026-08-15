@@ -35,7 +35,7 @@ export default function HKI({ user }: { user: UserSession }) {
   }, [hki.message, hki.messageType]);
 
   return (
-    <div className="w-full space-y-8 pb-12">
+    <div className="w-full space-y-6 pb-12">
 
       {/* Header Halaman */}
       <HKIHeader

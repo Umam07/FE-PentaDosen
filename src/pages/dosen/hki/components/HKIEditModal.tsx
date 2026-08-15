@@ -113,7 +113,7 @@ export default function HKIEditModal({
       isOpen={isOpen && !!editDoc}
       onClose={onClose}
       title="Edit HKI"
-      subtitle={editDoc ? `Perbarui data HKI #${editDoc.id}` : undefined}
+      subtitle={editDoc ? 'Perbarui data HKI Anda' : undefined}
       icon={Pencil}
       iconColorClass="text-blue-500"
       maxWidthClass="max-w-lg"

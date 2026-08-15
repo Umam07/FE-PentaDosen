@@ -1,6 +1,6 @@
 import React from 'react';
 import { Award, CheckCircle, Clock, Sparkles } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface HKIStatsProps {
   stats: {
@@ -17,31 +17,35 @@ export default function HKIStats({ stats, isTableLoading }: HKIStatsProps) {
     { label: 'Total HKI', value: stats.total, icon: Award, color: 'slate' },
     { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
     { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
-    { label: 'Poin HKI', value: stats.points, icon: Sparkles, color: 'indigo' },
+    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'indigo' },
   ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+    <section className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
       {statItems.map((item, index) => (
         <motion.div
           key={item.label}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-          className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl border border-gray-100 dark:border-zinc-800 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow"
+          transition={{ delay: index * 0.05 }}
+          className="bg-white dark:bg-slate-900 shadow-xs rounded-2xl border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all"
         >
-          <div className={`p-3 rounded-xl shrink-0 ${
-            item.color === 'slate' ? 'bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400' :
+          <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${
+            item.color === 'slate' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' :
             item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
             item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
-            'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400'
+            'bg-slate-100 dark:bg-slate-800 text-primary-600 dark:text-primary-400'
           }`}>
-            <item.icon className="h-6 w-6" />
+            <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 w-full">
             <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-1">
-              <p className="text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-widest">{item.label}</p>
-              <p className="text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">{item.value}</p>
+              <p className="text-[9px] sm:text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-wider truncate" title={item.label}>
+                {item.label}
+              </p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">
+                {item.value}
+              </p>
             </phantom-ui>
           </div>
         </motion.div>
