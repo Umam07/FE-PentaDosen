@@ -46,20 +46,20 @@ export default function PublicationStats({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.05 }}
           onClick={item.onClick}
-          className={`group bg-white dark:bg-zinc-900 shadow-sm rounded-2xl border p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all relative overflow-hidden ${
+          className={`group bg-white dark:bg-slate-900 shadow-xs rounded-2xl border p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all relative overflow-hidden ${
             item.isClickable ? 'cursor-pointer hover:border-teal-400 hover:shadow-md active:scale-95' : ''
           } ${
             item.isActive
               ? 'border-teal-500 ring-2 ring-teal-500/20 bg-teal-50/40 dark:bg-teal-950/30'
-              : 'border-gray-100 dark:border-zinc-800'
+              : 'border-slate-200/80 dark:border-slate-800'
           }`}
         >
           <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${
-            item.color === 'slate' ? 'bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400' :
+            item.color === 'slate' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' :
             item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
             item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
             item.color === 'teal' ? 'bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400' :
-            'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400'
+            'bg-slate-100 dark:bg-slate-800 text-primary-600 dark:text-primary-400'
           }`}>
             <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
           </div>

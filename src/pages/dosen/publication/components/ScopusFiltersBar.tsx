@@ -171,8 +171,8 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
 
   const sourceOptions: FilterOption[] = useMemo(() => [
     { id: 'all', label: 'Semua', count: sourceCounts.total },
-    { id: 'external', label: '🌐 External API', count: sourceCounts.external },
-    { id: 'manual', label: '✍️ Input Manual', count: sourceCounts.manual },
+    { id: 'external', label: 'External API', count: sourceCounts.external },
+    { id: 'manual', label: 'Input Manual', count: sourceCounts.manual },
   ], [sourceCounts]);
 
   // Hitung jumlah filter yang sedang aktif
