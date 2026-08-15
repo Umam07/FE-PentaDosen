@@ -151,10 +151,9 @@ export default function ResearchTable({
                         >
                           {res.judul_penelitian}
                         </p>
-                        <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
+                        <p className="lg:hidden text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
                           <span className="md:hidden">{formatDateVal(res.tahun)} • </span>
-                          <span className="lg:hidden">{res.program} • </span>
-                          ID: #RES-{res.id.toString().padStart(4, '0')}
+                          <span>{res.program}</span>
                         </p>
                         {res.status === 'Rejected' && res.catatan && (
                           <div className="mt-2 text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded-lg border border-red-100 dark:border-red-900/30 w-fit uppercase tracking-tight">

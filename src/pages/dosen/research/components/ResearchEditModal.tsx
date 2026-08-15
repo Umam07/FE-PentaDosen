@@ -77,7 +77,7 @@ export default function ResearchEditModal({
       isOpen={isOpen && !!editDoc}
       onClose={onClose}
       title="Edit Penelitian"
-      subtitle={editDoc ? `Perbarui data penelitian #RES-${editDoc.id.toString().padStart(4, '0')}` : undefined}
+      subtitle={editDoc ? 'Perbarui data penelitian Anda' : undefined}
       icon={Pencil}
       iconColorClass="text-blue-500"
       maxWidthClass="max-w-2xl"
