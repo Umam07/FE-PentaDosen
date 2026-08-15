@@ -106,7 +106,7 @@ export default function BukuEditModal({
       isOpen={isOpen && !!editDoc}
       onClose={onClose}
       title="Edit Buku"
-      subtitle={editDoc ? `Perbarui data buku #${editDoc.id}` : undefined}
+      subtitle={editDoc ? 'Perbarui data buku Anda' : undefined}
       icon={Pencil}
       iconColorClass="text-blue-500"
       maxWidthClass="max-w-lg"
