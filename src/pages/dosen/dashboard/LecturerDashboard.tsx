@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Info, FileText, Globe, RefreshCw, Award, 
@@ -6,8 +6,9 @@ import {
 } from 'lucide-react';
 
 import useLecturerDashboard from './useLecturerDashboard';
-import InternalDocumentsView from './components/InternalDocumentsView';
-import ExternalDocumentsView from './components/ExternalDocumentsView';
+
+const InternalDocumentsView = lazy(() => import('./components/InternalDocumentsView'));
+const ExternalDocumentsView = lazy(() => import('./components/ExternalDocumentsView'));
 
 export default function LecturerDashboard({ user }: { user: any }) {
   const {
@@ -55,91 +56,29 @@ export default function LecturerDashboard({ user }: { user: any }) {
   const statsLocal = [
     { 
       label: 'Total KPI Overall', 
-      val: grandTotal.toLocaleString(), 
+      val: loading && !profileData ? null : grandTotal.toLocaleString(), 
       icon: Award
     },
     { 
       label: 'Total KPI Tahun Ini',
-      val: grandTotalThisYear.toLocaleString(),
+      val: loading && !profileData ? null : grandTotalThisYear.toLocaleString(),
       icon: Globe
     },
     { 
       label: 'Poin (Internal)',
-      val: internalPoints.toLocaleString(),
+      val: loading && !profileData ? null : internalPoints.toLocaleString(),
       icon: FileText
     }
   ];
-
-  if (loading) return (
-    <phantom-ui loading={true} animation="shimmer" className="block space-y-6 max-w-none pb-12">
-      {/* Profile Card Shell */}
-      <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-        {/* Profile Info Row Skeleton */}
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <div className="h-20 w-20 sm:h-22 sm:w-22 shrink-0 rounded-2xl bg-slate-200 dark:bg-slate-800" />
-          <div className="space-y-2 flex-1">
-            <div className="h-7 w-64 bg-slate-200 dark:bg-slate-800 rounded-lg" />
-            <div className="flex gap-4">
-              <div className="h-4 w-36 bg-slate-200 dark:bg-slate-800 rounded" />
-              <div className="h-4 w-28 bg-slate-200 dark:bg-slate-800 rounded" />
-            </div>
-          </div>
-        </div>
-
-        <div className="my-6 h-px w-full bg-slate-100 dark:bg-slate-800" />
-
-        {/* Stats Row Skeleton */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="flex min-h-[88px] items-center gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 dark:border-slate-800 dark:bg-slate-800/30">
-              <div className="h-11 w-11 rounded-xl bg-slate-200 dark:bg-slate-800 shrink-0" />
-              <div className="space-y-2 flex-1">
-                <div className="h-3 w-20 bg-slate-200 dark:bg-slate-800 rounded" />
-                <div className="h-6 w-14 bg-slate-200 dark:bg-slate-800 rounded" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="my-6 h-px w-full bg-slate-100 dark:bg-slate-800" />
-
-        {/* Scholar & Scopus Skeleton */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {[1, 2].map(i => (
-            <div key={i} className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-5 dark:border-slate-800 dark:bg-slate-800/30 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1.5">
-                  <div className="h-4 w-28 bg-slate-200 dark:bg-slate-800 rounded" />
-                  <div className="h-3 w-20 bg-slate-200 dark:bg-slate-800 rounded" />
-                </div>
-                <div className="h-5 w-20 bg-slate-200 dark:bg-slate-800 rounded-full" />
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {[1, 2, 3].map(j => (
-                  <div key={j} className="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200/70 dark:border-slate-800 text-center space-y-2">
-                    <div className="h-2.5 w-12 bg-slate-200 dark:bg-slate-800 rounded mx-auto" />
-                    <div className="h-6 w-8 bg-slate-200 dark:bg-slate-800 rounded mx-auto" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Switcher & Content Skeleton */}
-      <div className="h-12 w-full sm:w-80 bg-slate-200 dark:bg-slate-800 rounded-2xl mt-8" />
-      <div className="h-96 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 mt-6" />
-    </phantom-ui>
-  );
 
   return (
     <div className="w-full space-y-6 pb-20">
 
       {/* MAIN PROFILE & KPI SUMMARY CARD */}
       <motion.div
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
         className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8"
       >
         {/* Top Profile Info Section */}
@@ -224,12 +163,14 @@ export default function LecturerDashboard({ user }: { user: any }) {
                 <stat.icon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <span className="block text-[11px] font-semibold tracking-wide text-slate-500 dark:text-slate-400">
-                  {stat.label}
-                </span>
-                <span className="mt-1 block text-2xl font-extrabold leading-none tracking-tight text-slate-900 dark:text-white tabular-nums">
-                  {stat.val}
-                </span>
+                <phantom-ui loading={loading && !profileData} animation="shimmer" className="block space-y-1">
+                  <span className="block text-[11px] font-semibold tracking-wide text-slate-500 dark:text-slate-400">
+                    {stat.label}
+                  </span>
+                  <span className="mt-1 block text-2xl font-extrabold leading-none tracking-tight text-slate-900 dark:text-white tabular-nums">
+                    {stat.val ?? '0'}
+                  </span>
+                </phantom-ui>
               </div>
             </div>
           ))}
@@ -266,45 +207,47 @@ export default function LecturerDashboard({ user }: { user: any }) {
                   }`}
                 >
                   <span className={`h-1.5 w-1.5 rounded-full ${scholarData ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                  {scholarData ? 'Tersinkron' : 'Belum Sinkron'}
+                  {scholarData ? 'Tersinkron' : (loading && !profileData ? 'Memuat...' : 'Belum Sinkron')}
                 </span>
               </div>
 
-              {scholarData ? (
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      Dokumen
-                    </span>
-                    <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
-                      {scholarData.document_count ?? profileData?.publications?.length ?? 0}
-                    </span>
-                  </div>
+              <phantom-ui loading={loading && !profileData} animation="shimmer" className="block">
+                {scholarData ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
+                      <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Dokumen
+                      </span>
+                      <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
+                        {scholarData.document_count ?? profileData?.publications?.length ?? 0}
+                      </span>
+                    </div>
 
-                  <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      Total Sitasi
-                    </span>
-                    <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
-                      {scholarData.total_citations}
-                    </span>
-                  </div>
+                    <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
+                      <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Total Sitasi
+                      </span>
+                      <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
+                        {scholarData.total_citations}
+                      </span>
+                    </div>
 
-                  <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      h-index
-                    </span>
-                    <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
-                      {scholarData.h_index}
-                    </span>
+                    <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
+                      <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        h-index
+                      </span>
+                      <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
+                        {scholarData.h_index}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-6 text-center rounded-xl border border-dashed border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40">
-                  <BookOpen className="h-6 w-6 text-slate-300 dark:text-slate-600 mb-1.5" />
-                  <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada data terhubung</p>
-                </div>
-              )}
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center rounded-xl border border-dashed border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40">
+                    <BookOpen className="h-6 w-6 text-slate-300 dark:text-slate-600 mb-1.5" />
+                    <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada data terhubung</p>
+                  </div>
+                )}
+              </phantom-ui>
             </div>
 
             {scholarData?.last_synced && (
@@ -339,45 +282,47 @@ export default function LecturerDashboard({ user }: { user: any }) {
                   }`}
                 >
                   <span className={`h-1.5 w-1.5 rounded-full ${scopusData ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                  {scopusData ? 'Tersinkron' : 'Belum Sinkron'}
+                  {scopusData ? 'Tersinkron' : (loading && !profileData ? 'Memuat...' : 'Belum Sinkron')}
                 </span>
               </div>
 
-              {scopusData ? (
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      Dokumen
-                    </span>
-                    <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
-                      {scopusData.document_count}
-                    </span>
-                  </div>
+              <phantom-ui loading={loading && !profileData} animation="shimmer" className="block">
+                {scopusData ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
+                      <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Dokumen
+                      </span>
+                      <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
+                        {scopusData.document_count}
+                      </span>
+                    </div>
 
-                  <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      Total Sitasi
-                    </span>
-                    <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
-                      {scopusData.total_citations}
-                    </span>
-                  </div>
+                    <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
+                      <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Total Sitasi
+                      </span>
+                      <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
+                        {scopusData.total_citations}
+                      </span>
+                    </div>
 
-                  <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      h-index
-                    </span>
-                    <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
-                      {scopusData.h_index}
-                    </span>
+                    <div className="rounded-xl border border-slate-200/70 bg-white p-3.5 text-center dark:border-slate-800 dark:bg-slate-900/80">
+                      <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        h-index
+                      </span>
+                      <span className="mt-1 block text-2xl font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
+                        {scopusData.h_index}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-6 text-center rounded-xl border border-dashed border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40">
-                  <Globe className="h-6 w-6 text-slate-300 dark:text-slate-600 mb-1.5" />
-                  <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada data terhubung</p>
-                </div>
-              )}
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center rounded-xl border border-dashed border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/40">
+                    <Globe className="h-6 w-6 text-slate-300 dark:text-slate-600 mb-1.5" />
+                    <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada data terhubung</p>
+                  </div>
+                )}
+              </phantom-ui>
             </div>
 
             {scopusData?.last_synced && (
@@ -494,35 +439,43 @@ export default function LecturerDashboard({ user }: { user: any }) {
       {/* Tab Content View */}
       <div className="mt-4">
         {activeView === 'external' && (
-          <div className="space-y-6">
-            <ExternalDocumentsView 
-              publicationSubTab={publicationSubTab}
-              setPublicationSubTab={setPublicationSubTab}
-              scopusChartData={scopusChartData}
-              scholarChartData={scholarChartData}
-              scopusData={scopusData}
-              scholarData={scholarData}
-              publications={profileData?.publications || []}
-              scopusPublications={profileData?.scopusPublications || []}
-              tabVariants={tabVariants}
-              onRefresh={fetchData}
-              loading={loading}
-            />
-          </div>
+          <Suspense fallback={
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/60 dark:border-slate-800 min-h-[400px] animate-pulse" />
+          }>
+            <div className="space-y-6">
+              <ExternalDocumentsView 
+                publicationSubTab={publicationSubTab}
+                setPublicationSubTab={setPublicationSubTab}
+                scopusChartData={scopusChartData}
+                scholarChartData={scholarChartData}
+                scopusData={scopusData}
+                scholarData={scholarData}
+                publications={profileData?.publications || []}
+                scopusPublications={profileData?.scopusPublications || []}
+                tabVariants={tabVariants}
+                onRefresh={fetchData}
+                loading={loading}
+              />
+            </div>
+          </Suspense>
         )}
 
         {activeView === 'internal' && (
-          <InternalDocumentsView 
-            filteredDocs={filteredDocs}
-            allInternalDocs={internalDocumentsOnly}
-            loading={loading}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            itemsPerPage={itemsPerPage}
-            setItemsPerPage={setItemsPerPage}
-            categoryFilter={categoryFilter}
-            setCategoryFilter={setCategoryFilter}
-          />
+          <Suspense fallback={
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/60 dark:border-slate-800 min-h-[400px] animate-pulse" />
+          }>
+            <InternalDocumentsView 
+              filteredDocs={filteredDocs}
+              allInternalDocs={internalDocumentsOnly}
+              loading={loading}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+              setItemsPerPage={setItemsPerPage}
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
+            />
+          </Suspense>
         )}
       </div>
 

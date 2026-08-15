@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp, Calendar, Search, Lock, AlertTriangle, Info
 } from 'lucide-react';
-import { ProfileTrendChart } from './ProfileCharts';
+
+const ProfileTrendChart = lazy(() =>
+  import('./ProfileCharts').then((m) => ({ default: m.ProfileTrendChart }))
+);
 import { calculateScholarPoints } from '../pointsCalculator';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 
@@ -107,8 +110,8 @@ export default function ExternalDocumentsView({
             </div>
           </div>
 
-          {/* Ringkasan kalkulasi poin dari seluruh publikasi eksternal (Scopus & Scholar) */}
-          {(() => {
+          {/* Ringkasan kalkulasi poin dari seluruh publikasi eksternal (Scopus & Scholar) - Disembunyikan pada subtab metriks */}
+          {publicationSubTab !== 'metriks' && (() => {
             const crossTitles = new Set(
               scholarList.filter(sd =>
                 scopusList.some(s => normalizeTitle(s.title) === normalizeTitle(sd.title))
@@ -193,16 +196,18 @@ export default function ExternalDocumentsView({
                         </div>
 
                         <div className="h-[350px] w-full">
-                          <ProfileTrendChart
-                            chartData={scopusChartData.chartData}
-                            leftDomainMax={scopusChartData.leftMax}
-                            rightDomainMax={scopusChartData.rightMax}
-                            barColor="#f97316" // orange-500
-                            barGradientColor="#fb923c" // orange-400
-                            lineColor="#10b981" // emerald-500
-                            areaGradientColor="#10b981"
-                            gradientId="scopus"
-                          />
+                          <Suspense fallback={<div className="h-[350px] w-full bg-slate-50 dark:bg-slate-800/40 rounded-2xl animate-pulse" />}>
+                            <ProfileTrendChart
+                              chartData={scopusChartData.chartData}
+                              leftDomainMax={scopusChartData.leftMax}
+                              rightDomainMax={scopusChartData.rightMax}
+                              barColor="#f97316" // orange-500
+                              barGradientColor="#fb923c" // orange-400
+                              lineColor="#10b981" // emerald-500
+                              areaGradientColor="#10b981"
+                              gradientId="scopus"
+                            />
+                          </Suspense>
                         </div>
                       </div>
                     </div>
@@ -441,16 +446,18 @@ export default function ExternalDocumentsView({
                         </div>
 
                         <div className="h-[350px] w-full">
-                          <ProfileTrendChart
-                            chartData={scholarChartData.chartData}
-                            leftDomainMax={scholarChartData.leftMax}
-                            rightDomainMax={scholarChartData.rightMax}
-                            barColor="#3b82f6" // blue-500
-                            barGradientColor="#60a5fa" // blue-400
-                            lineColor="#8b5cf6" // violet-500
-                            areaGradientColor="#8b5cf6"
-                            gradientId="scholar"
-                          />
+                          <Suspense fallback={<div className="h-[350px] w-full bg-slate-50 dark:bg-slate-800/40 rounded-2xl animate-pulse" />}>
+                            <ProfileTrendChart
+                              chartData={scholarChartData.chartData}
+                              leftDomainMax={scholarChartData.leftMax}
+                              rightDomainMax={scholarChartData.rightMax}
+                              barColor="#3b82f6" // blue-500
+                              barGradientColor="#60a5fa" // blue-400
+                              lineColor="#8b5cf6" // violet-500
+                              areaGradientColor="#8b5cf6"
+                              gradientId="scholar"
+                            />
+                          </Suspense>
                         </div>
                       </div>
                     </div>

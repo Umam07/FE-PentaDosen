@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, Beaker, ShieldCheck, Book, Globe, BookMarked, Search, BarChart2, Lock
 } from 'lucide-react';
-import { PdfPreviewModal } from '../../../../components/ui/pdf-preview-modal';
-import { DocumentDetailDrawer } from '../../../../components/ui/document-detail-drawer';
+
+const PdfPreviewModal = lazy(() =>
+  import('../../../../components/ui/pdf-preview-modal').then((m) => ({ default: m.PdfPreviewModal }))
+);
+const DocumentDetailDrawer = lazy(() =>
+  import('../../../../components/ui/document-detail-drawer').then((m) => ({ default: m.DocumentDetailDrawer }))
+);
 
 import PenelitianTable from './internal-documents/PenelitianTable';
 import HKITable from './internal-documents/HKITable';
@@ -143,31 +148,33 @@ export default function InternalDocumentsView({
                           : 'bg-slate-50/40 dark:bg-slate-950/20 border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-3 mb-3">
-                        <div className={`p-2 rounded-xl border transition-colors flex items-center justify-center ${
-                          categoryFilter === cat.id
-                            ? 'bg-primary-100/80 dark:bg-primary-900/40 border-primary-200 dark:border-primary-800/60'
-                            : 'bg-slate-100 dark:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60'
-                        }`}>
-                          <cat.icon className={`w-4 h-4 ${
+                      <phantom-ui loading={loading} animation="shimmer" className="block space-y-1">
+                        <div className="flex items-center justify-between gap-3 mb-3">
+                          <div className={`p-2 rounded-xl border transition-colors flex items-center justify-center ${
                             categoryFilter === cat.id
-                              ? 'text-primary-600 dark:text-primary-400'
-                              : 'text-slate-500 dark:text-slate-400'
-                          }`} />
+                              ? 'bg-primary-100/80 dark:bg-primary-900/40 border-primary-200 dark:border-primary-800/60'
+                              : 'bg-slate-100 dark:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60'
+                          }`}>
+                            <cat.icon className={`w-4 h-4 ${
+                              categoryFilter === cat.id
+                                ? 'text-primary-600 dark:text-primary-400'
+                                : 'text-slate-500 dark:text-slate-400'
+                            }`} />
+                          </div>
+                          <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                            Poin
+                          </span>
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                          Poin
-                        </span>
-                      </div>
-                      <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
-                        {cat.label}
-                      </p>
-                      <h4 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight mt-1">
-                        +{points} <span className="text-xs font-black text-slate-400 dark:text-slate-500">PTS</span>
-                      </h4>
-                      <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 mt-1">
-                        {count} Dokumen Disetujui
-                      </p>
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
+                          {cat.label}
+                        </p>
+                        <h4 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight mt-1">
+                          +{points} <span className="text-xs font-black text-slate-400 dark:text-slate-500">PTS</span>
+                        </h4>
+                        <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 mt-1">
+                          {count} Dokumen Disetujui
+                        </p>
+                      </phantom-ui>
                     </div>
                   );
                 })}
@@ -210,9 +217,11 @@ export default function InternalDocumentsView({
 
               {/* Document list */}
               {loading ? (
-                <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest animate-pulse">
-                  Memuat data...
-                </div>
+                <phantom-ui loading={true} animation="shimmer" className="block space-y-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 p-4" />
+                  ))}
+                </phantom-ui>
               ) : filteredDocs.length > 0 ? (
                 <div className="space-y-4">
                   {renderActiveTable()}
@@ -255,50 +264,58 @@ export default function InternalDocumentsView({
         </AnimatePresence>
       </div>
 
-      <DocumentDetailDrawer
-        isOpen={!!selectedDocForDetail}
-        onClose={() => setSelectedDocForDetail(null)}
-        drawerTitle={selectedDocForDetail?.category === 'Penelitian' ? "Detail Penelitian" : "Detail Dokumen"}
-        drawerSubtitle="Informasi &amp; Output Akademik"
-        category={selectedDocForDetail?.category ?? ''}
-        title={selectedDocForDetail?.title ?? ''}
-        status={selectedDocForDetail?.status ?? ''}
-        catatan={selectedDocForDetail?.catatan}
-        year={
-          selectedDocForDetail?.published_at
-            ? new Date(selectedDocForDetail.published_at).getFullYear()
-            : (selectedDocForDetail?.tahun_pelaksanaan ?? '-')
-        }
-        points={selectedDocForDetail?.awarded_points || 0}
-        isKpiCounted={selectedDocForDetail?.is_kpi_counted}
-        hideKpiClassification={selectedDocForDetail?.category === 'Penelitian'}
-        showResearchLink={selectedDocForDetail?.category !== 'Penelitian' && selectedDocForDetail?.category !== 'all'}
-        linkedResearch={selectedDocForDetail?.penelitian}
-        fileUrl={selectedDocForDetail?.file_url}
-        docId={selectedDocForDetail?.id || 0}
-        onPreviewClick={() => {
-          if (selectedDocForDetail?.file_url) {
-            setPreviewDoc({
-              fileUrl: selectedDocForDetail.file_url,
-              title: selectedDocForDetail.title,
-              category: selectedDocForDetail.category,
-            });
-          }
-        }}
-        customMetadata={
-          selectedDocForDetail && (
-            <ScopusMetaBadges doc={selectedDocForDetail} />
-          )
-        }
-      />
+      {selectedDocForDetail && (
+        <Suspense fallback={null}>
+          <DocumentDetailDrawer
+            isOpen={!!selectedDocForDetail}
+            onClose={() => setSelectedDocForDetail(null)}
+            drawerTitle={selectedDocForDetail?.category === 'Penelitian' ? "Detail Penelitian" : "Detail Dokumen"}
+            drawerSubtitle="Informasi &amp; Output Akademik"
+            category={selectedDocForDetail?.category ?? ''}
+            title={selectedDocForDetail?.title ?? ''}
+            status={selectedDocForDetail?.status ?? ''}
+            catatan={selectedDocForDetail?.catatan}
+            year={
+              selectedDocForDetail?.published_at
+                ? new Date(selectedDocForDetail.published_at).getFullYear()
+                : (selectedDocForDetail?.tahun_pelaksanaan ?? '-')
+            }
+            points={selectedDocForDetail?.awarded_points || 0}
+            isKpiCounted={selectedDocForDetail?.is_kpi_counted}
+            hideKpiClassification={selectedDocForDetail?.category === 'Penelitian'}
+            showResearchLink={selectedDocForDetail?.category !== 'Penelitian' && selectedDocForDetail?.category !== 'all'}
+            linkedResearch={selectedDocForDetail?.penelitian}
+            fileUrl={selectedDocForDetail?.file_url}
+            docId={selectedDocForDetail?.id || 0}
+            onPreviewClick={() => {
+              if (selectedDocForDetail?.file_url) {
+                setPreviewDoc({
+                  fileUrl: selectedDocForDetail.file_url,
+                  title: selectedDocForDetail.title,
+                  category: selectedDocForDetail.category,
+                });
+              }
+            }}
+            customMetadata={
+              selectedDocForDetail && (
+                <ScopusMetaBadges doc={selectedDocForDetail} />
+              )
+            }
+          />
+        </Suspense>
+      )}
 
-      <PdfPreviewModal
-        isOpen={!!previewDoc}
-        onClose={() => setPreviewDoc(null)}
-        fileUrl={previewDoc?.fileUrl ?? null}
-        title={previewDoc?.title}
-        category={previewDoc?.category}
-      />
+      {previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!previewDoc}
+            onClose={() => setPreviewDoc(null)}
+            fileUrl={previewDoc?.fileUrl ?? null}
+            title={previewDoc?.title}
+            category={previewDoc?.category}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

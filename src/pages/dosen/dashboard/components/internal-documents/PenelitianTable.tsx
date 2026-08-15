@@ -72,9 +72,6 @@ export default function PenelitianTable({
                         <p className="font-extrabold text-slate-900 dark:text-slate-100 uppercase tracking-tight truncate max-w-xs lg:max-w-sm" title={doc.title}>
                           {doc.title}
                         </p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                          ID: {doc.id_dokumen || ('RESEARCH-' + doc.id)}
-                        </p>
                         {doc.status === 'Rejected' && doc.catatan && (
                           <div className="mt-2 text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded-lg border border-red-100 dark:border-red-900/30 w-fit uppercase tracking-tight">
                             Catatan Umpan Balik: {doc.catatan}
@@ -171,8 +168,6 @@ export default function PenelitianTable({
                       {doc.title}
                     </p>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1.5">
-                      <span>ID: {doc.id_dokumen || ('RESEARCH-' + doc.id)}</span>
-                      <span>•</span>
                       <span className="flex items-center gap-1">
                         <CalendarDays className="w-3 h-3 text-slate-400" />
                         {formatTanggal(doc.tahun_pelaksanaan)}

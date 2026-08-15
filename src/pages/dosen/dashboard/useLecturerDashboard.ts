@@ -7,9 +7,36 @@ import {
 } from './pointsCalculator';
 
 export default function useLecturerDashboard(user: any) {
-  const [internalDocuments, setInternalDocuments] = useState<any[]>([]);
-  const [profileData, setProfileData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [internalDocuments, setInternalDocuments] = useState<any[]>(() => {
+    if (!user?.id) return [];
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_docs_${user.id}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [profileData, setProfileData] = useState<any>(() => {
+    if (!user?.id) return null;
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_profile_${user.id}`);
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [loading, setLoading] = useState(() => {
+    if (!user?.id) return true;
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_profile_${user.id}`);
+      return !cached;
+    } catch {
+      return true;
+    }
+  });
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [categoryFilter, setCategoryFilter] = useState<string>('penelitian');
@@ -18,7 +45,9 @@ export default function useLecturerDashboard(user: any) {
 
   const fetchData = async () => {
     if (!user?.id) return;
-    setLoading(true);
+    if (!profileData) {
+      setLoading(true);
+    }
     try {
       const [docsRes, profileRes, penRes] = await Promise.all([
         fetch(`/api/users/${user.id}/documents`),
@@ -48,10 +77,16 @@ export default function useLecturerDashboard(user: any) {
       }
 
       setInternalDocuments(combinedDocs);
+      try {
+        sessionStorage.setItem(`pentadosen_docs_${user.id}`, JSON.stringify(combinedDocs));
+      } catch (e) {}
 
       if (profileRes.ok) {
         const data = await profileRes.json();
         setProfileData(data);
+        try {
+          sessionStorage.setItem(`pentadosen_profile_${user.id}`, JSON.stringify(data));
+        } catch (e) {}
       }
 
     } catch (err) {
