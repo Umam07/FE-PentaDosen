@@ -42,15 +42,15 @@ function DashboardRedirect({ user }: { user: any }) {
     return <Navigate to="/admin/verify" />;
   }
   
-  // Check if ID is missing for Dosen
-  if (user.role === 'dosen' && (!user.scholar_id || !user.scopus_id)) {
-    return <Navigate to="/profile?warning=true" />;
-  }
-
-  // Redirect new dosen users to profile page to complete setup
+  // 1. Redirect new dosen users to profile page to complete onboarding first
   const hasSeenOnboarding = localStorage.getItem('penta_onboarding_seen');
   if (!hasSeenOnboarding && user.role === 'dosen') {
-    return <Navigate to="/profile" />;
+    return <Navigate to="/profile?tab=integrasi" />;
+  }
+
+  // 2. Check if ID is missing for Dosen (only after onboarding has been seen)
+  if (user.role === 'dosen' && (!user.scholar_id || !user.scopus_id)) {
+    return <Navigate to="/profile?warning=true" />;
   }
   
   return <Navigate to="/lecturer-dashboard" />;

@@ -52,8 +52,10 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tabParam = params.get('tab');
+    const isWarningParam = params.get('warning') === 'true';
+    const hasSeenOnboarding = localStorage.getItem('penta_onboarding_seen');
 
-    if (tabParam === 'integrasi' || params.get('warning') === 'true') {
+    if (tabParam === 'integrasi' || isWarningParam) {
       setActiveTab('integrasi');
     } else if (tabParam === 'info') {
       setActiveTab('info');
@@ -64,7 +66,14 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       }
     }
 
-    if (user && user.role === 'dosen' && (!user.scholar_id || !user.scopus_id) && !warningDismissedRef.current) {
+    if (
+      user &&
+      user.role === 'dosen' &&
+      (!user.scholar_id || !user.scopus_id) &&
+      !warningDismissedRef.current &&
+      hasSeenOnboarding === 'true' &&
+      isWarningParam
+    ) {
       setShowWarningModal(true);
     }
   }, [user, location.search]);
