@@ -27,7 +27,7 @@ export default function SyncTrackerTable({
   onItemsPerPageChange,
 }: SyncTrackerTableProps) {
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-xs overflow-hidden">
       
       {/* Table Header Filter controls */}
       <TableFilterHeader
@@ -66,13 +66,13 @@ export default function SyncTrackerTable({
 
       {/* Table Rendering */}
       <div className="overflow-x-auto scrollbar-hide">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
-          <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
+        <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs whitespace-nowrap">
+          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
             <tr>
               {['Nama Dosen', 'Fakultas / Prodi', 'Scholar Status', 'Scopus Status', 'Kendali'].map((h, i) => (
                 <th 
                   key={i} 
-                  className={`px-6 py-3.5 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider ${
+                  className={`px-6 py-3.5 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider ${
                     ['Scholar Status', 'Scopus Status', 'Kendali'].includes(h) ? 'text-center' : 'text-left'
                   }`}
                 >
@@ -81,23 +81,23 @@ export default function SyncTrackerTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
+          <tbody className="divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
             {currentLecturers.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center">
                   <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-3">
-                    <div className="p-3 bg-gray-100 dark:bg-zinc-800 rounded-2xl text-gray-400 dark:text-zinc-500">
+                    <div className="p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl text-muted-soft dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark">
                       <Search className="w-6 h-6" />
                     </div>
-                    <p className="text-sm font-bold text-gray-800 dark:text-zinc-200">Tidak ada dosen ditemukan</p>
-                    <p className="text-xs text-gray-400 dark:text-zinc-500">Coba ubah kata kunci pencarian atau sesuaikan filter fakultas yang dipilih.</p>
+                    <p className="text-sm font-bold text-ink-heading dark:text-on-dark">Tidak ada dosen ditemukan</p>
+                    <p className="text-xs text-muted dark:text-on-dark-muted">Coba ubah kata kunci pencarian atau sesuaikan filter fakultas yang dipilih.</p>
                     {(searchTerm || selectedFakultas) && (
                       <button
                         onClick={() => {
                           onSearchChange('');
                           onFakultasChange('');
                         }}
-                        className="mt-2 px-4 py-2 bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 text-xs font-bold rounded-xl border border-primary-200/60 dark:border-primary-800/40 hover:bg-primary-100 transition-colors cursor-pointer"
+                        className="mt-2 px-4 py-2 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-xs font-semibold rounded-xl border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
                       >
                         Reset Filter &amp; Pencarian
                       </button>
@@ -113,13 +113,13 @@ export default function SyncTrackerTable({
                   <tr 
                     key={l.id} 
                     className={`group transition-colors 
-                      ${selectedLecturerId === l.id ? 'bg-primary-50/20 dark:bg-primary-950/40' : 'hover:bg-gray-50/70 dark:hover:bg-zinc-800/40'}
-                      ${isCurrentlySyncing ? 'bg-emerald-50/10 dark:bg-emerald-950/5 border-l-4 border-l-emerald-500' : ''}
+                      ${selectedLecturerId === l.id ? 'bg-accent-soft/30 dark:bg-accent-soft/10' : 'hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'}
+                      ${isCurrentlySyncing ? 'bg-success-soft/20 dark:bg-success/10 border-l-4 border-l-success' : ''}
                     `}
                   >
                     <td className="px-6 py-4 text-left">
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-gray-400 dark:text-zinc-500 font-bold text-xs border border-gray-200 dark:border-zinc-700 shadow-xs group-hover:scale-105 transition-transform overflow-hidden shrink-0">
+                      <div className="flex items-center gap-3.5">
+                        <div className="h-10 w-10 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center text-muted font-bold font-mono text-xs border border-hairline-light dark:border-hairline-dark shadow-xs overflow-hidden shrink-0">
                           {l.thumbnail ? (
                             <img src={l.thumbnail} alt={l.name} className="w-full h-full object-cover" />
                           ) : (
@@ -128,18 +128,18 @@ export default function SyncTrackerTable({
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="text-xs font-bold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 transition-colors">
+                            <p className="text-xs font-semibold text-ink-heading dark:text-on-dark group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
                               {l.name}
                             </p>
                             {isCurrentlySyncing && (
-                              <span className="flex items-center text-[8px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-md uppercase tracking-widest animate-pulse border border-emerald-100/20 shrink-0">
-                                <Loader2 className="w-2.5 h-2.5 animate-spin mr-1 text-emerald-500" />
+                              <span className="flex items-center text-[9px] font-semibold text-success-dark dark:text-success-on-dark bg-success-soft dark:bg-success/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse border border-success-border shrink-0">
+                                <Loader2 className="w-2.5 h-2.5 animate-spin mr-1 text-success" />
                                 Syncing
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-500 dark:text-zinc-400 flex items-center gap-1.5 mt-0.5">
-                             <Mail className="w-3.5 h-3.5 text-primary-400/70" />
+                          <p className="text-[10px] font-mono text-muted dark:text-on-dark-muted flex items-center gap-1 mt-0.5">
+                             <Mail className="w-3 h-3 text-muted-soft dark:text-on-dark-muted" />
                              {l.email || 'N/A'}
                           </p>
                         </div>
@@ -148,10 +148,10 @@ export default function SyncTrackerTable({
                     
                     <td className="px-6 py-4 text-left">
                       <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-gray-900 dark:text-zinc-100">
+                        <span className="text-xs font-semibold text-body-strong dark:text-on-dark">
                           {l.program_studi || 'N/A'}
                         </span>
-                        <span className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+                        <span className="text-[10px] font-medium text-muted dark:text-on-dark-muted mt-0.5">
                           {l.fakultas || 'N/A'}
                         </span>
                       </div>
@@ -160,16 +160,16 @@ export default function SyncTrackerTable({
                     <td className="px-6 py-4 text-center">
                       {l.scholar_id ? (
                         <div className="space-y-1">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40">
-                             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-chart-scholar/10 text-chart-scholar dark:text-chart-scholar-dark border border-chart-scholar/20 uppercase tracking-wider">
+                             <div className="w-1.5 h-1.5 bg-chart-scholar rounded-full animate-pulse"></div>
                              Scholar Connected
                           </span>
-                          <p className="text-xs text-gray-500 dark:text-zinc-400 font-mono">
+                          <p className="text-[10px] text-muted dark:text-on-dark-muted font-mono">
                             ID: {l.scholar_id}
                           </p>
                         </div>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md border border-gray-200/60 dark:border-zinc-700/60 font-mono">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-full border border-hairline-light-soft dark:border-hairline-dark-soft uppercase tracking-wider">
                            Belum Terhubung
                         </span>
                       )}
@@ -178,16 +178,16 @@ export default function SyncTrackerTable({
                     <td className="px-6 py-4 text-center">
                       {l.scopus_id ? (
                         <div className="space-y-1">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40">
-                             <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></div>
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-chart-scopus/10 text-chart-scopus dark:text-chart-scopus-dark border border-chart-scopus/20 uppercase tracking-wider">
+                             <div className="w-1.5 h-1.5 bg-chart-scopus rounded-full animate-pulse"></div>
                              Scopus Connected
                           </span>
-                          <p className="text-xs text-gray-500 dark:text-zinc-400 font-mono">
+                          <p className="text-[10px] text-muted dark:text-on-dark-muted font-mono">
                             ID: {l.scopus_id}
                           </p>
                         </div>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800/80 px-2.5 py-1 rounded-md border border-gray-200/60 dark:border-zinc-700/60 font-mono">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-full border border-hairline-light-soft dark:border-hairline-dark-soft uppercase tracking-wider">
                            Belum Terhubung
                         </span>
                       )}
@@ -196,7 +196,7 @@ export default function SyncTrackerTable({
                     <td className="px-6 py-4 text-center">
                        <button
                          onClick={() => onSelectLecturer(l.id)}
-                         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/40 hover:bg-primary-100 dark:hover:bg-primary-900/60 border border-primary-200/60 dark:border-primary-800/40 rounded-xl transition-all cursor-pointer shadow-xs group/btn"
+                         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-ink-heading dark:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl transition-all cursor-pointer shadow-xs group/btn"
                        >
                          Kelola <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
                        </button>
@@ -211,14 +211,14 @@ export default function SyncTrackerTable({
 
       {/* Pagination */}
       {filteredCount > 0 && (
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 rounded-b-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-500 dark:text-zinc-400">
-              Menampilkan <span className="font-semibold text-gray-800 dark:text-zinc-200">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredCount)}</span> dari <span className="font-semibold text-gray-800 dark:text-zinc-200">{filteredCount}</span> Dosen
+            <span className="text-xs text-muted dark:text-on-dark-muted">
+              Menampilkan <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredCount)}</span> dari <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{filteredCount}</span> Dosen
             </span>
-            <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 hidden sm:block" />
+            <div className="h-4 w-px bg-hairline-light dark:bg-hairline-dark hidden sm:block" />
             <div className="hidden sm:flex items-center gap-2">
-              <span className="text-xs text-gray-400">Limit:</span>
+              <span className="text-xs text-muted dark:text-on-dark-muted">Limit:</span>
               <DropdownSelect
                 value={itemsPerPage}
                 onChange={(val) => { onItemsPerPageChange(val); onPageChange(1); }}
@@ -239,7 +239,7 @@ export default function SyncTrackerTable({
             <button
               disabled={currentPage === 1}
               onClick={() => onPageChange((p: number) => Math.max(1, p - 1))}
-              className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
+              className="p-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -250,14 +250,14 @@ export default function SyncTrackerTable({
                 .map((p, index, array) => (
                   <React.Fragment key={p}>
                     {index > 0 && array[index - 1] !== p - 1 && (
-                      <span className="px-1 text-gray-300 dark:text-zinc-600 text-xs">...</span>
+                      <span className="px-1 text-muted-soft dark:text-on-dark-muted text-xs font-mono">...</span>
                     )}
                     <button
                       onClick={() => onPageChange(p)}
-                      className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-all ${
+                      className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-mono transition-all cursor-pointer ${
                         currentPage === p 
-                          ? 'bg-primary-600 text-white shadow-xs' 
-                          : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
+                          ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark font-semibold shadow-xs' 
+                          : 'bg-surface-light dark:bg-surface-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                       }`}
                     >
                       {p}
@@ -269,7 +269,7 @@ export default function SyncTrackerTable({
             <button
               disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => onPageChange((p: number) => Math.min(totalPages, p + 1))}
-              className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
+              className="p-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

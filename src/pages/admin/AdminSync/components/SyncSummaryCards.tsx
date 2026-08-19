@@ -8,34 +8,34 @@ export default function SyncSummaryCards({
   scopusConnected
 }: SyncSummaryCardsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_20px_rgba(0,0,0,0.02)] dark:shadow-none rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex items-center justify-between group transition-all hover:border-gray-200 dark:hover:border-zinc-700 hover:shadow-sm">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      <div className="bg-surface-light dark:bg-surface-dark shadow-xs rounded-2xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-6 flex items-center justify-between transition-all hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated">
          <div>
-            <p className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Database Dosen</p>
-            <p className="text-3xl font-black text-gray-900 dark:text-zinc-100 mt-1">{totalLecturers}</p>
+            <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Database Dosen</p>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-ink-heading dark:text-on-dark mt-1">{totalLecturers}</p>
          </div>
-         <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100/50 dark:border-primary-900/20">
-            <Users className="h-6 w-6" />
+         <div className="p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-ink-heading dark:text-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft">
+            <Users className="h-5 w-5" />
          </div>
       </div>
       
-      <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_20px_rgba(0,0,0,0.02)] dark:shadow-none rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex items-center justify-between group transition-all hover:border-gray-200 dark:hover:border-zinc-700 hover:shadow-sm">
+      <div className="bg-surface-light dark:bg-surface-dark shadow-xs rounded-2xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-6 flex items-center justify-between transition-all hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated">
          <div>
-            <p className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Scholar Connected</p>
-            <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">{scholarConnected}</p>
+            <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Scholar Connected</p>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-chart-scholar dark:text-chart-scholar-dark mt-1">{scholarConnected}</p>
          </div>
-         <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-2xl text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
-            <BookOpen className="h-6 w-6" />
+         <div className="p-3 bg-chart-scholar/10 text-chart-scholar dark:text-chart-scholar-dark rounded-xl border border-chart-scholar/20">
+            <BookOpen className="h-5 w-5" />
          </div>
       </div>
       
-      <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_20px_rgba(0,0,0,0.02)] dark:shadow-none rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex items-center justify-between group transition-all hover:border-gray-200 dark:hover:border-zinc-700 hover:shadow-sm">
+      <div className="bg-surface-light dark:bg-surface-dark shadow-xs rounded-2xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-6 flex items-center justify-between transition-all hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated">
          <div>
-            <p className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Scopus Connected</p>
-            <p className="text-3xl font-black text-orange-600 dark:text-orange-400 mt-1">{scopusConnected}</p>
+            <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Scopus Connected</p>
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-chart-scopus dark:text-chart-scopus-dark mt-1">{scopusConnected}</p>
          </div>
-         <div className="p-4 bg-orange-50 dark:bg-orange-950/30 rounded-2xl text-orange-600 dark:text-orange-400 border border-orange-100/50 dark:border-orange-900/20">
-            <Globe className="h-6 w-6" />
+         <div className="p-3 bg-chart-scopus/10 text-chart-scopus dark:text-chart-scopus-dark rounded-xl border border-chart-scopus/20">
+            <Globe className="h-5 w-5" />
          </div>
       </div>
     </div>

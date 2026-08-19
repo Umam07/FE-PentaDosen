@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Globe, X } from 'lucide-react';
+import { GraduationCap, Mail, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { LecturerManagementPanelProps } from '../types/adminSync.types';
 import ScholarIntegrationCard from './ScholarIntegrationCard';
@@ -39,14 +39,13 @@ export default function LecturerManagementPanel({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.25 }}
-          className="space-y-8"
+          className="space-y-6"
         >
           {/* Lecturer Management Header */}
-          <div className="bg-white dark:bg-zinc-900 shadow-[0_4px_25px_rgba(0,0,0,0.02)] dark:shadow-none rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 overflow-hidden relative group">
-             <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent dark:from-primary-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-             <div className="p-8 flex flex-col md:flex-row gap-8 md:items-center justify-between relative z-10">
-                <div className="flex flex-col md:flex-row gap-6 md:items-center">
-                  <div className="h-20 w-20 rounded-3xl bg-primary-600 dark:bg-primary-500 flex items-center justify-center text-white text-3xl font-black shadow-lg shadow-primary-500/20 transform -rotate-2 group-hover:rotate-0 transition-all duration-500 border-2 border-white dark:border-zinc-800 overflow-hidden">
+          <div className="bg-surface-light dark:bg-surface-dark shadow-xs rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden relative">
+             <div className="p-6 flex flex-col md:flex-row gap-6 md:items-center justify-between">
+                <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
+                  <div className="h-16 w-16 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center text-ink-heading dark:text-on-dark text-2xl font-bold font-mono border border-hairline-light dark:border-hairline-dark shadow-xs overflow-hidden shrink-0">
                     {scholarData?.thumbnail ? (
                       <img src={scholarData.thumbnail} alt={scholarUser.name} className="w-full h-full object-cover" />
                     ) : (
@@ -54,14 +53,14 @@ export default function LecturerManagementPanel({
                     )}
                   </div>
                   <div>
-                    <h4 className="text-2xl font-black text-gray-950 dark:text-zinc-100 uppercase tracking-tight">{scholarUser.name}</h4>
-                    <div className="mt-2 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-6">
-                      <p className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest flex items-center">
-                        <GraduationCap className="h-4 w-4 mr-2 text-primary-500" />
+                    <h4 className="text-xl sm:text-2xl font-bold text-ink-heading dark:text-on-dark tracking-tight">{scholarUser.name}</h4>
+                    <div className="mt-1 flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4">
+                      <p className="text-xs font-semibold text-muted dark:text-on-dark-muted flex items-center">
+                        <GraduationCap className="h-3.5 w-3.5 mr-1.5 text-muted-soft dark:text-on-dark-muted" />
                         {scholarUser.program_studi || 'N/A'}
                       </p>
-                      <p className="text-[11px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest flex items-center">
-                        <Globe className="h-4 w-4 mr-2 text-primary-500" />
+                      <p className="text-xs font-mono font-medium text-muted dark:text-on-dark-muted flex items-center">
+                        <Mail className="h-3.5 w-3.5 mr-1.5 text-muted-soft dark:text-on-dark-muted" />
                         {scholarUser.email}
                       </p>
                     </div>
@@ -69,14 +68,14 @@ export default function LecturerManagementPanel({
                 </div>
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 hover:border-red-200 dark:hover:border-red-900/30 rounded-2xl text-[10px] font-black text-gray-400 hover:text-red-500 uppercase tracking-widest transition-all shadow-sm flex items-center gap-2 group/close"
+                  className="px-4 py-2.5 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark hover:border-error/30 dark:hover:border-error/30 rounded-xl text-xs font-semibold text-muted dark:text-on-dark-muted hover:text-error dark:hover:text-error uppercase tracking-wider transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <X className="w-4 h-4 group-hover/close:rotate-90 transition-transform" /> Tutup Panel
+                  <X className="w-4 h-4" /> Tutup Panel
                 </button>
              </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <ScholarIntegrationCard
               scholarId={scholarId}
               scholarData={scholarData}
