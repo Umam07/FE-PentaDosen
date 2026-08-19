@@ -6,15 +6,15 @@ export default function VerificationTabs({
   onTabChange
 }: VerificationTabsProps) {
   return (
-    <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 overflow-x-auto scrollbar-hide">
+    <div className="flex border-b border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated overflow-x-auto scrollbar-hide">
       {(['publikasi', 'hki', 'penelitian', 'buku'] as const).map((tab) => (
          <button
            key={tab}
            onClick={() => onTabChange(tab)}
-           className={`px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] border-b-2 transition-all whitespace-nowrap ${
+           className={`px-6 sm:px-8 py-3.5 sm:py-4 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all whitespace-nowrap cursor-pointer ${
              activeTab === tab 
-               ? 'border-primary-600 text-primary-600 dark:text-primary-400 bg-white dark:bg-zinc-900' 
-               : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+               ? 'border-accent dark:border-accent-on-dark text-ink-heading dark:text-on-dark bg-surface-light dark:bg-surface-dark font-bold' 
+               : 'border-transparent text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
            }`}
          >
            {tab}

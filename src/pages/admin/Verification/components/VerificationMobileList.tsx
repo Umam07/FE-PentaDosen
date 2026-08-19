@@ -12,38 +12,38 @@ export default function VerificationMobileList({
   onPreview
 }: VerificationMobileListProps) {
   return (
-    <div className="md:hidden divide-y divide-gray-50 dark:divide-zinc-800/50">
+    <div className="md:hidden divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft">
       {items.map((item: any) => (
-        <div key={item.id} className="p-6 space-y-5 bg-white dark:bg-zinc-900">
-          <div className="flex justify-between items-start gap-4">
+        <div key={item.id} className="p-5 space-y-4 bg-surface-light dark:bg-surface-dark">
+          <div className="flex justify-between items-start gap-3">
             <div className="flex-1">
-              <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight line-clamp-1">
+              <p className="text-sm font-semibold text-ink-heading dark:text-on-dark line-clamp-1">
                 {activeTab === 'penelitian' ? item.user?.name : (item.user?.name || item.user_name)}
               </p>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Dosen Pengaju</p>
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Dosen Pengaju</p>
                 {userRole === 'admin penelitian' && (
-                  <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100/50">
+                  <span className="text-[9px] font-mono font-semibold px-2 py-0.5 rounded-md uppercase tracking-wider bg-accent-soft text-accent dark:bg-accent/15 dark:text-accent-on-dark border border-accent-border dark:border-accent/30">
                     FAKULTAS VERIFIED
                   </span>
                 )}
               </div>
             </div>
-            <span className="text-[9px] font-black text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-3 py-1.5 rounded-xl border border-primary-100 dark:border-primary-900/30 uppercase tracking-widest shadow-sm">
+            <span className="text-[10px] font-mono font-semibold text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-lg border border-hairline-light-soft dark:border-hairline-dark-soft uppercase tracking-wider">
               {activeTab === 'penelitian' ? item.program : item.category}
             </span>
           </div>
 
-          <div className="flex items-center gap-4 bg-gray-50/50 dark:bg-zinc-800/50 p-4 rounded-2xl border border-gray-100/50 dark:border-zinc-800/50">
-            <div className="p-3 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-700 text-gray-400">
+          <div className="flex items-center gap-3 bg-surface-light-raised dark:bg-surface-dark-elevated p-4 rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft">
+            <div className="p-2.5 bg-surface-light dark:bg-surface-dark rounded-xl shadow-xs border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted">
               {activeTab === 'penelitian' ? <Beaker className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-black text-gray-800 dark:text-zinc-200 uppercase tracking-tight line-clamp-2 leading-snug">
+              <p className="text-xs font-semibold text-ink-heading dark:text-on-dark line-clamp-2 leading-snug">
                 {activeTab === 'penelitian' ? item.judul_penelitian : item.title}
               </p>
-              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 mt-2 uppercase tracking-widest flex items-center">
-                <CalendarDays className="w-3.5 h-3.5 mr-1.5 text-primary-500/70" />
+              <p className="text-[10px] font-mono text-muted dark:text-on-dark-muted mt-1.5 flex items-center">
+                <CalendarDays className="w-3.5 h-3.5 mr-1 text-muted-soft dark:text-on-dark-muted" />
                 {activeTab === 'penelitian' ? new Date(item.created_at).toLocaleDateString('id-ID') : (item.published_at ? new Date(item.published_at).toLocaleDateString('id-ID') : '-')}
               </p>
             </div>
@@ -51,21 +51,21 @@ export default function VerificationMobileList({
 
           {activeTab === 'penelitian' && (
             <div className="grid grid-cols-2 gap-3">
-               <div className="bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
-                  <p className="text-[8px] font-black uppercase text-emerald-600 tracking-widest mb-1.5 leading-none">Dana Disetujui</p>
-                  <p className="text-sm font-black text-emerald-900 dark:text-emerald-100">
-                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.dana_disetujui)}
+               <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft">
+                  <p className="text-[9px] font-semibold uppercase text-muted dark:text-on-dark-muted tracking-wider mb-1 leading-none">Dana Disetujui</p>
+                  <p className="text-xs font-bold font-mono text-success-dark dark:text-success-on-dark tabular-nums">
+                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.dana_disetujui || 0)}
                   </p>
                </div>
-               <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-2xl border border-blue-100/50 dark:border-blue-900/30">
-                  <p className="text-[8px] font-black uppercase text-blue-600 tracking-widest mb-1.5 leading-none">Skema/Fokus</p>
-                  <p className="text-xs font-black text-blue-900 dark:text-blue-100 truncate">{item.skema}</p>
+               <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft">
+                  <p className="text-[9px] font-semibold uppercase text-muted dark:text-on-dark-muted tracking-wider mb-1 leading-none">Skema / Fokus</p>
+                  <p className="text-[10px] font-mono font-semibold text-body dark:text-on-dark truncate">{item.skema} / {item.fokus}</p>
                </div>
             </div>
           )}
 
           {/* Action buttons */}
-          <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-zinc-800">
+          <div className="flex items-center gap-2 pt-3 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
             {/* Preview file button */}
             {(() => {
               const fileUrl = item.file_url;
@@ -74,13 +74,13 @@ export default function VerificationMobileList({
               return fileUrl && fileUrl !== '-' && fileUrl !== '' ? (
                 <button
                   onClick={() => onPreview({ fileUrl, title: judul, category: kategori })}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white rounded-xl border border-primary-100 dark:border-primary-900/30 hover:border-primary-600 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark rounded-xl text-xs font-semibold uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap shadow-xs cursor-pointer"
                 >
-                  <Eye className="h-4 w-4" />
+                  <Eye className="h-4 w-4 text-accent dark:text-accent-on-dark" />
                   Preview
                 </button>
               ) : (
-                <div className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 rounded-xl border border-gray-100 dark:border-zinc-700 text-[10px] font-black uppercase tracking-widest cursor-not-allowed italic whitespace-nowrap">
+                <div className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-surface-light-raised dark:bg-surface-dark-elevated text-muted-soft dark:text-on-dark-muted rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-[10px] font-mono font-semibold uppercase tracking-wider cursor-not-allowed italic whitespace-nowrap">
                   <FileText className="h-4 w-4" />
                   No File
                 </div>
@@ -91,7 +91,7 @@ export default function VerificationMobileList({
             <button
               onClick={() => onVerify(item.id, 'Approved')}
               disabled={actionLoading === item.id}
-              className="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50 whitespace-nowrap"
+              className="flex-1 px-4 py-2 bg-success hover:bg-success-dark text-white rounded-xl text-xs font-semibold uppercase tracking-wider shadow-xs transition-all active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50 whitespace-nowrap cursor-pointer"
             >
               {actionLoading === item.id ? (
                 <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -111,9 +111,10 @@ export default function VerificationMobileList({
                 });
               }}
               disabled={actionLoading === item.id}
-              className="p-2.5 bg-red-50 dark:bg-red-950/20 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all border border-red-100 dark:border-red-900/30 hover:border-red-500 active:scale-95 disabled:opacity-50 shrink-0"
+              className="p-2 bg-error-soft dark:bg-error/15 hover:bg-error text-error dark:text-error-on-dark hover:text-white rounded-xl transition-all border border-error-border dark:border-error/30 active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer shadow-xs"
+              title="Tolak"
             >
-              <X className="h-4.5 w-4.5" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>

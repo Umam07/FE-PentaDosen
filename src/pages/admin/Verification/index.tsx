@@ -55,7 +55,7 @@ export default function AdminVerification() {
       />
 
       {/* Bagian Konten & Filter */}
-      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
+      <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-xs">
         
         {/* Tab Navigasi Premium */}
         <VerificationTabs
@@ -79,8 +79,8 @@ export default function AdminVerification() {
         <div className="min-h-[400px]">
           {loading ? (
              <div className="p-20 text-center space-y-4">
-                <div className="w-12 h-12 border-4 border-primary-100 border-t-primary-600 rounded-full animate-spin mx-auto" />
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sinkronisasi Antrean...</p>
+                <div className="w-12 h-12 border-4 border-ink-soft border-t-ink dark:border-surface-dark-elevated dark:border-t-accent-on-dark rounded-full animate-spin mx-auto" />
+                <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-[0.2em]">Memuat Antrean...</p>
              </div>
           ) : currentItems.length > 0 ? (
             <div>
