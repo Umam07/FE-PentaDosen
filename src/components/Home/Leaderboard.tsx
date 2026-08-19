@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Sparkles, Zap, BookOpen, Users, FileText, ArrowRight } from 'lucide-react';
+import { Trophy, BarChart3, BookOpen, Users, FileText, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
@@ -30,6 +30,16 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
     };
     fetchData();
   }, []);
+
+  const totalDocs = (stats?.total_docs || 0) + (stats?.total_research || 0) + (stats?.total_scholar || 0) + (stats?.total_scopus || 0);
+  const scopusCount = stats?.total_scopus || 0;
+  const scholarCount = stats?.total_scholar || 0;
+  const internalCount = (stats?.total_research || 0) + (stats?.total_docs || 0);
+
+  const docsSum = totalDocs > 0 ? totalDocs : 1;
+  const scopusPercent = totalDocs > 0 ? Math.max(5, Math.round((scopusCount / docsSum) * 100)) : 35;
+  const scholarPercent = totalDocs > 0 ? Math.max(5, Math.round((scholarCount / docsSum) * 100)) : 45;
+  const internalPercent = Math.max(0, 100 - scopusPercent - scholarPercent);
 
   const content = loading ? (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch animate-pulse">
@@ -73,10 +83,10 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
               >
                 {/* Rank Badge */}
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 font-mono text-xs font-extrabold ${
-                  index === 0 ? 'bg-amber-500 text-white' : 
-                  index === 1 ? 'bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark' : 
-                  index === 2 ? 'bg-amber-700 text-white' :
-                  'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted'
+                  index === 0 ? 'bg-warning text-white' : 
+                  index === 1 ? 'bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark' : 
+                  index === 2 ? 'bg-[#9a6125] text-white' :
+                  'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft'
                 }`}>
                   {index + 1}
                 </div>
@@ -113,45 +123,149 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="lg:col-span-6 bg-surface-dark-soft dark:bg-surface-dark-soft rounded-3xl border border-hairline-dark p-6 lg:p-8 text-on-dark flex flex-col justify-between shadow-sm"
+        className="lg:col-span-6 bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-6 lg:p-8 flex flex-col justify-between shadow-sm"
       >
         <div>
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-hairline-dark">
-            <div className="p-2 rounded-lg bg-accent/15 border border-accent/25">
-              <Sparkles className="w-5 h-5 text-accent-on-dark" />
+          {/* Header Row */}
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-hairline-light dark:border-hairline-dark">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-ink-soft dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark">
+                <BarChart3 className="w-5 h-5 text-accent dark:text-accent-on-dark" />
+              </div>
+              <HeadingTag className="text-base font-bold text-ink-heading dark:text-on-dark uppercase tracking-tight">Statistik Produktivitas</HeadingTag>
             </div>
-            <HeadingTag className="text-base font-bold uppercase tracking-tight text-on-dark">Statistik Produktivitas</HeadingTag>
+            <button 
+              onClick={() => navigate('/insights')}
+              className="text-xs font-bold text-accent dark:text-accent-on-dark hover:text-accent-hover flex items-center gap-1 group cursor-pointer"
+            >
+              LIHAT INSIGHT
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3.5">
+          {/* Featured Highlight: Total Akumulasi Poin KPI & Source Distribution */}
+          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-4 sm:p-5 border border-hairline-light-soft dark:border-hairline-dark-soft mb-4">
+            <div className="flex items-center justify-between gap-2 mb-1.5">
+              <span className="text-[11px] font-mono font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
+                Total Akumulasi Poin KPI
+              </span>
+              <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-ink-soft dark:bg-canvas-dark text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark">
+                Universitas YARSI
+              </span>
+            </div>
+            
+            <div className="flex items-baseline gap-2 mb-3">
+              <span className="text-3xl sm:text-4xl font-mono font-black text-ink-heading dark:text-on-dark tracking-tight">
+                {stats?.total_points ? Math.round(stats.total_points).toLocaleString() : '0'}
+              </span>
+              <span className="text-xs font-mono font-bold text-muted dark:text-on-dark-muted uppercase">
+                Poin Agregat
+              </span>
+            </div>
+
+            {/* Distribution Contribution Bar */}
+            <div className="space-y-1.5">
+              <div className="h-2 w-full rounded-full bg-hairline-light dark:bg-canvas-dark overflow-hidden flex">
+                <div 
+                  style={{ width: `${scopusPercent}%` }} 
+                  className="h-full bg-chart-scopus dark:bg-chart-scopus-dark transition-all duration-500" 
+                  title={`Scopus: ${scopusCount} dokumen`} 
+                />
+                <div 
+                  style={{ width: `${scholarPercent}%` }} 
+                  className="h-full bg-chart-scholar dark:bg-chart-scholar-dark transition-all duration-500" 
+                  title={`Google Scholar: ${scholarCount} dokumen`} 
+                />
+                <div 
+                  style={{ width: `${internalPercent}%` }} 
+                  className="h-full bg-accent/70 dark:bg-accent-on-dark/70 transition-all duration-500" 
+                  title={`Riset Internal: ${internalCount} dokumen`} 
+                />
+              </div>
+              <div className="flex items-center justify-between text-[10px] font-mono text-muted dark:text-on-dark-muted pt-0.5">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-chart-scopus dark:bg-chart-scopus-dark" />
+                  Scopus <span className="text-ink-heading dark:text-on-dark font-bold">({scopusCount.toLocaleString()})</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-chart-scholar dark:bg-chart-scholar-dark" />
+                  Scholar <span className="text-ink-heading dark:text-on-dark font-bold">({scholarCount.toLocaleString()})</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-accent/70 dark:bg-accent-on-dark/70" />
+                  Internal <span className="text-ink-heading dark:text-on-dark font-bold">({internalCount.toLocaleString()})</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Key Metric Tiles (3-column on sm, 1-col on mobile) */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
             {[
-              { label: 'Total Dokumen', val: (stats?.total_docs || 0) + (stats?.total_research || 0) + (stats?.total_scholar || 0) + (stats?.total_scopus || 0), icon: BookOpen, color: 'text-indigo-400 bg-indigo-950/40 border-indigo-800/40', colSpan: 'col-span-2' },
-              { label: 'Total Sitasi', val: stats?.total_citations || 0, icon: FileText, color: 'text-emerald-400 bg-emerald-950/40 border-emerald-800/40' },
-              { label: 'Dosen Aktif', val: stats?.total_dosen || 0, icon: Users, color: 'text-blue-400 bg-blue-950/40 border-blue-800/40' }
+              { 
+                label: 'Total Dokumen', 
+                val: totalDocs, 
+                sub: 'Publikasi Riset',
+                icon: BookOpen 
+              },
+              { 
+                label: 'Total Sitasi', 
+                val: stats?.total_citations || 0, 
+                sub: 'Kutipan Sitasi',
+                icon: FileText 
+              },
+              { 
+                label: 'Dosen Aktif', 
+                val: stats?.total_dosen || 0, 
+                sub: 'Terverifikasi',
+                icon: Users 
+              }
             ].map((item, i) => (
-              <div key={i} className={`bg-canvas-dark border border-hairline-dark p-4 rounded-xl flex items-center gap-3.5 ${item.colSpan || ''}`}>
-                <div className={`w-9 h-9 rounded-lg border flex items-center justify-center ${item.color}`}>
-                  <item.icon className="w-4 h-4" />
+              <div 
+                key={i} 
+                className="bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft hover:border-hairline-light dark:hover:border-hairline-dark p-3 sm:p-3.5 rounded-xl flex flex-col justify-between transition-all group"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono font-bold text-muted dark:text-on-dark-muted uppercase truncate">
+                    {item.label}
+                  </span>
+                  <div className="w-6 h-6 rounded-md bg-ink-soft dark:bg-surface-dark flex items-center justify-center text-body dark:text-on-dark-soft shrink-0">
+                    <item.icon className="w-3.5 h-3.5" />
+                  </div>
                 </div>
                 <div>
-                  <p className="text-[10px] font-mono font-bold text-on-dark-muted uppercase tracking-wider">{item.label}</p>
-                  <div className="text-base font-mono font-bold text-on-dark">{item.val.toLocaleString()}</div>
+                  <div className="text-base sm:text-lg font-mono font-bold text-ink-heading dark:text-on-dark">
+                    {item.val.toLocaleString()}
+                  </div>
+                  <p className="text-[10px] text-muted dark:text-on-dark-muted font-medium truncate mt-0.5">
+                    {item.sub}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-6 pt-5 border-t border-hairline-dark flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Footer Row: Average KPI & Insights CTA */}
+        <div className="mt-6 pt-5 border-t border-hairline-light dark:border-hairline-dark flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
-            <h4 className="text-xs font-bold text-on-dark-soft">Rerata Nilai KPI Dosen</h4>
-            <p className="text-[11px] text-on-dark-muted">Total Poin KPI / Jumlah Dosen Terdaftar</p>
+            <h4 className="text-xs font-bold text-ink-heading dark:text-on-dark">Rerata Nilai KPI Dosen</h4>
+            <p className="text-[11px] text-muted dark:text-on-dark-muted">Total Poin KPI / Jumlah Dosen Terdaftar</p>
           </div>
-          <div className="bg-canvas-dark px-4 py-2.5 rounded-xl border border-hairline-dark text-center sm:text-right min-w-[110px]">
-            <p className="text-lg font-mono font-bold text-accent-on-dark">
-              {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
-            </p>
-            <p className="text-[9px] font-mono font-bold uppercase text-on-dark-muted tracking-wider">Poin Rerata</p>
+          <div className="flex items-center gap-3">
+            <div className="bg-surface-light-raised dark:bg-surface-dark-elevated px-3.5 py-2 rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-center sm:text-right min-w-[90px]">
+              <p className="text-lg font-mono font-bold text-accent dark:text-accent-on-dark">
+                {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
+              </p>
+              <p className="text-[9px] font-mono font-bold uppercase text-muted dark:text-on-dark-muted tracking-wider">Poin Rerata</p>
+            </div>
+            <button 
+              onClick={() => navigate('/insights')}
+              title="Buka Analisis Insights Lengkap"
+              className="p-2.5 rounded-xl bg-ink-soft hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark transition-all cursor-pointer group"
+            >
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
           </div>
         </div>
       </motion.div>

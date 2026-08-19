@@ -52,7 +52,7 @@ export default function Workflow() {
       highlights: [
         'Single Sign-On (SSO) LDAP Institusi',
         'Auto-Sync API Scopus & Google Scholar',
-        'Deteksi Otomatis ID Peneliti (ORCID/SINTA)'
+        'Deteksi Otomatis ID Peneliti (Scopus & Scholar)'
       ],
       accentColor: 'blue',
       accentBg: 'bg-accent/15 dark:bg-accent/20',
@@ -64,13 +64,13 @@ export default function Workflow() {
       title: 'Input & Ingest Portofolio',
       subtitle: 'Multi-Source Data Ingest',
       category: 'PENCATATAN TRI DHARMA',
-      description: 'Pencatatan terpusat untuk publikasi ilmiah, HKI, paten, riset, dan pengabdian melalui impor massal berkas PDF/BibTeX.',
+      description: 'Pencatatan terpusat untuk publikasi ilmiah, HKI, paten, riset, dan pengabdian melalui unggah berkas PDF atau impor massal Excel (.xlsx).',
       icon: FileText,
       role: 'Dosen Pengampu',
       highlights: [
-        'Impor Otomatis Berkas RIS / BibTeX / PDF',
-        'Dukungan Multi-Kategori (Jurnal, HKI, Buku)',
-        'Unggah Berkas Pendukung Ber-SLA Aman'
+        'Unggah Bukti Berkas Dokumen Format PDF',
+        'Bulk Import & Export Massal Berkas Excel (.xlsx)',
+        'Dukungan Multi-Kategori (Jurnal, HKI, Paten, Buku)'
       ],
       accentColor: 'indigo',
       accentBg: 'bg-ink-soft dark:bg-surface-dark-elevated',
@@ -118,12 +118,12 @@ export default function Workflow() {
       title: 'Dashboard & Analytic Insights',
       subtitle: 'Executive Decision System',
       category: 'ANALISIS KINERJA',
-      description: 'Penyajian grafik produktivitas, matriks pemeringkatan dosen, dan laporan siap cetak untuk pengambil keputusan.',
+      description: 'Penyajian grafik produktivitas, matriks pemeringkatan dosen, dan ekspor laporan rekapitulasi data format Excel (.xlsx).',
       icon: PieChart,
       role: 'Dosen & Pimpinan',
       highlights: [
         'Visualisasi Performa Real-time & Rangking',
-        'Ekspor Laporan Resmi Excel / PDF Format',
+        'Ekspor Rekap Laporan Format Excel (.xlsx)',
         'Proyeksi Pencapaian Target Tri Dharma'
       ],
       accentColor: 'amber',
@@ -207,7 +207,7 @@ export default function Workflow() {
 
         {/* Step Navigation Pill Track */}
         <div className="mb-10 max-w-5xl mx-auto">
-          <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-5">
             {steps.map((step) => {
               const Icon = step.icon;
               const isActive = activeStep === step.id;
@@ -216,7 +216,7 @@ export default function Workflow() {
                 <button
                   key={step.id}
                   onClick={() => handleSelectStep(step.id)}
-                  className={`relative flex items-center gap-2.5 px-4 py-3 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 shrink-0 cursor-pointer ${
+                  className={`relative flex items-center justify-center gap-2 px-3 py-2.5 sm:px-3.5 sm:py-3 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 shrink-0 sm:shrink cursor-pointer ${
                     isActive 
                       ? 'text-ink-heading dark:text-on-dark font-bold' 
                       : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
@@ -225,12 +225,12 @@ export default function Workflow() {
                   {isActive && (
                     <motion.div
                       layoutId="activeWorkflowTab"
-                      className="absolute inset-0 bg-surface-light dark:bg-surface-dark rounded-lg shadow-sm border border-hairline-light dark:border-hairline-dark z-0"
+                      className="absolute inset-0 bg-surface-light dark:bg-surface-dark rounded-xl shadow-xs border border-hairline-light dark:border-hairline-dark z-0"
                       transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                     />
                   )}
 
-                  <span className={`relative z-10 w-6 h-6 rounded-md font-mono text-xs flex items-center justify-center font-bold transition-colors ${
+                  <span className={`relative z-10 w-6 h-6 rounded-md font-mono text-xs flex items-center justify-center font-bold transition-colors shrink-0 ${
                     isActive 
                       ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark shadow-xs' 
                       : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted'
@@ -238,9 +238,9 @@ export default function Workflow() {
                     0{step.id}
                   </span>
 
-                  <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-ink-heading dark:text-on-dark' : 'text-muted'}`} />
-                    <span>{step.title.split(' ')[0]}</span>
+                  <span className="relative z-10 flex items-center gap-1.5 whitespace-nowrap truncate">
+                    <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${isActive ? 'text-ink-heading dark:text-on-dark' : 'text-muted'}`} />
+                    <span className="truncate">{step.title.split(' ')[0]}</span>
                   </span>
                 </button>
               );
@@ -423,7 +423,7 @@ export default function Workflow() {
                       <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
                         <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
                           <span className="text-xs font-mono font-bold text-on-dark-soft">MULTI-FORMAT INGESTION</span>
-                          <span className="text-[10px] font-mono bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">PDF / BibTeX / RIS</span>
+                          <span className="text-[10px] font-mono bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">PDF / EXCEL (.XLSX)</span>
                         </div>
 
                         {/* Publication Items Stack */}
@@ -468,8 +468,8 @@ export default function Workflow() {
                           <span className="font-mono text-on-dark-muted">Format Pendukung:</span>
                           <div className="flex gap-1.5 font-mono text-[10px]">
                             <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.PDF</span>
-                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.BIB</span>
-                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.RIS</span>
+                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.XLSX</span>
+                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.XLS</span>
                           </div>
                         </div>
                       </div>
@@ -590,7 +590,7 @@ export default function Workflow() {
                             <Award className="w-4 h-4 text-warning-on-dark" />
                             <span className="font-mono text-on-dark-soft">Export Ready:</span>
                           </div>
-                          <span className="font-mono font-bold text-warning-on-dark">Format BKD & SKP Ready</span>
+                          <span className="font-mono font-bold text-warning-on-dark">Format Excel (.xlsx) Ready</span>
                         </div>
                       </div>
                     )}
