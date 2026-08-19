@@ -27,8 +27,8 @@ export default function AdminInputDocument() {
       <InputDocumentHeader />
 
       {/* Kartu Utama Input Dokumen */}
-      <section className="bg-white dark:bg-zinc-900 shadow-sm rounded-[2.5rem] border border-gray-100 dark:border-zinc-800">
-        <div className="p-8 lg:p-12 space-y-10">
+      <section className="bg-surface-light dark:bg-surface-dark shadow-xs rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden">
+        <div className="p-6 sm:p-8 lg:p-10 space-y-8">
           
           {/* Tab Selector di Bagian Atas Card */}
           <InputTabSelector
