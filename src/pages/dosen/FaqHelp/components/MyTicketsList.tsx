@@ -45,16 +45,16 @@ export default function MyTicketsList({
       case 'menunggu':
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-500/20">
-            <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border border-warning-border dark:border-warning/30 font-mono">
+            <Clock className="w-3 h-3 text-warning dark:text-warning-on-dark" />
             Menunggu Balasan Admin
           </span>
         );
       case 'dibalas':
       case 'replied':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-500/20">
-            <MessageSquare className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark border border-accent-border dark:border-accent/30 font-mono">
+            <MessageSquare className="w-3 h-3 text-accent dark:text-accent-on-dark" />
             Dibalas Admin
           </span>
         );
@@ -62,8 +62,8 @@ export default function MyTicketsList({
       case 'completed':
       case 'closed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-500/20">
-            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border border-success-border dark:border-success/30 font-mono">
+            <CheckCircle2 className="w-3 h-3 text-success-dark dark:text-success-on-dark" />
             Selesai
           </span>
         );
@@ -146,33 +146,33 @@ export default function MyTicketsList({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4 shadow-2xs">
+    <div className="overflow-hidden rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark p-5 sm:p-6 space-y-4 shadow-xs">
       
       {/* Header Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline-light-soft dark:border-hairline-dark-soft pb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/40 shrink-0">
-            <Inbox className="w-5 h-5" />
+          <div className="p-2.5 rounded-xl bg-ink-soft dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
+            <Inbox className="w-5 h-5 text-accent dark:text-accent-on-dark" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark">
                 Riwayat Pesan &amp; Konsultasi Saya
               </h3>
-              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+              <span className="text-[11px] font-semibold text-body dark:text-on-dark-soft bg-ink-soft dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md font-mono">
                 {myTickets.length} Tiket
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
               Percakapan interaktif &amp; konsultasi kendala teknis dengan administrator
             </p>
           </div>
         </div>
 
-        {/* Tombol Kirim Pesan Baru */}
+        {/* Tombol Kirim Pesan Baru (Primary action) */}
         <button
           onClick={onOpenCreateModal}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink text-xs font-semibold transition-all shadow-xs active:scale-95 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Kirim Pesan Baru</span>
@@ -181,11 +181,11 @@ export default function MyTicketsList({
 
       {/* Sub-Filter Tabs (Aktif, Selesai, Semua) */}
       {myTickets.length > 0 && (
-        <div className="bg-slate-100/80 dark:bg-zinc-800/60 p-1.5 rounded-2xl border border-slate-200/60 dark:border-zinc-700/60 flex items-center gap-1.5 overflow-x-auto no-scrollbar shadow-2xs">
+        <div className="bg-surface-light-raised dark:bg-surface-dark-soft p-1.5 rounded-2xl border border-hairline-light dark:border-hairline-dark-soft flex items-center gap-1.5 overflow-x-auto no-scrollbar shadow-xs">
           {[
-            { key: 'aktif', label: 'Aktif / Dalam Proses', count: activeCount, icon: Clock, iconColor: 'text-amber-500' },
-            { key: 'selesai', label: 'Selesai', count: completedCount, icon: CheckCircle2, iconColor: 'text-emerald-500' },
-            { key: 'semua', label: 'Semua Pesan', count: myTickets.length, icon: Inbox, iconColor: 'text-primary-500' },
+            { key: 'aktif', label: 'Aktif / Dalam Proses', count: activeCount, icon: Clock, iconColor: 'text-warning dark:text-warning-on-dark' },
+            { key: 'selesai', label: 'Selesai', count: completedCount, icon: CheckCircle2, iconColor: 'text-success dark:text-success-on-dark' },
+            { key: 'semua', label: 'Semua Pesan', count: myTickets.length, icon: Inbox, iconColor: 'text-muted dark:text-on-dark-muted' },
           ].map((tab) => {
             const isActive = statusFilter === tab.key;
             const TabIcon = tab.icon;
@@ -193,26 +193,26 @@ export default function MyTicketsList({
               <button
                 key={tab.key}
                 onClick={() => setStatusFilter(tab.key as any)}
-                className={`relative group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 outline-none select-none cursor-pointer whitespace-nowrap ${
+                className={`relative group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 outline-none select-none cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'text-slate-900 dark:text-white'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200 hover:bg-slate-200/50 dark:hover:bg-zinc-700/40'
+                    ? 'text-ink-heading dark:text-on-dark'
+                    : 'text-muted dark:text-on-dark-muted hover:text-body-strong dark:hover:text-on-dark hover:bg-surface-light-raised/80 dark:hover:bg-surface-dark-elevated/40'
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="active-dosen-ticket-tab"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    className="absolute inset-0 bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-slate-200/80 dark:border-zinc-700"
+                    className="absolute inset-0 bg-surface-light dark:bg-surface-dark rounded-xl shadow-xs border border-hairline-light dark:border-hairline-dark"
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-2">
                   <TabIcon className={`w-3.5 h-3.5 ${tab.iconColor}`} />
                   <span>{tab.label}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors ${
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold font-mono transition-colors ${
                     isActive
-                      ? 'bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/60'
-                      : 'bg-slate-200/80 dark:bg-zinc-700/80 text-slate-700 dark:text-zinc-300'
+                      ? 'bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark'
+                      : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted'
                   }`}>
                     {tab.count}
                   </span>
@@ -225,7 +225,7 @@ export default function MyTicketsList({
 
       {/* Body Daftar Pesan */}
       {loadingTickets ? (
-        <div className="py-12 text-center text-xs font-medium text-slate-400">
+        <div className="py-12 text-center text-xs font-medium text-muted dark:text-on-dark-muted">
           Memuat riwayat pesan...
         </div>
       ) : filteredTickets.length > 0 ? (
@@ -261,8 +261,8 @@ export default function MyTicketsList({
                 key={ticket.id}
                 className={`rounded-xl border transition-all overflow-hidden ${
                   isExpanded
-                    ? 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-xs'
+                    : 'border-hairline-light dark:border-hairline-dark bg-surface-light-raised/40 dark:bg-surface-dark-soft/40 hover:border-ink-border dark:hover:border-hairline-dark'
                 }`}
               >
                 <button
@@ -273,29 +273,29 @@ export default function MyTicketsList({
                     <div className="flex items-center gap-2.5 flex-wrap">
                       {getTicketStatusBadge(ticket.status)}
                       {rawMessages.some(m => !!m.image_url) && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                          <ImageIcon className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-muted dark:text-on-dark-muted">
+                          <ImageIcon className="w-3 h-3 text-muted dark:text-on-dark-muted" />
                           <span>Lampiran Gambar</span>
                         </span>
                       )}
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
+                      <h4 className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark truncate">
                         {ticket.subject || 'Tanpa Subjek'}
                       </h4>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate pl-0.5">
+                    <p className="text-xs text-muted dark:text-on-dark-muted truncate pl-0.5">
                       {rawMessages[rawMessages.length - 1]?.message || ticket.message}
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 hidden sm:inline">
+                    <span className="text-[11px] font-medium font-mono text-muted dark:text-on-dark-muted hidden sm:inline">
                       {new Date(ticket.created_at).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'short',
                         year: 'numeric'
                       })}
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-slate-900 dark:text-white' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-muted dark:text-on-dark-muted transition-transform duration-200 ${isExpanded ? 'rotate-180 text-ink-heading dark:text-on-dark' : ''}`} />
                   </div>
                 </button>
 
@@ -307,13 +307,13 @@ export default function MyTicketsList({
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
-                      <div className="px-4 pb-5 pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-4">
+                      <div className="px-4 pb-5 pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft space-y-4">
                         
                         {/* Area Chat Conversation Thread */}
-                        <div className="bg-slate-50/70 dark:bg-slate-950/40 p-3.5 sm:p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 space-y-3.5 max-h-[420px] overflow-y-auto">
+                        <div className="bg-surface-light-raised/60 dark:bg-surface-dark-soft p-3.5 sm:p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-3.5 max-h-[420px] overflow-y-auto">
                           
                           <div className="text-center py-1">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-200/60 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
+                            <span className="text-[9px] font-semibold uppercase tracking-widest text-muted dark:text-on-dark-muted bg-surface-light dark:bg-surface-dark-elevated px-2.5 py-0.5 rounded-full border border-hairline-light-soft dark:border-hairline-dark-soft font-mono">
                               Percakapan Dimulai: {formatDate(ticket.created_at)}
                             </span>
                           </div>
@@ -325,18 +325,18 @@ export default function MyTicketsList({
                               /* Bubble Chat Pengirim (Dosen - Kanan) */
                               <div key={msg.id || index} className="flex justify-end gap-2.5 max-w-[88%] sm:max-w-[80%] ml-auto">
                                 <div className="space-y-1 text-right min-w-0">
-                                  <div className="flex items-center justify-end gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-semibold px-1">
+                                  <div className="flex items-center justify-end gap-1.5 text-[10px] text-muted dark:text-on-dark-muted font-medium px-1 font-mono">
                                     <span>{msg.sender_name || user?.name || 'Anda'}</span>
                                     <span>•</span>
                                     <span>{formatDate(msg.created_at)}</span>
                                   </div>
-                                  <div className="bg-primary-600 dark:bg-primary-600 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-xs shadow-xs text-xs leading-relaxed text-left font-medium border border-primary-500/30">
+                                  <div className="bg-ink dark:bg-surface-dark-elevated text-white dark:text-on-dark p-3.5 sm:p-4 rounded-2xl rounded-tr-xs shadow-xs text-xs leading-relaxed text-left font-normal border border-ink-hover dark:border-hairline-dark">
                                     <p className="whitespace-pre-line">{msg.message}</p>
                                     
                                     {/* Preview Lampiran Gambar */}
                                     {msg.image_url && (
-                                      <div className="mt-3 pt-2.5 border-t border-white/20">
-                                        <div className="relative group inline-block rounded-xl overflow-hidden bg-slate-950/80 p-1 border border-white/30 max-w-xs">
+                                      <div className="mt-3 pt-2.5 border-t border-white/20 dark:border-hairline-dark">
+                                        <div className="relative group inline-block rounded-xl overflow-hidden bg-surface-dark p-1 border border-white/30 dark:border-hairline-dark max-w-xs">
                                           <img
                                             src={msg.image_url}
                                             alt="Lampiran"
@@ -344,7 +344,7 @@ export default function MyTicketsList({
                                           />
                                           <div
                                             onClick={() => onZoomImage(msg.image_url!)}
-                                            className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-bold cursor-pointer"
+                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer"
                                           >
                                             <Maximize2 className="w-4 h-4" />
                                             <span>Perbesar</span>
@@ -354,32 +354,32 @@ export default function MyTicketsList({
                                     )}
                                   </div>
                                 </div>
-                                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-950/80 text-primary-700 dark:text-primary-300 font-bold flex items-center justify-center text-xs shrink-0 border border-primary-200 dark:border-primary-800 shadow-2xs mt-4">
+                                <div className="w-8 h-8 rounded-full bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark-soft font-bold flex items-center justify-center text-xs shrink-0 border border-hairline-light dark:border-hairline-dark shadow-xs mt-4">
                                   {user?.name ? user.name.charAt(0).toUpperCase() : 'D'}
                                 </div>
                               </div>
                             ) : (
                               /* Bubble Chat Penerima (Admin - Kiri) */
                               <div key={msg.id || index} className="flex justify-start gap-2.5 max-w-[88%] sm:max-w-[80%] mr-auto">
-                                <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-slate-800 text-white font-black flex items-center justify-center text-xs shrink-0 border border-slate-700 shadow-2xs mt-4">
+                                <div className="w-8 h-8 rounded-full bg-ink text-white dark:bg-surface-dark-elevated dark:text-on-dark font-bold flex items-center justify-center text-xs shrink-0 border border-hairline-dark shadow-xs mt-4">
                                   A
                                 </div>
                                 <div className="space-y-1 text-left min-w-0">
-                                  <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-semibold px-1">
-                                    <span className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40 uppercase tracking-wider text-[9px]">
+                                  <div className="flex items-center gap-1.5 text-[10px] text-muted dark:text-on-dark-muted font-medium px-1 font-mono">
+                                    <span className="font-semibold text-accent dark:text-accent-on-dark bg-accent-soft dark:bg-accent/15 px-1.5 py-0.5 rounded border border-accent-border dark:border-accent/30 uppercase tracking-wider text-[9px]">
                                       Admin
                                     </span>
                                     <span>{msg.sender_name || 'Tim Administrator'}</span>
                                     <span>•</span>
                                     <span>{formatDate(msg.created_at)}</span>
                                   </div>
-                                  <div className="bg-white dark:bg-slate-800/90 text-slate-800 dark:text-slate-100 p-3.5 sm:p-4 rounded-2xl rounded-tl-xs border border-slate-200/80 dark:border-slate-700/80 shadow-2xs text-xs leading-relaxed font-medium">
+                                  <div className="bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark p-3.5 sm:p-4 rounded-2xl rounded-tl-xs border border-hairline-light dark:border-hairline-dark shadow-xs text-xs leading-relaxed font-normal">
                                     <p className="whitespace-pre-line">{msg.message}</p>
 
                                     {/* Preview Lampiran Gambar Admin jika ada */}
                                     {msg.image_url && (
-                                      <div className="mt-3 pt-2.5 border-t border-slate-200 dark:border-slate-700">
-                                        <div className="relative group inline-block rounded-xl overflow-hidden bg-slate-950/80 p-1 border border-slate-700 max-w-xs">
+                                      <div className="mt-3 pt-2.5 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
+                                        <div className="relative group inline-block rounded-xl overflow-hidden bg-surface-dark p-1 border border-hairline-dark max-w-xs">
                                           <img
                                             src={msg.image_url}
                                             alt="Lampiran Admin"
@@ -387,7 +387,7 @@ export default function MyTicketsList({
                                           />
                                           <div
                                             onClick={() => onZoomImage(msg.image_url!)}
-                                            className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-bold cursor-pointer"
+                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer"
                                           >
                                             <Maximize2 className="w-4 h-4" />
                                             <span>Perbesar</span>
@@ -404,8 +404,8 @@ export default function MyTicketsList({
 
                         {/* Status Notice Banner jika Tiket Selesai */}
                         {ticket.status === 'selesai' && (
-                          <div className="p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs font-medium flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <div className="p-3 rounded-xl bg-success-soft dark:bg-success/15 border border-success-border dark:border-success/30 text-success-dark dark:text-success-on-dark text-xs font-medium flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-success-dark dark:text-success-on-dark shrink-0" />
                             <span>Tiket ini ditandai selesai oleh admin. Mengirim pesan baru akan membuka kembali tiket ini.</span>
                           </div>
                         )}
@@ -415,12 +415,12 @@ export default function MyTicketsList({
                           
                           {/* Preview Lampiran Gambar Balasan Dosen */}
                           {replyImagePreview && (
-                            <div className="relative group inline-block rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-950 p-1">
+                            <div className="relative group inline-block rounded-xl overflow-hidden border border-hairline-light dark:border-hairline-dark bg-surface-dark p-1">
                               <img src={replyImagePreview} alt="Preview Lampiran" className="h-16 w-auto object-contain rounded-lg" />
                               <button
                                 type="button"
                                 onClick={removeReplyImage}
-                                className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 shadow-md cursor-pointer transition-colors"
+                                className="absolute top-1 right-1 p-1 bg-error text-white rounded-full hover:bg-error/90 shadow-md cursor-pointer transition-colors"
                                 title="Hapus gambar"
                               >
                                 <X className="w-3 h-3" />
@@ -430,7 +430,7 @@ export default function MyTicketsList({
 
                           <div className="flex items-center gap-2">
                             <label
-                              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 text-slate-500 dark:text-slate-400 cursor-pointer transition-colors shrink-0"
+                              className="p-2.5 rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted dark:text-on-dark-muted cursor-pointer transition-colors shrink-0"
                               title="Lampirkan tangkapan layar/gambar"
                             >
                               <Paperclip className="w-4 h-4" />
@@ -442,13 +442,13 @@ export default function MyTicketsList({
                               value={replyText}
                               onChange={(e) => setReplyText(e.target.value)}
                               placeholder="Ketik balasan atau pertanyaan susulan ke admin..."
-                              className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                              className="flex-1 px-4 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent dark:focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all"
                             />
 
                             <button
                               type="submit"
                               disabled={submittingReply || !replyText.trim()}
-                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 disabled:opacity-50 cursor-pointer shrink-0"
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink text-xs font-semibold transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer shrink-0"
                             >
                               <Send className="w-3.5 h-3.5" />
                               <span>{submittingReply ? 'Mengirim...' : 'Kirim'}</span>
@@ -466,15 +466,15 @@ export default function MyTicketsList({
         </div>
       ) : (
         <div className="py-14 text-center">
-          <Inbox className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-          <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+          <Inbox className="w-10 h-10 text-muted dark:text-on-dark-muted mx-auto mb-2 opacity-60" />
+          <h4 className="text-xs font-semibold text-ink-heading dark:text-on-dark mb-1">
             {statusFilter === 'aktif'
               ? 'Tidak Ada Pesan Aktif / Dalam Proses'
               : statusFilter === 'selesai'
               ? 'Belum Ada Pesan Selesai'
               : 'Belum Ada Pesan yang Dikirim'}
           </h4>
-          <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto mb-4 leading-relaxed">
+          <p className="text-xs text-muted dark:text-on-dark-muted max-w-xs mx-auto mb-4 leading-relaxed">
             {statusFilter === 'aktif'
               ? 'Semua pertanyaan atau konsultasi Anda telah diselesaikan oleh admin.'
               : statusFilter === 'selesai'
@@ -483,7 +483,7 @@ export default function MyTicketsList({
           </p>
           <button
             onClick={onOpenCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink text-xs font-semibold transition-all shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Kirim Pesan Baru</span>
@@ -493,3 +493,4 @@ export default function MyTicketsList({
     </div>
   );
 }
+
