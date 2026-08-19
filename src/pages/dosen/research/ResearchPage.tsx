@@ -172,10 +172,10 @@ export default function Research({ user }: { user: UserSession }) {
           hideKpiClassification={true}
           customMetadata={
             <div>
-              <p className="text-[9px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest leading-none mb-1.5">
+              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none mb-1">
                 Dana Disetujui
               </p>
-              <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-800 dark:text-zinc-200">
+              <div className="flex items-center gap-1.5 text-xs font-bold font-mono tabular-nums text-slate-800 dark:text-slate-200">
                 Rp {Number(res.activeDetailDoc.dana_disetujui || 0).toLocaleString('id-ID')}
               </div>
             </div>

@@ -14,10 +14,10 @@ interface ResearchStatsProps {
 
 export default function ResearchStats({ stats, isTableLoading }: ResearchStatsProps) {
   const items = [
-    { label: 'Total Penelitian', value: stats.total, icon: Beaker, color: 'slate' },
-    { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
-    { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
-    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'indigo' },
+    { label: 'Total Penelitian', value: stats.total, icon: Beaker, color: 'neutral' },
+    { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'approved' },
+    { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'pending' },
+    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'neutral' },
   ];
 
   return (
@@ -30,20 +30,19 @@ export default function ResearchStats({ stats, isTableLoading }: ResearchStatsPr
           transition={{ delay: index * 0.05 }}
           className="bg-white dark:bg-slate-900 shadow-xs rounded-2xl border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all"
         >
-          <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${
-            item.color === 'slate' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' :
-            item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
-            item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
-            'bg-slate-100 dark:bg-slate-800 text-primary-600 dark:text-primary-400'
+          <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 border ${
+            item.color === 'approved' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-900/40' :
+            item.color === 'pending' ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200/60 dark:border-amber-900/40' :
+            'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80'
           }`}>
             <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
           </div>
           <div className="min-w-0 flex-1 w-full">
-            <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-1">
-              <p className="text-[9px] sm:text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-wider truncate" title={item.label}>
+            <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-0.5">
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate" title={item.label}>
                 {item.label}
               </p>
-              <p className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
                 {item.value}
               </p>
             </phantom-ui>
@@ -53,3 +52,4 @@ export default function ResearchStats({ stats, isTableLoading }: ResearchStatsPr
     </section>
   );
 }
+
