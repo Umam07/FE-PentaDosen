@@ -1,6 +1,5 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 import { LecturersPaginationProps } from '../types/lecturers.types';
 
@@ -16,14 +15,14 @@ export default function LecturersPagination({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   return (
-    <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark flex flex-col sm:flex-row items-center justify-between gap-4">
       <div className="flex items-center gap-4">
-        <span className="text-xs text-gray-500 dark:text-zinc-400">
-          Menampilkan <span className="font-semibold text-gray-800 dark:text-zinc-200">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)}</span> dari <span className="font-semibold text-gray-800 dark:text-zinc-200">{totalItems}</span> Dosen
+        <span className="text-xs text-muted dark:text-on-dark-muted">
+          Menampilkan <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)}</span> dari <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{totalItems}</span> Dosen
         </span>
-        <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 hidden sm:block" />
+        <div className="h-4 w-px bg-hairline-light dark:bg-hairline-dark hidden sm:block" />
         <div className="hidden sm:flex items-center gap-2">
-          <span className="text-xs text-gray-400">Limit:</span>
+          <span className="text-xs text-muted dark:text-on-dark-muted">Limit:</span>
           <DropdownSelect
             value={itemsPerPage}
             onChange={(val) => { onItemsPerPageChange(Number(val)); onPageChange(1); }}
@@ -44,7 +43,7 @@ export default function LecturersPagination({
         <button
           disabled={currentPage === 1}
           onClick={() => onPageChange(p => Math.max(1, p - 1))}
-          className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
+          className="p-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -55,14 +54,14 @@ export default function LecturersPagination({
             .map((p, index, array) => (
               <React.Fragment key={p}>
                 {index > 0 && array[index - 1] !== p - 1 && (
-                  <span className="px-1 text-gray-300 dark:text-zinc-600 text-xs">...</span>
+                  <span className="px-1 text-muted-soft dark:text-on-dark-muted text-xs font-mono">...</span>
                 )}
                 <button
                   onClick={() => onPageChange(p)}
-                  className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-all ${
+                  className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-mono transition-all cursor-pointer ${
                     currentPage === p 
-                      ? 'bg-primary-600 text-white shadow-xs' 
-                      : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
+                      ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark font-semibold shadow-xs' 
+                      : 'bg-surface-light dark:bg-surface-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                   }`}
                 >
                   {p}
@@ -74,7 +73,7 @@ export default function LecturersPagination({
         <button
           disabled={currentPage === totalPages || totalPages === 0}
           onClick={() => onPageChange(p => Math.min(totalPages, p + 1))}
-          className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
+          className="p-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
