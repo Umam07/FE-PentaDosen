@@ -192,7 +192,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-40 lg:hidden"
+            className="fixed inset-0 bg-canvas-dark/60 backdrop-blur-sm z-40 lg:hidden"
           />
         )}
       </AnimatePresence>

@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/Home/Navbar';
 import Footer from '../../../components/Home/Footer';
+import SEO from '../../../components/SEO';
 import { useInsights } from './hooks/useInsights';
 import InsightsHero from './components/InsightsHero';
 import InsightsStatsHighlights from './components/InsightsStatsHighlights';
@@ -34,6 +35,12 @@ export default function Insights() {
 
   return (
     <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-colors duration-300 font-sans antialiased text-body dark:text-on-dark">
+      <SEO
+        title="Insights & Analitik Kinerja — PentaDosen (Penta Dosen) Universitas YARSI"
+        description="Visualisasi data analitik, skor KPI, sebaran publikasi, dan leaderboard riset dosen PentaDosen (Penta Dosen) Universitas YARSI."
+        keywords="Insights PentaDosen, Penta Dosen, Analitik Dosen YARSI, Leaderboard Dosen, KPI Dosen YARSI, Universitas YARSI"
+        canonical="https://www.pentadosen.site/insights"
+      />
       <Navbar />
 
       <main className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">

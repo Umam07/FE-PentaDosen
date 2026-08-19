@@ -9,18 +9,18 @@ interface SEOProps {
 }
 
 export default function SEO({
-  title = "PentaDosen 2.0 - Platform Portofolio & Tri Dharma Dosen Universitas YARSI",
-  description = "PentaDosen 2.0 adalah platform sistem informasi manajemen portofolio dan Tri Dharma Dosen Universitas YARSI. Otomatisasi sinkronisasi data publikasi Google Scholar & Scopus, penelitian, pengabdian, HKI, dan evaluasi kinerja akademik dosen.",
-  keywords = "PentaDosen, Penta Dosen, Universitas YARSI, Dosen YARSI, Tri Dharma Dosen, Google Scholar, Scopus, Portofolio Dosen, Publikasi Dosen, Penelitian Dosen, HKI, LPPM YARSI",
+  title = "PentaDosen (Penta Dosen) — Platform Penelitian & Portofolio Dosen Universitas YARSI",
+  description = "PentaDosen (Penta Dosen) adalah platform penelitian dosen dan sistem manajemen portofolio Tri Dharma Universitas YARSI. Sinkronisasi data publikasi Google Scholar & Scopus, penelitian, pengabdian, HKI, dan evaluasi kinerja akademik dosen.",
+  keywords = "PentaDosen, Penta Dosen, pentadosen, penta dosen, pentadosen yarsi, penta dosen yarsi, penelitian dosen, penelitian dosen yarsi, portofolio dosen yarsi, publikasi dosen yarsi, Universitas YARSI, Dosen YARSI, Tri Dharma Dosen, Google Scholar, Scopus, HKI, LPPM YARSI, DUK Team, pentadosen site, pentadosen.site",
   canonical,
   ogImage
 }: SEOProps) {
   useEffect(() => {
-    // Determine base URL dynamically based on current environment or fallback to official campus domain
-    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://pentadosen.yarsi.ac.id';
+    // Determine base URL dynamically based on current environment or fallback to production domain
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.pentadosen.site';
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
     
-    // Active canonical link: prioritize passed canonical, otherwise default to current origin or official campus domain
+    // Active canonical link: prioritize passed canonical, otherwise default to current origin
     const activeCanonical = canonical || `${currentOrigin}${currentPath}`;
     const activeOgImage = ogImage || `${currentOrigin}/PentaDosen-2-0-07-06-2026_05_02_PM.webp`;
 

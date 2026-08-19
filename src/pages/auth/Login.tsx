@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import SEO from '../../components/SEO';
 import { useAuthStats } from './hooks/useAuthStats';
 import { AuthBrandingPanel } from './components/AuthBrandingPanel';
 import { DosenLoginForm } from './components/DosenLoginForm';
@@ -10,6 +11,12 @@ export default function Login({ setUser }: { setUser: any }) {
 
   return (
     <main className="min-h-screen bg-canvas-light dark:bg-canvas-dark flex font-sans transition-colors duration-300 relative overflow-hidden">
+      <SEO
+        title="Masuk ke Akun — PentaDosen (Penta Dosen) Universitas YARSI"
+        description="Portal login dosen dan verifikator administrasi penelitian & pengabdian PentaDosen (Penta Dosen) Universitas YARSI."
+        keywords="Login PentaDosen, Masuk Penta Dosen, Portal Dosen YARSI"
+        canonical="https://www.pentadosen.site/login"
+      />
       
       {/* Tombol Kembali ke Beranda */}
       <Link

@@ -1,7 +1,7 @@
-# 🚀 PentaDosen 2.0
+# 🚀 PentaDosen (Penta Dosen)
 
 <p align="center">
-  <img src="public/PentaDosen-2-0-07-06-2026_05_02_PM.webp" alt="PentaDosen 2.0 Preview" width="100%" />
+  <img src="public/PentaDosen-2-0-07-06-2026_05_02_PM.webp" alt="PentaDosen Preview" width="100%" />
 </p>
 
 <p align="center">
@@ -14,7 +14,7 @@
 
 ---
 
-**PentaDosen 2.0** adalah sistem dashboard manajemen dokumen dan evaluasi kinerja dosen tingkat lanjut. Mengusung konsep **"High-Tech Academic Workspace"**, platform ini menggabungkan fungsionalitas administrasi akademik yang kuat dengan keindahan antarmuka modern layaknya dasbor developer premium—dilengkapi dengan efek *glassmorphism*, pendaran cahaya halus (*text glow*), serta dukungan penuh untuk **Light Mode** dan **Dark Mode**.
+**PentaDosen (Penta Dosen)** adalah platform penelitian dosen dan sistem dashboard manajemen portofolio Tri Dharma Dosen Universitas YARSI. Platform ini menggabungkan integrasi otomatisasi data publikasi Google Scholar & Scopus, penelitian, pengabdian, dan HKI dengan antarmuka yang modern, dinamis, dan responsif.
 
 ---
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/Home/Navbar';
 import Footer from '../../../components/Home/Footer';
+import SEO from '../../../components/SEO';
 import { useDepartementList } from './hooks/useDepartementList';
 import DepartementHeader from './components/DepartementHeader';
 import DepartementCard from './components/DepartementCard';
@@ -19,6 +20,12 @@ export default function DepartementList() {
 
   return (
     <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-all duration-500 font-sans">
+      <SEO
+        title="Fakultas & Program Studi — PentaDosen (Penta Dosen) Universitas YARSI"
+        description="Daftar fakultas, program studi, dan kontribusi penelitian akademik di lingkungan Universitas YARSI melalui PentaDosen (Penta Dosen)."
+        keywords="Fakultas YARSI, Program Studi YARSI, PentaDosen, Penta Dosen, Universitas YARSI"
+        canonical="https://www.pentadosen.site/departments"
+      />
       <Navbar />
       
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24">

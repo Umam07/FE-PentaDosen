@@ -82,9 +82,9 @@ function MemberAvatar({
 
   if (size === "large") {
     return (
-      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/80 overflow-hidden shrink-0 flex items-center justify-center">
+      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden shrink-0 flex items-center justify-center">
         {imageFailed || !currentSrc ? (
-          <span className="text-2xl font-bold text-slate-600 dark:text-slate-400 font-mono tracking-tight">
+          <span className="text-2xl font-bold text-muted dark:text-on-dark-muted font-mono tracking-tight">
             {initials}
           </span>
         ) : (
@@ -102,9 +102,9 @@ function MemberAvatar({
   }
 
   return (
-    <div className="relative w-full aspect-square rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/80 overflow-hidden flex items-center justify-center mb-4 group/avatar">
+    <div className="relative w-full aspect-square rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden flex items-center justify-center mb-4 group/avatar">
       {imageFailed || !currentSrc ? (
-        <span className="text-3xl font-bold text-slate-400 dark:text-slate-600 font-mono tracking-tight">
+        <span className="text-3xl font-bold text-muted-soft dark:text-on-dark-muted font-mono tracking-tight">
           {initials}
         </span>
       ) : (
@@ -123,11 +123,11 @@ function MemberAvatar({
 
 export default function Developers() {
   return (
-    <div className="font-sans antialiased bg-canvas-light dark:bg-canvas-dark text-body dark:text-on-dark min-h-screen flex flex-col selection:bg-accent/20 selection:text-ink-heading">
+    <div className="font-sans antialiased bg-canvas-light dark:bg-canvas-dark text-body dark:text-on-dark min-h-screen flex flex-col selection:bg-accent/20 selection:text-ink-heading dark:selection:text-on-dark">
       <SEO
-        title="Tim Pengembang & Pembimbing DUK Team — PentaDosen Universitas YARSI"
-        description="Profil Dosen Pembimbing dan Tim Pengembang (DUK Team) di balik platform tata kelola publikasi ilmiah PentaDosen Universitas YARSI."
-        keywords="DUK Team, Tim Pengembang PentaDosen, Universitas YARSI, Nurmaya, Kiki Aimar Wicaksana, Muhammad Syafi'ul Umam, Rafi Daniswara Anggoro Putra"
+        title="Tim Pengembang & Pembimbing DUK Team — PentaDosen (Penta Dosen) Universitas YARSI"
+        description="Profil Dosen Pembimbing dan Tim Pengembang (DUK Team) di balik platform tata kelola publikasi ilmiah dan penelitian dosen PentaDosen (Penta Dosen) Universitas YARSI."
+        keywords="DUK Team, Tim Pengembang PentaDosen, PentaDosen, Penta Dosen, pentadosen, penta dosen, Universitas YARSI, Nurmaya, Kiki Aimar Wicaksana, Muhammad Syafi'ul Umam, Rafi Daniswara Anggoro Putra, pentadosen site"
         canonical="https://www.pentadosen.site/developers"
       />
 
@@ -153,7 +153,7 @@ export default function Developers() {
 
         {/* Page Hero Section */}
         <div className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold">
             <Users className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
             <span>Profil Tim & Pengarah</span>
           </div>
@@ -174,7 +174,7 @@ export default function Developers() {
             </h2>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark transition-colors">
+          <div className="p-6 sm:p-8 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark transition-colors shadow-sm hover:border-ink-border dark:hover:border-hairline-dark-soft">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-start sm:items-center gap-5 sm:gap-6">
                 <MemberAvatar
@@ -185,30 +185,30 @@ export default function Developers() {
                   size="large"
                 />
                 <div className="space-y-1.5">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono border border-slate-200/80 dark:border-slate-700/60">
-                    <GraduationCap className="w-3 h-3 text-slate-500" />
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-semibold bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark font-mono border border-hairline-light-soft dark:border-hairline-dark">
+                    <GraduationCap className="w-3 h-3 text-muted dark:text-on-dark-muted" />
                     <span>Pembimbing Utama</span>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+                  <h3 className="text-lg sm:text-xl font-bold text-ink-heading dark:text-on-dark tracking-tight">
                     {supervisor.name}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+                  <p className="text-xs sm:text-sm text-muted dark:text-on-dark-muted font-medium">
                     {supervisor.institution}
                   </p>
                   {supervisor.bio && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 pt-1 leading-relaxed max-w-xl">
+                    <p className="text-xs text-body dark:text-on-dark-soft pt-1 leading-relaxed max-w-xl">
                       {supervisor.bio}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="hidden lg:flex flex-col items-end gap-1.5 text-right border-l border-slate-100 dark:border-slate-800/80 pl-6 py-2">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  <Building2 className="w-3.5 h-3.5 text-slate-500" />
+              <div className="hidden lg:flex flex-col items-end gap-1.5 text-right border-l border-hairline-light dark:border-hairline-dark pl-6 py-2">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-body-strong dark:text-on-dark">
+                  <Building2 className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
                   <span>Universitas YARSI</span>
                 </div>
-                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                <span className="text-[11px] font-mono text-muted dark:text-on-dark-muted">
                   Fakultas Teknologi Informasi
                 </span>
               </div>
@@ -220,12 +220,12 @@ export default function Developers() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Code2 className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-              <h2 className="text-xs font-mono tracking-widest text-slate-600 dark:text-slate-400 uppercase font-semibold">
+              <Code2 className="w-4 h-4 text-muted dark:text-on-dark-muted" />
+              <h2 className="text-xs font-mono tracking-widest text-muted dark:text-on-dark-muted uppercase font-semibold">
                 Tim Pengembang (Developers)
               </h2>
             </div>
-            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+            <span className="text-[11px] font-mono text-muted dark:text-on-dark-muted">
               3 Anggota • DUK Team
             </span>
           </div>
@@ -234,7 +234,7 @@ export default function Developers() {
             {developers.map((dev) => (
               <div
                 key={dev.name}
-                className="p-5 rounded-2xl bg-white dark:bg-[#141722] border border-slate-200 dark:border-slate-800/90 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-colors duration-150"
+                className="p-5 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm"
               >
                 <div>
                   <MemberAvatar
@@ -244,25 +244,25 @@ export default function Developers() {
                   />
 
                   <div className="space-y-1.5 mb-5">
-                    <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/60">
+                    <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark">
                       {dev.role}
                     </div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
+                    <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight leading-snug">
                       {dev.name}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-muted dark:text-on-dark-muted">
                       {dev.institution}
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-2">
+                <div className="pt-4 border-t border-hairline-light-soft dark:border-hairline-dark flex items-center gap-2">
                   {dev.githubUrl && (
                     <a
                       href={dev.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold transition-colors duration-150"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink hover:text-on-ink dark:hover:bg-surface-dark-soft dark:hover:text-on-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-all duration-200"
                       aria-label={`GitHub profil ${dev.name}`}
                     >
                       <Github className="w-3.5 h-3.5" />
@@ -275,7 +275,7 @@ export default function Developers() {
                       href={dev.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold transition-colors duration-150"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink hover:text-on-ink dark:hover:bg-surface-dark-soft dark:hover:text-on-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-all duration-200"
                       aria-label={`Instagram profil ${dev.name}`}
                     >
                       <Instagram className="w-3.5 h-3.5" />
@@ -292,68 +292,68 @@ export default function Developers() {
         {/* Section 3: Pilar Fondasi Platform */}
         <section className="space-y-4">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-            <h2 className="text-xs font-mono tracking-widest text-slate-600 dark:text-slate-400 uppercase font-semibold">
+            <ShieldCheck className="w-4 h-4 text-muted dark:text-on-dark-muted" />
+            <h2 className="text-xs font-mono tracking-widest text-muted dark:text-on-dark-muted uppercase font-semibold">
               Pilar Fondasi Sistem
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Card 1 */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#141722] border border-slate-200 dark:border-slate-800/90 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-colors duration-150">
+            <div className="p-6 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm">
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                  <div className="w-9 h-9 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark flex items-center justify-center text-body dark:text-on-dark-soft">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
-                  <span className="text-[11px] font-mono font-semibold text-slate-400 dark:text-slate-600">
+                  <span className="text-[11px] font-mono font-semibold text-muted-soft dark:text-on-dark-muted">
                     01
                   </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+                <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight mb-2">
                   Tata Kelola Terintegrasi
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+                <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed font-normal">
                   Dirancang untuk memudahkan dosen mengelola data publikasi ilmiah, sitasi, dan dokumen pendukung dalam satu repositori terpadu.
                 </p>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#141722] border border-slate-200 dark:border-slate-800/90 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-colors duration-150">
+            <div className="p-6 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm">
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                  <div className="w-9 h-9 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark flex items-center justify-center text-body dark:text-on-dark-soft">
                     <Database className="w-4 h-4" />
                   </div>
-                  <span className="text-[11px] font-mono font-semibold text-slate-400 dark:text-slate-600">
+                  <span className="text-[11px] font-mono font-semibold text-muted-soft dark:text-on-dark-muted">
                     02
                   </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+                <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight mb-2">
                   Validasi Data Akurat
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+                <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed font-normal">
                   Sinkronisasi berkala dengan indeksasi akademik nasional dan internasional untuk memastikan integritas rekam jejak riset.
                 </p>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#141722] border border-slate-200 dark:border-slate-800/90 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-colors duration-150">
+            <div className="p-6 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm">
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                  <div className="w-9 h-9 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark flex items-center justify-center text-body dark:text-on-dark-soft">
                     <Sparkles className="w-4 h-4" />
                   </div>
-                  <span className="text-[11px] font-mono font-semibold text-slate-400 dark:text-slate-600">
+                  <span className="text-[11px] font-mono font-semibold text-muted-soft dark:text-on-dark-muted">
                     03
                   </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+                <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight mb-2">
                   Standar Rekayasa Web
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+                <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed font-normal">
                   Dibangun dengan standar rekayasa frontend modern berkecepatan tinggi, responsif, dan aksesibilitas tinggi untuk seluruh sivitas.
                 </p>
               </div>
@@ -368,5 +368,3 @@ export default function Developers() {
     </div>
   );
 }
-
-

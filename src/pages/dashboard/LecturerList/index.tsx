@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import Navbar from '../../../components/Home/Navbar';
 import Footer from '../../../components/Home/Footer';
+import SEO from '../../../components/SEO';
 import { useLecturerList } from './hooks/useLecturerList';
 import LecturerHeader from './components/LecturerHeader';
 import LecturerFilterStrip from './components/LecturerFilterStrip';
@@ -25,6 +26,12 @@ export default function LecturerList() {
 
   return (
     <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-colors duration-500 font-sans">
+      <SEO
+        title="Direktori Dosen & Portofolio Akademik — PentaDosen (Penta Dosen) Universitas YARSI"
+        description="Direktori profil dosen, publikasi Google Scholar & Scopus, penelitian, dan HKI dosen Universitas YARSI di PentaDosen (Penta Dosen)."
+        keywords="Direktori Dosen YARSI, Portofolio Dosen, Dosen Universitas YARSI, PentaDosen, Penta Dosen, Publikasi Dosen"
+        canonical="https://www.pentadosen.site/lecturers"
+      />
       <Navbar />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-8">

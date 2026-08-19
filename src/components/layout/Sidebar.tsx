@@ -106,7 +106,7 @@ export default function Sidebar({
       animate={isMobile ? (isMobileMenuOpen ? "mobileOpen" : "mobileClosed") : (isCollapsed ? "collapsed" : "expanded")}
       variants={sidebarVariants}
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-      className={`bg-surface-light dark:bg-surface-dark border-r border-hairline-light dark:border-hairline-dark flex flex-col fixed top-0 left-0 h-screen z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] lg:z-30 ${isCollapsed && !isMobile ? 'overflow-visible' : 'overflow-hidden'}`}
+      className={`bg-surface-light dark:bg-surface-dark border-r border-hairline-light dark:border-hairline-dark flex flex-col fixed top-0 left-0 h-screen z-50 shadow-sm lg:z-30 ${isCollapsed && !isMobile ? 'overflow-visible' : 'overflow-hidden'}`}
     >
       {/* Brand & Toggle Button */}
       <div className={`h-16 lg:h-20 flex items-center flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? 'justify-center px-2' : 'justify-between px-3.5 sm:px-4'}`}>
@@ -124,7 +124,7 @@ export default function Sidebar({
                 <motion.h1 
                   initial={{ opacity: 0, x: -5 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="text-base lg:text-[17px] font-black text-ink-heading dark:text-on-dark tracking-tighter uppercase"
+                  className="text-base lg:text-[17px] font-bold text-ink-heading dark:text-on-dark tracking-tight uppercase"
                 >
                   Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
                 </motion.h1>
@@ -136,7 +136,7 @@ export default function Sidebar({
                 onClick={() => setIsCollapsed(true)}
                 aria-label="Collapse sidebar"
                 title="Kecilkan Sidebar"
-                className="p-1.5 rounded-lg transition-all duration-300 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark flex-shrink-0"
+                className="p-1.5 rounded-lg transition-colors duration-200 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark flex-shrink-0"
               >
                 <PanelLeftClose className="w-5 h-5" />
               </button>
@@ -155,7 +155,7 @@ export default function Sidebar({
             onClick={() => setIsCollapsed(false)}
             aria-label="Expand sidebar"
             title="Perluas Sidebar"
-            className="p-2 rounded-lg transition-all duration-300 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark flex-shrink-0 mx-auto"
+            className="p-2 rounded-lg transition-colors duration-200 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark flex-shrink-0 mx-auto"
           >
             <PanelLeftOpen className="w-5 h-5" />
           </button>
@@ -169,12 +169,12 @@ export default function Sidebar({
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[10px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest ml-3 mb-3"
+              className="text-[11px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-[1.2px] ml-3 mb-2.5"
             >
               Main Menu
             </motion.p>
           )}
-          <nav className="space-y-1.5 font-bold">
+          <nav className="space-y-1.5 font-semibold text-sm font-sans">
             {navItems.filter(item => item.roles.includes(user.role) && !item.hidden).map((item) => {
               const Icon = item.icon;
               const hasChildren = !!(item.children && item.children.length > 0);
@@ -198,18 +198,18 @@ export default function Sidebar({
                       }}
                       className={`group relative w-full flex items-center text-sm rounded-lg transition-all duration-200 ${
                         parentActive
-                          ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent'
-                          : 'text-body dark:text-on-dark-soft hover:bg-surface-light dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent hover:border-hairline-light dark:hover:border-hairline-dark'
+                          ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent dark:border-accent-on-dark'
+                          : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent'
                       } ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
                     >
-                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentActive ? 'text-on-ink dark:text-on-dark' : 'text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
+                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentActive ? 'text-on-ink dark:text-on-dark' : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark'}`} />
                       
                       {showLabels ? (
                         <>
                           <motion.span 
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="whitespace-nowrap flex-1 text-left"
+                            className="whitespace-nowrap flex-1 text-left font-semibold"
                           >
                             {item.name}
                           </motion.span>
@@ -218,12 +218,12 @@ export default function Sidebar({
                             transition={{ duration: 0.25 }}
                             className="flex-shrink-0 ml-1"
                           >
-                            <ChevronDown className={`w-3.5 h-3.5 ${parentActive ? 'text-on-ink/70 dark:text-on-dark/70' : 'text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
+                            <ChevronDown className={`w-3.5 h-3.5 ${parentActive ? 'text-on-ink/70 dark:text-on-dark/70' : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark'}`} />
                           </motion.div>
                         </>
                       ) : (
                         // Modern Tooltip when collapsed
-                        <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-md pointer-events-none border border-hairline-light dark:border-hairline-dark flex items-center">
+                        <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark text-xs font-semibold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-md pointer-events-none border border-hairline-light dark:border-hairline-dark flex items-center">
                           {item.name}
                           <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-ink dark:bg-surface-dark-elevated rotate-45" />
                         </div>
@@ -248,16 +248,16 @@ export default function Sidebar({
                                 <button
                                   key={child.name}
                                   onClick={() => handleChildClick(child)}
-                                  className={`group w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wide transition-all duration-200 ${
+                                  className={`group w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all duration-200 ${
                                     childActive
-                                      ? 'bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-black'
-                                      : 'text-muted dark:text-on-dark-muted hover:bg-surface-light dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
+                                      ? 'bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-semibold'
+                                      : 'text-muted dark:text-on-dark-muted hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                                   }`}
                                 >
-                                  <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-transform ${childActive ? 'text-accent dark:text-accent-on-dark' : ''}`} />
+                                  <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-colors ${childActive ? 'text-accent dark:text-accent-on-dark' : 'text-muted-soft dark:text-on-dark-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
                                   <span className="truncate">{child.name}</span>
                                   {child.points !== undefined && (
-                                    <div className={`ml-auto px-1.5 py-0.5 rounded text-[8px] font-black tracking-widest flex-shrink-0 ${childActive ? 'bg-ink text-on-ink dark:bg-surface-dark dark:text-on-dark' : 'bg-surface-light-raised text-muted dark:bg-surface-dark dark:text-on-dark-muted group-hover:bg-ink-soft group-hover:text-ink-heading'}`}>
+                                    <div className={`ml-auto px-1.5 py-0.5 rounded-md text-[9px] font-semibold font-mono tracking-wider flex-shrink-0 ${childActive ? 'bg-ink text-on-ink dark:bg-surface-dark dark:text-on-dark' : 'bg-surface-light-raised text-muted dark:bg-surface-dark dark:text-on-dark-muted group-hover:bg-ink-soft group-hover:text-ink-heading dark:group-hover:text-on-dark'}`}>
                                       +{child.points} PTS
                                     </div>
                                   )}
@@ -287,22 +287,22 @@ export default function Sidebar({
                   onClick={() => isMobile && setIsMobileMenuOpen(false)}
                   className={`group relative flex items-center text-sm rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent'
-                      : 'text-body dark:text-on-dark-soft hover:bg-surface-light dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent hover:border-hairline-light dark:hover:border-hairline-dark'
+                      ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent dark:border-accent-on-dark'
+                      : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent'
                   } ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
                 >
-                  <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${isActive ? 'text-on-ink dark:text-on-dark' : 'text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
+                  <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${isActive ? 'text-on-ink dark:text-on-dark' : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark'}`} />
                   {showLabels ? (
                     <motion.span 
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="whitespace-nowrap"
+                      className="whitespace-nowrap font-semibold"
                     >
                       {item.name}
                     </motion.span>
                   ) : (
                     // Modern Tooltip when collapsed
-                    <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-xl pointer-events-none border border-hairline-light dark:border-hairline-dark flex items-center">
+                    <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark text-xs font-semibold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-md pointer-events-none border border-hairline-light dark:border-hairline-dark flex items-center">
                       {item.name}
                       <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-ink dark:bg-surface-dark-elevated rotate-45" />
                     </div>
@@ -313,8 +313,6 @@ export default function Sidebar({
           </nav>
         </div>
       </div>
-
-
     </motion.aside>
   );
 }
