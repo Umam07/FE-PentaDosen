@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, ChevronRight, AlertCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface BukuLinkingModalProps {
   isOpen: boolean;
@@ -58,45 +58,46 @@ export default function BukuLinkingModal({
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-xs"
           />
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden"
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden"
           >
-            <div className="p-8 lg:p-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl text-indigo-600">
-                  <Link className="w-6 h-6" />
+            <div className="p-6 sm:p-8">
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-2xl text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80">
+                  <Link className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Pilih Asal Penelitian</h3>
-                  <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">Hubungkan buku ini dengan penelitian yang relevan</p>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">Pilih Asal Penelitian</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Hubungkan buku ini dengan penelitian yang relevan</p>
                 </div>
               </div>
 
-              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 custom-scrollbar">
                 {approvedResearch.length > 0 ? (
                   approvedResearch.map((res: any) => (
                     <button
                       key={res.id}
                       disabled={isLinkingLoading}
                       onClick={() => handleLinkToResearchInternal(res.id)}
-                      className="w-full text-left p-5 rounded-2xl border-2 border-gray-50 dark:border-zinc-800 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all group"
+                      className="w-full text-left p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all group cursor-pointer"
                     >
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="min-w-0">
-                          <p className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight group-hover:text-indigo-700 dark:group-hover:text-indigo-300 leading-tight">
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-semibold text-slate-900 dark:text-zinc-100 tracking-tight leading-snug group-hover:text-slate-900 dark:group-hover:text-white">
                             {res.judul_penelitian}
                           </p>
-                          <div className="flex items-center gap-3 mt-2">
-                            <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">{res.tahun}</span>
-                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-zinc-800 text-gray-500 text-[8px] font-black uppercase tracking-widest rounded-md">{res.program}</span>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">{res.tahun}</span>
+                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200/60 dark:border-slate-700/60">{res.program}</span>
                           </div>
                         </div>
-                        <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg text-gray-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40 group-hover:text-indigo-600 transition-colors">
+                        <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0">
                           <ChevronRight className="w-4 h-4" />
                         </div>
                       </div>
@@ -104,16 +105,16 @@ export default function BukuLinkingModal({
                   ))
                 ) : (
                   <div className="py-12 text-center">
-                    <AlertCircle className="w-10 h-10 text-gray-200 mx-auto mb-4" />
-                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Tidak ada penelitian yang disetujui</p>
+                    <AlertCircle className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                    <p className="text-xs font-medium text-slate-400 dark:text-slate-500">Tidak ada penelitian yang disetujui</p>
                   </div>
                 )}
               </div>
 
-              <div className="mt-8 pt-8 border-t border-gray-50 dark:border-zinc-800">
+              <div className="mt-6 pt-4 border-t border-slate-200/80 dark:border-slate-800">
                 <button 
                   onClick={onClose}
-                  className="w-full py-4 bg-gray-50 dark:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all"
+                  className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-xl transition-all cursor-pointer"
                 >
                   Batalkan
                 </button>
@@ -125,3 +126,4 @@ export default function BukuLinkingModal({
     </AnimatePresence>
   );
 }
+

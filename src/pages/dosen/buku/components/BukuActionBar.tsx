@@ -1,6 +1,6 @@
 import React from 'react';
-import { Upload, Zap, Download, FileSpreadsheet } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Upload, Download, FileSpreadsheet } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface BukuActionBarProps {
   onUploadClick: () => void;
@@ -19,39 +19,44 @@ export default function BukuActionBar({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl lg:rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+      className="bg-white dark:bg-slate-900 shadow-xs rounded-2xl lg:rounded-3xl border border-slate-200/80 dark:border-slate-800 p-4 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6"
     >
-      <div className="flex items-center gap-4 w-full md:w-auto">
-        <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-2xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30 shadow-sm">
-          <Upload className="w-6 h-6" />
+      <div className="flex items-center gap-3 sm:gap-4 w-full lg:w-auto">
+        <div className="p-3 sm:p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shadow-xs shrink-0">
+          <Upload className="w-5 h-5 sm:w-6 sm:h-6" />
         </div>
-        <div>
-          <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Kelola Buku Referensi & Ajar</h3>
-          <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">Registrasikan buku baru atau impor data dari Excel secara massal</p>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+            Kelola Buku Referensi & Ajar
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Registrasikan buku baru atau impor data dari Excel secara massal
+          </p>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto justify-end">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex items-center gap-2.5 sm:gap-3 w-full lg:w-auto shrink-0 justify-end">
         <button
           onClick={onUploadClick}
-          className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95"
+          className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 sm:py-3 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
         >
           Unggah Buku Baru
         </button>
         <button 
           type="button"
           onClick={onDownloadTemplate}
-          className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm uppercase tracking-wider"
+          className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 sm:py-3 text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-200 shadow-xs whitespace-nowrap cursor-pointer"
         >
-          <Download className="w-4 h-4 mr-2" />
+          <Download className="w-4 h-4 mr-1.5 shrink-0" />
           Template
         </button>
-        <label className={`w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 text-xs font-black bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors text-gray-700 dark:text-zinc-300 shadow-sm cursor-pointer uppercase tracking-wider whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
-          <FileSpreadsheet className="w-4 h-4 mr-2 shrink-0 text-slate-500 dark:text-zinc-400" />
-          {isImporting ? 'Importing...' : 'Import Excel'}
+        <label className={`w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 sm:py-3 text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-200 shadow-xs cursor-pointer whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+          <FileSpreadsheet className="w-4 h-4 mr-1.5 shrink-0 text-slate-500 dark:text-slate-400" />
+          {isImporting ? 'Mengimpor...' : 'Import Excel'}
           <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={onImportExcel} disabled={isImporting} />
         </label>
       </div>
     </motion.div>
   );
 }
+

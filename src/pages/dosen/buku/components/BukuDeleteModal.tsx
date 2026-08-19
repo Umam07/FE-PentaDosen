@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Trash2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface BukuDeleteModalProps {
   isOpen: boolean;
@@ -60,39 +60,39 @@ export default function BukuDeleteModal({
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            className="fixed inset-0 bg-gray-950/70 backdrop-blur-md" 
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" 
             onClick={onClose} 
           />
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }} 
+            initial={{ opacity: 0, scale: 0.95, y: 15 }} 
             animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.9, y: 20 }} 
+            exit={{ opacity: 0, scale: 0.95, y: 15 }} 
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 p-8"
+            className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8"
           >
             <div className="flex flex-col items-center text-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
-                <Trash2 className="w-8 h-8 text-red-500" />
+              <div className="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200/60 dark:border-red-800/40 flex items-center justify-center">
+                <Trash2 className="w-7 h-7 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Hapus Buku?</h3>
-                <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 mt-1">Tindakan ini tidak dapat dibatalkan.</p>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Hapus Buku?</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Tindakan ini tidak dapat dibatalkan.</p>
               </div>
-              <div className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-100 dark:border-zinc-700">
-                <p className="text-xs font-black text-gray-700 dark:text-zinc-300 uppercase tracking-tight">{deleteDoc.title}</p>
-                <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 mt-1 uppercase tracking-widest">{deleteDoc.category}</p>
+              <div className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
+                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 tracking-tight">{deleteDoc.title}</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{deleteDoc.category}</p>
               </div>
               <div className="flex gap-3 w-full mt-2">
                 <button 
                   onClick={onClose} 
-                  className="flex-1 px-4 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                  className="flex-1 px-4 py-2.5 border border-slate-200/80 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl text-xs font-semibold transition-all cursor-pointer"
                 >
                   Batal
                 </button>
                 <button 
                   onClick={handleDeleteInternal} 
                   disabled={isDeleteLoading} 
-                  className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-red-900/30 transition-all active:scale-95 disabled:opacity-60"
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-95 disabled:opacity-60 cursor-pointer"
                 >
                   {isDeleteLoading ? 'Menghapus...' : 'Ya, Hapus'}
                 </button>
@@ -104,3 +104,4 @@ export default function BukuDeleteModal({
     </AnimatePresence>
   );
 }
+

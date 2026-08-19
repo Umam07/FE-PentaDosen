@@ -17,7 +17,7 @@ export default function BukuStats({ stats, isTableLoading }: BukuStatsProps) {
     { label: 'Total Buku', value: stats.total, icon: Book, color: 'slate' },
     { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
     { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
-    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'indigo' },
+    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'slate' },
   ];
 
   return (
@@ -31,19 +31,18 @@ export default function BukuStats({ stats, isTableLoading }: BukuStatsProps) {
           className="bg-white dark:bg-slate-900 shadow-xs rounded-2xl border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all"
         >
           <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${
-            item.color === 'slate' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' :
+            item.color === 'slate' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' :
             item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
-            item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
-            'bg-slate-100 dark:bg-slate-800 text-primary-600 dark:text-primary-400'
+            'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'
           }`}>
             <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
           </div>
           <div className="min-w-0 flex-1 w-full">
             <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-1">
-              <p className="text-[9px] sm:text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-wider truncate" title={item.label}>
+              <p className="text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate" title={item.label}>
                 {item.label}
               </p>
-              <p className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold font-mono text-slate-900 dark:text-zinc-100 tabular-nums">
                 {item.value}
               </p>
             </phantom-ui>
@@ -53,3 +52,4 @@ export default function BukuStats({ stats, isTableLoading }: BukuStatsProps) {
     </section>
   );
 }
+
