@@ -17,7 +17,7 @@ export default function DepartementCard({ dept, index, onClick }: DepartementCar
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       whileHover={{ y: -6 }}
-      className="group relative bg-surface-light dark:bg-surface-dark p-7 rounded-3xl border border-hairline-light dark:border-hairline-dark shadow-xs hover:shadow-md hover:border-hairline-light dark:hover:border-hairline-dark transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[460px]"
+      className="group relative bg-surface-light dark:bg-surface-dark p-7 rounded-3xl border border-hairline-light dark:border-hairline-dark shadow-xs hover:shadow-md hover:border-ink-border dark:hover:border-hairline-dark transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[460px]"
       onClick={onClick}
     >
       <div className="relative z-10 flex flex-col h-full justify-between flex-1">
@@ -71,9 +71,9 @@ export default function DepartementCard({ dept, index, onClick }: DepartementCar
           </div>
 
           {/* Read more trigger */}
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          <div className="flex items-center justify-between text-xs font-semibold text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark transition-colors">
             <span>Lihat Direktori Dosen</span>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${dept.bgColor} text-slate-500 dark:text-slate-400 group-hover:bg-primary-500 group-hover:text-white transition-all duration-300`}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${dept.bgColor} ${dept.textColor} group-hover:bg-ink group-hover:text-on-ink dark:group-hover:bg-surface-dark-elevated dark:group-hover:text-on-dark transition-all duration-300`}>
               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </div>
           </div>

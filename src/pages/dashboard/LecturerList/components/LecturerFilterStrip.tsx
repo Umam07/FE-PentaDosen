@@ -67,7 +67,7 @@ export default function LecturerFilterStrip({
 
   const selectedCount = fakultasCounts[selectedFakultas] ?? 0;
   const selectedDotColor = selectedFakultas === 'Semua' 
-    ? 'bg-slate-400 dark:bg-slate-500' 
+    ? 'bg-muted-soft dark:bg-on-dark-muted' 
     : getFakultasTheme(selectedFakultas).color;
 
   return (
@@ -79,20 +79,20 @@ export default function LecturerFilterStrip({
           onClick={() => setIsOpen(!isOpen)}
           className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold border transition-all cursor-pointer ${
             isOpen
-              ? 'bg-white dark:bg-slate-900 border-primary-500 text-slate-900 dark:text-white shadow-md shadow-primary-500/5'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+              ? 'bg-surface-light dark:bg-surface-dark border-accent text-ink-heading dark:text-on-dark shadow-sm'
+              : 'bg-surface-light dark:bg-surface-dark border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:border-ink-border dark:hover:border-hairline-dark'
           }`}
           aria-expanded={isOpen}
           aria-haspopup="true"
         >
           <div className="flex items-center gap-2.5 min-w-0">
-            <Filter className="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0" />
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0">Fakultas:</span>
+            <Filter className="w-4 h-4 text-accent dark:text-accent-on-dark shrink-0" />
+            <span className="text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider shrink-0">Fakultas:</span>
             
             <div className="flex items-center gap-2 truncate">
               <span className={`w-2 h-2 rounded-full shrink-0 ${selectedDotColor}`} />
-              <span className="truncate font-bold text-slate-900 dark:text-white">{selectedFakultas}</span>
-              <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50">
+              <span className="truncate font-bold text-ink-heading dark:text-on-dark">{selectedFakultas}</span>
+              <span className="px-2 py-0.5 text-[10px] font-bold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft">
                 {selectedCount}
               </span>
             </div>
@@ -101,7 +101,7 @@ export default function LecturerFilterStrip({
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            className="flex items-center justify-center w-5 h-5 text-slate-400 shrink-0 ml-2"
+            className="flex items-center justify-center w-5 h-5 text-muted dark:text-on-dark-muted shrink-0 ml-2"
           >
             <ChevronDown className="w-4 h-4" />
           </motion.div>
@@ -134,7 +134,7 @@ export default function LecturerFilterStrip({
               }}
               className="absolute left-0 right-0 top-full mt-2 z-50"
             >
-              <div className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-2xl max-h-[380px] overflow-y-auto">
+              <div className="w-full rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark p-1.5 shadow-xl max-h-[380px] overflow-y-auto">
                 <motion.div 
                   className="py-0.5 space-y-0.5" 
                   variants={containerVariants} 
@@ -146,7 +146,7 @@ export default function LecturerFilterStrip({
                     const isTarget = (hoveredFakultas || selectedFakultas) === fak;
                     const count = fakultasCounts[fak] ?? 0;
                     const dotColor = fak === 'Semua' 
-                      ? 'bg-slate-400 dark:bg-slate-500' 
+                      ? 'bg-muted-soft dark:bg-on-dark-muted' 
                       : getFakultasTheme(fak).color;
 
                     return (
@@ -163,11 +163,11 @@ export default function LecturerFilterStrip({
                         whileTap={{ scale: 0.98 }}
                         variants={itemVariants}
                       >
-                        {/* Pixel-Perfect Dynamic Hover Highlight */}
+                        {/* Dynamic Hover Highlight */}
                         {isTarget && (
                           <motion.div
                             layoutId="faculty-hover-highlight"
-                            className="absolute inset-0 bg-slate-100 dark:bg-slate-800 rounded-xl"
+                            className="absolute inset-0 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl"
                             initial={false}
                             transition={{
                               type: 'spring',
@@ -180,16 +180,16 @@ export default function LecturerFilterStrip({
                         {/* Label & Dot */}
                         <div className="relative z-10 flex items-center gap-2.5 truncate">
                           <span className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
-                          <span className={`truncate ${isSelected ? 'font-bold text-primary-600 dark:text-primary-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                          <span className={`truncate ${isSelected ? 'font-bold text-accent dark:text-accent-on-dark' : 'text-body dark:text-on-dark-soft'}`}>
                             {fak}
                           </span>
                         </div>
 
                         {/* Badge Count */}
-                        <span className={`relative z-10 px-2 py-0.5 text-[10px] font-extrabold rounded-md shrink-0 ${
+                        <span className={`relative z-10 px-2 py-0.5 text-[10px] font-bold font-mono rounded-md shrink-0 ${
                           isSelected
-                            ? 'bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 border border-primary-200/50 dark:border-primary-800/50'
-                            : 'bg-white/80 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 border border-slate-200/40 dark:border-slate-800/40'
+                            ? 'bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark border border-accent-border/50 dark:border-accent/30'
+                            : 'bg-surface-light-raised/80 dark:bg-surface-dark-elevated/80 text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft'
                         }`}>
                           {count}
                         </span>

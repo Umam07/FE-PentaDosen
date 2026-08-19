@@ -24,7 +24,7 @@ export default function LecturerCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}
-      className="group relative bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 hover:border-primary-500/60 dark:hover:border-primary-500/60 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-950/60 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[480px]"
+      className="group relative bg-surface-light dark:bg-surface-dark rounded-3xl p-6 border border-hairline-light dark:border-hairline-dark hover:border-ink-border dark:hover:border-hairline-dark hover:-translate-y-1 hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[480px]"
       onClick={onClick}
     >
       <div className="relative z-10 flex flex-col h-full justify-between flex-1">
@@ -38,16 +38,16 @@ export default function LecturerCard({
                 lecturer.name.charAt(0)
               )}
             </div>
-            <div className="px-2.5 py-1 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
-              <p className="text-[9px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-widest">
-                Penta ID: <span className="text-slate-800 dark:text-slate-200 font-semibold">{lecturer.penta_id || `712400${index + 1}`}</span>
+            <div className="px-2.5 py-1 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg border border-hairline-light-soft dark:border-hairline-dark-soft">
+              <p className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest">
+                Penta ID: <span className="text-ink-heading dark:text-on-dark font-mono font-semibold">{lecturer.penta_id || `712400${index + 1}`}</span>
               </p>
             </div>
           </div>
 
           {/* Title & Info tags */}
           <div className="space-y-3">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
               {lecturer.name}
             </h3>
             <div className="flex flex-wrap items-center gap-1.5">
@@ -55,7 +55,7 @@ export default function LecturerCard({
                 {lecturer.fakultas || 'N/A'}
               </span>
               {lecturer.program_studi && (
-                <span className="text-[9px] font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded-md truncate max-w-[150px]">
+                <span className="text-[9px] font-medium text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark px-2 py-0.5 rounded-md truncate max-w-[150px]">
                   {lecturer.program_studi}
                 </span>
               )}
@@ -63,21 +63,21 @@ export default function LecturerCard({
           </div>
 
           {/* Scholar & Scopus Metrics block */}
-          <div className="space-y-4 py-4 border-y border-slate-100 dark:border-slate-800">
+          <div className="space-y-4 py-4 border-y border-hairline-light-soft dark:border-hairline-dark-soft">
             {/* Scholar Metrics */}
             <div className="space-y-2">
               <div className="flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
-                <span className="text-[9px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-widest">Google Scholar</span>
+                <BookOpen className="w-3.5 h-3.5 text-chart-scholar dark:text-chart-scholar-dark" />
+                <span className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest">Google Scholar</span>
               </div>
-              <div className="grid grid-cols-2 gap-2 p-2 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
+              <div className="grid grid-cols-2 gap-2 p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-center">
                 <div>
-                  <p className="text-[8px] font-medium text-slate-400 uppercase tracking-wider mb-0.5">Citations</p>
-                  <p className="text-sm font-extrabold text-slate-800 dark:text-slate-100">{lecturer.total_citations || 0}</p>
+                  <p className="text-[8px] font-medium text-muted dark:text-on-dark-muted uppercase tracking-wider mb-0.5">Citations</p>
+                  <p className="text-sm font-bold font-mono text-ink-heading dark:text-on-dark">{lecturer.total_citations || 0}</p>
                 </div>
-                <div className="border-l border-slate-200 dark:border-slate-800">
-                  <p className="text-[8px] font-medium text-slate-400 uppercase tracking-wider mb-0.5">H-Index</p>
-                  <p className="text-sm font-extrabold text-slate-800 dark:text-slate-100">{lecturer.h_index || 0}</p>
+                <div className="border-l border-hairline-light-soft dark:border-hairline-dark-soft">
+                  <p className="text-[8px] font-medium text-muted dark:text-on-dark-muted uppercase tracking-wider mb-0.5">H-Index</p>
+                  <p className="text-sm font-bold font-mono text-ink-heading dark:text-on-dark">{lecturer.h_index || 0}</p>
                 </div>
               </div>
             </div>
@@ -85,17 +85,17 @@ export default function LecturerCard({
             {/* Scopus Metrics */}
             <div className="space-y-2">
               <div className="flex items-center gap-1.5">
-                <GraduationCap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span className="text-[9px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-widest">Scopus</span>
+                <GraduationCap className="w-3.5 h-3.5 text-chart-scopus dark:text-chart-scopus-dark" />
+                <span className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest">Scopus</span>
               </div>
-              <div className="grid grid-cols-2 gap-2 p-2 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
+              <div className="grid grid-cols-2 gap-2 p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-center">
                 <div>
-                  <p className="text-[8px] font-medium text-slate-400 uppercase tracking-wider mb-0.5">Citations</p>
-                  <p className="text-sm font-extrabold text-slate-800 dark:text-slate-100">{lecturer.scopus_total_citations || 0}</p>
+                  <p className="text-[8px] font-medium text-muted dark:text-on-dark-muted uppercase tracking-wider mb-0.5">Citations</p>
+                  <p className="text-sm font-bold font-mono text-ink-heading dark:text-on-dark">{lecturer.scopus_total_citations || 0}</p>
                 </div>
-                <div className="border-l border-slate-200 dark:border-slate-800">
-                  <p className="text-[8px] font-medium text-slate-400 uppercase tracking-wider mb-0.5">H-Index</p>
-                  <p className="text-sm font-extrabold text-slate-800 dark:text-slate-100">{lecturer.scopus_h_index || 0}</p>
+                <div className="border-l border-hairline-light-soft dark:border-hairline-dark-soft">
+                  <p className="text-[8px] font-medium text-muted dark:text-on-dark-muted uppercase tracking-wider mb-0.5">H-Index</p>
+                  <p className="text-sm font-bold font-mono text-ink-heading dark:text-on-dark">{lecturer.scopus_h_index || 0}</p>
                 </div>
               </div>
             </div>
@@ -105,8 +105,8 @@ export default function LecturerCard({
         {/* Bottom Section: KPI & Nav button with Tooltip */}
         <div className="flex items-end justify-between pt-4">
           <div className="space-y-1">
-            <p className="text-[9px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest opacity-80">Total KPI</p>
-            <p className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-none">
+            <p className="text-[9px] font-bold text-accent dark:text-accent-on-dark uppercase tracking-widest opacity-90">Total KPI</p>
+            <p className="text-xl font-extrabold font-mono text-ink-heading dark:text-on-dark tracking-tight leading-none">
               {Math.round(lecturer.total_kpi_points).toLocaleString()}
             </p>
           </div>
@@ -115,11 +115,11 @@ export default function LecturerCard({
             <div 
               title="Lihat Profil Lengkap"
               aria-label="Lihat Profil Lengkap"
-              className={`w-9 h-9 rounded-full flex items-center justify-center ${theme.bgColor} ${theme.textColor} group-hover:bg-primary-600 group-hover:text-white transition-all duration-200`}
+              className={`w-9 h-9 rounded-full flex items-center justify-center ${theme.bgColor} ${theme.textColor} group-hover:bg-ink group-hover:text-on-ink dark:group-hover:bg-surface-dark-elevated dark:group-hover:text-on-dark transition-all duration-200`}
             >
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </div>
-            <span className="absolute bottom-full right-0 mb-2 hidden group-hover/cta:block px-2.5 py-1 text-[10px] font-bold text-white bg-slate-900 dark:bg-slate-800 rounded-md whitespace-nowrap pointer-events-none z-20">
+            <span className="absolute bottom-full right-0 mb-2 hidden group-hover/cta:block px-2.5 py-1 text-[10px] font-bold text-on-ink bg-ink dark:bg-surface-dark-elevated dark:text-on-dark rounded-md whitespace-nowrap pointer-events-none z-20 shadow-md">
               Lihat Profil Lengkap
             </span>
           </div>
@@ -127,7 +127,7 @@ export default function LecturerCard({
       </div>
 
       {/* Decorative Elements */}
-      <Sparkles className="absolute top-6 right-6 w-10 h-10 text-slate-900/5 dark:text-white/5 -rotate-12 group-hover:rotate-12 transition-transform duration-700 pointer-events-none" />
+      <Sparkles className="absolute top-6 right-6 w-10 h-10 text-ink-heading/5 dark:text-on-dark/5 -rotate-12 group-hover:rotate-12 transition-transform duration-700 pointer-events-none" />
     </motion.div>
   );
 }

@@ -46,13 +46,13 @@ export default function DepartementHeader({
         {/* Grouped Hero Controls & Stats */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-3xl border border-hairline-light dark:border-hairline-dark">
           <div className="relative group flex-1 min-w-[240px]">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted group-focus-within:text-ink-heading transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted group-focus-within:text-accent transition-colors" />
             <input 
               type="text" 
               placeholder="Cari fakultas..." 
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl text-xs font-semibold outline-none focus:border-ink-border dark:focus:border-hairline-dark text-ink-heading dark:text-on-dark placeholder:text-muted transition-all"
+              className="w-full pl-11 pr-4 py-3 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl text-xs font-semibold outline-none focus:border-accent dark:focus:border-accent-on-dark focus:ring-2 focus:ring-accent/15 text-ink-heading dark:text-on-dark placeholder:text-muted transition-all"
             />
           </div>
 

@@ -53,11 +53,11 @@ export const FAKULTAS_THEMES: Record<string, FakultasTheme> = {
 
 export const getFakultasTheme = (fakultasName?: string): FakultasTheme => {
   return FAKULTAS_THEMES[fakultasName || ''] || {
-    color: 'bg-primary-500',
-    textColor: 'text-primary-600 dark:text-primary-400',
-    bgColor: 'bg-primary-500/10',
-    borderColor: 'border-primary-500/20',
-    badgeClass: 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 border-primary-100/50 dark:border-primary-900/30',
+    color: 'bg-accent',
+    textColor: 'text-accent dark:text-accent-on-dark',
+    bgColor: 'bg-accent/10',
+    borderColor: 'border-accent/20',
+    badgeClass: 'bg-accent-soft dark:bg-accent/10 text-accent dark:text-accent-on-dark border-accent-border/50 dark:border-accent/20',
     glowColor: ''
   };
 };

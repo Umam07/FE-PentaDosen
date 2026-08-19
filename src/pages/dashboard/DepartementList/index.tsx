@@ -18,7 +18,7 @@ export default function DepartementList() {
   } = useDepartementList();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-all duration-500 font-sans">
+    <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-all duration-500 font-sans">
       <Navbar />
       
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24">
