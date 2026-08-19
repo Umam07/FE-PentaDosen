@@ -8,7 +8,7 @@ interface BaseFormModalProps {
   title: string;
   subtitle?: string;
   icon?: LucideIcon;
-  iconColorClass?: string; // e.g., 'text-primary-500' or 'text-blue-500'
+  iconColorClass?: string;
   maxWidthClass?: string;  // e.g., 'max-w-6xl' (default), 'max-w-2xl'
   children: ReactNode;
 }
@@ -19,7 +19,7 @@ export function BaseFormModal({
   title,
   subtitle,
   icon: Icon,
-  iconColorClass = 'text-primary-500',
+  iconColorClass = 'text-ink-heading dark:text-on-dark',
   maxWidthClass = 'max-w-6xl',
   children
 }: BaseFormModalProps) {

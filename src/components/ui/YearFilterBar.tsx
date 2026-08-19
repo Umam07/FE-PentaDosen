@@ -70,7 +70,7 @@ export default function YearFilterBar({
     <div className={`${containerCls} ${className}`}>
       {/* Label */}
       <div className={labelCls}>
-        <Calendar className="w-4 h-4 text-primary-500" />
+        <Calendar className="w-4 h-4 text-muted dark:text-on-dark-soft" />
         <span>Filter Tahun:</span>
       </div>
 
@@ -82,11 +82,11 @@ export default function YearFilterBar({
             setIsOpen((prev) => !prev);
             setSearchQuery('');
           }}
-          className={`flex items-center justify-between gap-2.5 px-3.5 py-2 bg-white dark:bg-zinc-800/90 border ${
+          className={`flex items-center justify-between gap-2.5 px-3.5 py-2 bg-surface-light dark:bg-surface-dark-elevated border ${
             isFiltered
-              ? 'border-primary-500/60 dark:border-primary-500/60 text-primary-700 dark:text-primary-300 bg-primary-50/40 dark:bg-primary-950/20 font-black'
-              : 'border-slate-200 dark:border-zinc-700 text-slate-800 dark:text-zinc-100 font-extrabold'
-          } rounded-xl text-[11px] uppercase tracking-wider outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 hover:border-primary-400 dark:hover:border-primary-500/60 transition-all cursor-pointer min-w-[130px] sm:min-w-[150px] shadow-2xs`}
+              ? 'border-ink-border dark:border-hairline-dark text-ink-heading dark:text-on-dark bg-ink-soft dark:bg-surface-dark font-black'
+              : 'border-hairline-light dark:border-hairline-dark text-body-strong dark:text-on-dark font-extrabold'
+          } rounded-lg text-[11px] uppercase tracking-wider outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent hover:border-ink-border dark:hover:border-hairline-dark transition-all cursor-pointer min-w-[130px] sm:min-w-[150px] shadow-2xs`}
         >
           <span className="truncate">
             {selectedYear !== null ? `Tahun ${selectedYear}` : 'Semua Tahun'}
@@ -94,7 +94,7 @@ export default function YearFilterBar({
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="text-slate-400 dark:text-zinc-500 shrink-0 ml-1"
+            className="text-muted dark:text-on-dark-muted shrink-0 ml-1"
           >
             <ChevronDown className="w-3.5 h-3.5" />
           </motion.div>
@@ -107,26 +107,26 @@ export default function YearFilterBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute left-0 top-full mt-1.5 z-[999] min-w-[170px] w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xl py-1.5"
+              className="absolute left-0 top-full mt-1.5 z-[999] min-w-[170px] w-full bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-xl py-1.5"
             >
               {/* Filter Pencarian/Search Input jika opsi tahun > 10 */}
               {sortedYears.length > 10 && (
-                <div className="px-2.5 py-1.5 pb-2 border-b border-slate-100 dark:border-zinc-800">
+                <div className="px-2.5 py-1.5 pb-2 border-b border-hairline-light dark:border-hairline-dark">
                   <div className="relative flex items-center">
-                    <Search className="w-3.5 h-3.5 absolute left-2.5 text-slate-400 dark:text-zinc-500 pointer-events-none" />
+                    <Search className="w-3.5 h-3.5 absolute left-2.5 text-muted dark:text-on-dark-muted pointer-events-none" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Cari tahun..."
-                      className="w-full pl-8 pr-7 py-1.5 bg-slate-50 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 text-[10px] font-bold rounded-lg border border-slate-200/80 dark:border-zinc-700/60 outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/20 transition-all placeholder:font-normal"
+                      className="w-full pl-8 pr-7 py-1.5 bg-canvas-light dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-[10px] font-bold rounded-lg border border-hairline-light dark:border-hairline-dark outline-none focus:border-accent focus:ring-1 focus:ring-accent/20 transition-all placeholder:font-normal"
                       autoFocus
                     />
                     {searchQuery && (
                       <button
                         type="button"
                         onClick={() => setSearchQuery('')}
-                        className="absolute right-2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 cursor-pointer"
+                        className="absolute right-2 text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark cursor-pointer"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -147,13 +147,13 @@ export default function YearFilterBar({
                     }}
                     className={`w-full text-left px-3.5 py-2 text-[11px] font-black uppercase tracking-wider flex items-center justify-between cursor-pointer transition-colors duration-150 ${
                       selectedYear === null
-                        ? 'bg-primary-50/80 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 font-black'
-                        : 'text-slate-700 dark:text-zinc-200 hover:bg-slate-100/70 dark:hover:bg-zinc-800/80 hover:text-slate-900 dark:hover:text-zinc-100'
+                        ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark font-black'
+                        : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                     }`}
                   >
                     <span>Semua Tahun</span>
                     {selectedYear === null && (
-                      <Check className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0 ml-2" />
+                      <Check className="w-3.5 h-3.5 text-on-ink dark:text-on-dark shrink-0 ml-2" />
                     )}
                   </button>
                 )}
@@ -172,19 +172,19 @@ export default function YearFilterBar({
                         }}
                         className={`w-full text-left px-3.5 py-2 text-[11px] font-black uppercase tracking-wider flex items-center justify-between cursor-pointer transition-colors duration-150 ${
                           isSelected
-                            ? 'bg-primary-50/80 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 font-black'
-                            : 'text-slate-700 dark:text-zinc-200 hover:bg-slate-100/70 dark:hover:bg-zinc-800/80 hover:text-slate-900 dark:hover:text-zinc-100'
+                            ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark font-black'
+                            : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                         }`}
                       >
                         <span>Tahun {year}</span>
                         {isSelected && (
-                          <Check className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0 ml-2" />
+                          <Check className="w-3.5 h-3.5 text-on-ink dark:text-on-dark shrink-0 ml-2" />
                         )}
                       </button>
                     );
                   })
                 ) : searchQuery ? (
-                  <div className="px-3 py-3 text-center text-[10px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+                  <div className="px-3 py-3 text-center text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">
                     Tahun tidak ditemukan
                   </div>
                 ) : null}

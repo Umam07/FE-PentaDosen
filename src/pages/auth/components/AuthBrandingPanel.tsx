@@ -8,7 +8,7 @@ interface AuthBrandingPanelProps {
 
 export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelProps) {
   return (
-    <div className="hidden lg:flex flex-col justify-between w-[44%] bg-slate-50 dark:bg-slate-900/20 px-14 py-12 absolute top-0 bottom-0 left-0 border-r border-slate-200/80 dark:border-slate-800/80 z-20">
+    <div className="hidden lg:flex flex-col justify-between w-[44%] bg-surface-light dark:bg-surface-dark px-14 py-12 absolute top-0 bottom-0 left-0 border-r border-hairline-light dark:border-hairline-dark z-20">
       {/* Top Placeholder */}
       <div className="h-6" />
 
@@ -21,15 +21,15 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
           className="space-y-8"
         >
           <div className="space-y-4">
-            <p className="text-[11px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-[0.2em]">
+            <p className="text-[11px] font-bold text-accent dark:text-accent-on-dark uppercase tracking-[0.2em]">
               Portal Akademik & KPI System
             </p>
-            <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white leading-[1.2] tracking-tight">
+            <h1 className="text-4xl font-extrabold text-ink-heading dark:text-on-dark leading-[1.2] tracking-tight">
               Satu Platform Untuk<br />Penelitian & KPI<br />Akademik Kampus.
             </h1>
           </div>
           
-          <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium max-w-sm">
+          <p className="text-body dark:text-on-dark-soft text-sm leading-relaxed font-medium max-w-sm">
             PentaDosen mengintegrasikan rekam jejak akademik, kinerja penelitian, dan monitoring KPI dalam satu interface yang modern.
           </p>
 
@@ -40,8 +40,8 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
               'Visualisasi pencapaian KPI secara real-time',
               'Penyusunan & verifikasi berkas evaluasi kinerja',
             ].map((item) => (
-              <li key={item} className="flex items-start gap-3 text-slate-600 dark:text-slate-300 text-sm font-medium">
-                <div className="p-0.5 bg-primary-50 dark:bg-primary-950/50 rounded-md text-primary-600 dark:text-primary-400 shrink-0 mt-0.5">
+              <li key={item} className="flex items-start gap-3 text-body-strong dark:text-on-dark text-sm font-medium">
+                <div className="p-0.5 bg-ink-soft dark:bg-surface-dark-elevated rounded-md text-ink dark:text-on-dark shrink-0 mt-0.5">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
@@ -57,27 +57,27 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/60 rounded-2xl p-5 shadow-sm max-w-sm"
+          className="border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-5 shadow-sm max-w-sm"
         >
-          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
+          <p className="text-[10px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest mb-3">
             Statistik Kinerja Kampus
           </p>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 mb-1">
-                <BookOpen className="w-3.5 h-3.5 text-primary-500" />
+              <div className="flex items-center gap-1.5 text-muted dark:text-on-dark-muted mb-1">
+                <BookOpen className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
                 <span className="text-[11px] font-semibold">Total Dokumen</span>
               </div>
-              <p className="text-xl font-bold text-slate-900 dark:text-white">
+              <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark">
                 {typeof totalDocs === 'number' ? `${totalDocs.toLocaleString('id-ID')}` : totalDocs}
               </p>
             </div>
-            <div className="border-l border-slate-100 dark:border-slate-800 pl-4">
-              <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 mb-1">
-                <Users className="w-3.5 h-3.5 text-primary-500" />
+            <div className="border-l border-hairline-light dark:border-hairline-dark pl-4">
+              <div className="flex items-center gap-1.5 text-muted dark:text-on-dark-muted mb-1">
+                <Users className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
                 <span className="text-[11px] font-semibold">Dosen Aktif</span>
               </div>
-              <p className="text-xl font-bold text-slate-900 dark:text-white">
+              <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark">
                 {typeof totalDosen === 'number' ? `${totalDosen.toLocaleString('id-ID')}` : totalDosen}
               </p>
             </div>
@@ -87,7 +87,7 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
 
       {/* Bottom: Hak Cipta */}
       <div className="relative z-10">
-        <p className="text-slate-400 dark:text-slate-600 text-[10px] font-semibold uppercase tracking-wider">
+        <p className="text-muted dark:text-on-dark-muted text-[10px] font-semibold uppercase tracking-wider">
           © 2026 PentaDosen · KPI & Research System
         </p>
       </div>

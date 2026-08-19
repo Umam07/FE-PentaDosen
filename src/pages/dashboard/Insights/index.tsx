@@ -33,7 +33,7 @@ export default function Insights() {
   } = useInsights();
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 transition-colors duration-300 font-sans antialiased text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-colors duration-300 font-sans antialiased text-body dark:text-on-dark">
       <Navbar />
 
       <main className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">

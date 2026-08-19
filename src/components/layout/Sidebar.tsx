@@ -106,7 +106,7 @@ export default function Sidebar({
       animate={isMobile ? (isMobileMenuOpen ? "mobileOpen" : "mobileClosed") : (isCollapsed ? "collapsed" : "expanded")}
       variants={sidebarVariants}
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-      className={`bg-white dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800 flex flex-col fixed top-0 left-0 h-screen z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] lg:z-30 ${isCollapsed && !isMobile ? 'overflow-visible' : 'overflow-hidden'}`}
+      className={`bg-surface-light dark:bg-surface-dark border-r border-hairline-light dark:border-hairline-dark flex flex-col fixed top-0 left-0 h-screen z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] lg:z-30 ${isCollapsed && !isMobile ? 'overflow-visible' : 'overflow-hidden'}`}
     >
       {/* Brand & Toggle Button */}
       <div className={`h-16 lg:h-20 flex items-center flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? 'justify-center px-2' : 'justify-between px-3.5 sm:px-4'}`}>
@@ -118,15 +118,15 @@ export default function Sidebar({
                 alt="Universitas YARSI" 
                 className="h-7 lg:h-8 w-auto object-contain flex-shrink-0"
               />
-              <div className="h-6 w-[1px] bg-gray-200 dark:bg-zinc-700/80 flex-shrink-0" />
+              <div className="h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark flex-shrink-0" />
               <div className="flex items-center gap-2 min-w-0">
                 <PentaDosenLogo className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0" />
                 <motion.h1 
                   initial={{ opacity: 0, x: -5 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="text-base lg:text-[17px] font-black text-gray-900 dark:text-zinc-100 tracking-tighter uppercase"
+                  className="text-base lg:text-[17px] font-black text-ink-heading dark:text-on-dark tracking-tighter uppercase"
                 >
-                  Penta<span className="text-primary-600 dark:text-primary-400">Dosen</span>
+                  Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
                 </motion.h1>
               </div>
             </Link>
@@ -136,14 +136,14 @@ export default function Sidebar({
                 onClick={() => setIsCollapsed(true)}
                 aria-label="Collapse sidebar"
                 title="Kecilkan Sidebar"
-                className="p-1.5 rounded-xl transition-all duration-300 hover:bg-primary-50 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-primary-600 flex-shrink-0"
+                className="p-1.5 rounded-lg transition-all duration-300 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark flex-shrink-0"
               >
                 <PanelLeftClose className="w-5 h-5" />
               </button>
             ) : (
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 lg:hidden flex-shrink-0"
+                className="p-1.5 rounded-lg text-muted hover:text-ink-heading dark:hover:text-on-dark lg:hidden flex-shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -155,7 +155,7 @@ export default function Sidebar({
             onClick={() => setIsCollapsed(false)}
             aria-label="Expand sidebar"
             title="Perluas Sidebar"
-            className="p-2 rounded-xl transition-all duration-300 hover:bg-primary-50 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 hover:text-primary-600 flex-shrink-0 mx-auto"
+            className="p-2 rounded-lg transition-all duration-300 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark flex-shrink-0 mx-auto"
           >
             <PanelLeftOpen className="w-5 h-5" />
           </button>
@@ -164,12 +164,12 @@ export default function Sidebar({
       
       {/* Nav Area */}
       <div className={`mb-4 flex-1 overflow-y-auto ${isCollapsed && !isMobile ? 'overflow-x-visible px-2' : 'overflow-x-hidden px-4'}`}>
-        <div className={`bg-gray-50 dark:bg-zinc-800/50 rounded-2xl border border-gray-100/50 dark:border-zinc-700 ${isCollapsed && !isMobile ? 'p-1 overflow-visible' : 'p-2'}`}>
+        <div className={`bg-canvas-light dark:bg-surface-dark-soft rounded-2xl border border-hairline-light dark:border-hairline-dark ${isCollapsed && !isMobile ? 'p-1 overflow-visible' : 'p-2'}`}>
           {showLabels && (
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest ml-3 mb-3"
+              className="text-[10px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest ml-3 mb-3"
             >
               Main Menu
             </motion.p>
@@ -196,13 +196,13 @@ export default function Sidebar({
                           toggleGroup(item.name);
                         }
                       }}
-                      className={`group relative w-full flex items-center text-sm rounded-xl transition-all duration-200 ${
+                      className={`group relative w-full flex items-center text-sm rounded-lg transition-all duration-200 ${
                         parentActive
-                          ? 'bg-primary-600 text-white'
-                          : 'text-gray-500 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 border border-transparent hover:border-gray-200/80 dark:hover:border-zinc-700'
+                          ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent'
+                          : 'text-body dark:text-on-dark-soft hover:bg-surface-light dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent hover:border-hairline-light dark:hover:border-hairline-dark'
                       } ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
                     >
-                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentActive ? 'text-white' : 'text-gray-400 group-hover:text-primary-600'}`} />
+                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentActive ? 'text-on-ink dark:text-on-dark' : 'text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
                       
                       {showLabels ? (
                         <>
@@ -218,14 +218,14 @@ export default function Sidebar({
                             transition={{ duration: 0.25 }}
                             className="flex-shrink-0 ml-1"
                           >
-                            <ChevronDown className={`w-3.5 h-3.5 ${parentActive ? 'text-white/70' : 'text-gray-400 group-hover:text-primary-500'}`} />
+                            <ChevronDown className={`w-3.5 h-3.5 ${parentActive ? 'text-on-ink/70 dark:text-on-dark/70' : 'text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
                           </motion.div>
                         </>
                       ) : (
                         // Modern Tooltip when collapsed
-                        <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-md pointer-events-none border border-zinc-800 dark:border-zinc-200 flex items-center">
+                        <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-md pointer-events-none border border-hairline-light dark:border-hairline-dark flex items-center">
                           {item.name}
-                          <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-900 dark:bg-zinc-100 rotate-45" />
+                          <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-ink dark:bg-surface-dark-elevated rotate-45" />
                         </div>
                       )}
                     </button>
@@ -240,7 +240,7 @@ export default function Sidebar({
                           transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                           className="overflow-hidden"
                         >
-                          <div className="mt-1 ml-3 pl-3 border-l-2 border-gray-100 dark:border-zinc-700 space-y-1 pb-1">
+                          <div className="mt-1 ml-3 pl-3 border-l-2 border-hairline-light dark:border-hairline-dark space-y-1 pb-1">
                             {item.children!.map((child) => {
                               const ChildIcon = child.icon;
                               const childActive = isChildActive(child);
@@ -248,21 +248,21 @@ export default function Sidebar({
                                 <button
                                   key={child.name}
                                   onClick={() => handleChildClick(child)}
-                                  className={`group w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wide transition-all duration-200 ${
+                                  className={`group w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wide transition-all duration-200 ${
                                     childActive
-                                      ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
-                                      : 'text-gray-400 dark:text-zinc-500 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 dark:hover:text-primary-400'
+                                      ? 'bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-black'
+                                      : 'text-muted dark:text-on-dark-muted hover:bg-surface-light dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                                   }`}
                                 >
-                                  <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-transform ${childActive ? 'text-primary-600 dark:text-primary-400' : ''}`} />
+                                  <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-transform ${childActive ? 'text-accent dark:text-accent-on-dark' : ''}`} />
                                   <span className="truncate">{child.name}</span>
                                   {child.points !== undefined && (
-                                    <div className={`ml-auto px-1.5 py-0.5 rounded text-[8px] font-black tracking-widest flex-shrink-0 ${childActive ? 'bg-primary-50 text-primary-600 dark:bg-primary-950/40 dark:text-primary-400' : 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400 group-hover:bg-primary-50 group-hover:text-primary-600'}`}>
+                                    <div className={`ml-auto px-1.5 py-0.5 rounded text-[8px] font-black tracking-widest flex-shrink-0 ${childActive ? 'bg-ink text-on-ink dark:bg-surface-dark dark:text-on-dark' : 'bg-surface-light-raised text-muted dark:bg-surface-dark dark:text-on-dark-muted group-hover:bg-ink-soft group-hover:text-ink-heading'}`}>
                                       +{child.points} PTS
                                     </div>
                                   )}
                                   {childActive && child.points === undefined && (
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-500 flex-shrink-0" />
+                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent-on-dark flex-shrink-0" />
                                   )}
                                 </button>
                               );
@@ -285,13 +285,13 @@ export default function Sidebar({
                   key={item.name}
                   to={item.path}
                   onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                  className={`group relative flex items-center text-sm rounded-xl transition-all duration-200 ${
+                  className={`group relative flex items-center text-sm rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary-600 text-white'
-                      : 'text-gray-500 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 hover:text-primary-600 border border-transparent hover:border-gray-200/80 dark:hover:border-zinc-700'
+                      ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent'
+                      : 'text-body dark:text-on-dark-soft hover:bg-surface-light dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent hover:border-hairline-light dark:hover:border-hairline-dark'
                   } ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
                 >
-                  <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary-600'}`} />
+                  <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${isActive ? 'text-on-ink dark:text-on-dark' : 'text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
                   {showLabels ? (
                     <motion.span 
                       initial={{ opacity: 0, x: -10 }}
@@ -302,9 +302,9 @@ export default function Sidebar({
                     </motion.span>
                   ) : (
                     // Modern Tooltip when collapsed
-                    <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-xl pointer-events-none border border-zinc-800 dark:border-zinc-200 flex items-center">
+                    <div className="absolute left-full ml-3.5 px-3 py-1.5 bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-1 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-[100] shadow-xl pointer-events-none border border-hairline-light dark:border-hairline-dark flex items-center">
                       {item.name}
-                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-900 dark:bg-zinc-100 rotate-45" />
+                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-ink dark:bg-surface-dark-elevated rotate-45" />
                     </div>
                   )}
                 </Link>

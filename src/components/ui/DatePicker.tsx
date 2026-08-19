@@ -237,10 +237,10 @@ export function DatePicker({
                     className={cn(
                       "h-8 rounded-lg text-xs font-bold flex items-center justify-center transition-all border border-transparent",
                       cell.isCurrentMonth 
-                        ? "text-gray-800 dark:text-zinc-200 hover:bg-primary-50 dark:hover:bg-primary-950/20 hover:text-primary-600 dark:hover:text-primary-400" 
-                        : "text-gray-300 dark:text-zinc-600 hover:bg-gray-50 dark:hover:bg-zinc-800/50",
-                      isDayToday && "border-primary-500 text-primary-600 dark:text-primary-400 font-extrabold",
-                      isDaySelected && "bg-primary-600 border-primary-600 text-white font-black hover:bg-primary-700 dark:hover:bg-primary-700 hover:text-white"
+                        ? "text-gray-800 dark:text-zinc-200 hover:bg-ink-soft dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark" 
+                        : "text-gray-300 dark:text-zinc-600 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated",
+                      isDayToday && "border-ink-border dark:border-hairline-dark text-ink-heading dark:text-on-dark font-extrabold",
+                      isDaySelected && "bg-ink border-ink text-on-ink font-black hover:bg-ink-hover dark:bg-ink dark:border-ink dark:text-on-ink hover:text-on-ink"
                     )}
                   >
                     {cell.date!.getDate()}

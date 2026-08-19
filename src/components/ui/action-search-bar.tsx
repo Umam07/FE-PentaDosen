@@ -213,7 +213,7 @@ function ActionSearchBar({
                   onSelect={() => handleItemSelect(act.path || "", act)}
                 >
                   <div className="flex items-center gap-3 w-full">
-                    <div className="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 shrink-0">
+                    <div className="p-2 rounded-xl bg-ink-soft dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft shrink-0">
                       {act.icon}
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
@@ -241,10 +241,10 @@ function ActionSearchBar({
       {/* Search Trigger Button */}
       <button
         onClick={() => setOpen(true)}
-        className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 hover:bg-gray-100/60 dark:hover:bg-zinc-800/60 transition-all text-gray-400 dark:text-zinc-500 shadow-inner group overflow-hidden"
+        className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark transition-all text-muted dark:text-on-dark-muted shadow-inner group overflow-hidden"
       >
         <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-          <Search className="h-4 w-4 text-gray-400 group-hover:text-primary-500 transition-colors shrink-0" />
+          <Search className="h-4 w-4 text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark transition-colors shrink-0" />
           <span className="truncate">{placeholder}</span>
         </div>
         <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 font-mono text-[9px] font-bold text-gray-400 dark:text-zinc-500 shadow-sm shrink-0">

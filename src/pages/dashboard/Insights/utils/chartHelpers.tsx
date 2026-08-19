@@ -20,10 +20,10 @@ export const renderActiveShape = (props: any) => {
   return (
     <g>
       {/* Center Display Info */}
-      <text x={cx} y={cy - 12} textAnchor="middle" fill="#64748b" className="text-[11px] font-semibold tracking-wider uppercase">
+      <text x={cx} y={cy - 12} textAnchor="middle" fill="#8a8478" className="text-[11px] font-bold tracking-wider uppercase">
         {payload.name}
       </text>
-      <text x={cx} y={cy + 18} textAnchor="middle" fill="#0f172a" className="text-3xl dark:fill-white font-extrabold tracking-tight">
+      <text x={cx} y={cy + 18} textAnchor="middle" fill="#191918" className="text-3xl dark:fill-[#ede8e1] font-mono font-black tracking-tight">
         {`${(percent * 100).toFixed(1)}%`}
       </text>
 
@@ -57,8 +57,8 @@ export const renderActiveShape = (props: any) => {
         x={ex + (cos >= 0 ? 1 : -1) * 10} 
         y={ey + 4} 
         textAnchor={textAnchor} 
-        fill="#334155" 
-        className="text-xs font-bold dark:fill-slate-200"
+        fill="#2c2b29" 
+        className="text-xs font-mono font-bold dark:fill-[#ede8e1]"
       >
         {`${value.toLocaleString()} Poin`}
       </text>

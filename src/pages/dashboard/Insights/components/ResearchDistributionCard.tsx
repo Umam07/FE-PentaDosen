@@ -21,24 +21,24 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
       count: scopus,
       percentage: total > 0 ? ((scopus / total) * 100).toFixed(1) : '0',
       icon: Award,
-      color: '#f97316', // Scopus Orange
-      bgColor: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
+      color: '#d9823b', // Scopus Orange Token
+      bgColor: 'bg-[#d9823b]/10 text-[#d9823b] dark:text-[#f0a365]',
     },
     {
       name: 'Google Scholar',
       count: scholar,
       percentage: total > 0 ? ((scholar / total) * 100).toFixed(1) : '0',
       icon: GraduationCap,
-      color: '#2563eb', // Scholar Blue
-      bgColor: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+      color: '#4a78d0', // Scholar Blue Token
+      bgColor: 'bg-[#4a78d0]/10 text-[#4a78d0] dark:text-[#7ea7ff]',
     },
     {
       name: 'Riset & Pengabdian Internal',
       count: research,
       percentage: total > 0 ? ((research / total) * 100).toFixed(1) : '0',
       icon: BookOpen,
-      color: '#10b981', // Emerald Green
-      bgColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+      color: '#3f8f5f', // Success Green Token
+      bgColor: 'bg-success-soft text-success dark:text-success-on-dark',
     },
   ];
 
@@ -47,20 +47,20 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-6"
+      className="bg-surface-light dark:bg-surface-dark rounded-3xl p-6 sm:p-8 border border-hairline-light dark:border-hairline-dark shadow-xs space-y-6"
     >
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-hairline-light dark:border-hairline-dark">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-xl font-bold text-ink-heading dark:text-on-dark tracking-tight">
             Distribusi Channel Publikasi & Riset
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-muted dark:text-on-dark-muted mt-1">
             Komposisi publikasi ilmiah terverifikasi berdasarkan database pengindeks.
           </p>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 text-xs font-semibold text-slate-700 dark:text-slate-300">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-xs font-mono font-semibold text-body dark:text-on-dark">
+          <CheckCircle2 className="w-4 h-4 text-success dark:text-success-on-dark" />
           <span>{approved.toLocaleString()} Dokumen Disetujui</span>
         </div>
       </div>
@@ -70,27 +70,27 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
         {channels.map((ch, i) => (
           <div
             key={i}
-            className="p-5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 space-y-3"
+            className="p-5 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark space-y-3"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className={`p-2 rounded-xl ${ch.bgColor}`}>
                   <ch.icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{ch.name}</span>
+                <span className="text-xs font-bold text-ink-heading dark:text-on-dark">{ch.name}</span>
               </div>
-              <span className="text-xs font-bold text-slate-900 dark:text-white">{ch.percentage}%</span>
+              <span className="text-xs font-mono font-bold text-ink-heading dark:text-on-dark">{ch.percentage}%</span>
             </div>
 
             {loading ? (
-              <div className="h-6 w-20 bg-slate-200 dark:bg-slate-700 animate-pulse rounded" />
+              <div className="h-6 w-20 bg-hairline-light dark:bg-hairline-dark animate-pulse rounded" />
             ) : (
-              <p className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                {ch.count.toLocaleString()} <span className="text-xs font-normal text-slate-500">dokumen</span>
+              <p className="text-2xl font-mono font-black text-ink-heading dark:text-on-dark tracking-tight">
+                {ch.count.toLocaleString()} <span className="text-xs font-sans font-normal text-muted dark:text-on-dark-muted">dokumen</span>
               </p>
             )}
 
-            <div className="w-full h-1.5 bg-slate-200/70 dark:bg-slate-700/60 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-hairline-light dark:bg-hairline-dark rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: `${ch.percentage}%` }}

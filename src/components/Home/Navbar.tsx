@@ -72,7 +72,7 @@ export default function Navbar() {
         }}
         className={`fixed left-0 right-0 z-50 transition-all duration-700 mx-auto ${
           isScrolled 
-            ? 'top-4 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-7xl py-3 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 dark:border-gray-800/50 rounded-2xl' 
+            ? 'top-4 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-7xl py-3 bg-surface-light/85 dark:bg-canvas-dark/85 backdrop-blur-xl shadow-md border border-hairline-light dark:border-hairline-dark rounded-2xl' 
             : 'top-0 w-full max-w-full py-6 bg-transparent border-transparent rounded-none'
         }`}
       >
@@ -85,11 +85,11 @@ export default function Navbar() {
                 alt="Universitas YARSI" 
                 className="h-7 sm:h-9 w-auto object-contain shrink-0"
               />
-              <div className="h-5 sm:h-7 w-[1px] bg-gray-300 dark:bg-gray-700/80 shrink-0" />
+              <div className="h-5 sm:h-7 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
               <div className="flex items-center gap-1.5 sm:gap-2 shrink min-w-0">
                 <PentaDosenLogo className="w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
-                <span className="text-sm xs:text-base sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase truncate">
-                  Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
+                <span className="text-sm xs:text-base sm:text-2xl font-black text-ink-heading dark:text-on-dark tracking-tighter uppercase truncate">
+                  Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
                 </span>
               </div>
             </Link>
@@ -101,10 +101,10 @@ export default function Navbar() {
                   key={link.name}
                   to={location.pathname === '/' ? link.href : `/${link.href}`}
                   onClick={(e: any) => handleScrollTo(e, link.href)}
-                  className="text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 relative group"
+                  className="text-sm font-semibold text-muted dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark transition-colors duration-200 relative group"
                 >
                   {link.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300" />
                 </Link>
               ))}
             </nav>
@@ -115,7 +115,7 @@ export default function Navbar() {
               {user ? (
                 <Link 
                   to="/dashboard"
-                  className="flex items-center gap-2 text-sm font-black text-white bg-primary-600 hover:bg-primary-700 active:scale-[0.98] px-6 py-2.5 rounded-xl transition-all duration-200 group shadow-sm"
+                  className="flex items-center gap-2 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover active:scale-[0.98] px-6 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
                 >
                   Insights
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -124,13 +124,13 @@ export default function Navbar() {
                 <>
                   <Link 
                     to="/login"
-                    className="text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-xl transition-all"
+                    className="text-sm font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark px-4 py-2 rounded-lg transition-all"
                   >
                     Masuk
                   </Link>
                   <Link 
                     to="/insights"
-                    className="flex items-center gap-2 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 active:scale-[0.98] px-5 py-2.5 rounded-xl transition-all duration-200 group shadow-sm"
+                    className="flex items-center gap-2 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover active:scale-[0.98] px-5 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
                   >
                     Insights
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -144,7 +144,7 @@ export default function Navbar() {
               <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
               <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-1.5 sm:p-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
+                className="p-1.5 sm:p-2 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft rounded-lg hover:bg-ink-soft dark:hover:bg-surface-dark hover:text-ink-heading dark:hover:text-on-dark transition-all"
                 aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
               >
                 {isMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
@@ -174,27 +174,27 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-white/95 dark:bg-gray-950/95 backdrop-blur-2xl border-l border-gray-100 dark:border-gray-800 shadow-2xl flex flex-col md:hidden"
+              className="fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur-2xl border-l border-hairline-light dark:border-hairline-dark shadow-2xl flex flex-col md:hidden"
             >
               {/* Header inside drawer */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
+              <div className="flex items-center justify-between p-6 border-b border-hairline-light dark:border-hairline-dark">
                 <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setIsMenuOpen(false)}>
                   <img 
                     src="/YARSI-KOTAK-e1739161183276.png" 
                     alt="Universitas YARSI" 
                     className="h-7 w-auto object-contain"
                   />
-                  <div className="h-5 w-[1px] bg-gray-300 dark:bg-gray-700" />
+                  <div className="h-5 w-[1px] bg-hairline-light dark:bg-hairline-dark" />
                   <div className="flex items-center gap-2">
                     <PentaDosenLogo className="w-7 h-7" />
-                    <span className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                      Penta<span className="text-primary-600 dark:text-primary-500">Dosen</span>
+                    <span className="text-lg font-black text-ink-heading dark:text-on-dark uppercase tracking-tight">
+                      Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
                     </span>
                   </div>
                 </Link>
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                  className="p-2 text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors"
                   aria-label="Tutup menu"
                 >
                   <X className="w-5 h-5" />
@@ -203,16 +203,16 @@ export default function Navbar() {
 
               {/* User profile section if logged in */}
               {user && (
-                <div className="p-6 bg-gray-50/50 dark:bg-gray-900/30 border-b border-gray-100 dark:border-gray-800">
+                <div className="p-6 bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-950 flex items-center justify-center font-black text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800 uppercase">
+                    <div className="w-10 h-10 rounded-lg bg-ink text-on-ink dark:bg-surface-dark dark:text-on-dark flex items-center justify-center font-black border border-ink-border dark:border-hairline-dark uppercase">
                       {user.name ? user.name.charAt(0) : 'U'}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black text-gray-800 dark:text-gray-200 truncate uppercase tracking-tight">
+                      <p className="text-sm font-bold text-ink-heading dark:text-on-dark truncate uppercase tracking-tight">
                         {user.name}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      <p className="text-xs text-muted dark:text-on-dark-muted truncate">
                         {user.email || 'Dosen'}
                       </p>
                     </div>
@@ -235,9 +235,9 @@ export default function Navbar() {
                         <Link
                           to={location.pathname === '/' ? link.href : `/${link.href}`}
                           onClick={(e: any) => handleScrollTo(e, link.href)}
-                          className="flex items-center gap-3.5 p-3 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-950/30 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all"
+                          className="flex items-center gap-3.5 p-3 text-sm font-semibold text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark rounded-lg transition-all"
                         >
-                          <Icon className="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
+                          <Icon className="w-5 h-5 text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark transition-colors" />
                           {link.name}
                         </Link>
                       </motion.div>
@@ -247,12 +247,12 @@ export default function Navbar() {
               </div>
 
               {/* Footer inside drawer with Action Buttons */}
-              <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-gray-950/50">
+              <div className="p-6 border-t border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark">
                 {user ? (
                   <Link
                     to="/dashboard"
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-black text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-sm"
+                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover rounded-lg transition-all shadow-sm"
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
@@ -262,7 +262,7 @@ export default function Navbar() {
                     <Link
                       to="/login"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-all"
+                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-all"
                     >
                       <LogIn className="w-4 h-4" />
                       Masuk
@@ -270,7 +270,7 @@ export default function Navbar() {
                     <Link
                       to="/insights"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-sm"
+                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover rounded-lg transition-all shadow-sm"
                     >
                       Insights
                       <ArrowRight className="w-4 h-4" />

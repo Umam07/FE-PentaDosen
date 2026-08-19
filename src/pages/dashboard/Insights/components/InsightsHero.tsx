@@ -26,36 +26,36 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
       value: totalDocs.toLocaleString(),
       sub: 'Dokumen terindeks',
       icon: FileText,
-      iconColor: 'text-blue-600 dark:text-blue-400',
-      iconBg: 'bg-blue-50 dark:bg-blue-950/40',
-      accentLine: 'bg-blue-500',
+      iconColor: 'text-accent dark:text-accent-on-dark',
+      iconBg: 'bg-accent-soft dark:bg-accent/15',
+      accentLine: 'bg-accent',
     },
     {
       label: 'Sitasi Global',
       value: (stats?.total_citations || 0).toLocaleString(),
       sub: 'Kutipan riset aktif',
       icon: Sparkles,
-      iconColor: 'text-sky-600 dark:text-sky-400',
-      iconBg: 'bg-sky-50 dark:bg-sky-950/40',
-      accentLine: 'bg-sky-500',
+      iconColor: 'text-accent dark:text-accent-on-dark',
+      iconBg: 'bg-accent-soft dark:bg-accent/15',
+      accentLine: 'bg-accent',
     },
     {
       label: 'Rerata Poin KPI',
       value: avgKpi.toLocaleString(),
       sub: 'Per dosen aktif',
       icon: BarChart3,
-      iconColor: 'text-amber-600 dark:text-amber-400',
-      iconBg: 'bg-amber-50 dark:bg-amber-950/40',
-      accentLine: 'bg-amber-500',
+      iconColor: 'text-warning dark:text-warning-on-dark',
+      iconBg: 'bg-warning-soft dark:bg-warning/15',
+      accentLine: 'bg-warning',
     },
     {
       label: 'Akurasi Data',
       value: `${stats?.data_accuracy !== undefined ? stats.data_accuracy.toFixed(1) : '100'}%`,
       sub: 'Tervalidasi LPPM',
       icon: ShieldCheck,
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
-      iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
-      accentLine: 'bg-emerald-500',
+      iconColor: 'text-success dark:text-success-on-dark',
+      iconBg: 'bg-success-soft dark:bg-success/15',
+      accentLine: 'bg-success',
     },
   ];
 
@@ -64,7 +64,7 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+      className="rounded-3xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-xs"
     >
       <div className="p-8 sm:p-10 lg:p-12">
         {/* Hero Title Row */}
@@ -72,11 +72,11 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
 
           {/* Left: Headline */}
           <div className="space-y-4 max-w-xl">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.05]">
-              Penta<span className="text-primary-600 dark:text-primary-400">Insights</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-ink-heading dark:text-on-dark leading-[1.05]">
+              Penta<span className="text-accent dark:text-accent-on-dark">Insights</span>
             </h1>
 
-            <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-normal leading-relaxed">
+            <p className="text-body dark:text-on-dark-soft text-base sm:text-lg font-normal leading-relaxed">
               Pantau distribusi capaian KPI, publisitas riset, dan performa akademis
               dosen lintas fakultas secara presisi dan real-time.
             </p>
@@ -85,7 +85,7 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
               <div className="pt-1">
                 <button
                   onClick={onExploreClick}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white font-bold text-sm transition-all duration-200 shadow-sm cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-hover active:scale-[0.98] text-on-ink font-bold text-sm transition-all duration-200 shadow-xs cursor-pointer"
                 >
                   <span>Jelajahi Peringkat Fakultas</span>
                   <ArrowUpRight className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
             )}
           </div>
 
-          {/* Right: Modern Metric Cards (No Glow / No Gradient) */}
+          {/* Right: Modern Metric Cards */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:w-[420px] xl:w-[460px] shrink-0">
             {metrics.map((m, i) => (
               <motion.div
@@ -102,11 +102,11 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.08 + i * 0.06, duration: 0.4, ease: 'easeOut' }}
-                className="group relative p-5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 flex flex-col justify-between"
+                className="group relative p-5 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark hover:border-hairline-light-soft dark:hover:border-hairline-dark-soft transition-all duration-200 flex flex-col justify-between"
               >
                 {/* Top Row: Icon & Label */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted dark:text-on-dark-muted">
                     {m.label}
                   </span>
                   <div className={`w-8 h-8 rounded-xl ${m.iconBg} flex items-center justify-center`}>
@@ -117,13 +117,13 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
                 {/* Value & Subtitle */}
                 <div>
                   {loading ? (
-                    <div className="h-8 w-20 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg" />
+                    <div className="h-8 w-20 bg-hairline-light dark:bg-hairline-dark animate-pulse rounded-lg" />
                   ) : (
-                    <p className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white tabular-nums">
+                    <p className="text-2xl sm:text-3xl font-mono font-black tracking-tight text-ink-heading dark:text-on-dark tabular-nums">
                       {m.value}
                     </p>
                   )}
-                  <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-1 block">
+                  <span className="text-[11px] font-medium text-muted dark:text-on-dark-muted mt-1 block">
                     {m.sub}
                   </span>
                 </div>
@@ -136,8 +136,8 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
         </div>
 
         {/* Bottom Info Bar */}
-        <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
-          <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+        <div className="pt-6 border-t border-hairline-light dark:border-hairline-dark">
+          <span className="text-[11px] font-medium text-muted dark:text-on-dark-muted">
             Data bersumber dari Google Scholar, Scopus, dan Dokumen Internal.
           </span>
         </div>

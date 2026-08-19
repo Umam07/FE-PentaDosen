@@ -35,20 +35,20 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
       <div className="w-full max-w-[400px] mt-10 lg:mt-0">
         {/* Mobile-only brand */}
         <div className="flex items-center gap-3 mb-8 lg:hidden">
-          <div className="p-2.5 bg-primary-600 rounded-xl text-white">
+          <div className="p-2.5 bg-ink text-on-ink rounded-lg">
             <Hexagon className="w-5 h-5 fill-white/20" />
           </div>
-          <span className="text-slate-900 dark:text-white font-extrabold text-lg tracking-tight uppercase">
-            Penta<span className="text-primary-600 dark:text-primary-400">Dosen</span>
+          <span className="text-ink-heading dark:text-on-dark font-extrabold text-lg tracking-tight uppercase">
+            Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
           </span>
         </div>
 
         {/* Heading */}
         <div className="mb-8">
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
+          <h2 className="text-2xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2">
             Masuk ke Akun Anda
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+          <p className="text-muted dark:text-on-dark-muted text-sm font-medium">
             Gunakan kredensial Anda untuk melanjutkan ke dashboard.
           </p>
         </div>
@@ -58,11 +58,11 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
 
           {/* Username field */}
           <div className="space-y-2">
-            <label htmlFor="username" className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <label htmlFor="username" className="block text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
               Username
             </label>
-            <div className="relative group flex items-center border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 focus-within:border-primary-600 dark:focus-within:border-primary-500 focus-within:bg-white dark:focus-within:bg-slate-950 transition-all duration-200">
-              <div className="absolute left-3.5 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-500 transition-colors pointer-events-none">
+            <div className="relative group flex items-center border border-hairline-light dark:border-hairline-dark rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 focus-within:bg-surface-light dark:focus-within:bg-surface-dark transition-all duration-200">
+              <div className="absolute left-3.5 text-muted group-focus-within:text-accent dark:group-focus-within:text-accent-on-dark transition-colors pointer-events-none">
                 <UserIcon className="h-4.5 w-4.5" />
               </div>
               <input
@@ -71,7 +71,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 outline-none border-none font-medium"
+                className="w-full pl-11 pr-4 py-3 bg-transparent text-sm text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none border-none font-medium"
                 placeholder="username"
               />
             </div>
@@ -79,11 +79,11 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
 
           {/* Password field */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <label htmlFor="password" className="block text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
               Password
             </label>
-            <div className="relative group flex items-center border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 focus-within:border-primary-600 dark:focus-within:border-primary-500 focus-within:bg-white dark:focus-within:bg-slate-950 transition-all duration-200">
-              <div className="absolute left-3.5 text-slate-400 group-focus-within:text-primary-600 dark:group-focus-within:text-primary-500 transition-colors pointer-events-none">
+            <div className="relative group flex items-center border border-hairline-light dark:border-hairline-dark rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 focus-within:bg-surface-light dark:focus-within:bg-surface-dark transition-all duration-200">
+              <div className="absolute left-3.5 text-muted group-focus-within:text-accent dark:group-focus-within:text-accent-on-dark transition-colors pointer-events-none">
                 <Lock className="h-4.5 w-4.5" />
               </div>
               <input
@@ -92,14 +92,14 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-11 pr-11 py-3 bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 outline-none border-none font-medium"
+                className="w-full pl-11 pr-11 py-3 bg-transparent text-sm text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none border-none font-medium"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-                className="absolute right-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                className="absolute right-3.5 text-muted hover:text-ink-heading dark:hover:text-on-dark transition-colors"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -112,7 +112,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
               href="https://www.yarsi.ac.id/ganti-password-akun-yarsi"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+              className="text-xs font-semibold text-accent hover:text-accent-hover dark:text-accent-on-dark transition-colors"
             >
               Lupa password?
             </a>
@@ -123,7 +123,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
             <motion.div
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 p-4 rounded-xl text-xs font-medium leading-relaxed"
+              className="flex items-start gap-3 bg-error-soft dark:bg-surface-dark-elevated border border-error-border dark:border-hairline-dark text-error dark:text-error-on-dark p-4 rounded-lg text-xs font-medium leading-relaxed"
             >
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{dosenError}</span>
@@ -134,7 +134,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-primary-600 dark:hover:bg-primary-500 active:scale-[0.99] text-white rounded-xl font-bold text-sm tracking-wide transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none cursor-pointer"
+            className="w-full py-3 bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink rounded-lg font-bold text-sm tracking-wide transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none cursor-pointer shadow-sm"
           >
             {loading ? (
               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -146,14 +146,14 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
         </form>
 
         {/* Demo Accounts Quick-Fill */}
-        <div className="mt-4 pt-4 border-t border-dashed border-slate-200 dark:border-slate-800">
+        <div className="mt-4 pt-4 border-t border-dashed border-hairline-light dark:border-hairline-dark">
           <button
             type="button"
             onClick={() => setShowDemo(!showDemo)}
-            className="w-full flex items-center justify-between text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+            className="w-full flex items-center justify-between text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
           >
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
               Gunakan Akun Demo
             </span>
             <span>{showDemo ? 'Sembunyikan' : 'Tampilkan'}</span>
@@ -169,12 +169,12 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
                     setUsername(acc.email);
                     setPassword(acc.password);
                   }}
-                  className="text-left p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-primary-500 dark:hover:border-primary-500 hover:bg-primary-50/50 dark:hover:bg-primary-950/20 transition-all cursor-pointer group"
+                  className="text-left p-2 border border-hairline-light dark:border-hairline-dark rounded-lg hover:border-ink-border dark:hover:border-hairline-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-all cursor-pointer group"
                 >
-                  <p className="text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+                  <p className="text-xs font-bold text-body-strong dark:text-on-dark group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors truncate">
                     {acc.shortName}
                   </p>
-                  <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+                  <p className="text-[10px] text-muted dark:text-on-dark-muted truncate">
                     {acc.email}
                   </p>
                 </button>

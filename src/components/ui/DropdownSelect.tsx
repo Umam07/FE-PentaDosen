@@ -69,12 +69,12 @@ export function DropdownSelect<T extends string | number = string | number>({
       }`;
     }
     if (size === "sm") {
-      return `w-full flex items-center justify-between px-3 py-1.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
-        disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
+      return `w-full flex items-center justify-between px-3 py-1.5 bg-surface-light dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition-all outline-none text-body-strong dark:text-on-dark shadow-sm ${
+        disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-2 focus:ring-accent/20 focus:border-accent cursor-pointer"
       }`;
     }
-    return `w-full h-11 flex items-center justify-between px-5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all outline-none text-gray-700 dark:text-zinc-200 shadow-sm ${
-      disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 cursor-pointer"
+    return `w-full h-11 flex items-center justify-between px-5 bg-surface-light dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-lg text-[11px] font-black uppercase tracking-widest transition-all outline-none text-body-strong dark:text-on-dark shadow-sm ${
+      disabled ? "opacity-50 cursor-not-allowed" : "focus:ring-2 focus:ring-accent/20 focus:border-accent cursor-pointer"
     }`;
   };
 
@@ -92,13 +92,13 @@ export function DropdownSelect<T extends string | number = string | number>({
         title={selectedOption?.label}
       >
         <div className="flex items-center gap-2 min-w-0">
-          {icon && <span className="text-gray-400 dark:text-zinc-500 shrink-0">{icon}</span>}
+          {icon && <span className="text-muted dark:text-on-dark-muted shrink-0">{icon}</span>}
           <span className="truncate">{selectedOption?.label}</span>
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="text-gray-400 dark:text-zinc-500 shrink-0 ml-1.5"
+          className="text-muted dark:text-on-dark-muted shrink-0 ml-1.5"
         >
           <ChevronDown className="w-3.5 h-3.5" />
         </motion.div>
@@ -111,7 +111,7 @@ export function DropdownSelect<T extends string | number = string | number>({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: dropPosition === "top" ? 8 : -8, scale: 0.96 }}
             transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className={`absolute left-0 min-w-full z-50 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden py-1.5 max-h-[250px] overflow-y-auto ${
+            className={`absolute left-0 min-w-full z-50 bg-surface-light dark:bg-surface-dark backdrop-blur-md border border-hairline-light dark:border-hairline-dark rounded-xl shadow-xl overflow-hidden py-1.5 max-h-[250px] overflow-y-auto ${
               dropPosition === "top" ? "bottom-full mb-2" : "top-full mt-2"
             }`}
           >
@@ -127,14 +127,14 @@ export function DropdownSelect<T extends string | number = string | number>({
                   }}
                   className={`${optionClasses} ${
                     isSelected
-                      ? "bg-primary-50/70 dark:bg-primary-950/20 text-primary-600 dark:text-primary-400"
-                      : "text-gray-600 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800/60 hover:text-gray-900 dark:hover:text-zinc-100"
+                      ? "bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark font-black"
+                      : "text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark"
                   }`}
                   title={opt.label}
                 >
                   <span className="truncate">{opt.label}</span>
                   {isSelected && (
-                    <Check className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0 ml-2" />
+                    <Check className="w-3.5 h-3.5 text-on-ink dark:text-on-dark shrink-0 ml-2" />
                   )}
                 </button>
               );

@@ -17,7 +17,7 @@ export default function DepartementCard({ dept, index, onClick }: DepartementCar
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       whileHover={{ y: -6 }}
-      className="group relative bg-white dark:bg-slate-900 p-7 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[460px]"
+      className="group relative bg-surface-light dark:bg-surface-dark p-7 rounded-3xl border border-hairline-light dark:border-hairline-dark shadow-xs hover:shadow-md hover:border-hairline-light dark:hover:border-hairline-dark transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[460px]"
       onClick={onClick}
     >
       <div className="relative z-10 flex flex-col h-full justify-between flex-1">
@@ -31,17 +31,17 @@ export default function DepartementCard({ dept, index, onClick }: DepartementCar
 
           {/* Title & Aligned Description */}
           <div className="space-y-3">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            <h3 className="text-xl font-bold text-ink-heading dark:text-on-dark tracking-tight leading-tight group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
               {dept.name}
             </h3>
-            <p className="text-slate-500 dark:text-slate-400 text-xs font-normal leading-relaxed text-justify">
+            <p className="text-body dark:text-on-dark-soft text-xs font-normal leading-relaxed text-justify">
               {dept.description}
             </p>
           </div>
 
           {/* Program Studi Badges */}
           <div className="space-y-2">
-            <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Program Studi:</p>
+            <p className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest">Program Studi:</p>
             <div className="flex flex-wrap gap-1.5">
               {dept.prodi?.map((p: string) => (
                 <span key={p} className={`text-[9px] font-semibold px-2.5 py-0.5 rounded-md border transition-all ${dept.badgeBg}`}>
@@ -53,20 +53,20 @@ export default function DepartementCard({ dept, index, onClick }: DepartementCar
         </div>
 
         {/* Bottom Section: Stats & Action */}
-        <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/50 space-y-4">
+        <div className="mt-6 pt-5 border-t border-hairline-light dark:border-hairline-dark space-y-4">
           {/* Micro-metrics Grid */}
-          <div className="grid grid-cols-3 gap-2 text-center p-3 bg-slate-50/50 dark:bg-slate-950/40 rounded-2xl border border-slate-100/50 dark:border-slate-900/50">
+          <div className="grid grid-cols-3 gap-2 text-center p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
             <div>
-              <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Dosen</p>
-              <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.lecturerCount}</p>
+              <p className="text-[9px] font-medium text-muted dark:text-on-dark-muted uppercase tracking-wider mb-0.5">Dosen</p>
+              <p className="text-base font-bold font-mono text-ink-heading dark:text-on-dark leading-none">{dept.lecturerCount}</p>
             </div>
-            <div className="border-x border-slate-200/50 dark:border-slate-800/50">
-              <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Dokumen</p>
-              <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.documentCount}</p>
+            <div className="border-x border-hairline-light dark:border-hairline-dark">
+              <p className="text-[9px] font-medium text-muted dark:text-on-dark-muted uppercase tracking-wider mb-0.5">Dokumen</p>
+              <p className="text-base font-bold font-mono text-ink-heading dark:text-on-dark leading-none">{dept.documentCount}</p>
             </div>
             <div>
-              <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">Prodi</p>
-              <p className="text-base font-bold text-slate-900 dark:text-white leading-none">{dept.prodi?.length || 0}</p>
+              <p className="text-[9px] font-medium text-muted dark:text-on-dark-muted uppercase tracking-wider mb-0.5">Prodi</p>
+              <p className="text-base font-bold font-mono text-ink-heading dark:text-on-dark leading-none">{dept.prodi?.length || 0}</p>
             </div>
           </div>
 

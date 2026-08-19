@@ -46,42 +46,42 @@ export default function PerformanceSummary({
       {/* ─── Hero Row: Title + Grand Total ─── */}
       <motion.div
         variants={itemVariants}
-        className="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8"
+        className="relative overflow-hidden bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-sm p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8"
       >
         {/* Decorative blobs */}
-        <div className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 rounded-full bg-primary-500/5 blur-3xl" />
+        <div className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 rounded-full bg-accent/5 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-12 right-1/3 w-48 h-48 rounded-full bg-amber-500/5 blur-2xl" />
 
         {/* Left: Heading */}
         <div className="relative z-10">
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.22em] mb-2">
+          <p className="text-[9px] font-black text-muted dark:text-on-dark-muted uppercase tracking-[0.22em] mb-2">
             Ringkasan Performa
           </p>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">
+          <h1 className="text-4xl font-black text-ink-heading dark:text-on-dark uppercase tracking-tighter leading-none">
             Dashboard{' '}
-            <span className="text-primary-600">Performa</span>
+            <span className="text-accent dark:text-accent-on-dark">Performa</span>
           </h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mt-3 max-w-xs leading-relaxed">
+          <p className="text-[10px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-[0.15em] mt-3 max-w-xs leading-relaxed">
             Akumulasi seluruh poin dari semua dokumen yang telah diverifikasi
           </p>
         </div>
 
         {/* Right: Grand Total Score */}
         <div className="relative z-10 flex-shrink-0 flex flex-col items-center lg:items-end gap-1">
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.22em]">
+          <p className="text-[9px] font-black text-muted dark:text-on-dark-muted uppercase tracking-[0.22em]">
             Total Poin KPI
           </p>
           <motion.p
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.25, duration: 0.5, ease: 'backOut' }}
-            className="text-6xl font-black text-slate-900 dark:text-white leading-none tabular-nums"
+            className="text-6xl font-black font-mono text-ink-heading dark:text-on-dark leading-none tabular-nums"
           >
             {grandTotal.toLocaleString()}
           </motion.p>
           <div className="flex items-center gap-1.5 mt-1">
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">
+            <TrendingUp className="w-3.5 h-3.5 text-success" />
+            <span className="text-[9px] font-black text-success uppercase tracking-widest">
               Kumulatif Semua Sumber
             </span>
           </div>
@@ -95,26 +95,23 @@ export default function PerformanceSummary({
             key={i}
             variants={itemVariants}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="group relative overflow-hidden flex items-center gap-4 px-6 py-5 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-primary-200/60 dark:hover:border-primary-800/60 transition-all duration-300"
+            className="group relative overflow-hidden flex items-center gap-4 px-6 py-5 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-sm hover:shadow-md hover:border-ink-border dark:hover:border-hairline-dark transition-all duration-300"
           >
-            {/* Subtle gradient overlay on hover */}
-            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-primary-50/40 to-transparent dark:from-primary-950/20 rounded-[2rem]" />
-
             <div
-              className={`relative z-10 w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center flex-shrink-0 shadow-sm`}
+              className={`relative z-10 w-12 h-12 rounded-lg ${stat.bg} flex items-center justify-center flex-shrink-0 shadow-xs`}
             >
               <stat.icon className={`w-5 h-5 ${stat.color}`} />
             </div>
 
             <div className="relative z-10 min-w-0">
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.18em] leading-none mb-1.5 truncate">
+              <p className="text-[8px] font-black text-muted dark:text-on-dark-muted uppercase tracking-[0.18em] leading-none mb-1.5 truncate">
                 {stat.label}
               </p>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 + i * 0.1 }}
-                className="text-2xl font-black text-slate-900 dark:text-white leading-none tabular-nums"
+                className="text-2xl font-black font-mono text-ink-heading dark:text-on-dark leading-none tabular-nums"
               >
                 {stat.val.toLocaleString()}
               </motion.p>
@@ -129,15 +126,15 @@ export default function PerformanceSummary({
       {/* ─── Contribution Visualization ─── */}
       <motion.div
         variants={itemVariants}
-        className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-8 shadow-sm"
+        className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark p-8 shadow-sm"
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-8 gap-4">
           <div>
-            <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
+            <h3 className="text-sm font-black text-ink-heading dark:text-on-dark uppercase tracking-wider">
               Kontribusi Poin
             </h3>
-            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            <p className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest mt-1">
               Perbandingan sumber poin Anda
             </p>
           </div>

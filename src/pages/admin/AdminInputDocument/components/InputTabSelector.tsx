@@ -7,32 +7,32 @@ export default function InputTabSelector({
   onTabChange
 }: InputTabSelectorProps) {
   return (
-    <div className="flex border-b border-gray-100 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/10 rounded-2xl p-1 max-w-md">
+    <div className="flex border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl p-1 max-w-md">
       <button
         type="button"
         onClick={() => onTabChange('manual')}
-        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
+        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
           activeTab === 'manual'
-            ? 'bg-white dark:bg-zinc-800 shadow-sm border border-gray-100 dark:border-zinc-700 text-primary-600 dark:text-primary-400'
-            : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+            ? 'bg-surface-light dark:bg-surface-dark shadow-xs border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark'
+            : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
         }`}
       >
         <span className="flex items-center justify-center gap-2">
-          <FileText className="w-3.5 h-3.5" />
+          <FileText className={`w-3.5 h-3.5 ${activeTab === 'manual' ? 'text-accent dark:text-accent-on-dark' : 'text-muted'}`} />
           Input Manual
         </span>
       </button>
       <button
         type="button"
         onClick={() => onTabChange('import')}
-        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
+        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
           activeTab === 'import'
-            ? 'bg-white dark:bg-zinc-800 shadow-sm border border-gray-100 dark:border-zinc-700 text-primary-600 dark:text-primary-400'
-            : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+            ? 'bg-surface-light dark:bg-surface-dark shadow-xs border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark'
+            : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
         }`}
       >
         <span className="flex items-center justify-center gap-2">
-          <FileSpreadsheet className="w-3.5 h-3.5" />
+          <FileSpreadsheet className={`w-3.5 h-3.5 ${activeTab === 'import' ? 'text-accent dark:text-accent-on-dark' : 'text-muted'}`} />
           Import Excel Massal
         </span>
       </button>

@@ -15,12 +15,12 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
     <motion.div
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8"
+      className="rounded-3xl border border-hairline-light bg-surface-light p-6 shadow-xs dark:border-hairline-dark dark:bg-surface-dark sm:p-8"
     >
       {/* Top Profile Info Section */}
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         {/* Avatar */}
-        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 sm:h-22 sm:w-22">
+        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-hairline-light bg-surface-light-raised dark:border-hairline-dark dark:bg-surface-dark-elevated sm:h-22 sm:w-22">
           {user?.avatar ? (
             <img
               src={user.avatar}
@@ -29,7 +29,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-slate-900 text-2xl font-bold text-white dark:bg-slate-100 dark:text-slate-900">
+            <div className="flex h-full w-full items-center justify-center bg-ink text-2xl font-bold text-on-ink dark:bg-on-dark dark:text-ink">
               {user?.name?.charAt(0) || 'U'}
             </div>
           )}
@@ -37,33 +37,33 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
 
         {/* Name & Academic Meta */}
         <div className="min-w-0 flex-1 space-y-2">
-          <h2 className="truncate text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+          <h2 className="truncate text-2xl font-bold tracking-tight text-ink-heading dark:text-on-dark sm:text-3xl">
             {user?.name || 'Dosen'}
           </h2>
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted dark:text-on-dark-muted">
             {affiliation ? (
               <div className="flex items-center gap-1.5 truncate">
-                <Building2 className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                <Building2 className="h-4 w-4 shrink-0 text-muted dark:text-on-dark-muted" />
                 <span className="truncate">{affiliation}</span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5">
-                <Building2 className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                <Building2 className="h-4 w-4 shrink-0 text-muted dark:text-on-dark-muted" />
                 <span>Universitas YARSI</span>
               </div>
             )}
 
             {user?.email && (
               <div className="flex items-center gap-1.5 truncate">
-                <Mail className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                <Mail className="h-4 w-4 shrink-0 text-muted dark:text-on-dark-muted" />
                 <span className="truncate">{user.email}</span>
               </div>
             )}
 
             {user?.nidn && (
               <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                <GraduationCap className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                <GraduationCap className="h-4 w-4 shrink-0 text-muted dark:text-on-dark-muted" />
                 <span>NIDN: {user.nidn}</span>
               </div>
             )}
@@ -74,22 +74,22 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
       {/* KPI Stats Row (Rendered if stats exist) */}
       {stats && stats.length > 0 && (
         <>
-          <div className="my-6 h-px w-full bg-slate-100 dark:bg-slate-800" />
+          <div className="my-6 h-px w-full bg-hairline-light dark:bg-hairline-dark" />
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {stats.map((stat, i) => (
               <div
                 key={i}
-                className="flex min-h-[88px] items-center gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-800/30 dark:hover:border-slate-700 dark:hover:bg-slate-800/60"
+                className="flex min-h-[88px] items-center gap-4 rounded-xl border border-hairline-light bg-surface-light-raised p-4 transition-all duration-200 hover:border-hairline-light hover:bg-surface-light dark:border-hairline-dark dark:bg-surface-dark-elevated dark:hover:border-hairline-dark"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-700 shadow-none dark:border-slate-700/80 dark:bg-slate-800 dark:text-slate-200">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-hairline-light bg-surface-light text-body-strong shadow-none dark:border-hairline-dark dark:bg-surface-dark dark:text-on-dark">
                   <stat.icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <span className="block text-[11px] font-semibold tracking-wide text-slate-500 dark:text-slate-400">
+                  <span className="block text-[11px] font-semibold tracking-wide text-muted dark:text-on-dark-muted">
                     {stat.label}
                   </span>
-                  <span className="mt-1 block text-2xl font-extrabold leading-none tracking-tight text-slate-900 dark:text-white tabular-nums">
+                  <span className="mt-1 block text-2xl font-extrabold font-mono leading-none tracking-tight text-ink-heading dark:text-on-dark tabular-nums">
                     {stat.val}
                   </span>
                 </div>

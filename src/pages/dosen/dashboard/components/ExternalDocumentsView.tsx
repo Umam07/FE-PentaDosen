@@ -73,10 +73,10 @@ export default function ExternalDocumentsView({
       className="space-y-8"
     >
       {/* Main Content Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-5 sm:p-8 lg:p-10 shadow-sm min-h-[500px] relative overflow-hidden">
+      <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-8 lg:p-10 shadow-xs min-h-[500px] relative overflow-hidden">
         <div className="space-y-8 sm:space-y-10 relative z-10">
           {/* Nested Publication Sub-tabs - Underline Style */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline-light dark:border-hairline-dark pb-2">
             {/* pb-3 on inner div so overflow-x-auto doesn't clip bottom-0 underlines */}
             <div className="flex items-center gap-5 sm:gap-8 pb-3 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
               {[
@@ -88,9 +88,9 @@ export default function ExternalDocumentsView({
                 <button
                   key={sub.id}
                   onClick={() => setPublicationSubTab(sub.id as any)}
-                  className={`group/tab relative pb-3 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest whitespace-nowrap shrink-0 transition-colors ${publicationSubTab === sub.id
-                      ? 'text-primary-600 dark:text-primary-400'
-                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  className={`group/tab relative pb-3 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest whitespace-nowrap shrink-0 transition-colors cursor-pointer ${publicationSubTab === sub.id
+                      ? 'text-ink-heading dark:text-on-dark'
+                      : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
                     }`}
                 >
                   {sub.label}
@@ -98,12 +98,12 @@ export default function ExternalDocumentsView({
                   {publicationSubTab === sub.id && (
                     <motion.div
                       layoutId="insights-subtab-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary-600 dark:bg-primary-500 rounded-full"
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-accent dark:bg-accent-on-dark rounded-full"
                     />
                   )}
                   {/* Hover underline — slides in from left when not active */}
                   {publicationSubTab !== sub.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-200 dark:bg-slate-700 rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-hairline-light dark:bg-hairline-dark rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
                   )}
                 </button>
               ))}
@@ -127,28 +127,28 @@ export default function ExternalDocumentsView({
             return (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {/* Scopus-only */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800/60">
-                   <p className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Scopus-Only</p>
-                   <p className="text-xl font-black text-slate-900 dark:text-white">{Math.round(scopusOnly)} <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">pts</span></p>
-                   <p className="text-[9px] font-semibold text-slate-400 dark:text-slate-500 mt-1">{scopusOnlyCount} dokumen</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[9px] font-black text-muted dark:text-on-dark-muted uppercase tracking-widest mb-1.5">Scopus-Only</p>
+                   <p className="text-xl font-black font-mono text-ink-heading dark:text-on-dark">{Math.round(scopusOnly)} <span className="text-[10px] font-bold text-muted dark:text-on-dark-muted">pts</span></p>
+                   <p className="text-[9px] font-semibold text-muted dark:text-on-dark-muted mt-1">{scopusOnlyCount} dokumen</p>
                 </div>
                 {/* Scholar-only */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800/60">
-                   <p className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Scholar-Only</p>
-                   <p className="text-xl font-black text-slate-900 dark:text-white">{Math.round(scholarOnly)} <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">pts</span></p>
-                   <p className="text-[9px] font-semibold text-slate-400 dark:text-slate-500 mt-1">{scholarOnlyCount} dokumen</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[9px] font-black text-muted dark:text-on-dark-muted uppercase tracking-widest mb-1.5">Scholar-Only</p>
+                   <p className="text-xl font-black font-mono text-ink-heading dark:text-on-dark">{Math.round(scholarOnly)} <span className="text-[10px] font-bold text-muted dark:text-on-dark-muted">pts</span></p>
+                   <p className="text-[9px] font-semibold text-muted dark:text-on-dark-muted mt-1">{scholarOnlyCount} dokumen</p>
                 </div>
                 {/* Cross-indexed */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800/60">
-                   <p className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Cross-Indexed</p>
-                   <p className="text-xl font-black text-slate-900 dark:text-white">{Math.round(crossPts)} <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">pts</span></p>
-                   <p className="text-[9px] font-semibold text-slate-400 dark:text-slate-500 mt-1">{crossTitles.size} irisan</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[9px] font-black text-muted dark:text-on-dark-muted uppercase tracking-widest mb-1.5">Cross-Indexed</p>
+                   <p className="text-xl font-black font-mono text-ink-heading dark:text-on-dark">{Math.round(crossPts)} <span className="text-[10px] font-bold text-muted dark:text-on-dark-muted">pts</span></p>
+                   <p className="text-[9px] font-semibold text-muted dark:text-on-dark-muted mt-1">{crossTitles.size} irisan</p>
                 </div>
                 {/* Grand Total */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800/60">
-                   <p className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Total (No Double)</p>
-                   <p className="text-xl font-black text-slate-900 dark:text-white">{Math.round(grandTotal)} <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">pts</span></p>
-                   <p className="text-[9px] font-semibold text-slate-400 dark:text-slate-500 mt-1">Scopus + Scholar + Cross</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[9px] font-black text-muted dark:text-on-dark-muted uppercase tracking-widest mb-1.5">Total (No Double)</p>
+                   <p className="text-xl font-black font-mono text-ink-heading dark:text-on-dark">{Math.round(grandTotal)} <span className="text-[10px] font-bold text-muted dark:text-on-dark-muted">pts</span></p>
+                   <p className="text-[9px] font-semibold text-muted dark:text-on-dark-muted mt-1">Scopus + Scholar + Cross</p>
                 </div>
               </div>
             );
@@ -178,33 +178,33 @@ export default function ExternalDocumentsView({
                 ) : scopusChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
-                      <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm transition-all duration-500">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
+                      <div className="relative bg-surface-light dark:bg-surface-dark p-6 sm:p-8 lg:p-10 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-xs transition-all duration-300">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-10 gap-4">
                           <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center border border-orange-500/20 shadow-inner">
-                              <TrendingUp className="w-6 h-6 text-orange-500" />
+                            <div className="w-12 h-12 bg-[#e07b39]/10 rounded-xl flex items-center justify-center border border-[#e07b39]/20 shadow-inner">
+                              <TrendingUp className="w-6 h-6 text-[#e07b39]" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Analisis Tren Scopus</h4>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Statistik Publikasi & Sitasi</p>
+                              <h4 className="text-sm font-black text-ink-heading dark:text-on-dark uppercase tracking-widest">Analisis Tren Scopus</h4>
+                              <p className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-[0.2em] mt-1">Statistik Publikasi & Sitasi</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Statistik Tahunan</span>
+                          <div className="flex items-center gap-2 px-4 py-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg border border-hairline-light dark:border-hairline-dark">
+                            <Calendar className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
+                            <span className="text-[10px] font-black text-muted dark:text-on-dark-muted uppercase tracking-widest">Statistik Tahunan</span>
                           </div>
                         </div>
 
                         <div className="h-[350px] w-full">
-                          <Suspense fallback={<div className="h-[350px] w-full bg-slate-50 dark:bg-slate-800/40 rounded-2xl animate-pulse" />}>
+                          <Suspense fallback={<div className="h-[350px] w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl animate-pulse" />}>
                             <ProfileTrendChart
                               chartData={scopusChartData.chartData}
                               leftDomainMax={scopusChartData.leftMax}
                               rightDomainMax={scopusChartData.rightMax}
-                              barColor="#f97316" // orange-500
-                              barGradientColor="#fb923c" // orange-400
-                              lineColor="#10b981" // emerald-500
-                              areaGradientColor="#10b981"
+                              barColor="#e07b39"
+                              barGradientColor="#f09a5a"
+                              lineColor="#788194"
+                              areaGradientColor="#788194"
                               gradientId="scopus"
                             />
                           </Suspense>
@@ -221,19 +221,19 @@ export default function ExternalDocumentsView({
                         }).length;
 
                         return (
-                          <div className="bg-slate-50 dark:bg-slate-800/40 p-4 sm:p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 space-y-4">
+                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-4 sm:p-5 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-4">
                             {/* Baris 1: Alert Banner jika ada dokumen butuh konfirmasi */}
                             {unconfirmedScopusCount > 0 && (
-                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-3.5 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 rounded-2xl">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-3.5 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 rounded-xl">
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+                                  <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
                                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                                   </div>
                                   <div className="min-w-0">
-                                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+                                    <p className="text-xs font-bold text-body-strong dark:text-on-dark leading-tight">
                                       <span className="font-black text-amber-600 dark:text-amber-400">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi
                                     </p>
-                                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block">
+                                    <p className="text-[10px] text-muted dark:text-on-dark-muted mt-0.5 hidden sm:block">
                                       Konfirmasi status korespondensi untuk kalkulasi poin SINTA
                                     </p>
                                   </div>
@@ -244,7 +244,7 @@ export default function ExternalDocumentsView({
                                     setScopusFilter(scopusFilter === 'unconfirmed' ? 'all' : 'unconfirmed');
                                     setCurrentPage(1);
                                   }}
-                                  className={`w-full sm:w-auto px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer text-center shrink-0 shadow-xs ${
+                                  className={`w-full sm:w-auto px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer text-center shrink-0 shadow-xs ${
                                     scopusFilter === 'unconfirmed'
                                       ? 'bg-amber-700 text-white'
                                       : 'bg-amber-600 hover:bg-amber-700 text-white'
@@ -258,7 +258,7 @@ export default function ExternalDocumentsView({
                             {/* Baris 2: Judul & Info Tooltip */}
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                                <span className="text-xs font-black text-ink-heading dark:text-on-dark uppercase tracking-wider">
                                   Dokumen Scopus Indexed
                                 </span>
                                 {/* Info Tooltip Formula Penilaian Scopus */}
@@ -266,13 +266,13 @@ export default function ExternalDocumentsView({
                                   <button
                                     type="button"
                                     aria-label="Info Formula Penilaian Scopus"
-                                    className="p-1 rounded-lg text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                                    className="p-1 rounded-lg text-muted hover:text-amber-600 dark:hover:text-amber-400 hover:bg-surface-light dark:hover:bg-surface-dark transition-colors cursor-pointer"
                                   >
                                     <Info className="w-3.5 h-3.5" />
                                   </button>
-                                  <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block group-focus-within:block w-72 p-3 bg-slate-900 text-white dark:bg-slate-800 text-[10px] rounded-xl shadow-xl border border-slate-800 dark:border-slate-700 z-50 pointer-events-none">
+                                  <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block group-focus-within:block w-72 p-3 bg-surface-dark-elevated text-on-dark text-[10px] rounded-xl shadow-xl border border-hairline-dark z-50 pointer-events-none">
                                     <p className="font-bold text-amber-400 mb-1">Formula Penilaian Scopus SINTA</p>
-                                    <p className="text-slate-300 text-[9px] leading-relaxed">
+                                    <p className="text-on-dark-soft text-[9px] leading-relaxed">
                                       Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Didasarkan pada peran penulis (First/Member) &amp; status korespondensi.
                                     </p>
                                   </div>
@@ -281,10 +281,10 @@ export default function ExternalDocumentsView({
                             </div>
 
                             {/* Baris 3: Filter Chips & Filter Tahun */}
-                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1 border-t border-hairline-light dark:border-hairline-dark">
                               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                                 {/* Filter Korespondensi */}
-                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-2xs">
+                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
                                     { id: 'all', label: 'Semua', fullLabel: 'Semua Status' },
                                     { id: 'unconfirmed', label: 'Perlu Update', fullLabel: 'Perlu Update', count: unconfirmedScopusCount },
@@ -293,10 +293,10 @@ export default function ExternalDocumentsView({
                                     <button
                                       key={opt.id}
                                       onClick={() => { setScopusFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-tight transition-all cursor-pointer text-center ${
+                                      className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-tight transition-all cursor-pointer text-center ${
                                         scopusFilter === opt.id
                                           ? 'bg-amber-600 dark:bg-amber-600 text-white shadow-xs'
-                                          : 'text-slate-600 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                          : 'text-muted hover:text-amber-600 dark:text-on-dark-muted dark:hover:text-amber-400 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'
                                       }`}
                                     >
                                       <span>{opt.label}</span>
@@ -314,7 +314,7 @@ export default function ExternalDocumentsView({
                                 </div>
 
                                 {/* Filter Tipe Dokumen */}
-                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-2xs">
+                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
                                     { id: 'all', label: 'Semua' },
                                     { id: 'article', label: 'Article' },
@@ -323,10 +323,10 @@ export default function ExternalDocumentsView({
                                     <button
                                       key={opt.id}
                                       onClick={() => { setArticleFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`flex items-center justify-center px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-tight transition-all cursor-pointer text-center ${
+                                      className={`flex items-center justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-tight transition-all cursor-pointer text-center ${
                                         articleFilter === opt.id
                                           ? 'bg-amber-600 dark:bg-amber-600 text-white shadow-xs'
-                                          : 'text-slate-600 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                          : 'text-muted hover:text-amber-600 dark:text-on-dark-muted dark:hover:text-amber-400 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'
                                       }`}
                                     >
                                       <span>{opt.label}</span>
@@ -342,7 +342,7 @@ export default function ExternalDocumentsView({
                                     availableYears={availableYearsScopus}
                                     selectedYear={filterYearExt}
                                     onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                    className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-2xs w-full sm:w-auto"
+                                    className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs w-full sm:w-auto"
                                   />
                                 </div>
                               )}
@@ -428,33 +428,33 @@ export default function ExternalDocumentsView({
                 ) : scholarChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
-                      <div className="relative bg-white dark:bg-slate-900/50 backdrop-blur-sm p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm transition-all duration-500">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
+                      <div className="relative bg-surface-light dark:bg-surface-dark p-6 sm:p-8 lg:p-10 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-xs transition-all duration-300">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-10 gap-4">
                           <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center border border-blue-500/20 shadow-inner">
-                              <TrendingUp className="w-6 h-6 text-blue-500" />
+                            <div className="w-12 h-12 bg-[#3b6fe0]/10 rounded-xl flex items-center justify-center border border-[#3b6fe0]/20 shadow-inner">
+                              <TrendingUp className="w-6 h-6 text-[#3b6fe0]" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Tren Google Scholar</h4>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Analisis Publikasi & Sitasi</p>
+                              <h4 className="text-sm font-black text-ink-heading dark:text-on-dark uppercase tracking-widest">Tren Google Scholar</h4>
+                              <p className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-[0.2em] mt-1">Analisis Publikasi & Sitasi</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Statistik Tahunan</span>
+                          <div className="flex items-center gap-2 px-4 py-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg border border-hairline-light dark:border-hairline-dark">
+                            <Calendar className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
+                            <span className="text-[10px] font-black text-muted dark:text-on-dark-muted uppercase tracking-widest">Statistik Tahunan</span>
                           </div>
                         </div>
 
                         <div className="h-[350px] w-full">
-                          <Suspense fallback={<div className="h-[350px] w-full bg-slate-50 dark:bg-slate-800/40 rounded-2xl animate-pulse" />}>
+                          <Suspense fallback={<div className="h-[350px] w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl animate-pulse" />}>
                             <ProfileTrendChart
                               chartData={scholarChartData.chartData}
                               leftDomainMax={scholarChartData.leftMax}
                               rightDomainMax={scholarChartData.rightMax}
-                              barColor="#3b82f6" // blue-500
-                              barGradientColor="#60a5fa" // blue-400
-                              lineColor="#8b5cf6" // violet-500
-                              areaGradientColor="#8b5cf6"
+                              barColor="#3b6fe0"
+                              barGradientColor="#628fee"
+                              lineColor="#788194"
+                              areaGradientColor="#788194"
                               gradientId="scholar"
                             />
                           </Suspense>
@@ -465,13 +465,13 @@ export default function ExternalDocumentsView({
                     {/* Document List Table */}
                     <div className="space-y-4 sm:space-y-5">
                       {/* Skema poin GS banner */}
-                      <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-2xl">
-                        <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black">i</span>
+                      <div className="flex items-start gap-3 p-4 bg-[#3b6fe0]/5 dark:bg-[#3b6fe0]/10 border border-[#3b6fe0]/20 rounded-xl">
+                        <div className="w-6 h-6 rounded-full bg-[#3b6fe0]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-[#3b6fe0] dark:text-[#7fa4ea] text-[10px] font-black">i</span>
                         </div>
                         <div>
-                          <p className="text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">Skema Poin Google Scholar</p>
-                          <p className="text-[10px] font-bold text-blue-600/70 dark:text-blue-400/70 mt-1">
+                          <p className="text-[10px] font-black text-[#3b6fe0] dark:text-[#7fa4ea] uppercase tracking-widest">Skema Poin Google Scholar</p>
+                          <p className="text-[10px] font-bold text-body dark:text-on-dark-soft mt-1">
                             Dihitung berdasarkan dokumen Google Scholar, jumlah sitasi, &amp; bonus tersitasi.
                           </p>
                         </div>
@@ -484,7 +484,7 @@ export default function ExternalDocumentsView({
                             availableYears={availableYearsScholar}
                             selectedYear={filterYearExt}
                             onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                            className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs"
+                            className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs"
                           />
                         </div>
                       )}
@@ -554,39 +554,39 @@ export default function ExternalDocumentsView({
                 >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex flex-col">
-                    <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                    <h4 className="text-sm sm:text-base font-black text-ink-heading dark:text-on-dark uppercase tracking-wider">
                       Daftar Publikasi Terindeks Ganda
                     </h4>
-                    <p className="text-[10px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider sm:tracking-widest mt-1">
+                    <p className="text-[10px] sm:text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider sm:tracking-widest mt-1">
                       Poin diambil dari Scopus (lebih besar)
                     </p>
                   </div>
-                  <div className="flex items-center justify-between sm:justify-end gap-3 bg-slate-50 dark:bg-slate-800/60 sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-2xl sm:rounded-none border border-slate-100 dark:border-slate-800/80 sm:border-none">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 bg-surface-light-raised dark:bg-surface-dark-elevated sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-hairline-light dark:border-hairline-dark sm:border-none">
                     <div className="text-left sm:text-right">
-                      <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">
+                      <p className="text-[9px] font-black text-muted dark:text-on-dark-muted uppercase tracking-widest leading-none">
                         Total Poin
                       </p>
-                      <p className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 mt-1">
+                      <p className="text-base sm:text-lg font-black font-mono text-success dark:text-success-on-dark mt-1">
                         {Math.round(crossIndexedDocs.reduce((acc: number, doc: any) => {
                           const sd = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                           return acc + calculateScopusBreakdown(sd || doc).totalPoints;
-                        }, 0))} <span className="text-xs font-bold text-slate-400 dark:text-slate-500">pts</span>
+                        }, 0))} <span className="text-xs font-bold text-muted dark:text-on-dark-muted">pts</span>
                       </p>
                     </div>
-                    <div className="px-3.5 py-2 bg-emerald-600 dark:bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap shadow-sm shadow-emerald-600/20">
+                    <div className="px-3.5 py-2 bg-success text-on-ink rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap shadow-xs">
                       {filteredCrossIndexedDocs?.length || 0} Total
                     </div>
                   </div>
                 </div>
 
                 {/* Info banner cross-indexed */}
-                <div className="flex items-start gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-emerald-600 text-[10px] font-black">i</span>
+                <div className="flex items-start gap-3 p-4 bg-success/5 dark:bg-success/10 border border-success/20 rounded-xl">
+                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-success text-[10px] font-black">i</span>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Deduplikasi Otomatis — Poin Scopus Digunakan</p>
-                    <p className="text-[10px] font-bold text-emerald-600/70 dark:text-emerald-400/70 mt-1">
+                    <p className="text-[10px] font-black text-success dark:text-success-on-dark uppercase tracking-widest">Deduplikasi Otomatis — Poin Scopus Digunakan</p>
+                    <p className="text-[10px] font-bold text-body dark:text-on-dark-soft mt-1">
                       Ketika judul ada di Scopus &amp; Scholar, sistem memakai poin Scopus (kalkulasi SINTA) karena lebih besar.
                     </p>
                   </div>
@@ -599,7 +599,7 @@ export default function ExternalDocumentsView({
                       availableYears={availableYearsCross}
                       selectedYear={filterYearExt}
                       onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                      className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs"
+                      className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs"
                     />
                   </div>
                 )}

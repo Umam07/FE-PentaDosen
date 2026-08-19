@@ -183,7 +183,7 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
   ].some(path => location.pathname === path || location.pathname.startsWith(path + '/'));
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-zinc-950 flex font-sans selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden text-gray-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark flex font-sans selection:bg-accent/20 selection:text-ink-heading dark:selection:text-on-dark overflow-x-hidden text-body dark:text-on-dark">
       {/* Mobile Overlay */}
       <AnimatePresence>
         {isMobile && isMobileMenuOpen && (

@@ -296,10 +296,10 @@ export default function ManualDocumentForm({
       )}
 
       {/* Scoring Preview & Submit Action */}
-      <div className="pt-4 border-t border-gray-100 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-center gap-6">
+      <div className="pt-4 border-t border-hairline-light dark:border-hairline-dark flex flex-col sm:flex-row justify-between items-center gap-6">
         <div>
-          <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block">Pratinjau Bobot KPI</span>
-          <span className="text-lg font-black text-primary-600 dark:text-primary-400 font-mono">
+          <span className="text-[10px] font-black uppercase text-muted dark:text-on-dark-muted tracking-widest block">Pratinjau Bobot KPI</span>
+          <span className="text-lg font-black text-ink-heading dark:text-on-dark font-mono">
             {scoringPreview.message}
           </span>
         </div>
@@ -307,7 +307,7 @@ export default function ManualDocumentForm({
         <button
           type="submit"
           disabled={loading || !selectedUserId || !file || !title}
-          className="w-full sm:w-auto px-10 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+          className="w-full sm:w-auto px-8 py-3.5 bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink rounded-lg font-black text-xs uppercase tracking-widest shadow-xs transition-all disabled:opacity-50 flex items-center justify-center gap-3 cursor-pointer"
         >
           {loading ? (
             <>

@@ -20,28 +20,28 @@ export const ProfileTabs: React.FC<ProfileTabsProps> = ({
   ];
 
   return (
-    <div className="flex items-center gap-8 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto no-scrollbar">
+    <div className="flex items-center gap-8 border-b border-hairline-light dark:border-hairline-dark pb-2 overflow-x-auto no-scrollbar">
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id as any)}
-          className={`group/tab relative pb-3 text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === tab.id
-              ? 'text-primary-600 dark:text-primary-400'
-              : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+          className={`group/tab relative pb-3 text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === tab.id
+              ? 'text-ink-heading dark:text-on-dark'
+              : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
             }`}
         >
-          <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+          <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? 'text-accent dark:text-accent-on-dark' : 'text-muted'}`} />
           {tab.label}
           {/* Active indicator */}
           {activeTab === tab.id && (
             <motion.div
               layoutId="profile-subtab-indicator"
-              className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary-600 dark:bg-primary-500 rounded-full"
+              className="absolute bottom-0 left-0 right-0 h-[3px] bg-accent dark:bg-accent-on-dark rounded-full"
             />
           )}
           {/* Hover underline */}
           {activeTab !== tab.id && (
-            <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-200 dark:bg-slate-700 rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
+            <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-hairline-light dark:bg-hairline-dark rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
           )}
         </button>
       ))}

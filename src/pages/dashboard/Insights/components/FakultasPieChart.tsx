@@ -43,21 +43,21 @@ export default function FakultasPieChart({
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl shadow-xs border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 overflow-hidden relative flex flex-col justify-between"
+      className="lg:col-span-8 bg-surface-light dark:bg-surface-dark rounded-3xl shadow-xs border border-hairline-light dark:border-hairline-dark p-6 sm:p-8 overflow-hidden relative flex flex-col justify-between"
     >
       {/* Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-hairline-light dark:border-hairline-dark">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-primary-500/10 text-primary-600 dark:text-primary-400 rounded-xl">
+            <div className="p-2 bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark rounded-xl">
               <Building2 className="w-5 h-5" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Poin KPI per Fakultas</h2>
-            <span className="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-slate-700">
+            <h2 className="text-xl font-bold text-ink-heading dark:text-on-dark tracking-tight">Poin KPI per Fakultas</h2>
+            <span className="px-2.5 py-0.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark text-xs font-mono font-semibold rounded-full border border-hairline-light dark:border-hairline-dark">
               {totalFakultasPoints.toLocaleString()} Poin Total
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-muted dark:text-on-dark-muted">
             Proporsi distribusi capaian KPI fakultas secara real-time.
           </p>
         </div>
@@ -66,14 +66,14 @@ export default function FakultasPieChart({
         <div className="flex flex-wrap items-center gap-2">
           {/* View Mode Toggle */}
           {setChartViewMode && (
-            <div className="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+            <div className="inline-flex p-1 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
               <button
                 onClick={() => setChartViewMode('donut')}
                 title="Donut Chart View"
                 className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                   chartViewMode === 'donut'
-                    ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                    ? 'bg-surface-light dark:bg-surface-dark text-accent dark:text-accent-on-dark shadow-xs'
+                    : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
                 }`}
               >
                 <PieIcon className="w-4 h-4" />
@@ -83,8 +83,8 @@ export default function FakultasPieChart({
                 title="Bar Matrix View"
                 className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                   chartViewMode === 'bar'
-                    ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                    ? 'bg-surface-light dark:bg-surface-dark text-accent dark:text-accent-on-dark shadow-xs'
+                    : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
                 }`}
               >
                 <BarChart2 className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function FakultasPieChart({
 
           {/* Search Box */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
             <input 
               type="text" 
               placeholder="Cari fakultas..." 
@@ -103,7 +103,7 @@ export default function FakultasPieChart({
                 setSearchQuery(e.target.value);
                 setActiveIndex(0);
               }}
-              className="pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl text-xs font-medium border border-slate-200/80 dark:border-slate-700/80 focus:border-primary-500 dark:focus:border-primary-400 outline-none w-36 sm:w-44 transition-all text-slate-900 dark:text-white placeholder:text-slate-400" 
+              className="pl-8 pr-3 py-1.5 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-xs font-medium border border-hairline-light dark:border-hairline-dark focus:border-accent dark:focus:border-accent outline-none w-36 sm:w-44 transition-all text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted" 
             />
           </div>
 
@@ -112,27 +112,27 @@ export default function FakultasPieChart({
             <button 
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
               aria-label="Filter peringkat"
-              className="p-2 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer text-slate-600 dark:text-slate-300"
+              className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark hover:bg-ink-soft dark:hover:bg-surface-dark transition-all cursor-pointer text-body dark:text-on-dark"
             >
               <Filter className="w-4 h-4" />
             </button>
             {showFilterDropdown && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl z-50 p-2 space-y-1">
+              <div className="absolute right-0 mt-2 w-48 bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-xl z-50 p-2 space-y-1">
                 <button 
                   onClick={() => { setSortBy('points_desc'); setShowFilterDropdown(false); }}
-                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${sortBy === 'points_desc' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${sortBy === 'points_desc' ? 'bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark' : 'text-body dark:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'}`}
                 >
                   Poin Tertinggi
                 </button>
                 <button 
                   onClick={() => { setSortBy('points_asc'); setShowFilterDropdown(false); }}
-                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${sortBy === 'points_asc' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${sortBy === 'points_asc' ? 'bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark' : 'text-body dark:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'}`}
                 >
                   Poin Terendah
                 </button>
                 <button 
                   onClick={() => { setSortBy('alphabetical'); setShowFilterDropdown(false); }}
-                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${sortBy === 'alphabetical' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${sortBy === 'alphabetical' ? 'bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark' : 'text-body dark:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'}`}
                 >
                   Nama (A-Z)
                 </button>
@@ -148,8 +148,8 @@ export default function FakultasPieChart({
           {/* Chart Display */}
           <div className="xl:col-span-7 h-[320px] relative">
             {loading ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                <div className="w-40 h-40 rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-primary-500 animate-spin flex items-center justify-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-muted dark:text-on-dark-muted">
+                <div className="w-40 h-40 rounded-full border-4 border-hairline-light dark:border-hairline-dark border-t-accent animate-spin flex items-center justify-center">
                   <Building2 className="w-8 h-8 opacity-30 animate-pulse" />
                 </div>
               </div>
@@ -183,7 +183,7 @@ export default function FakultasPieChart({
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-muted dark:text-on-dark-muted">
                 <Building2 className="w-12 h-12 mb-2 opacity-30" />
                 <p className="text-xs font-semibold">Fakultas tidak ditemukan</p>
               </div>
@@ -195,10 +195,10 @@ export default function FakultasPieChart({
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex items-center gap-3 p-2.5 rounded-xl animate-pulse">
-                  <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 shrink-0" />
+                  <div className="w-8 h-8 rounded-lg bg-hairline-light dark:bg-hairline-dark shrink-0" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2" />
-                    <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded w-full" />
+                    <div className="h-3 bg-hairline-light dark:bg-hairline-dark rounded w-1/2" />
+                    <div className="h-2 bg-hairline-light dark:bg-hairline-dark rounded w-full" />
                   </div>
                 </div>
               ))
@@ -214,8 +214,8 @@ export default function FakultasPieChart({
                     onClick={() => onFakultasClick(f.fullName)}
                     className={`flex items-center gap-3 p-2.5 rounded-xl transition-all border cursor-pointer ${
                       isActive 
-                        ? 'bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 shadow-xs' 
-                        : 'border-transparent hover:bg-slate-50/50 dark:hover:bg-slate-800/40'
+                        ? 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark shadow-xs' 
+                        : 'border-transparent hover:bg-surface-light-raised/60 dark:hover:bg-surface-dark-elevated/40'
                     }`}
                   >
                     <div 
@@ -227,12 +227,12 @@ export default function FakultasPieChart({
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-1">
-                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                        <p className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate">
                           {f.name}
                         </p>
-                        <span className="text-[11px] font-bold text-slate-900 dark:text-white">{percentage}%</span>
+                        <span className="text-[11px] font-mono font-bold text-ink-heading dark:text-on-dark">{percentage}%</span>
                       </div>
-                      <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="w-full h-1.5 bg-hairline-light dark:bg-hairline-dark rounded-full overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }}
                           animate={{ width: `${percentage}%` }}
@@ -256,22 +256,22 @@ export default function FakultasPieChart({
               <div 
                 key={f.fullName} 
                 onClick={() => onFakultasClick(f.fullName)}
-                className="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 transition-all cursor-pointer space-y-2"
+                className="p-4 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark hover:border-hairline-light-soft dark:hover:border-hairline-dark-soft transition-all cursor-pointer space-y-2"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="w-3 h-3 rounded-full" style={{ backgroundColor: f.color }} />
-                    <span className="text-sm font-bold text-slate-900 dark:text-white">{f.fullName}</span>
+                    <span className="text-sm font-bold text-ink-heading dark:text-on-dark">{f.fullName}</span>
                   </div>
                   <div className="flex items-center gap-4 text-xs">
-                    <span className="font-semibold text-slate-600 dark:text-slate-300">{f.value.toLocaleString()} Poin KPI</span>
-                    <span className="px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white">
+                    <span className="font-mono font-semibold text-body dark:text-on-dark-soft">{f.value.toLocaleString()} Poin KPI</span>
+                    <span className="px-2 py-0.5 rounded-md bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark font-mono font-bold text-ink-heading dark:text-on-dark">
                       {percentage}%
                     </span>
                   </div>
                 </div>
 
-                <div className="w-full h-2.5 bg-slate-200/70 dark:bg-slate-700/60 rounded-full overflow-hidden">
+                <div className="w-full h-2.5 bg-hairline-light dark:bg-hairline-dark rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
                     whileInView={{ width: `${percentage}%` }}

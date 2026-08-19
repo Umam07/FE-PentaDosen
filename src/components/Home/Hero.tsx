@@ -5,7 +5,7 @@ import Leaderboard from './Leaderboard';
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <section id="hero" className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-canvas-light dark:bg-canvas-dark transition-colors duration-300">
       {/* Structural Line Grid Pattern (No glows, no gradients) */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.05] dark:opacity-[0.07]">
         <div className="h-full w-full bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:4rem_4rem]" />
@@ -19,10 +19,10 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-slate-900 dark:text-white"
+            className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-ink-heading dark:text-on-dark"
           >
             Masa Depan Karir <br />
-            <span className="text-primary-600 dark:text-primary-400">Akademik &amp; Riset Dosen</span>
+            <span className="text-accent dark:text-accent-on-dark">Akademik &amp; Riset Dosen</span>
           </motion.h1>
 
           {/* Subtitle - Max 20 words max readability */}
@@ -30,9 +30,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg md:text-xl font-medium text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8"
+            className="text-base sm:text-lg md:text-xl font-medium text-body dark:text-on-dark-soft max-w-2xl mx-auto leading-relaxed mb-8"
           >
-            Otomatisasi sinkronisasi data <span className="text-slate-900 dark:text-white font-bold">Google Scholar</span> &amp; <span className="text-slate-900 dark:text-white font-bold">Scopus</span>. Kelola berkas evaluasi lebih cepat, akurat, dan transparan.
+            Otomatisasi sinkronisasi data <span className="text-ink-heading dark:text-on-dark font-bold">Google Scholar</span> &amp; <span className="text-ink-heading dark:text-on-dark font-bold">Scopus</span>. Kelola berkas evaluasi lebih cepat, akurat, dan transparan.
           </motion.p>
 
           {/* Feature Highlights Pills - High Contrast WCAG AA/AAA */}
@@ -49,9 +49,9 @@ export default function Hero() {
             ].map((tag, idx) => (
               <span 
                 key={idx} 
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-primary-50/90 dark:bg-slate-900 border border-primary-200/80 dark:border-slate-800 text-xs font-bold text-primary-900 dark:text-primary-300 shadow-sm"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-ink-soft dark:bg-surface-dark-elevated border border-ink-border dark:border-hairline-dark text-xs font-bold text-body dark:text-on-dark-soft shadow-sm"
               >
-                <tag.icon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0" />
+                <tag.icon className="w-3.5 h-3.5 text-body dark:text-on-dark-soft shrink-0" />
                 {tag.label}
               </span>
             ))}
@@ -66,7 +66,7 @@ export default function Hero() {
           >
             <Link
               to="/insights"
-              className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white font-bold text-base px-8 py-4 rounded-xl transition-all duration-200 shadow-sm group relative overflow-hidden"
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-accent hover:bg-accent-hover active:scale-[0.98] text-white font-bold text-base px-8 py-4 rounded-lg transition-all duration-200 shadow-sm group relative overflow-hidden"
             >
               {/* Shiny Glossy Sheen Sweep Effect */}
               <motion.span 
@@ -82,11 +82,11 @@ export default function Hero() {
 
             <Link
               to="/lecturers"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-base px-7 py-4 rounded-xl transition-all duration-200 group shadow-sm"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-surface-light dark:bg-surface-dark-elevated hover:bg-surface-light-raised dark:hover:bg-surface-dark active:scale-[0.98] border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark font-bold text-base px-7 py-4 rounded-lg transition-all duration-200 group shadow-sm"
             >
-              <Users className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+              <Users className="w-5 h-5 text-muted dark:text-on-dark-muted" />
               <span>Direktori Dosen</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-4 h-4 text-muted group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Link>
           </motion.div>
         </div>

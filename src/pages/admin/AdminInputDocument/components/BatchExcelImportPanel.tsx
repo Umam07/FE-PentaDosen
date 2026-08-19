@@ -22,19 +22,19 @@ export default function BatchExcelImportPanel({
   return (
     <div className="space-y-8">
       {/* Template Instructions & Download */}
-      <div className="bg-primary-50/50 dark:bg-primary-950/20 rounded-3xl p-6 border border-primary-100 dark:border-primary-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-6 border border-hairline-light dark:border-hairline-dark flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-1">
-          <h4 className="text-sm font-black text-primary-950 dark:text-primary-200 uppercase tracking-tight">
+          <h4 className="text-sm font-black text-ink-heading dark:text-on-dark uppercase tracking-tight">
             Unduh Template Format Excel
           </h4>
-          <p className="text-xs text-primary-800/70 dark:text-primary-300/70 font-medium">
+          <p className="text-xs text-body dark:text-on-dark-soft font-medium">
             Gunakan template Excel resmi dengan daftar dropdown agar data terformat dengan benar.
           </p>
         </div>
         <button
           type="button"
           onClick={onDownloadTemplate}
-          className="flex items-center gap-2.5 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-md shadow-primary-500/20 shrink-0"
+          className="flex items-center gap-2.5 px-6 py-3 bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink rounded-lg text-xs font-black uppercase tracking-widest transition-all shadow-xs shrink-0 cursor-pointer"
         >
           <Download className="w-4 h-4" />
           Unduh Template ({mainCategory})

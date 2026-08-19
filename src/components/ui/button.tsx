@@ -9,15 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-sm shadow-black/5 hover:bg-primary/90",
+        default: "bg-ink text-on-ink shadow-sm hover:bg-ink-hover active:bg-ink-active",
+        hero: "bg-accent text-on-ink shadow-sm hover:bg-accent-hover active:bg-accent-active",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm shadow-black/5 hover:bg-destructive/90",
+          "bg-error text-white shadow-sm hover:bg-error/90 dark:bg-error-on-dark dark:text-zinc-950",
         outline:
-          "border border-input bg-background shadow-sm shadow-black/5 hover:bg-accent hover:text-accent-foreground",
+          "border border-hairline-light bg-surface-light text-ink-heading shadow-sm hover:bg-surface-light-raised dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark dark:hover:bg-surface-dark",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm shadow-black/5 hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border border-hairline-light bg-surface-light text-ink-heading shadow-sm hover:bg-surface-light-raised dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark",
+        ghost: "text-muted hover:bg-ink-soft hover:text-ink-heading dark:hover:bg-surface-dark-elevated dark:hover:text-on-dark",
+        link: "text-accent underline-offset-4 hover:underline dark:text-accent-on-dark",
       },
       size: {
         default: "h-9 px-4 py-2",

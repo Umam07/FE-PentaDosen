@@ -55,9 +55,9 @@ export default function Workflow() {
         'Deteksi Otomatis ID Peneliti (ORCID/SINTA)'
       ],
       accentColor: 'blue',
-      accentBg: 'bg-blue-500/10 dark:bg-blue-400/10',
-      accentBorder: 'border-blue-500/20 dark:border-blue-400/20',
-      accentText: 'text-blue-600 dark:text-blue-400'
+      accentBg: 'bg-accent/15 dark:bg-accent/20',
+      accentBorder: 'border-accent/30 dark:border-accent/40',
+      accentText: 'text-accent dark:text-accent-on-dark'
     },
     {
       id: 2,
@@ -73,9 +73,9 @@ export default function Workflow() {
         'Unggah Berkas Pendukung Ber-SLA Aman'
       ],
       accentColor: 'indigo',
-      accentBg: 'bg-indigo-500/10 dark:bg-indigo-400/10',
-      accentBorder: 'border-indigo-500/20 dark:border-indigo-400/20',
-      accentText: 'text-indigo-600 dark:text-indigo-400'
+      accentBg: 'bg-ink-soft dark:bg-surface-dark-elevated',
+      accentBorder: 'border-ink-border dark:border-hairline-dark',
+      accentText: 'text-ink-heading dark:text-on-dark'
     },
     {
       id: 3,
@@ -91,9 +91,9 @@ export default function Workflow() {
         'Audit Trail Perhitungan Transparan'
       ],
       accentColor: 'violet',
-      accentBg: 'bg-violet-500/10 dark:bg-violet-400/10',
-      accentBorder: 'border-violet-500/20 dark:border-violet-400/20',
-      accentText: 'text-violet-600 dark:text-violet-400'
+      accentBg: 'bg-[#7c5cf0]/15 dark:bg-[#7c5cf0]/20',
+      accentBorder: 'border-[#7c5cf0]/30 dark:border-[#7c5cf0]/40',
+      accentText: 'text-[#7c5cf0] dark:text-[#a78bfa]'
     },
     {
       id: 4,
@@ -109,9 +109,9 @@ export default function Workflow() {
         'SLA Verifikasi Terukur < 24 Jam'
       ],
       accentColor: 'emerald',
-      accentBg: 'bg-emerald-500/10 dark:bg-emerald-400/10',
-      accentBorder: 'border-emerald-500/20 dark:border-emerald-400/20',
-      accentText: 'text-emerald-600 dark:text-emerald-400'
+      accentBg: 'bg-success-soft dark:bg-success/15',
+      accentBorder: 'border-success-border dark:border-success/30',
+      accentText: 'text-success dark:text-success-on-dark'
     },
     {
       id: 5,
@@ -127,9 +127,9 @@ export default function Workflow() {
         'Proyeksi Pencapaian Target Tri Dharma'
       ],
       accentColor: 'amber',
-      accentBg: 'bg-amber-500/10 dark:bg-amber-400/10',
-      accentBorder: 'border-amber-500/20 dark:border-amber-400/20',
-      accentText: 'text-amber-600 dark:text-amber-400'
+      accentBg: 'bg-warning-soft dark:bg-warning/15',
+      accentBorder: 'border-warning-border dark:border-warning/30',
+      accentText: 'text-warning dark:text-warning-on-dark'
     }
   ];
 
@@ -173,7 +173,7 @@ export default function Workflow() {
     <section 
       id="workflow" 
       ref={containerRef}
-      className="py-20 md:py-32 bg-slate-50 dark:bg-slate-950 relative overflow-hidden font-sans"
+      className="py-20 md:py-32 bg-canvas-light dark:bg-canvas-dark relative overflow-hidden font-sans"
     >
       {/* Structural Line Grid Pattern */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]">
@@ -189,9 +189,9 @@ export default function Workflow() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-ink-heading dark:text-on-dark tracking-tight leading-tight mb-4"
           >
-            Alur Kerja Terpadu <span className="text-blue-600 dark:text-blue-400">Penta Dosen</span>
+            Alur Kerja Terpadu <span className="text-accent dark:text-accent-on-dark">Penta Dosen</span>
           </motion.h2>
 
           <motion.p
@@ -199,7 +199,7 @@ export default function Workflow() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base md:text-lg font-medium text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto"
+            className="text-base md:text-lg font-medium text-body dark:text-on-dark-soft leading-relaxed max-w-2xl mx-auto"
           >
             Proses otomatisasi 5 tahap yang menghubungkan Dosen, Admin Fakultas, dan LPPM dalam satu ekosistem produktivitas yang presisi.
           </motion.p>
@@ -216,30 +216,30 @@ export default function Workflow() {
                 <button
                   key={step.id}
                   onClick={() => handleSelectStep(step.id)}
-                  className={`relative flex items-center gap-2.5 px-4 py-3 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 shrink-0 cursor-pointer ${
+                  className={`relative flex items-center gap-2.5 px-4 py-3 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 shrink-0 cursor-pointer ${
                     isActive 
-                      ? 'text-slate-900 dark:text-white font-bold' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                      ? 'text-ink-heading dark:text-on-dark font-bold' 
+                      : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeWorkflowTab"
-                      className="absolute inset-0 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 z-0"
+                      className="absolute inset-0 bg-surface-light dark:bg-surface-dark rounded-lg shadow-sm border border-hairline-light dark:border-hairline-dark z-0"
                       transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                     />
                   )}
 
-                  <span className={`relative z-10 w-6 h-6 rounded-lg font-mono text-xs flex items-center justify-center font-bold transition-colors ${
+                  <span className={`relative z-10 w-6 h-6 rounded-md font-mono text-xs flex items-center justify-center font-bold transition-colors ${
                     isActive 
-                      ? 'bg-blue-600 text-white shadow-xs' 
-                      : 'bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                      ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark shadow-xs' 
+                      : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted'
                   }`}>
                     0{step.id}
                   </span>
 
                   <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
-                    <Icon className={`w-4 h-4 ${isActive ? step.accentText : 'text-slate-400'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-ink-heading dark:text-on-dark' : 'text-muted'}`} />
                     <span>{step.title.split(' ')[0]}</span>
                   </span>
                 </button>
@@ -249,13 +249,13 @@ export default function Workflow() {
         </div>
 
         {/* MAIN SPOTLIGHT STAGE */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mb-12 relative">
+        <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark shadow-xl overflow-hidden mb-12 relative">
           
           {/* Top Progress Bar for Auto-play */}
           {isPlaying && (
-            <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+            <div className="h-1 w-full bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden">
               <div 
-                className="h-full bg-blue-600 transition-all duration-100 ease-linear" 
+                className="h-full bg-accent transition-all duration-100 ease-linear" 
                 style={{ width: `${progress}%` }} 
               />
             </div>
@@ -282,32 +282,32 @@ export default function Workflow() {
                       {currentStep.category}
                     </span>
 
-                    <span className="text-3xl sm:text-4xl font-mono font-black text-slate-300 dark:text-slate-800 select-none">
-                      0{currentStep.id} <span className="text-sm font-sans font-medium text-slate-400">/ 05</span>
+                    <span className="text-3xl sm:text-4xl font-mono font-black text-muted-soft dark:text-on-dark-muted/40 select-none">
+                      0{currentStep.id} <span className="text-sm font-sans font-medium text-muted">/ 05</span>
                     </span>
                   </div>
 
                   {/* Step Title & Subtitle */}
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2 leading-tight">
+                  <h3 className="text-2xl sm:text-3xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2 leading-tight">
                     {currentStep.title}
                   </h3>
                   
-                  <p className="text-xs font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">
+                  <p className="text-xs font-mono font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest mb-4">
                     {currentStep.subtitle}
                   </p>
 
-                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-6 font-normal">
+                  <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed mb-6 font-normal">
                     {currentStep.description}
                   </p>
 
                   {/* Highlights Bullet List */}
-                  <div className="space-y-3 mb-8 bg-slate-50 dark:bg-slate-950/60 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                  <div className="space-y-3 mb-8 bg-surface-light-raised dark:bg-surface-dark-elevated p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark">
                     {currentStep.highlights.map((item, idx) => (
                       <div key={idx} className="flex items-start gap-3">
                         <div className={`mt-0.5 w-5 h-5 rounded-full ${currentStep.accentBg} flex items-center justify-center shrink-0`}>
                           <CheckCircle2 className={`w-3.5 h-3.5 ${currentStep.accentText}`} />
                         </div>
-                        <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                        <span className="text-xs sm:text-sm font-semibold text-body-strong dark:text-on-dark">
                           {item}
                         </span>
                       </div>
@@ -315,11 +315,11 @@ export default function Workflow() {
                   </div>
 
                   {/* Role Badge & Controls Footer */}
-                  <div className="flex items-center justify-between gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center justify-between gap-3 pt-4 border-t border-hairline-light dark:border-hairline-dark">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs font-medium text-slate-400 shrink-0">Aktor Utama:</span>
-                      <span className="h-9 sm:h-10 inline-flex items-center gap-1.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 truncate">
-                        <User className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                      <span className="text-xs font-medium text-muted dark:text-on-dark-muted shrink-0">Aktor Utama:</span>
+                      <span className="h-9 sm:h-10 inline-flex items-center gap-1.5 px-3 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-xs font-bold text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark truncate">
+                        <User className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark shrink-0" />
                         <span className="truncate">{currentStep.role}</span>
                       </span>
                     </div>
@@ -327,10 +327,10 @@ export default function Workflow() {
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => setIsPlaying(!isPlaying)}
-                        className={`h-9 sm:h-10 px-3.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                        className={`h-9 sm:h-10 px-3.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                           isPlaying
-                            ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
-                            : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                            ? 'bg-warning-soft dark:bg-warning/20 border-warning-border dark:border-warning/30 text-warning dark:text-warning-on-dark'
+                            : 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark'
                         }`}
                         title={isPlaying ? 'Pause Auto Play' : 'Play Auto Flow'}
                       >
@@ -341,14 +341,14 @@ export default function Workflow() {
                       <div className="flex items-center gap-1.5 shrink-0">
                         <button
                           onClick={handlePrev}
-                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer flex items-center justify-center shrink-0"
+                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink-soft dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark transition-colors cursor-pointer flex items-center justify-center shrink-0"
                           aria-label="Tahap Sebelumnya"
                         >
                           <ChevronLeft className="w-4 h-4" />
                         </button>
                         <button
                           onClick={handleNext}
-                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 transition-colors cursor-pointer shadow-xs flex items-center justify-center shrink-0"
+                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-ink dark:bg-on-dark hover:bg-ink-hover dark:hover:bg-white text-on-ink dark:text-ink-heading transition-colors cursor-pointer shadow-xs flex items-center justify-center shrink-0"
                           aria-label="Tahap Selanjutnya"
                         >
                           <ChevronRight className="w-4 h-4" />
@@ -361,69 +361,69 @@ export default function Workflow() {
 
                 {/* Right Column: Custom Interactive Stage Graphics */}
                 <div className="lg:col-span-6">
-                  <div className="bg-slate-900 dark:bg-slate-950 rounded-2xl p-6 border border-slate-800 text-white shadow-2xl relative overflow-hidden min-h-[340px] flex flex-col justify-between">
+                  <div className="bg-surface-dark-soft dark:bg-surface-dark-soft rounded-2xl p-6 border border-hairline-dark text-on-dark shadow-2xl relative overflow-hidden min-h-[340px] flex flex-col justify-between">
                     
                     {/* Background Grid Pattern inside Card */}
-                    <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] pointer-events-none" />
+                    <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] pointer-events-none" />
 
                     {/* Render Specific Visual per Step */}
                     {currentStep.id === 1 && (
                       <div className="relative z-10 flex flex-col h-full justify-between gap-6 py-2">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
                           <div className="flex items-center gap-2">
                             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-xs font-mono font-bold text-slate-300">SYSTEM GATEWAY ACTIVE</span>
+                            <span className="text-xs font-mono font-bold text-on-dark-soft">SYSTEM GATEWAY ACTIVE</span>
                           </div>
-                          <span className="text-[10px] font-mono bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30">SSO OAuth 2.0</span>
+                          <span className="text-[10px] font-mono bg-accent/20 text-accent-on-dark px-2 py-0.5 rounded border border-accent/30">SSO OAuth 2.0</span>
                         </div>
 
                         {/* Connected Node Graph Simulation */}
                         <div className="grid grid-cols-3 gap-3 items-center text-center relative my-4">
                           <motion.div 
                             whileHover={{ scale: 1.03 }}
-                            className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 flex flex-col items-center gap-2"
+                            className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col items-center gap-2"
                           >
-                            <UserCheck className="w-6 h-6 text-blue-400" />
-                            <span className="text-xs font-bold text-slate-200">LDAP Kampus</span>
-                            <span className="text-[9px] font-mono text-emerald-400 font-bold">✓ Authenticated</span>
+                            <UserCheck className="w-6 h-6 text-accent-on-dark" />
+                            <span className="text-xs font-bold text-on-dark">LDAP Kampus</span>
+                            <span className="text-[9px] font-mono text-success-on-dark font-bold">✓ Authenticated</span>
                           </motion.div>
 
                           <div className="flex flex-col items-center justify-center relative">
                             <motion.div 
                               animate={{ scale: [1, 1.2, 1] }}
                               transition={{ duration: 2, repeat: Infinity }}
-                              className="w-8 h-8 rounded-full bg-blue-600/30 border border-blue-500 flex items-center justify-center text-blue-400 mb-1"
+                              className="w-8 h-8 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent-on-dark mb-1"
                             >
                               <RefreshCw className="w-4 h-4 animate-spin" style={{ animationDuration: '6s' }} />
                             </motion.div>
-                            <span className="text-[9px] font-mono text-slate-400">Sync Engine</span>
+                            <span className="text-[9px] font-mono text-on-dark-muted">Sync Engine</span>
                           </div>
 
                           <motion.div 
                             whileHover={{ scale: 1.03 }}
-                            className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 flex flex-col items-center gap-2"
+                            className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col items-center gap-2"
                           >
-                            <Database className="w-6 h-6 text-emerald-400" />
-                            <span className="text-xs font-bold text-slate-200">Scopus & Scholar</span>
-                            <span className="text-[9px] font-mono text-blue-400 font-bold">API Connected</span>
+                            <Database className="w-6 h-6 text-success-on-dark" />
+                            <span className="text-xs font-bold text-on-dark">Scopus & Scholar</span>
+                            <span className="text-[9px] font-mono text-accent-on-dark font-bold">API Connected</span>
                           </motion.div>
                         </div>
 
-                        <div className="bg-slate-950/80 rounded-xl p-3 border border-slate-800 flex items-center justify-between text-xs">
+                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-blue-400" />
-                            <span className="font-mono text-slate-300">Data Stream Sync:</span>
+                            <div className="w-2 h-2 rounded-full bg-accent" />
+                            <span className="font-mono text-on-dark-soft">Data Stream Sync:</span>
                           </div>
-                          <span className="font-mono font-bold text-emerald-400">142 Articles Ingested</span>
+                          <span className="font-mono font-bold text-success-on-dark">142 Articles Ingested</span>
                         </div>
                       </div>
                     )}
 
                     {currentStep.id === 2 && (
                       <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                          <span className="text-xs font-mono font-bold text-slate-300">MULTI-FORMAT INGESTION</span>
-                          <span className="text-[10px] font-mono bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/30">PDF / BibTeX / RIS</span>
+                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
+                          <span className="text-xs font-mono font-bold text-on-dark-soft">MULTI-FORMAT INGESTION</span>
+                          <span className="text-[10px] font-mono bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">PDF / BibTeX / RIS</span>
                         </div>
 
                         {/* Publication Items Stack */}
@@ -431,45 +431,45 @@ export default function Workflow() {
                           <motion.div 
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-slate-800/90 p-3 rounded-xl border border-slate-700 flex items-center justify-between gap-3"
+                            className="bg-surface-dark/90 p-3 rounded-xl border border-hairline-dark flex items-center justify-between gap-3"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0 font-bold text-xs">
+                              <div className="w-8 h-8 rounded-lg bg-surface-dark-elevated border border-hairline-dark flex items-center justify-center text-accent-on-dark shrink-0 font-bold text-xs">
                                 J1
                               </div>
                               <div className="overflow-hidden">
-                                <div className="text-xs font-bold text-slate-200 truncate">Deep Learning for Precision Agriculture</div>
-                                <div className="text-[10px] font-mono text-slate-400">Jurnal Q1 Scopus • DOI: 10.1016/j.future</div>
+                                <div className="text-xs font-bold text-on-dark truncate">Deep Learning for Precision Agriculture</div>
+                                <div className="text-[10px] font-mono text-on-dark-muted">Jurnal Q1 Scopus • DOI: 10.1016/j.future</div>
                               </div>
                             </div>
-                            <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">Imported</span>
+                            <span className="text-[10px] font-mono font-bold text-success-on-dark bg-success/15 px-2 py-1 rounded">Imported</span>
                           </motion.div>
 
                           <motion.div 
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="bg-slate-800/90 p-3 rounded-xl border border-slate-700 flex items-center justify-between gap-3"
+                            className="bg-surface-dark/90 p-3 rounded-xl border border-hairline-dark flex items-center justify-between gap-3"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-amber-600/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 font-bold text-xs">
+                              <div className="w-8 h-8 rounded-lg bg-warning/15 border border-warning/30 flex items-center justify-center text-warning-on-dark shrink-0 font-bold text-xs">
                                 HKI
                               </div>
                               <div className="overflow-hidden">
-                                <div className="text-xs font-bold text-slate-200 truncate">Sistem Otomatisasi Evaluasi Kinerja</div>
-                                <div className="text-[10px] font-mono text-slate-400">Hak Cipta No. EC00202688192</div>
+                                <div className="text-xs font-bold text-on-dark truncate">Sistem Otomatisasi Evaluasi Kinerja</div>
+                                <div className="text-[10px] font-mono text-on-dark-muted">Hak Cipta No. EC00202688192</div>
                               </div>
                             </div>
-                            <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">Imported</span>
+                            <span className="text-[10px] font-mono font-bold text-success-on-dark bg-success/15 px-2 py-1 rounded">Imported</span>
                           </motion.div>
                         </div>
 
-                        <div className="bg-indigo-950/40 rounded-xl p-3 border border-indigo-800/50 flex items-center justify-between text-xs">
-                          <span className="font-mono text-indigo-300">Format Pendukung:</span>
+                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
+                          <span className="font-mono text-on-dark-muted">Format Pendukung:</span>
                           <div className="flex gap-1.5 font-mono text-[10px]">
-                            <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded">.PDF</span>
-                            <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded">.BIB</span>
-                            <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded">.RIS</span>
+                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.PDF</span>
+                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.BIB</span>
+                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.RIS</span>
                           </div>
                         </div>
                       </div>
@@ -477,120 +477,120 @@ export default function Workflow() {
 
                     {currentStep.id === 3 && (
                       <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                          <span className="text-xs font-mono font-bold text-slate-300">CORE DEDUPLICATION & SCORING</span>
-                          <span className="text-[10px] font-mono bg-violet-500/20 text-violet-400 px-2 py-0.5 rounded border border-violet-500/30">FUZZY MATCH 99.8%</span>
+                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
+                          <span className="text-xs font-mono font-bold text-on-dark-soft">CORE DEDUPLICATION & SCORING</span>
+                          <span className="text-[10px] font-mono bg-[#7c5cf0]/20 text-[#a78bfa] px-2 py-0.5 rounded border border-[#7c5cf0]/30">FUZZY MATCH 99.8%</span>
                         </div>
 
                         {/* Processing Matrix Simulation */}
-                        <div className="bg-slate-800/70 p-4 rounded-xl border border-slate-700 space-y-3 my-1">
-                          <div className="flex items-center justify-between text-xs border-b border-slate-700/60 pb-2">
-                            <span className="text-slate-400">Verifikasi DOI:</span>
-                            <span className="font-mono font-bold text-emerald-400">✓ Unique Entry Validated</span>
+                        <div className="bg-surface-dark/80 p-4 rounded-xl border border-hairline-dark space-y-3 my-1">
+                          <div className="flex items-center justify-between text-xs border-b border-hairline-dark pb-2">
+                            <span className="text-on-dark-muted">Verifikasi DOI:</span>
+                            <span className="font-mono font-bold text-success-on-dark">✓ Unique Entry Validated</span>
                           </div>
 
                           <div className="space-y-1.5">
                             <div className="flex justify-between text-[11px] font-mono">
-                              <span className="text-slate-400">Skor Bobot Jurnal (Q1):</span>
-                              <span className="text-slate-200 font-bold">40.0 Poin</span>
+                              <span className="text-on-dark-muted">Skor Bobot Jurnal (Q1):</span>
+                              <span className="text-on-dark font-bold">40.0 Poin</span>
                             </div>
                             <div className="flex justify-between text-[11px] font-mono">
-                              <span className="text-slate-400">Pengali Penulis Utama (60%):</span>
-                              <span className="text-slate-200 font-bold">× 0.6</span>
+                              <span className="text-on-dark-muted">Pengali Penulis Utama (60%):</span>
+                              <span className="text-on-dark font-bold">× 0.6</span>
                             </div>
-                            <div className="h-px bg-slate-700 my-1" />
+                            <div className="h-px bg-hairline-dark my-1" />
                             <div className="flex justify-between text-xs font-mono font-bold">
-                              <span className="text-violet-300">Akumulasi Poin Kinerja:</span>
-                              <span className="text-emerald-400 text-sm">+24.0 KPI</span>
+                              <span className="text-[#a78bfa]">Akumulasi Poin Kinerja:</span>
+                              <span className="text-success-on-dark text-sm">+24.0 KPI</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="bg-slate-950/80 rounded-xl p-3 border border-slate-800 flex items-center justify-between text-xs">
+                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
                           <div className="flex items-center gap-2">
-                            <Cpu className="w-4 h-4 text-violet-400" />
-                            <span className="font-mono text-slate-300">Rules Engine:</span>
+                            <Cpu className="w-4 h-4 text-[#a78bfa]" />
+                            <span className="font-mono text-on-dark-soft">Rules Engine:</span>
                           </div>
-                          <span className="font-mono font-bold text-violet-400">Permenristekdikti Standard</span>
+                          <span className="font-mono font-bold text-[#a78bfa]">Permenristekdikti Standard</span>
                         </div>
                       </div>
                     )}
 
                     {currentStep.id === 4 && (
                       <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                          <span className="text-xs font-mono font-bold text-slate-300">VERIFICATION APPROVAL TRACK</span>
-                          <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">SLA &lt; 24 JAM</span>
+                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
+                          <span className="text-xs font-mono font-bold text-on-dark-soft">VERIFICATION APPROVAL TRACK</span>
+                          <span className="text-[10px] font-mono bg-success/20 text-success-on-dark px-2 py-0.5 rounded border border-success/30">SLA &lt; 24 JAM</span>
                         </div>
 
                         {/* Approval Stage Timeline */}
                         <div className="space-y-3 my-2">
                           <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-xs shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center font-bold text-xs shrink-0">
                               ✓
                             </div>
-                            <div className="flex-1 bg-slate-800/80 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
-                              <span className="font-bold text-slate-200">1. Submit Berkas Dosen</span>
-                              <span className="text-[10px] font-mono text-slate-400">09:15 WIB</span>
+                            <div className="flex-1 bg-surface-dark/90 p-2.5 rounded-lg border border-hairline-dark flex justify-between items-center text-xs">
+                              <span className="font-bold text-on-dark">1. Submit Berkas Dosen</span>
+                              <span className="text-[10px] font-mono text-on-dark-muted">09:15 WIB</span>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-xs shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center font-bold text-xs shrink-0">
                               ✓
                             </div>
-                            <div className="flex-1 bg-slate-800/80 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
-                              <span className="font-bold text-slate-200">2. Verifikasi Admin Fakultas</span>
-                              <span className="text-[10px] font-mono text-slate-400">11:40 WIB</span>
+                            <div className="flex-1 bg-surface-dark/90 p-2.5 rounded-lg border border-hairline-dark flex justify-between items-center text-xs">
+                              <span className="font-bold text-on-dark">2. Verifikasi Admin Fakultas</span>
+                              <span className="text-[10px] font-mono text-on-dark-muted">11:40 WIB</span>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-xs shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center font-bold text-xs shrink-0">
                               ✓
                             </div>
-                            <div className="flex-1 bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-700/60 flex justify-between items-center text-xs">
-                              <span className="font-bold text-emerald-300">3. Validasi Final LPPM</span>
-                              <span className="text-[10px] font-mono font-bold text-emerald-400">VERIFIED</span>
+                            <div className="flex-1 bg-success/10 p-2.5 rounded-lg border border-success/30 flex justify-between items-center text-xs">
+                              <span className="font-bold text-success-on-dark">3. Validasi Final LPPM</span>
+                              <span className="text-[10px] font-mono font-bold text-success-on-dark">VERIFIED</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="bg-emerald-950/40 rounded-xl p-3 border border-emerald-800/50 flex items-center justify-between text-xs">
-                          <span className="font-mono text-emerald-300">Status Dokumen:</span>
-                          <span className="font-mono font-bold text-emerald-400 uppercase tracking-wider">TERVALIDASI RESMI</span>
+                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
+                          <span className="font-mono text-on-dark-soft">Status Dokumen:</span>
+                          <span className="font-mono font-bold text-success-on-dark uppercase tracking-wider">TERVALIDASI RESMI</span>
                         </div>
                       </div>
                     )}
 
                     {currentStep.id === 5 && (
                       <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                          <span className="text-xs font-mono font-bold text-slate-300">EXECUTIVE ANALYTICS</span>
-                          <span className="text-[10px] font-mono bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">REAL-TIME RANKING</span>
+                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
+                          <span className="text-xs font-mono font-bold text-on-dark-soft">EXECUTIVE ANALYTICS</span>
+                          <span className="text-[10px] font-mono bg-warning/20 text-warning-on-dark px-2 py-0.5 rounded border border-warning/30">REAL-TIME RANKING</span>
                         </div>
 
                         {/* Analytics Mini Dashboard */}
                         <div className="grid grid-cols-2 gap-3 my-1">
-                          <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 flex flex-col justify-between">
-                            <span className="text-[10px] font-mono text-slate-400">Total Akumulasi Skor</span>
-                            <div className="text-2xl font-mono font-black text-amber-400 mt-1">348.5 <span className="text-xs font-sans text-slate-300">pts</span></div>
-                            <span className="text-[9px] text-emerald-400 font-mono mt-1">▲ 18% dari target</span>
+                          <div className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col justify-between">
+                            <span className="text-[10px] font-mono text-on-dark-muted">Total Akumulasi Skor</span>
+                            <div className="text-2xl font-mono font-black text-warning-on-dark mt-1">348.5 <span className="text-xs font-sans text-on-dark-soft">pts</span></div>
+                            <span className="text-[9px] text-success-on-dark font-mono mt-1">▲ 18% dari target</span>
                           </div>
 
-                          <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 flex flex-col justify-between">
-                            <span className="text-[10px] font-mono text-slate-400">Posisi Pemeringkatan</span>
-                            <div className="text-2xl font-mono font-black text-white mt-1">#01 <span className="text-xs font-sans text-slate-400">FTI</span></div>
-                            <span className="text-[9px] text-amber-400 font-mono mt-1">Top 5% Perguruan Tinggi</span>
+                          <div className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col justify-between">
+                            <span className="text-[10px] font-mono text-on-dark-muted">Posisi Pemeringkatan</span>
+                            <div className="text-2xl font-mono font-black text-on-dark mt-1">#01 <span className="text-xs font-sans text-on-dark-muted">FTI</span></div>
+                            <span className="text-[9px] text-warning-on-dark font-mono mt-1">Top 5% Perguruan Tinggi</span>
                           </div>
                         </div>
 
-                        <div className="bg-slate-950/80 rounded-xl p-3 border border-slate-800 flex items-center justify-between text-xs">
+                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
                           <div className="flex items-center gap-2">
-                            <Award className="w-4 h-4 text-amber-400" />
-                            <span className="font-mono text-slate-300">Export Ready:</span>
+                            <Award className="w-4 h-4 text-warning-on-dark" />
+                            <span className="font-mono text-on-dark-soft">Export Ready:</span>
                           </div>
-                          <span className="font-mono font-bold text-amber-400">Format BKD & SKP Ready</span>
+                          <span className="font-mono font-bold text-warning-on-dark">Format BKD & SKP Ready</span>
                         </div>
                       </div>
                     )}

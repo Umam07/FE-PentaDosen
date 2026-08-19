@@ -114,18 +114,18 @@ export default function Topbar({
   };
 
   return (
-    <header className="h-20 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-20 shadow-sm">
+    <header className="h-20 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-xl border-b border-hairline-light dark:border-hairline-dark flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-20 shadow-sm">
       <div className="flex items-center gap-2 sm:gap-4 min-w-0">
            {isMobile && (
              <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 sm:p-2.5 bg-primary-50 text-primary-600 rounded-xl lg:hidden shrink-0"
+              className="p-2 sm:p-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft rounded-lg lg:hidden shrink-0 hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
              >
                 <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
              </button>
            )}
            <div className="hidden sm:block min-w-0 truncate">
-              <h2 className="text-base lg:text-lg font-black text-gray-900 dark:text-zinc-100 tracking-tight flex items-center gap-2 truncate">
+              <h2 className="text-base lg:text-lg font-black text-ink-heading dark:text-on-dark tracking-tight flex items-center gap-2 truncate">
                 {currentPageName || 'PentaDosen'}
               </h2>
            </div>
@@ -151,23 +151,23 @@ export default function Topbar({
         <NotificationBell userId={user?.id} />
         
         {/* Divider khusus Mobile */}
-        <div className="h-4 w-px bg-gray-200 dark:bg-zinc-800 sm:hidden" />
+        <div className="h-4 w-px bg-hairline-light dark:bg-hairline-dark sm:hidden" />
         
         {/* Mobile Search Button */}
         <button 
           onClick={() => setIsSearchOpen(true)}
-          className="flex sm:hidden items-center justify-center w-9 h-9 bg-gray-50 dark:bg-zinc-800 hover:bg-primary-50 text-gray-400 hover:text-primary-600 rounded-xl transition-all border border-gray-100 dark:border-zinc-700 flex-shrink-0"
+          className="flex sm:hidden items-center justify-center w-9 h-9 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light text-muted hover:text-ink-heading rounded-lg transition-all border border-hairline-light dark:border-hairline-dark flex-shrink-0"
         >
            <Search className="w-4 h-4" />
         </button>
 
         {/* User Profile & Dropdown */}
-        <div className="relative flex items-center gap-1.5 xs:gap-3 pl-1.5 xs:pl-3 border-l border-gray-200 dark:border-zinc-800" ref={dropdownRef}>
+        <div className="relative flex items-center gap-1.5 xs:gap-3 pl-1.5 xs:pl-3 border-l border-hairline-light dark:border-hairline-dark" ref={dropdownRef}>
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-2 hover:bg-gray-100/80 dark:hover:bg-zinc-800/60 p-1.5 rounded-xl transition-colors duration-150"
+            className="flex items-center gap-2 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated p-1.5 rounded-lg transition-colors duration-150 cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-lg bg-primary-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden">
+            <div className="w-9 h-9 rounded-lg bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden border border-ink-border dark:border-hairline-dark">
               {user?.avatar ? (
                 <img 
                   src={user.avatar} 
@@ -180,12 +180,12 @@ export default function Topbar({
               )}
             </div>
             <div className="hidden md:block text-left min-w-0">
-              <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 leading-tight truncate">{user?.name}</p>
+              <p className="text-sm font-semibold text-ink-heading dark:text-on-dark leading-tight truncate">{user?.name}</p>
               {user?.role && (
-                <p className="text-[11px] font-medium text-gray-400 dark:text-zinc-400 capitalize truncate">{user.role}</p>
+                <p className="text-[11px] font-medium text-muted dark:text-on-dark-muted capitalize truncate">{user.role}</p>
               )}
             </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-150 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block shrink-0`} />
+            <ChevronDown className={`w-4 h-4 text-muted dark:text-on-dark-muted transition-transform duration-150 ${isDropdownOpen ? 'rotate-180' : ''} hidden md:block shrink-0`} />
           </button>
 
           {/* Dropdown Menu — Minimalist Single-Line List */}
@@ -196,31 +196,31 @@ export default function Topbar({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 6 }}
                       transition={{ duration: 0.15, ease: 'easeOut' }}
-                      className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-zinc-900 rounded-xl shadow-lg border border-gray-200/90 dark:border-zinc-800 z-50 p-1 space-y-0.5 overflow-hidden"
+                      className="absolute right-0 top-full mt-2 w-52 bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg border border-hairline-light dark:border-hairline-dark z-50 p-1 space-y-0.5 overflow-hidden"
                     >
                       <button
                         onClick={() => { navigate('/profile'); setIsDropdownOpen(false); }}
-                        className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-zinc-800/80 transition-colors duration-150 text-left"
+                        className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors duration-150 text-left cursor-pointer"
                       >
-                        <div className="w-7 h-7 rounded-md bg-gray-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 text-gray-600 dark:text-zinc-300">
+                        <div className="w-7 h-7 rounded-md bg-ink-soft dark:bg-surface-dark-elevated flex items-center justify-center flex-shrink-0 text-body dark:text-on-dark-soft">
                           <Settings className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-xs font-semibold text-gray-800 dark:text-zinc-200">
+                        <span className="text-xs font-semibold text-ink-heading dark:text-on-dark">
                           Pengaturan Profil
                         </span>
                       </button>
 
-                      <div className="my-1 border-t border-gray-100 dark:border-zinc-800/80" />
+                      <div className="my-1 border-t border-hairline-light dark:border-hairline-dark" />
 
                       <button
                         onClick={handleLogout}
                         data-logout-trigger
-                        className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-150 text-left"
+                        className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg hover:bg-error-soft dark:hover:bg-surface-dark-elevated transition-colors duration-150 text-left cursor-pointer"
                       >
-                        <div className="w-7 h-7 rounded-md bg-red-50 dark:bg-red-950/50 flex items-center justify-center flex-shrink-0 text-red-600 dark:text-red-400">
+                        <div className="w-7 h-7 rounded-md bg-error-soft dark:bg-surface-dark-elevated flex items-center justify-center flex-shrink-0 text-error dark:text-error-on-dark">
                           <LogOut className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-xs font-semibold text-red-600 dark:text-red-400">
+                        <span className="text-xs font-semibold text-error dark:text-error-on-dark">
                           Keluar Sistem
                         </span>
                       </button>

@@ -39,7 +39,7 @@ export interface TableFilterHeaderProps {
 
 export function TableFilterHeader({
   icon: Icon,
-  iconColorClass = "bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/40 shadow-xs",
+  iconColorClass = "bg-ink-soft dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-ink-border dark:border-hairline-dark shadow-xs",
   title,
   description,
   showSearch = true,
@@ -75,20 +75,20 @@ export function TableFilterHeader({
   };
 
   return (
-    <div className={`relative z-30 p-6 border-b border-gray-200 dark:border-zinc-800 bg-gray-50/20 dark:bg-zinc-800/20 backdrop-blur-xs rounded-t-2xl flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-6 ${className}`}>
+    <div className={`relative z-30 p-6 border-b border-hairline-light dark:border-hairline-dark bg-canvas-light/60 dark:bg-surface-dark-elevated/40 backdrop-blur-xs rounded-t-2xl flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-6 ${className}`}>
       {/* Left Sub-Header Info */}
       <div className="flex items-center gap-4 w-full xl:w-auto">
         {Icon && (
-          <div className={`hidden md:flex p-3 rounded-2xl shrink-0 ${iconColorClass}`}>
+          <div className={`hidden md:flex p-3 rounded-lg shrink-0 ${iconColorClass}`}>
             {renderIcon()}
           </div>
         )}
         <div>
-          <h3 className="text-base md:text-lg font-black text-gray-950 dark:text-zinc-100 uppercase tracking-tight">
+          <h3 className="text-base md:text-lg font-black text-ink-heading dark:text-on-dark uppercase tracking-tight">
             {title}
           </h3>
           {description && (
-            <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5">
+            <p className="text-[10px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest mt-0.5">
               {description}
             </p>
           )}
@@ -101,21 +101,21 @@ export function TableFilterHeader({
         {showSearch && (
           <form 
             onSubmit={handleSearchSubmitInternal} 
-            className={`relative ${searchWidthClassName} h-11 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-xs focus-within:ring-4 focus-within:ring-primary-100 dark:focus-within:ring-primary-900/20 focus-within:border-primary-500 transition-all flex items-center group shrink-0`}
+            className={`relative ${searchWidthClassName} h-11 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg shadow-xs focus-within:ring-2 focus-within:ring-accent/20 focus-within:border-accent transition-all flex items-center group shrink-0`}
           >
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-zinc-500 transition-colors group-focus-within:text-primary-500 pointer-events-none" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted dark:text-on-dark-muted transition-colors group-focus-within:text-accent pointer-events-none" />
             <input
               type="text"
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => onSearchChange?.(e.target.value)}
-              className="block w-full h-full pl-10 pr-9 bg-transparent text-xs font-bold text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 outline-none"
+              className="block w-full h-full pl-10 pr-9 bg-transparent text-xs font-bold text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => onSearchChange?.('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700/60 transition-colors cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer"
                 title="Hapus pencarian"
               >
                 <X className="w-3.5 h-3.5" />
@@ -137,10 +137,10 @@ export function TableFilterHeader({
               transition={{ duration: 0.18, ease: "easeOut" }}
               type="button"
               onClick={onResetFilters}
-              className="h-11 px-4 bg-gray-100 hover:bg-gray-200/80 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[11px] font-black text-gray-600 dark:text-zinc-300 uppercase tracking-wider transition-colors flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
+              className="h-11 px-4 bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-[11px] font-black text-body dark:text-on-dark-soft uppercase tracking-wider transition-colors flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
               title="Reset semua filter"
             >
-              <RotateCcw className="w-3.5 h-3.5 text-gray-500 dark:text-zinc-400 shrink-0" />
+              <RotateCcw className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted shrink-0" />
               <span className="hidden sm:inline">Reset</span>
             </motion.button>
           )}

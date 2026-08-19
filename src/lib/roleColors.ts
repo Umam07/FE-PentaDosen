@@ -10,34 +10,34 @@ export interface RoleColorStyle {
 
 export const ROLE_COLOR_MAP: Record<string, RoleColorStyle> = {
   'super admin': {
-    badge: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/50',
-    avatar: 'bg-red-100 text-red-700 dark:bg-red-950/70 dark:text-red-300'
+    badge: 'bg-error-soft text-error border-error-border dark:bg-surface-dark-elevated dark:text-error-on-dark dark:border-hairline-dark',
+    avatar: 'bg-error-soft text-error dark:bg-surface-dark-elevated dark:text-error-on-dark'
   },
   'admin fakultas': {
-    badge: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-900/50',
-    avatar: 'bg-purple-100 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300'
+    badge: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-surface-dark-elevated dark:text-purple-300 dark:border-hairline-dark',
+    avatar: 'bg-purple-100 text-purple-700 dark:bg-surface-dark-elevated dark:text-purple-300'
   },
   'admin penelitian': {
-    badge: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/50',
-    avatar: 'bg-blue-100 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300'
+    badge: 'bg-ink-soft text-ink-heading border-ink-border dark:bg-surface-dark-elevated dark:text-on-dark dark:border-hairline-dark',
+    avatar: 'bg-ink-soft text-ink-heading dark:bg-surface-dark-elevated dark:text-on-dark'
   },
   'reviewer': {
-    badge: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900/50',
-    avatar: 'bg-teal-100 text-teal-700 dark:bg-teal-950/70 dark:text-teal-300'
+    badge: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-surface-dark-elevated dark:text-teal-300 dark:border-hairline-dark',
+    avatar: 'bg-teal-100 text-teal-700 dark:bg-surface-dark-elevated dark:text-teal-300'
   },
   'dosen': {
-    badge: 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700',
-    avatar: 'bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:text-zinc-300'
+    badge: 'bg-ink-soft text-body border-ink-border dark:bg-surface-dark-elevated dark:text-on-dark-soft dark:border-hairline-dark',
+    avatar: 'bg-ink-soft text-body-strong dark:bg-surface-dark-elevated dark:text-on-dark'
   },
   'staf': {
-    badge: 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700',
-    avatar: 'bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:text-zinc-300'
+    badge: 'bg-ink-soft text-body border-ink-border dark:bg-surface-dark-elevated dark:text-on-dark-soft dark:border-hairline-dark',
+    avatar: 'bg-ink-soft text-body-strong dark:bg-surface-dark-elevated dark:text-on-dark'
   }
 };
 
 const DEFAULT_ROLE_STYLE: RoleColorStyle = {
-  badge: 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700',
-  avatar: 'bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:text-zinc-300'
+  badge: 'bg-ink-soft text-body border-ink-border dark:bg-surface-dark-elevated dark:text-on-dark-soft dark:border-hairline-dark',
+  avatar: 'bg-ink-soft text-body-strong dark:bg-surface-dark-elevated dark:text-on-dark'
 };
 
 export function getRoleBadgeStyle(role?: string): string {

@@ -123,7 +123,7 @@ function MemberAvatar({
 
 export default function Developers() {
   return (
-    <div className="font-sans antialiased bg-slate-50 dark:bg-[#0b0d14] text-slate-900 dark:text-slate-100 min-h-screen flex flex-col selection:bg-slate-200 dark:selection:bg-slate-800">
+    <div className="font-sans antialiased bg-canvas-light dark:bg-canvas-dark text-body dark:text-on-dark min-h-screen flex flex-col selection:bg-accent/20 selection:text-ink-heading">
       <SEO
         title="Tim Pengembang & Pembimbing DUK Team — PentaDosen Universitas YARSI"
         description="Profil Dosen Pembimbing dan Tim Pengembang (DUK Team) di balik platform tata kelola publikasi ilmiah PentaDosen Universitas YARSI."
@@ -138,29 +138,29 @@ export default function Developers() {
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
         
         {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800/80 pb-5">
+        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-5">
           <Link
             to="/"
-            className="group inline-flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-150"
+            className="group inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors duration-150"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform duration-150" />
             <span>Kembali ke Beranda</span>
           </Link>
-          <div className="text-xs font-mono text-slate-400 dark:text-slate-500">
+          <div className="text-xs font-mono text-muted dark:text-on-dark-muted">
             PentaDosen / DUK Team
           </div>
         </div>
 
         {/* Page Hero Section */}
         <div className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 text-[11px] font-mono tracking-wider uppercase font-semibold">
-            <Users className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold">
+            <Users className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
             <span>Profil Tim & Pengarah</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-ink-heading dark:text-on-dark">
             DUK Team — PentaDosen
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+          <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed font-normal">
             Platform tata kelola dan analitik publikasi ilmiah PentaDosen dikembangkan oleh DUK Team di bawah bimbingan Program Studi Teknik Informatika, Fakultas Teknologi Informasi Universitas YARSI.
           </p>
         </div>
@@ -168,13 +168,13 @@ export default function Developers() {
         {/* Section 1: Dosen Pembimbing */}
         <section className="space-y-4">
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-            <h2 className="text-xs font-mono tracking-widest text-slate-600 dark:text-slate-400 uppercase font-semibold">
+            <GraduationCap className="w-4 h-4 text-muted dark:text-on-dark-muted" />
+            <h2 className="text-xs font-mono tracking-widest text-muted dark:text-on-dark-muted uppercase font-semibold">
               Dosen Pembimbing
             </h2>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#141722] border border-slate-200 dark:border-slate-800/90 transition-colors">
+          <div className="p-6 sm:p-8 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark transition-colors">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-start sm:items-center gap-5 sm:gap-6">
                 <MemberAvatar

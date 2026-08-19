@@ -7,7 +7,7 @@ import {
 
 // 1. Komponen Kustom Crosshair ala TradingView
 export const CustomCrosshair = (props: any) => {
-  const { offset, leftMax, rightMax, crosshairData, color = "#3b82f6" } = props;
+  const { offset, leftMax, rightMax, crosshairData, color = "#3b6fe0" } = props;
   
   if (!offset || !crosshairData || crosshairData.y === undefined || crosshairData.x === undefined) return null;
 
@@ -20,8 +20,8 @@ export const CustomCrosshair = (props: any) => {
   const leftValue = (ratio * leftMax).toFixed(1);
   const rightValue = (ratio * rightMax).toFixed(1);
 
-  const lineColor = "#94a3b8"; // slate-400
-  const badgeBg = "#0f172a"; // slate-900
+  const lineColor = "#8a8478"; // neutral border/line token
+  const badgeBg = "#14151a"; // ink
   const textColor = "#ffffff"; 
 
   return (
@@ -56,8 +56,8 @@ export const CustomTooltip = ({ active, payload, label }: any) => {
     });
 
     return (
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-2xl min-w-[180px] ring-1 ring-black/5">
-        <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-800 pb-3">Tahun {label}</p>
+      <div className="bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur-xl border border-hairline-light dark:border-hairline-dark p-5 rounded-2xl shadow-2xl min-w-[180px] ring-1 ring-black/5">
+        <p className="text-muted dark:text-on-dark-muted text-[10px] font-black uppercase tracking-widest mb-3 border-b border-hairline-light dark:border-hairline-dark pb-3">Tahun {label}</p>
         <div className="space-y-3">
           {filteredPayload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center justify-between gap-6">
@@ -66,9 +66,9 @@ export const CustomTooltip = ({ active, payload, label }: any) => {
                   className="w-2.5 h-2.5 rounded-full ring-4 ring-current/10" 
                   style={{ color: entry.color, backgroundColor: entry.color }}
                 />
-                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">{entry.name}</span>
+                <span className="text-[10px] font-bold text-body dark:text-on-dark-soft uppercase tracking-wider">{entry.name}</span>
               </div>
-              <span className="text-sm font-black text-slate-900 dark:text-white">{entry.value}</span>
+              <span className="text-sm font-black text-ink-heading dark:text-on-dark font-mono">{entry.value}</span>
             </div>
           ))}
         </div>
@@ -83,16 +83,16 @@ export const ProfileTrendChart = ({
   chartData, 
   leftDomainMax, 
   rightDomainMax,
-  barColor = "#3b82f6",
-  barGradientColor = "#60a5fa",
-  lineColor = "#a855f7",
-  areaGradientColor = "#a855f7",
+  barColor = "#3b6fe0",
+  barGradientColor = "#628fee",
+  lineColor = "#8a8478",
+  areaGradientColor = "#8a8478",
   gradientId = "default"
 }: any) => {
   const [crosshair, setCrosshair] = useState<{ x: number, y: number, year: string } | null>(null);
 
   return (
-    <div className="w-full h-full relative group/chart"> 
+    <div className="w-full h-full relative group/chart font-sans"> 
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart 
           data={chartData} 
@@ -135,13 +135,13 @@ export const ProfileTrendChart = ({
           <CartesianGrid 
             strokeDasharray="0" 
             vertical={false} 
-            stroke="#cbd5e1" 
-            opacity={0.1} 
+            stroke="#8a8478" 
+            opacity={0.15} 
           />
           
           <XAxis 
             dataKey="name" 
-            tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 800 }} 
+            tick={{ fill: '#8a8478', fontSize: 10, fontWeight: 800 }} 
             tickLine={false} 
             axisLine={false} 
             dy={15}
@@ -180,7 +180,7 @@ export const ProfileTrendChart = ({
           
           <RechartsTooltip 
             content={<CustomTooltip />} 
-            cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4', opacity: 0.2 }} 
+            cursor={{ stroke: '#8a8478', strokeWidth: 1, strokeDasharray: '4 4', opacity: 0.3 }} 
             animationDuration={300}
           />
           

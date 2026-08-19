@@ -7,7 +7,7 @@ import SEO from '../components/SEO';
 
 export default function Home() {
   return (
-    <div className="font-sans antialiased bg-white dark:bg-slate-950 text-gray-900 dark:text-gray-100">
+    <div className="font-sans antialiased bg-canvas-light dark:bg-canvas-dark text-body dark:text-on-dark min-h-screen selection:bg-accent/20 selection:text-accent dark:selection:bg-accent/30 dark:selection:text-accent-on-dark">
       <SEO
         title="PentaDosen 2.0 - Platform Portofolio & Tri Dharma Dosen Universitas YARSI"
         description="PentaDosen 2.0 adalah platform sistem informasi manajemen portofolio dan Tri Dharma Dosen Universitas YARSI. Otomatisasi sinkronisasi data publikasi Google Scholar & Scopus, penelitian, pengabdian, HKI, dan evaluasi kinerja akademik dosen."
