@@ -45,6 +45,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
     handleSync,
     handleSyncScopus,
     handleSyncAll,
+    handleSyncSinta,
   } = useProfile(user, setUser);
 
   const tabVariants: Variants = {
@@ -132,6 +133,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
                 handleSync={handleSync}
                 handleSyncScopus={handleSyncScopus}
                 handleSyncAll={handleSyncAll}
+                handleSyncSinta={handleSyncSinta}
                 tabVariants={tabVariants}
               />
             )}

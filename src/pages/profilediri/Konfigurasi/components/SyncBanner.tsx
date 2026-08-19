@@ -6,6 +6,7 @@ interface SyncBannerProps {
   scholarId: string;
   scopusId: string;
   onSyncAll: () => Promise<void>;
+  onSyncSinta?: () => Promise<void>;
 }
 
 export const SyncBanner: React.FC<SyncBannerProps> = ({
@@ -13,6 +14,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
   scholarId,
   scopusId,
   onSyncAll,
+  onSyncSinta,
 }) => {
   const hasConfiguredId = Boolean(scholarId || scopusId);
 
@@ -28,19 +30,33 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
               Sinkronisasi Data Publikasi
             </h2>
             <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
-              Hubungkan ID Scholar dan Scopus untuk memperbarui dokumen, sitasi, dan kalkulasi poin secara otomatis.
+              Isi ID Scholar & Scopus secara manual, atau gunakan deteksi otomatis dari profil SINTA untuk mengisi ID Anda.
             </p>
           </div>
         </div>
 
-        <button
-          onClick={onSyncAll}
-          disabled={loading || !hasConfiguredId}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-xs font-bold text-on-ink transition-colors hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-ink dark:hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 sm:shrink-0 cursor-pointer"
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
-          {loading ? 'Menyinkronkan...' : 'Sinkronkan Semua'}
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5 sm:shrink-0">
+          {onSyncSinta && (
+            <button
+              onClick={onSyncSinta}
+              disabled={loading}
+              title="Deteksi dan isi Scopus ID serta Google Scholar ID secara otomatis berdasarkan nama dari profil SINTA"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-hairline-light bg-surface-light-raised px-4 text-xs font-semibold text-ink transition-colors hover:bg-surface-light hover:border-ink/20 dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark dark:hover:bg-surface-dark disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Mendeteksi ID...' : 'Isi ID dari SINTA'}
+            </button>
+          )}
+
+          <button
+            onClick={onSyncAll}
+            disabled={loading || !hasConfiguredId}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-xs font-bold text-on-ink transition-colors hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-ink dark:hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+            {loading ? 'Menyinkronkan...' : 'Sinkronkan Semua'}
+          </button>
+        </div>
       </div>
     </section>
   );

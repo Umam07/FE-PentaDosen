@@ -28,6 +28,7 @@ export default function Konfigurasi({
   handleSync,
   handleSyncScopus,
   handleSyncAll,
+  handleSyncSinta,
   handleDeleteScholarId,
   handleDeleteScopusId,
   tabVariants,
@@ -64,6 +65,7 @@ export default function Konfigurasi({
         scholarId={scholarId}
         scopusId={scopusId}
         onSyncAll={handleSyncAll}
+        onSyncSinta={handleSyncSinta}
       />
 
       {/* Kartu Integrasi */}

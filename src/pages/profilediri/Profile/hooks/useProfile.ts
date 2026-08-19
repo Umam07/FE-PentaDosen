@@ -5,6 +5,7 @@ import { ProfileUser, ProfileStat, ToastMessage } from '../types/profile.types';
 import { calculateScopusSintaPoints } from '../utils/profileUtils';
 import { calculateScholarPoints } from '../../../dosen/dashboard/pointsCalculator';
 import * as profileService from '../services/profileService';
+import { toast } from '@/components/ui/toast';
 
 export const useProfile = (user: ProfileUser | null | undefined, setUser: (user: any) => void) => {
   const location = useLocation();
@@ -22,16 +23,6 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
 
   const warningDismissedRef = useRef(false);
   const userLoadedRef = useRef(false);
-
-  // Auto-dismiss notification message after 4.5 seconds
-  useEffect(() => {
-    if (message.text) {
-      const timer = setTimeout(() => {
-        setMessage({ text: '', type: '' });
-      }, 4500);
-      return () => clearTimeout(timer);
-    }
-  }, [message.text]);
 
   const [activeTab, setActiveTab] = useState<'info' | 'integrasi'>(() => {
     const params = new URLSearchParams(window.location.search);
@@ -195,18 +186,17 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
 
   const handleCheckId = async () => {
     if (!scholarId) {
-      setMessage({ text: 'Masukkan Google Scholar ID terlebih dahulu.', type: 'error' });
+      toast.error('Masukkan Google Scholar ID terlebih dahulu.', 'Google Scholar');
       return;
     }
     try {
       setCheckingInfo(true);
-      setMessage({ text: '', type: '' });
       setCheckedAuthor(null);
       const data = await profileService.checkScholarId(scholarId);
       setCheckedAuthor(data);
-      setMessage({ text: 'ID ditemukan! Silakan verifikasi dan simpan.', type: 'success' });
+      toast.success('ID Scholar ditemukan! Silakan verifikasi dan simpan.', 'Google Scholar');
     } catch (err: any) {
-      setMessage({ text: err.message || 'Gagal mengecek Scholar ID.', type: 'error' });
+      toast.error(err.message || 'Gagal mengecek Google Scholar ID.', 'Google Scholar');
     } finally {
       setCheckingInfo(false);
     }
@@ -217,7 +207,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     try {
       setLoading(true);
       await profileService.saveScholarId(user.id, scholarId, checkedAuthor?.thumbnail || null);
-      setMessage({ text: 'Scholar ID berhasil disimpan.', type: 'success' });
+      toast.success('Google Scholar ID berhasil disimpan.', 'Google Scholar');
       setUser({
         ...user,
         scholar_id: scholarId,
@@ -225,7 +215,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       });
       setCheckedAuthor(null);
     } catch (err: any) {
-      setMessage({ text: err.message || 'Gagal menyimpan Scholar ID.', type: 'error' });
+      toast.error(err.message || 'Gagal menyimpan Google Scholar ID.', 'Google Scholar');
     } finally {
       setLoading(false);
     }
@@ -233,18 +223,17 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
 
   const handleCheckScopusId = async () => {
     if (!scopusId) {
-      setMessage({ text: 'Masukkan Scopus Author ID terlebih dahulu.', type: 'error' });
+      toast.error('Masukkan Scopus Author ID terlebih dahulu.', 'Scopus');
       return;
     }
     try {
       setCheckingScopus(true);
-      setMessage({ text: '', type: '' });
       setCheckedScopusAuthor(null);
       const data = await profileService.checkScopusId(scopusId);
       setCheckedScopusAuthor(data);
-      setMessage({ text: 'ID Scopus ditemukan! Silakan verifikasi dan simpan.', type: 'success' });
+      toast.success('Scopus Author ID ditemukan! Silakan verifikasi dan simpan.', 'Scopus');
     } catch (err: any) {
-      setMessage({ text: err.message || 'Gagal mengecek Scopus ID.', type: 'error' });
+      toast.error(err.message || 'Gagal mengecek Scopus Author ID.', 'Scopus');
     } finally {
       setCheckingScopus(false);
     }
@@ -255,11 +244,11 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     try {
       setLoading(true);
       await profileService.saveScopusId(user.id, scopusId);
-      setMessage({ text: 'Scopus ID berhasil disimpan.', type: 'success' });
+      toast.success('Scopus Author ID berhasil disimpan.', 'Scopus');
       setUser({ ...user, scopus_id: scopusId });
       setCheckedScopusAuthor(null);
     } catch (err: any) {
-      setMessage({ text: err.message || 'Gagal menyimpan Scopus ID.', type: 'error' });
+      toast.error(err.message || 'Gagal menyimpan Scopus Author ID.', 'Scopus');
     } finally {
       setLoading(false);
     }
@@ -270,7 +259,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     try {
       setLoading(true);
       await profileService.saveScholarId(user.id, null, null);
-      setMessage({ text: 'Scholar ID berhasil dihapus.', type: 'success' });
+      toast.success('Google Scholar ID berhasil dihapus.', 'Google Scholar');
       setScholarId('');
       setScholarData(null);
       setPublications([]);
@@ -280,7 +269,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
         avatar: null,
       });
     } catch (err: any) {
-      setMessage({ text: err.message || 'Gagal menghapus Scholar ID.', type: 'error' });
+      toast.error(err.message || 'Gagal menghapus Google Scholar ID.', 'Google Scholar');
     } finally {
       setLoading(false);
     }
@@ -291,13 +280,13 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     try {
       setLoading(true);
       await profileService.saveScopusId(user.id, null);
-      setMessage({ text: 'Scopus ID berhasil dihapus.', type: 'success' });
+      toast.success('Scopus Author ID berhasil dihapus.', 'Scopus');
       setScopusId('');
       setScopusData(null);
       setScopusPublications([]);
       setUser({ ...user, scopus_id: null });
     } catch (err: any) {
-      setMessage({ text: err.message || 'Gagal menghapus Scopus ID.', type: 'error' });
+      toast.error(err.message || 'Gagal menghapus Scopus Author ID.', 'Scopus');
     } finally {
       setLoading(false);
     }
@@ -306,19 +295,20 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
   const handleSync = async () => {
     if (!user?.id) return;
     if (!scholarId) {
-      setMessage({ text: 'Simpan Google Scholar ID terlebih dahulu.', type: 'error' });
+      toast.error('Simpan Google Scholar ID terlebih dahulu.', 'Google Scholar');
       return;
     }
     try {
       setLoading(true);
+      toast.info('Sedang menyinkronkan data Google Scholar...', 'Google Scholar');
       await profileService.syncScholar(user.id);
-      setMessage({ text: 'Data Scholar berhasil disinkronisasi.', type: 'success' });
+      toast.success('Data Google Scholar berhasil disinkronisasi.', 'Google Scholar');
       const data = await profileService.fetchProfileData(user.id);
       setScholarData(data.scholarData);
       setPublications(data.publications || []);
       setUser(data.user);
     } catch (err: any) {
-      setMessage({ text: err.message || 'Error sinkronisasi data Scholar.', type: 'error' });
+      toast.error(err.message || 'Error sinkronisasi data Google Scholar.', 'Google Scholar');
     } finally {
       setLoading(false);
     }
@@ -327,19 +317,20 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
   const handleSyncScopus = async () => {
     if (!user?.id) return;
     if (!scopusId) {
-      setMessage({ text: 'Simpan Scopus ID terlebih dahulu.', type: 'error' });
+      toast.error('Simpan Scopus Author ID terlebih dahulu.', 'Scopus');
       return;
     }
     try {
       setLoading(true);
+      toast.info('Sedang menyinkronkan data Scopus...', 'Scopus');
       await profileService.syncScopus(user.id);
-      setMessage({ text: 'Data Scopus berhasil disinkronisasi.', type: 'success' });
+      toast.success('Data Scopus berhasil disinkronisasi.', 'Scopus');
       const data = await profileService.fetchProfileData(user.id);
       setScopusData(data.scopusData);
       setScopusPublications(data.scopusPublications || []);
       setUser(data.user);
     } catch (err: any) {
-      setMessage({ text: err.message || 'Error sinkronisasi data Scopus.', type: 'error' });
+      toast.error(err.message || 'Error sinkronisasi data Scopus.', 'Scopus');
     } finally {
       setLoading(false);
     }
@@ -348,19 +339,19 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
   const handleSyncAll = async () => {
     if (!user?.id) return;
     if (!scholarId && !scopusId) {
-      setMessage({ text: 'Simpan setidaknya satu ID (Scholar atau Scopus) terlebih dahulu.', type: 'error' });
+      toast.error('Simpan setidaknya satu ID (Scholar atau Scopus) terlebih dahulu.', 'Sinkronisasi');
       return;
     }
     try {
       setLoading(true);
-      setMessage({ text: 'Sedang sinkronisasi data...', type: 'info' });
+      toast.info('Sedang menyinkronkan seluruh data publikasi...', 'Sinkronisasi');
 
       const syncPromises = [];
       if (scholarId) syncPromises.push(profileService.syncScholar(user.id));
       if (scopusId) syncPromises.push(profileService.syncScopus(user.id));
 
       await Promise.all(syncPromises);
-      setMessage({ text: 'Semua data berhasil disinkronisasi.', type: 'success' });
+      toast.success('Semua data publikasi berhasil disinkronisasi.', 'Sinkronisasi');
 
       // Refresh data
       const data = await profileService.fetchProfileData(user.id);
@@ -370,7 +361,27 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       setScopusPublications(data.scopusPublications || []);
       setUser(data.user);
     } catch (err: any) {
-      setMessage({ text: err.message || 'Error saat sinkronisasi data.', type: 'error' });
+      toast.error(err.message || 'Error saat sinkronisasi data.', 'Sinkronisasi');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSyncSinta = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      toast.info('Sedang mendeteksi ID dari data SINTA...', 'Profil SINTA');
+      const result = await profileService.syncSinta(user.id, true);
+      toast.success(result.message || 'Scopus ID & Google Scholar ID berhasil terhubung dari data SINTA.', 'Profil SINTA');
+
+      // Refresh data
+      const data = await profileService.fetchProfileData(user.id);
+      setScholarId(data.user.scholar_id || '');
+      setScopusId(data.user.scopus_id || '');
+      setUser(data.user);
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal mendeteksi data dari SINTA.', 'Profil SINTA');
     } finally {
       setLoading(false);
     }
@@ -412,5 +423,6 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     handleSync,
     handleSyncScopus,
     handleSyncAll,
+    handleSyncSinta,
   };
 };

@@ -34,10 +34,10 @@ export interface KonfigurasiProps {
   handleCheckScopusId: () => Promise<void>;
   handleSaveScopusId: () => Promise<void>;
   handleDeleteScholarId: () => Promise<void>;
-  handleDeleteScopusId: () => Promise<void>;
   handleSync: () => Promise<void>;
   handleSyncScopus: () => Promise<void>;
   handleSyncAll: () => Promise<void>;
+  handleSyncSinta?: () => Promise<void>;
   message: { text: string; type: 'success' | 'error' | 'info' | '' };
   setMessage: (msg: { text: string; type: 'success' | 'error' | 'info' | '' }) => void;
   tabVariants: any;

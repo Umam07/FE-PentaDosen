@@ -62,3 +62,17 @@ export const syncScopus = async (userId: string) => {
   if (!res.ok) throw new Error('Gagal melakukan sinkronisasi data Scopus.');
   return res;
 };
+
+export const syncSinta = async (userId: string, force: boolean = true) => {
+  const res = await fetch(`/api/users/${userId}/sync-sinta`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ force }),
+  });
+  if (!res.ok) {
+    const errData = await res.json();
+    throw new Error(errData.message || 'Gagal menarik data dari SINTA.');
+  }
+  return res.json();
+};
+
