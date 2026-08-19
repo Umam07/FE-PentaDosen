@@ -31,14 +31,14 @@
   --color-hairline-light: #dedcd7;
   --color-hairline-light-soft: #e9e7e2;
 
-  /* Canvas & Surface Dark (Warm Charcoal) */
-  --color-canvas-dark: #211f1c;
-  --color-surface-dark: #28251f;
-  --color-surface-dark-elevated: #332f28;
-  --color-surface-dark-soft: #24221f;
-  --color-hairline-dark: #3b3731;
-  --color-hairline-dark-soft: #302d29;
-  --color-footer-dark: #191715;
+  /* Canvas & Surface Dark (Warm Espresso / Deep Coffee) */
+  --color-canvas-dark: #171412;
+  --color-surface-dark: #201b17;
+  --color-surface-dark-elevated: #2a241f;
+  --color-surface-dark-soft: #1b1714;
+  --color-hairline-dark: #38312a;
+  --color-hairline-dark-soft: #2c2621;
+  --color-footer-dark: #110e0c;
 
   /* Teks */
   --color-ink-heading: #191918;
@@ -46,9 +46,9 @@
   --color-body-strong: #292824;
   --color-muted: #74716b;
   --color-muted-soft: #9a9690;
-  --color-on-dark: #ede8e1;
-  --color-on-dark-soft: #cec7bd;
-  --color-on-dark-muted: #9e968c;
+  --color-on-dark: #ece4db;
+  --color-on-dark-soft: #cfc5ba;
+  --color-on-dark-muted: #9d9285;
 
   /* Semantik — Status Only */
   --color-success: #3f8f5f;
@@ -111,14 +111,14 @@
   }
 
   .dark {
-    /* Warm Charcoal Palette */
-    --bg-page: #211f1c;           /* Warm Charcoal Canvas */
-    --bg-surface: #28251f;        /* Warm Charcoal Surface Card */
-    --bg-surface-raised: #332f28; /* Elevated Surface / Sub-card / Hover State */
-    --text-primary: #ede8e1;      /* Warm Off-White */
-    --text-secondary: #cec7bd;    /* Neutral Soft Text */
-    --text-muted: #9e968c;        /* Dark Muted Text */
-    --border-color: #3b3731;      /* Hairline Dark Border */
+    /* Warm Espresso / Deep Coffee Palette */
+    --bg-page: #171412;           /* Warm Espresso Canvas */
+    --bg-surface: #201b17;        /* Warm Espresso Surface Card */
+    --bg-surface-raised: #2a241f; /* Elevated Surface / Sub-card / Hover State */
+    --text-primary: #ece4db;      /* Warm Off-White / Ivory */
+    --text-secondary: #cfc5ba;    /* Neutral Soft Text */
+    --text-muted: #9d9285;        /* Dark Muted Text */
+    --border-color: #38312a;      /* Hairline Dark Border */
   }
 
   /* Global Dark Mode overrides for rapid implementation without bulk edits */
@@ -128,8 +128,8 @@
   }
 
   .dark option {
-    background-color: #28251f !important;
-    color: #ede8e1 !important;
+    background-color: #201b17 !important;
+    color: #ece4db !important;
   }
 
   .dark .bg-white {
@@ -154,16 +154,16 @@
   /* Make transparent whites into transparent dark colors for consistent backdrop effects */
   .dark .bg-white\/90,
   .dark .dark\:bg-zinc-900\/90 {
-    background-color: rgba(40, 37, 31, 0.9) !important;
+    background-color: rgba(32, 27, 23, 0.9) !important;
   }
 
   .dark .bg-white\/80,
   .dark .dark\:bg-zinc-900\/80 {
-    background-color: rgba(40, 37, 31, 0.8) !important;
+    background-color: rgba(32, 27, 23, 0.8) !important;
   }
 
   .dark .bg-white\/70 {
-    background-color: rgba(40, 37, 31, 0.7) !important;
+    background-color: rgba(32, 27, 23, 0.7) !important;
   }
 
   .dark .bg-white\/50,
@@ -218,7 +218,7 @@
   }
 
   .dark header {
-    background-color: rgba(40, 37, 31, 0.85) !important;
+    background-color: rgba(32, 27, 23, 0.85) !important;
   }
 }
 
@@ -248,7 +248,7 @@
     border-radius: 100px;
   }
   .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: #38312a;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;

@@ -10,8 +10,8 @@ description: |
   Prinsip utamanya adalah warm neutral sebagai fondasi visual, ink sebagai warna kerja default,
   dan Royal Blue sebagai signature brand yang dipakai secara langka dan bermakna. Light mode
   menggunakan off-white hangat dan surface yang sangat berdekatan tonalitasnya agar halaman tidak
-  terasa seperti kumpulan kartu putih dan abu-abu yang terpisah. Dark mode menggunakan warm charcoal
-  yang terinspirasi karakter visual Claude: bukan hitam pekat, bukan abu-abu kebiruan, dan bukan beige
+  terasa seperti kumpulan kartu putih dan abu-abu yang terpisah. Dark mode menggunakan warm espresso / deep coffee
+  yang elegan, berkelas, dan nyaman di mata: bukan hitam pekat, bukan abu-abu kebiruan, dan bukan beige
   yang berlebihan.
 
   Warna semantik hijau, oranye, dan merah hanya digunakan ketika ada makna status. Warna chart
@@ -50,15 +50,15 @@ colors:
   hairline-light-soft: "#e9e7e2"
 
   # ================================================================
-  # CANVAS & SURFACE — DARK / WARM CHARCOAL
+  # CANVAS & SURFACE — DARK / WARM ESPRESSO
   # ================================================================
-  canvas-dark: "#211f1c"
-  surface-dark: "#28251f"
-  surface-dark-elevated: "#332f28"
-  surface-dark-soft: "#24221f"
-  hairline-dark: "#3b3731"
-  hairline-dark-soft: "#302d29"
-  footer-dark: "#191715"
+  canvas-dark: "#171412"
+  surface-dark: "#201b17"
+  surface-dark-elevated: "#2a241f"
+  surface-dark-soft: "#1b1714"
+  hairline-dark: "#38312a"
+  hairline-dark-soft: "#2c2621"
+  footer-dark: "#110e0c"
 
   # ================================================================
   # TEXT
@@ -68,9 +68,9 @@ colors:
   body-strong: "#292824"
   muted: "#74716b"
   muted-soft: "#9a9690"
-  on-dark: "#ede8e1"
-  on-dark-soft: "#cec7bd"
-  on-dark-muted: "#9e968c"
+  on-dark: "#ece4db"
+  on-dark-soft: "#cfc5ba"
+  on-dark-muted: "#9d9285"
 
   # ================================================================
   # SEMANTIC — status only, never decorative
@@ -514,7 +514,7 @@ Masalah utama versi sebelumnya adalah adanya dua arah palette yang bercampur: cl
 2. **Ink adalah warna kerja default.** Tombol primary, item dashboard aktif, dan kontrol utama menggunakan `#191918`, bukan biru.
 3. **Biru adalah tanda tangan brand.** `#2563eb` digunakan secara langka untuk logo, link, satu CTA hero homepage, indikator aktif sidebar, focus ring, dan konteks analitik yang memang membutuhkan identitas sumber.
 4. **Status tetap semantik.** Hijau berarti berhasil/terverifikasi/tersinkron, oranye berarti menunggu/perlu konfirmasi, merah berarti error/ditolak.
-5. **Dark mode memakai warm charcoal.** Tidak menggunakan black murni, slate kebiruan, atau abu-abu dingin. Kedalaman dibangun dari beberapa level charcoal hangat.
+5. **Dark mode memakai warm espresso / deep coffee.** Tidak menggunakan black murni, slate kebiruan, atau abu-abu dingin. Kedalaman dibangun dari beberapa level cokelat kopi gelap yang hangat.
 6. **Restraint adalah fitur.** Jangan menambahkan warna hanya agar dashboard terlihat hidup. Gunakan warna ketika pengguna memang perlu menginterpretasikannya.
 
 ## Colors
@@ -529,17 +529,17 @@ Masalah utama versi sebelumnya adalah adanya dua arah palette yang bercampur: cl
 
 **Aturan:** hindari penggunaan `#ffffff` sebagai background besar. Pure white hanya boleh muncul sebagai elemen kecil yang memang membutuhkan kontras tambahan, misalnya overlay atau kontrol tertentu. Kartu utama default menggunakan `{colors.surface-light}`.
 
-### Warm Charcoal Dark
+### Warm Espresso Dark
 
-- **Canvas Dark** (`{colors.canvas-dark}` — `#211f1c`): background halaman utama.
-- **Surface Dark** (`{colors.surface-dark}` — `#28251f`): container/kartu utama.
-- **Surface Dark Elevated** (`{colors.surface-dark-elevated}` — `#332f28`): sub-card, dropdown, metric tile, modal layer, dan hover state yang membutuhkan elevasi lebih tinggi.
-- **Surface Dark Soft** (`{colors.surface-dark-soft}` — `#24221f`): surface yang hanya sedikit lebih terang dari canvas.
-- **Hairline Dark** (`{colors.hairline-dark}` — `#3b3731`): border utama.
-- **Hairline Dark Soft** (`{colors.hairline-dark-soft}` — `#302d29`): divider yang halus.
-- **Footer Dark** (`{colors.footer-dark}` — `#191715`): footer atau area paling gelap.
+- **Canvas Dark** (`{colors.canvas-dark}` — `#171412`): background halaman utama.
+- **Surface Dark** (`{colors.surface-dark}` — `#201b17`): container/kartu utama.
+- **Surface Dark Elevated** (`{colors.surface-dark-elevated}` — `#2a241f`): sub-card, dropdown, metric tile, modal layer, dan hover state yang membutuhkan elevasi lebih tinggi.
+- **Surface Dark Soft** (`{colors.surface-dark-soft}` — `#1b1714`): surface yang hanya sedikit lebih terang dari canvas.
+- **Hairline Dark** (`{colors.hairline-dark}` — `#38312a`): border utama.
+- **Hairline Dark Soft** (`{colors.hairline-dark-soft}` — `#2c2621`): divider yang halus.
+- **Footer Dark** (`{colors.footer-dark}` — `#110e0c`): footer atau area paling gelap.
 
-**Aturan:** jangan menggunakan `#000000` atau slate blue untuk canvas. Dark mode harus terasa seperti warm charcoal, bukan terminal hitam.
+**Aturan:** jangan menggunakan `#000000` atau slate blue untuk canvas. Dark mode harus terasa seperti warm espresso yang kaya dan nyaman di mata, bukan terminal hitam.
 
 ### Ink
 
@@ -565,11 +565,11 @@ Masalah utama versi sebelumnya adalah adanya dua arah palette yang bercampur: cl
 - **Body Strong** (`{colors.body-strong}` — `#292824`).
 - **Muted** (`{colors.muted}` — `#74716b`).
 - **Muted Soft** (`{colors.muted-soft}` — `#9a9690`).
-- **On Dark** (`{colors.on-dark}` — `#ede8e1`): off-white untuk teks utama dark mode.
-- **On Dark Soft** (`{colors.on-dark-soft}` — `#cec7bd`).
-- **On Dark Muted** (`{colors.on-dark-muted}` — `#9e968c`).
+- **On Dark** (`{colors.on-dark}` — `#ece4db`): off-white hangat untuk teks utama dark mode.
+- **On Dark Soft** (`{colors.on-dark-soft}` — `#cfc5ba`).
+- **On Dark Muted** (`{colors.on-dark-muted}` — `#9d9285`).
 
-Gunakan off-white untuk teks dark mode dan jangan menaruh body text putih murni di atas warm charcoal kecuali ada alasan aksesibilitas yang jelas.
+Gunakan off-white untuk teks dark mode dan jangan menaruh body text putih murni di atas warm dark surface kecuali ada alasan aksesibilitas yang jelas.
 
 ### Semantik
 
@@ -578,7 +578,7 @@ Gunakan off-white untuk teks dark mode dan jangan menaruh body text putih murni 
 - **Error** → `{colors.error}` `#c94a4a`.
 - **Info Purple** → `{colors.info-purple}` `#7c5cf0`, khusus klasifikasi HKI/Paten jika memang dibutuhkan.
 
-Di dark mode, gunakan varian `-on-dark` atau surface semantik transparan. Jangan reuse warna light mode yang terlalu jenuh langsung di atas charcoal.
+Di dark mode, gunakan varian `-on-dark` atau surface semantik transparan. Jangan reuse warna light mode yang terlalu jenuh langsung di atas warm dark surface.
 
 ### Chart & Analitik
 
@@ -674,7 +674,7 @@ Base unit 4px:
 | 0 Flat     | `{colors.canvas-light}`                 | `{colors.canvas-dark}`             | Background halaman |
 | 1 Card     | Border 1px hairline + `shadow-sm`       | Border 1px dark hairline           | Card/container     |
 | 2 Hover    | Border ink-border + `shadow-md`         | Border dark hairline + `shadow-lg` | Interactive card   |
-| 3 Floating | Warm off-white translucent + blur       | Warm charcoal translucent + blur   | Sticky navbar      |
+| 3 Floating | Warm off-white translucent + blur       | Warm espresso translucent + blur   | Sticky navbar      |
 | 4 Modal    | `{colors.surface-light}` + `shadow-2xl` | `{colors.surface-dark}` + border   | Modal/drawer       |
 
 **Catatan:** gunakan shadow secara hemat. Warm-neutral system mengandalkan perubahan surface dan border lebih banyak daripada shadow berat.
@@ -735,7 +735,7 @@ Table row default transparan. Hover menggunakan raised surface. Divider mengguna
 
 ### Inputs
 
-Input light menggunakan surface hampir putih hangat. Input dark menggunakan surface charcoal yang sedikit lebih terang dari canvas. Focus ring menggunakan accent blue dengan opacity rendah.
+Input light menggunakan surface hampir putih hangat. Input dark menggunakan surface espresso/dark coffee yang sedikit lebih terang dari canvas. Focus ring menggunakan accent blue dengan opacity rendah.
 
 ## Icon Color Rules
 
@@ -788,7 +788,7 @@ Angka ini adalah panduan visual, bukan aturan matematika. Tujuannya menjaga rest
 - Jangan memakai chart colors di tombol atau icon generik.
 - Jangan menggunakan black `#000000` untuk canvas dark.
 - Jangan menggunakan slate/blue-gray sebagai dark surface.
-- Jangan membuat dark mode menjadi beige terang; warm charcoal harus tetap netral dan tenang.
+- Jangan membuat dark mode menjadi beige terang; warm dark harus tetap netral, hangat, dan tenang.
 - Jangan menggunakan pill radius untuk tombol aksi.
 - Jangan mencampur Inter/Plus Jakarta Sans dengan IBM Plex Sans.
 
