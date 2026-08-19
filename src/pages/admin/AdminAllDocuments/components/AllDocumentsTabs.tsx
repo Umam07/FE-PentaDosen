@@ -17,14 +17,14 @@ export default function AllDocumentsTabs({
           <button
             key={tab}
             onClick={() => onTabChange(tab)}
-            className={`px-8 py-4 text-[10px] font-black uppercase tracking-[0.15em] border-b-2 transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+            className={`px-6 sm:px-8 py-3.5 sm:py-4 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
               isSelected 
-                ? 'border-accent text-ink-heading dark:text-on-dark bg-surface-light dark:bg-surface-dark' 
+                ? 'border-accent dark:border-accent-on-dark text-ink-heading dark:text-on-dark bg-surface-light dark:bg-surface-dark font-bold' 
                 : 'border-transparent text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
             }`}
           >
-            <IconComponent className={`w-4 h-4 ${isSelected ? 'text-accent dark:text-accent-on-dark' : 'text-muted'}`} />
-            {tab}
+            <IconComponent className={`w-4 h-4 ${isSelected ? 'text-accent dark:text-accent-on-dark' : 'text-muted dark:text-on-dark-muted'}`} />
+            <span>{tab}</span>
           </button>
         );
       })}

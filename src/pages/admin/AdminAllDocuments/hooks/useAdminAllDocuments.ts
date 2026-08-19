@@ -35,25 +35,25 @@ export function useAdminAllDocuments(user: SessionUser) {
       title: 'Daftar Publikasi',
       description: 'Pengelolaan Publikasi: Kelola, monitoring, dan validasi data publikasi ilmiah dosen.',
       icon: FileText,
-      colorClass: 'text-primary-600 bg-primary-50 dark:bg-primary-900/20 border-primary-100/50 dark:border-primary-900/30'
+      colorClass: 'text-body dark:text-on-dark-soft bg-ink-soft dark:bg-surface-dark-elevated border-ink-border dark:border-hairline-dark'
     },
     hki: {
       title: 'Daftar HKI',
       description: 'Pengelolaan HKI: Kelola, monitoring, dan verifikasi data hak kekayaan intelektual dosen.',
       icon: Award,
-      colorClass: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 border-indigo-100/50 dark:border-indigo-900/30'
+      colorClass: 'text-body dark:text-on-dark-soft bg-ink-soft dark:bg-surface-dark-elevated border-ink-border dark:border-hairline-dark'
     },
     penelitian: {
       title: 'Daftar Penelitian',
       description: 'Pengelolaan Penelitian: Kelola, monitoring, dan laporan data penelitian dosen.',
       icon: Beaker,
-      colorClass: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100/50 dark:border-emerald-900/30'
+      colorClass: 'text-body dark:text-on-dark-soft bg-ink-soft dark:bg-surface-dark-elevated border-ink-border dark:border-hairline-dark'
     },
     buku: {
       title: 'Daftar Buku',
       description: 'Pengelolaan Buku: Kelola, monitoring, dan verifikasi data buku akademik dosen.',
       icon: Book,
-      colorClass: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-100/50 dark:border-amber-900/30'
+      colorClass: 'text-body dark:text-on-dark-soft bg-ink-soft dark:bg-surface-dark-elevated border-ink-border dark:border-hairline-dark'
     }
   }), []);
 

@@ -37,7 +37,7 @@ export default function AdminAllDocuments() {
       />
 
       {/* Card Utama Navigasi Tab & Tabel Dokumen */}
-      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
+      <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-xs">
         
         {/* Tab Navigasi (Publikasi, HKI, Penelitian, Buku) */}
         <AllDocumentsTabs
@@ -63,15 +63,15 @@ export default function AdminAllDocuments() {
         <div className="min-h-[400px]">
           {docState.loading ? (
             <div className="p-20 text-center space-y-4">
-              <div className="w-12 h-12 border-4 border-primary-100 border-t-primary-600 rounded-full animate-spin mx-auto" />
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sinkronisasi Data...</p>
+              <div className="w-12 h-12 border-4 border-ink-soft border-t-ink dark:border-surface-dark-elevated dark:border-t-accent-on-dark rounded-full animate-spin mx-auto" />
+              <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-[0.2em]">Memuat Data...</p>
             </div>
           ) : docState.filteredDocuments.length === 0 ? (
             <div className="p-20 text-center flex flex-col items-center">
-              <div className="w-20 h-20 bg-gray-50 dark:bg-zinc-800 rounded-3xl flex items-center justify-center mb-6">
-                <FileText className="w-10 h-10 text-gray-200" />
+              <div className="w-20 h-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl flex items-center justify-center mb-6 border border-hairline-light-soft dark:border-hairline-dark-soft">
+                <FileText className="w-10 h-10 text-muted-soft dark:text-on-dark-muted" />
               </div>
-              <p className="text-sm font-black text-gray-400 uppercase tracking-widest italic">Data Tidak Ditemukan</p>
+              <p className="text-sm font-semibold text-muted dark:text-on-dark-muted uppercase tracking-widest italic">Data Tidak Ditemukan</p>
             </div>
           ) : (
             <div>
