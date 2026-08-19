@@ -30,9 +30,6 @@ interface SubGroup {
 
 /**
  * Tab Pengaturan Bobot Poin KPI & Periode Akreditasi.
- * Design Read: KPI weights & Accreditation Period administration page redesign, 
- * with a clean structured data language, clear tabular hierarchy, crisp visual grouping, 
- * zero glow or gradient slop, optimal readability, paired weight columns, and modal popups.
  */
 export default function KpiTab({ triggerMessage }: KpiTabProps) {
   const {
@@ -155,35 +152,35 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
       <div className="lg:col-span-8 space-y-6">
         
         {/* Bobot Point Table Card */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-6 space-y-5 shadow-xs">
+        <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-6 space-y-5 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300">
-                  <Layers className="w-4 h-4" />
+                <div className="p-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft">
+                  <Layers className="w-4 h-4 text-accent dark:text-accent-on-dark" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
+                <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
                   Bobot KPI Master Data
                 </h3>
               </div>
-              <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-                Atur besaran poin dinamis untuk masing-masing kategori berkas & publikasi.
+              <p className="text-xs text-muted dark:text-on-dark-muted mt-1">
+                Atur besaran poin dinamis untuk masing-masing kategori berkas &amp; publikasi.
               </p>
             </div>
             
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <button
                 onClick={() => setIsGuideOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-300 rounded-xl text-xs font-semibold transition-all cursor-pointer border border-gray-200/60 dark:border-zinc-700/60"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated text-ink-heading dark:text-on-dark rounded-xl text-xs font-semibold transition-all cursor-pointer border border-hairline-light dark:border-hairline-dark shadow-xs"
                 title="Buka Panduan Metriks Penilaian"
               >
-                <HelpCircle className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                <HelpCircle className="w-4 h-4 text-accent dark:text-accent-on-dark" />
                 <span>Panduan Metriks</span>
               </button>
 
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gray-900 hover:bg-black dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-gray-900 rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated text-ink-heading dark:text-on-dark rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer border border-hairline-light dark:border-hairline-dark"
               >
                 <Plus className="w-4 h-4" />
                 <span>Tambah Kategori</span>
@@ -192,7 +189,7 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
               <button
                 onClick={handleSaveWeights}
                 disabled={savingWeights || loading}
-                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-primary-600 hover:bg-primary-700 active:scale-98 text-white rounded-xl text-xs font-semibold shadow-xs disabled:opacity-40 transition-all outline-none cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90 dark:bg-surface-dark-elevated dark:hover:bg-surface-dark-elevated/80 active:scale-95 text-on-ink dark:text-on-dark rounded-xl text-xs font-semibold shadow-xs disabled:opacity-40 transition-all outline-none cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>{savingWeights ? 'Menyimpan...' : 'Simpan Bobot'}</span>
@@ -201,12 +198,12 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
           </div>
 
           {/* Group Selector Tabs */}
-          <div className="flex flex-wrap gap-1 p-1 bg-gray-100/80 dark:bg-zinc-800/80 rounded-xl border border-gray-200/60 dark:border-zinc-700/60">
+          <div className="flex flex-wrap gap-1 p-1 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft">
             {[
-              { id: 'scopus', label: 'Scopus & SINTA', icon: Zap, color: 'text-amber-500' },
-              { id: 'hki', label: 'HKI', icon: ShieldCheck, color: 'text-purple-500' },
-              { id: 'buku', label: 'Buku', icon: Book, color: 'text-blue-500' },
-              { id: 'lain', label: 'Lainnya', icon: FileSpreadsheet, color: 'text-emerald-500' }
+              { id: 'scopus', label: 'Scopus & SINTA', icon: Zap, color: 'text-chart-scholar' },
+              { id: 'hki', label: 'HKI', icon: ShieldCheck, color: 'text-chart-hki' },
+              { id: 'buku', label: 'Buku', icon: Book, color: 'text-chart-buku' },
+              { id: 'lain', label: 'Lainnya', icon: FileSpreadsheet, color: 'text-chart-penelitian' }
             ].map(group => {
               const isActive = activeGroup === group.id;
               const Icon = group.icon;
@@ -216,19 +213,19 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                   onClick={() => setActiveGroup(group.id as any)}
                   className={`relative flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all outline-none select-none cursor-pointer ${
                     isActive
-                      ? 'text-white font-semibold'
-                      : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-gray-200/50 dark:hover:bg-zinc-700/50'
+                      ? 'text-ink-heading dark:text-on-dark font-semibold'
+                      : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light/50 dark:hover:bg-surface-dark/50'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="active-kpi-group-tab"
                       transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                      className="absolute inset-0 bg-primary-600 rounded-lg shadow-xs"
+                      className="absolute inset-0 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg shadow-xs"
                     />
                   )}
                   <span className="relative z-10 flex items-center gap-1.5">
-                    <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-white' : group.color}`} />
+                    <Icon className={`w-3.5 h-3.5 transition-colors ${group.color}`} />
                     {group.label}
                   </span>
                 </button>
@@ -236,20 +233,20 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
             })}
           </div>
 
-          {/* Search Filter Input Kecil */}
+          {/* Search Filter Input */}
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-zinc-500" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted dark:text-on-dark-muted" />
             <input
               type="text"
               placeholder="Cari kategori (misal: Q1, Hyperauthor, Paten)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 bg-gray-50 dark:bg-zinc-800/70 border border-gray-200 dark:border-zinc-700/80 rounded-xl text-xs font-medium text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+              className="w-full pl-9 pr-8 py-2 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted hover:text-ink-heading dark:hover:text-on-dark cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -260,7 +257,7 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
           <div className="min-h-[280px] space-y-4">
             {loading ? (
               <div className="space-y-3">
-                {[1, 2, 3].map(i => <div key={i} className="h-14 bg-gray-100 dark:bg-zinc-800/60 animate-pulse rounded-xl" />)}
+                {[1, 2, 3].map(i => <div key={i} className="h-14 bg-surface-light-raised dark:bg-surface-dark-elevated animate-pulse rounded-xl" />)}
               </div>
             ) : subGroups.length > 0 ? (
               subGroups.map((group) => {
@@ -269,22 +266,22 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                 return (
                   <div 
                     key={group.id}
-                    className="border border-gray-200/80 dark:border-zinc-800 rounded-xl overflow-hidden bg-white dark:bg-zinc-900"
+                    className="border border-hairline-light dark:border-hairline-dark rounded-xl overflow-hidden bg-surface-light dark:bg-surface-dark"
                   >
                     {/* Header Group Accordion */}
                     <button
                       onClick={() => toggleGroup(group.id)}
-                      className="w-full flex items-center justify-between px-4 py-3 bg-gray-50/80 dark:bg-zinc-800/60 hover:bg-gray-100/70 dark:hover:bg-zinc-800/90 transition-colors select-none text-left cursor-pointer border-b border-gray-200/60 dark:border-zinc-800"
+                      className="w-full flex items-center justify-between px-4 py-3 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark transition-colors select-none text-left cursor-pointer border-b border-hairline-light-soft dark:border-hairline-dark-soft"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
+                        <span className="text-xs font-bold text-ink-heading dark:text-on-dark tracking-tight">
                           {group.title}
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-200/60 dark:bg-zinc-700/60 text-gray-600 dark:text-zinc-300">
-                          {group.items.length} {group.items.length === 1 ? 'baris' : 'baris'}
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted">
+                          {group.items.length} baris
                         </span>
                       </div>
-                      <div className="text-gray-400 dark:text-zinc-500">
+                      <div className="text-muted dark:text-on-dark-muted">
                         {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </div>
                     </button>
@@ -292,23 +289,23 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                     {/* Content Accordion Table */}
                     {isOpen && (
                       <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
-                          <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
+                        <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">
+                          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
                             <tr>
-                              <th className="px-4 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Kategori</th>
-                              <th className="px-3 py-3.5 text-center w-36 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">First Author / Single</th>
-                              <th className="px-3 py-3.5 text-center w-36 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Member Author</th>
-                              <th className="px-3 py-3.5 text-right w-16 text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Aksi</th>
+                              <th className="px-4 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Kategori</th>
+                              <th className="px-3 py-3.5 text-center w-36 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">First Author / Single</th>
+                              <th className="px-3 py-3.5 text-center w-36 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Member Author</th>
+                              <th className="px-3 py-3.5 text-right w-16 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Aksi</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
+                          <tbody className="divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
                             {group.items.map((row) => (
                               <tr 
                                 key={row.baseName}
-                                className="hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors"
+                                className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors"
                               >
                                 {/* Kolom Kategori */}
-                                <td className="px-4 py-3 font-medium text-gray-900 dark:text-zinc-100">
+                                <td className="px-4 py-3 font-medium text-ink-heading dark:text-on-dark">
                                   <span>{row.baseName}</span>
                                 </td>
 
@@ -316,22 +313,22 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                                 <td className="px-3 py-3 text-center">
                                   {row.firstAuthor ? (
                                     <div className="flex items-center justify-center gap-1.5">
-                                      <span className="text-[10px] text-gray-400 font-normal hidden sm:inline">First:</span>
+                                      <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">First:</span>
                                       <input
                                         type="number"
                                         value={row.firstAuthor.weight_value}
                                         onChange={(e) => handleWeightChangeByCategory(row.firstAuthor!.category, parseInt(e.target.value) || 0)}
-                                        className="w-16 px-2 py-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-center font-bold text-xs outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                                        className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
                                       />
                                     </div>
                                   ) : row.singleAuthor ? (
                                     <div className="flex items-center justify-center gap-1.5">
-                                      <span className="text-[10px] text-gray-400 font-normal hidden sm:inline">Single:</span>
+                                      <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">Single:</span>
                                       <input
                                         type="number"
                                         value={row.singleAuthor.weight_value}
                                         onChange={(e) => handleWeightChangeByCategory(row.singleAuthor!.category, parseInt(e.target.value) || 0)}
-                                        className="w-16 px-2 py-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-center font-bold text-xs outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                                        className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
                                       />
                                     </div>
                                   ) : row.standalone ? (
@@ -339,10 +336,10 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                                       type="number"
                                       value={row.standalone.weight_value}
                                       onChange={(e) => handleWeightChangeByCategory(row.standalone!.category, parseInt(e.target.value) || 0)}
-                                      className="w-16 px-2 py-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-center font-bold text-xs outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                                      className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
                                     />
                                   ) : (
-                                    <span className="text-gray-300 dark:text-zinc-600">-</span>
+                                    <span className="text-muted-soft dark:text-on-dark-muted">-</span>
                                   )}
                                 </td>
 
@@ -350,16 +347,16 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                                 <td className="px-3 py-3 text-center">
                                   {row.memberAuthor ? (
                                     <div className="flex items-center justify-center gap-1.5">
-                                      <span className="text-[10px] text-gray-400 font-normal hidden sm:inline">Member:</span>
+                                      <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">Member:</span>
                                       <input
                                         type="number"
                                         value={row.memberAuthor.weight_value}
                                         onChange={(e) => handleWeightChangeByCategory(row.memberAuthor!.category, parseInt(e.target.value) || 0)}
-                                        className="w-16 px-2 py-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-center font-bold text-xs outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                                        className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
                                       />
                                     </div>
                                   ) : (
-                                    <span className="text-gray-300 dark:text-zinc-600">-</span>
+                                    <span className="text-muted-soft dark:text-on-dark-muted">-</span>
                                   )}
                                 </td>
 
@@ -370,7 +367,7 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                                       const targetCat = row.firstAuthor?.category || row.standalone?.category || row.memberAuthor?.category || row.singleAuthor?.category;
                                       if (targetCat) setDeleteCategory(targetCat);
                                     }}
-                                    className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
+                                    className="p-1.5 text-error hover:bg-error-soft rounded-lg transition-colors cursor-pointer"
                                     title="Hapus Kategori"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -386,8 +383,8 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                 );
               })
             ) : (
-              <div className="py-16 border border-dashed border-gray-200 dark:border-zinc-800 rounded-xl text-center text-gray-400 dark:text-zinc-500 font-medium text-sm flex flex-col items-center justify-center gap-2">
-                <FileSpreadsheet className="w-8 h-8 text-gray-300 dark:text-zinc-600" />
+              <div className="py-16 border border-dashed border-hairline-light dark:border-hairline-dark rounded-xl text-center text-muted dark:text-on-dark-muted font-medium text-xs flex flex-col items-center justify-center gap-2">
+                <FileSpreadsheet className="w-8 h-8 text-muted-soft dark:text-on-dark-muted" />
                 <span>Tidak ada kategori yang cocok dengan pencarian/kelompok ini.</span>
               </div>
             )}
@@ -397,59 +394,59 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
 
       {/* SISI KANAN (Col-4): Periode Akreditasi Card */}
       <div className="lg:col-span-4 space-y-6">
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-6 space-y-5 shadow-xs">
+        <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark p-6 space-y-5 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400">
+              <div className="p-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-accent dark:text-accent-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft">
                 <Calendar className="w-4 h-4" />
               </div>
-              <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
+              <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
                 Periode Akreditasi KPI
               </h3>
             </div>
-            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
+            <p className="text-xs text-muted dark:text-on-dark-muted mt-1">
               Atur rentang tanggal aktif dokumen yang dinilai untuk penilaian KPI.
             </p>
           </div>
 
           <form onSubmit={handleSavePeriod} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-gray-700 dark:text-zinc-300">Label Periode</label>
+              <label className="text-xs font-semibold text-ink-heading dark:text-on-dark">Label Periode</label>
               <input
                 type="text"
                 required
                 placeholder="Contoh: 2025-2027"
                 value={periodLabel}
                 onChange={(e) => setPeriodLabel(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl text-xs font-medium outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                className="w-full px-4 py-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent transition-all"
               />
             </div>
 
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 dark:text-zinc-300">Tanggal Mulai</label>
+                <label className="text-xs font-semibold text-ink-heading dark:text-on-dark">Tanggal Mulai</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                   <input
                     type="date"
                     required
                     value={periodStart}
                     onChange={(e) => setPeriodStart(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl text-xs font-medium outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent transition-all"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 dark:text-zinc-300">Tanggal Selesai</label>
+                <label className="text-xs font-semibold text-ink-heading dark:text-on-dark">Tanggal Selesai</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                   <input
                     type="date"
                     required
                     value={periodEnd}
                     onChange={(e) => setPeriodEnd(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl text-xs font-medium outline-none text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent transition-all"
                   />
                 </div>
               </div>
@@ -458,7 +455,7 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
             <button
               type="submit"
               disabled={savingPeriod || loading}
-              className="w-full py-2.5 bg-primary-600 hover:bg-primary-700 active:scale-98 text-white rounded-xl text-xs font-semibold shadow-xs disabled:opacity-40 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full py-2.5 bg-ink hover:bg-ink/90 dark:bg-surface-dark-elevated dark:hover:bg-surface-dark-elevated/80 active:scale-95 text-on-ink dark:text-on-dark rounded-xl text-xs font-semibold shadow-xs disabled:opacity-40 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{savingPeriod ? 'Menyimpan...' : 'Perbarui Periode'}</span>
@@ -494,32 +491,32 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsGuideOpen(false)}
-              className="fixed inset-0 bg-gray-950/50 backdrop-blur-sm"
+              className="fixed inset-0 bg-ink/40 dark:bg-black/60 backdrop-blur-xs"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-3xl bg-white dark:bg-zinc-900 rounded-3xl shadow-xl border border-gray-200 dark:border-zinc-800 p-6 md:p-8 max-h-[85vh] overflow-y-auto"
+              className="relative w-full max-w-3xl bg-surface-light dark:bg-surface-dark rounded-2xl shadow-xl border border-hairline-light dark:border-hairline-dark p-6 md:p-8 max-h-[85vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-start mb-6 pb-4 border-b border-gray-100 dark:border-zinc-800">
+              <div className="flex justify-between items-start mb-6 pb-4 border-b border-hairline-light-soft dark:border-hairline-dark-soft">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 border border-primary-200/50 dark:border-primary-800/40">
+                  <div className="p-2.5 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-accent dark:text-accent-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft">
                     <Award className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
+                    <h3 className="text-lg font-bold text-ink-heading dark:text-on-dark tracking-tight">
                       Panduan Metriks Penilaian
                     </h3>
-                    <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+                    <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
                       Referensi lengkap skema otomatisasi poin KPI yang berlaku di sistem.
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsGuideOpen(false)}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                  className="p-1.5 text-muted hover:text-ink-heading dark:hover:text-on-dark rounded-xl hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -527,83 +524,83 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
 
               <div className="space-y-4 text-xs">
                 {/* HKI */}
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800/40 rounded-2xl border border-gray-200/70 dark:border-zinc-800/70 space-y-2.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-900 dark:text-zinc-100">
-                    <ShieldCheck className="w-4.5 h-4.5 text-purple-500 shrink-0" />
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft space-y-2.5">
+                  <div className="flex items-center gap-2 font-bold text-sm text-ink-heading dark:text-on-dark">
+                    <ShieldCheck className="w-4.5 h-4.5 text-chart-hki shrink-0" />
                     <span>1. Hak Kekayaan Intelektual (HKI)</span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-gray-600 dark:text-zinc-400 pt-1">
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60">Paten: <span className="font-bold text-purple-600 dark:text-purple-400 block mt-0.5">40 pts</span></div>
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60">Paten Sederhana: <span className="font-bold text-purple-600 dark:text-purple-400 block mt-0.5">28 pts</span></div>
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60">Merek: <span className="font-bold text-purple-600 dark:text-purple-400 block mt-0.5">12 pts</span></div>
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60">Hak Cipta: <span className="font-bold text-purple-600 dark:text-purple-400 block mt-0.5">5 pts</span></div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-body dark:text-on-dark-soft pt-1 font-mono">
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft">Paten: <span className="font-bold text-chart-hki block mt-0.5">40 pts</span></div>
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft">Paten Sederhana: <span className="font-bold text-chart-hki block mt-0.5">28 pts</span></div>
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft">Merek: <span className="font-bold text-chart-hki block mt-0.5">12 pts</span></div>
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft">Hak Cipta: <span className="font-bold text-chart-hki block mt-0.5">5 pts</span></div>
                   </div>
                 </div>
 
                 {/* Buku Akademik */}
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800/40 rounded-2xl border border-gray-200/70 dark:border-zinc-800/70 space-y-2.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-900 dark:text-zinc-100">
-                    <Book className="w-4.5 h-4.5 text-blue-500 shrink-0" />
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft space-y-2.5">
+                  <div className="flex items-center gap-2 font-bold text-sm text-ink-heading dark:text-on-dark">
+                    <Book className="w-4.5 h-4.5 text-chart-buku shrink-0" />
                     <span>2. Buku Akademik</span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-600 dark:text-zinc-400 pt-1">
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 flex justify-between items-center"><span>Buku Referensi:</span> <span className="font-bold text-blue-600 dark:text-blue-400">40 pts</span></div>
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 flex justify-between items-center"><span>Buku Ajar:</span> <span className="font-bold text-blue-600 dark:text-blue-400">20 pts</span></div>
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 flex justify-between items-center"><span>Buku Monograf:</span> <span className="font-bold text-blue-600 dark:text-blue-400">20 pts</span></div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-body dark:text-on-dark-soft pt-1 font-mono">
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center"><span>Buku Referensi:</span> <span className="font-bold text-chart-buku">40 pts</span></div>
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center"><span>Buku Ajar:</span> <span className="font-bold text-chart-buku">20 pts</span></div>
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center"><span>Buku Monograf:</span> <span className="font-bold text-chart-buku">20 pts</span></div>
                   </div>
                 </div>
 
                 {/* Penelitian & Hibah */}
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800/40 rounded-2xl border border-gray-200/70 dark:border-zinc-800/70 space-y-2.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-900 dark:text-zinc-100">
-                    <Beaker className="w-4.5 h-4.5 text-emerald-500 shrink-0" />
-                    <span>3. Penelitian & Hibah</span>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft space-y-2.5">
+                  <div className="flex items-center gap-2 font-bold text-sm text-ink-heading dark:text-on-dark">
+                    <Beaker className="w-4.5 h-4.5 text-chart-penelitian shrink-0" />
+                    <span>3. Penelitian &amp; Hibah</span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-600 dark:text-zinc-400 pt-1">
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 flex justify-between items-center"><span>Hibah Luar Negeri:</span> <span className="font-bold text-emerald-600 dark:text-emerald-400">10 pts</span></div>
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 flex justify-between items-center"><span>Hibah Eksternal (Dikti):</span> <span className="font-bold text-emerald-600 dark:text-emerald-400">6 pts</span></div>
-                    <div className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 flex justify-between items-center"><span>Internal Institusi:</span> <span className="font-bold text-emerald-600 dark:text-emerald-400">3 pts</span></div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-body dark:text-on-dark-soft pt-1 font-mono">
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center"><span>Hibah Luar Negeri:</span> <span className="font-bold text-chart-penelitian">10 pts</span></div>
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center"><span>Hibah Eksternal (Dikti):</span> <span className="font-bold text-chart-penelitian">6 pts</span></div>
+                    <div className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center"><span>Internal Institusi:</span> <span className="font-bold text-chart-penelitian">3 pts</span></div>
                   </div>
                 </div>
 
                 {/* Google Scholar */}
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800/40 rounded-2xl border border-gray-200/70 dark:border-zinc-800/70 space-y-2.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-900 dark:text-zinc-100">
-                    <BookOpen className="w-4.5 h-4.5 text-sky-500 shrink-0" />
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft space-y-2.5">
+                  <div className="flex items-center gap-2 font-bold text-sm text-ink-heading dark:text-on-dark">
+                    <BookOpen className="w-4.5 h-4.5 text-chart-scholar shrink-0" />
                     <span>4. Publikasi Google Scholar</span>
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-zinc-400 leading-relaxed p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60">
-                    Poin dasar <span className="font-bold text-sky-600 dark:text-sky-400">0.5</span> + bonus tersitasi <span className="font-bold text-sky-600 dark:text-sky-400">0.5</span> + sitasi (<span className="font-bold text-sky-600 dark:text-sky-400">0.25</span> / sitasi, max 500).
+                  <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft font-mono">
+                    Poin dasar <span className="font-bold text-chart-scholar">0.5</span> + bonus tersitasi <span className="font-bold text-chart-scholar">0.5</span> + sitasi (<span className="font-bold text-chart-scholar">0.25</span> / sitasi, max 500).
                   </p>
                 </div>
 
                 {/* Scopus & SINTA */}
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800/40 rounded-2xl border border-gray-200/70 dark:border-zinc-800/70 space-y-2.5">
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-900 dark:text-zinc-100">
-                    <Zap className="w-4.5 h-4.5 text-amber-500 shrink-0" />
-                    <span>5. Publikasi Scopus & SINTA</span>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft space-y-2.5">
+                  <div className="flex items-center gap-2 font-bold text-sm text-ink-heading dark:text-on-dark">
+                    <Zap className="w-4.5 h-4.5 text-chart-scholar shrink-0" />
+                    <span>5. Publikasi Scopus &amp; SINTA</span>
                   </div>
-                  <div className="space-y-2 text-xs text-gray-600 dark:text-zinc-400 leading-relaxed">
-                    <p className="font-semibold text-gray-800 dark:text-zinc-200">Base points per Quartile (Article):</p>
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 font-bold text-amber-600 dark:text-amber-400">
-                      <div className="p-2 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 text-center">Q1: 40 pts</div>
-                      <div className="p-2 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 text-center">Q2: 38 pts</div>
-                      <div className="p-2 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 text-center">Q3: 35 pts</div>
-                      <div className="p-2 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 text-center">Q4: 33 pts</div>
-                      <div className="p-2 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 text-center">None: 33 pts</div>
-                      <div className="p-2 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 text-center">Non-Ar: 30</div>
+                  <div className="space-y-2 text-xs text-body dark:text-on-dark-soft leading-relaxed">
+                    <p className="font-semibold text-ink-heading dark:text-on-dark">Base points per Quartile (Article):</p>
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 font-bold font-mono text-chart-scholar">
+                      <div className="p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-center">Q1: 40 pts</div>
+                      <div className="p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-center">Q2: 38 pts</div>
+                      <div className="p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-center">Q3: 35 pts</div>
+                      <div className="p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-center">Q4: 33 pts</div>
+                      <div className="p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-center">None: 33 pts</div>
+                      <div className="p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-center">Non-Ar: 30</div>
                     </div>
-                    <p className="p-2.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700/60 text-gray-500 dark:text-zinc-400 mt-2">
+                    <p className="p-2.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted mt-2">
                       Skema peran penulis (60/40): Single Author = 100%, First Author = 60%, Member = 40% / (totalAuthors - 1).
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-100 dark:border-zinc-800 flex justify-end">
+              <div className="mt-6 pt-4 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex justify-end">
                 <button
                   onClick={() => setIsGuideOpen(false)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-300 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark rounded-xl text-xs font-semibold transition-colors cursor-pointer"
                 >
                   Tutup Panduan
                 </button>

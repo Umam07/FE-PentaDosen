@@ -70,20 +70,20 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
 
   return (
     <div className="w-full space-y-6 pb-12">
-      {/* Header Halaman (Clean, Minimal, Zero Wasted Space) */}
+      {/* Header Halaman */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink-heading dark:text-on-dark tracking-tight">
             CMS Control Center
           </h1>
-          <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1.5">
-            Manajemen Hak Akses, Bobot KPI, Pengumuman, Panduan FAQ & Dukungan
+          <p className="text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-widest mt-1">
+            Manajemen Hak Akses, Bobot KPI, Pengumuman, Panduan FAQ &amp; Dukungan
           </p>
         </div>
       </div>
 
-      {/* Sub Menu / Navigation Tabs (Clean Border-Bottom Strip) */}
-      <div className="border-b border-gray-200 dark:border-zinc-800 pb-0 overflow-x-auto no-scrollbar">
+      {/* Sub Menu / Navigation Tabs */}
+      <div className="border-b border-hairline-light dark:border-hairline-dark pb-0 overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-6 sm:gap-8 min-w-max">
           {navTabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -92,22 +92,22 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`group/tab relative pb-3.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer select-none ${
+                className={`group/tab relative pb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer select-none ${
                   isActive
-                    ? 'text-primary-600 dark:text-primary-400'
-                    : 'text-gray-500 hover:text-gray-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+                    ? 'text-accent dark:text-accent-on-dark font-bold'
+                    : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
                 }`}
               >
                 <Icon className={`w-4 h-4 transition-transform ${
                   isActive 
-                    ? 'scale-105 text-primary-600 dark:text-primary-400' 
-                    : 'text-gray-400 dark:text-zinc-500 group-hover/tab:text-gray-700 dark:group-hover/tab:text-zinc-300'
+                    ? 'scale-105 text-accent dark:text-accent-on-dark' 
+                    : 'text-muted dark:text-on-dark-muted group-hover/tab:text-ink-heading dark:group-hover/tab:text-on-dark'
                 }`} />
                 <span>{tab.label}</span>
 
                 {/* Badge Pending Ticket */}
                 {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1.5 rounded-full bg-rose-500 text-white text-[10px] font-bold leading-none">
+                  <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1.5 rounded-full bg-error-soft text-error border border-error-border text-[10px] font-bold font-mono leading-none">
                     {tab.badge}
                   </span>
                 )}
@@ -117,13 +117,13 @@ export default function CmsDashboard({ user }: CmsDashboardProps) {
                   <motion.div
                     layoutId="active-cms-tab-indicator"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                    className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary-600 dark:bg-primary-500 rounded-full"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent dark:bg-accent-on-dark rounded-full"
                   />
                 )}
 
                 {/* Hover Underline effect */}
                 {!isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gray-200 dark:bg-zinc-700 rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-hairline-light dark:bg-hairline-dark rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
                 )}
               </button>
             );

@@ -42,21 +42,21 @@ export default function FaqDeleteModal({
   const getCategoryBadgeStyle = (categoryName?: string) => {
     const c = (categoryName || '').toLowerCase();
     if (c.includes('publikasi') || c.includes('scholar') || c.includes('scopus')) {
-      return 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800';
+      return 'bg-accent-soft text-accent dark:text-accent-on-dark border-accent/20';
     }
     if (c.includes('buku')) {
-      return 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+      return 'bg-chart-buku/15 text-chart-buku border-chart-buku/30';
     }
     if (c.includes('hki')) {
-      return 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800';
+      return 'bg-chart-hki/15 text-chart-hki border-chart-hki/30';
     }
     if (c.includes('penelitian')) {
-      return 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
+      return 'bg-chart-penelitian/15 text-chart-penelitian border-chart-penelitian/30';
     }
     if (c.includes('kpi')) {
-      return 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+      return 'bg-success-soft text-success-dark dark:text-success-on-dark border-success-border';
     }
-    return 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-200 dark:border-zinc-700';
+    return 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border-hairline-light-soft dark:border-hairline-dark-soft';
   };
 
   return (
@@ -67,34 +67,34 @@ export default function FaqDeleteModal({
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            className="fixed inset-0 bg-gray-950/70 backdrop-blur-md" 
+            className="fixed inset-0 bg-ink/40 dark:bg-black/60 backdrop-blur-xs" 
             onClick={onClose} 
           />
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }} 
+            initial={{ opacity: 0, scale: 0.95, y: 16 }} 
             animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.9, y: 20 }} 
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-800 p-8"
+            exit={{ opacity: 0, scale: 0.95, y: 16 }} 
+            transition={{ duration: 0.2 }}
+            className="relative w-full max-w-md bg-surface-light dark:bg-surface-dark rounded-2xl shadow-xl border border-hairline-light dark:border-hairline-dark p-6 sm:p-8"
           >
             <div className="flex flex-col items-center text-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
-                <Trash2 className="w-8 h-8 text-red-500" />
+              <div className="w-14 h-14 rounded-2xl bg-error-soft border border-error-border flex items-center justify-center">
+                <Trash2 className="w-7 h-7 text-error" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Hapus Panduan / FAQ?</h3>
-                <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 mt-1">Tindakan ini tidak dapat dibatalkan.</p>
+                <h3 className="text-lg font-bold text-ink-heading dark:text-on-dark tracking-tight">Hapus Panduan / FAQ?</h3>
+                <p className="text-xs text-muted dark:text-on-dark-muted mt-1">Tindakan ini tidak dapat dibatalkan.</p>
               </div>
 
               {/* Card Detail Item yang Akan Dihapus */}
-              <div className="w-full px-4 py-3.5 bg-gray-50 dark:bg-zinc-800/70 rounded-2xl border border-gray-100 dark:border-zinc-700/80 text-left space-y-2">
+              <div className="w-full px-4 py-3.5 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-left space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${getCategoryBadgeStyle(faq.category)}`}>
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider border ${getCategoryBadgeStyle(faq.category)}`}>
                     <HelpCircle className="w-3 h-3" />
                     Kategori: {faq.category}
                   </span>
                 </div>
-                <p className="text-xs font-black text-gray-800 dark:text-zinc-200 tracking-tight line-clamp-2 leading-snug">
+                <p className="text-xs font-semibold text-ink-heading dark:text-on-dark tracking-tight line-clamp-2 leading-snug">
                   {faq.question}
                 </p>
               </div>
@@ -102,14 +102,14 @@ export default function FaqDeleteModal({
               <div className="flex gap-3 w-full mt-2">
                 <button 
                   onClick={onClose} 
-                  className="flex-1 px-4 py-3 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
+                  className="flex-1 px-4 py-2.5 border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated rounded-xl text-xs font-semibold transition-all cursor-pointer"
                 >
                   Batal
                 </button>
                 <button 
                   onClick={handleDeleteInternal} 
                   disabled={isDeleteLoading} 
-                  className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer"
+                  className="flex-1 px-4 py-2.5 bg-error hover:bg-error/90 text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   {isDeleteLoading ? 'Menghapus...' : 'Ya, Hapus'}
                 </button>

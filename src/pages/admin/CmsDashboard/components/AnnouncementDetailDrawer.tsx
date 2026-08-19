@@ -45,7 +45,7 @@ export default function AnnouncementDetailDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-gray-950/50 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-ink/40 dark:bg-black/60 backdrop-blur-xs transition-opacity"
           />
 
           {/* Slide-over panel (Drawer) */}
@@ -54,17 +54,17 @@ export default function AnnouncementDetailDrawer({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-            className="relative w-full max-w-md bg-white dark:bg-zinc-900 border-l border-gray-100 dark:border-zinc-800 shadow-2xl h-full flex flex-col z-10"
+            className="relative w-full max-w-md bg-surface-light dark:bg-surface-dark border-l border-hairline-light dark:border-hairline-dark shadow-2xl h-full flex flex-col z-10"
           >
             {/* Drawer Header */}
-            <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex justify-between items-center bg-gray-50/50 dark:bg-zinc-850/50">
+            <div className="p-6 border-b border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center bg-surface-light-raised dark:bg-surface-dark-elevated">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 rounded-2xl border border-primary-100 dark:border-primary-900/30">
+                <div className="p-2.5 bg-surface-light dark:bg-surface-dark text-accent dark:text-accent-on-dark rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft">
                   <CalendarIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Detail Pengumuman</p>
-                  <h3 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted dark:text-on-dark-muted">Detail Pengumuman</p>
+                  <h3 className="text-sm font-bold text-ink-heading dark:text-on-dark">
                     {formattedDate}
                   </h3>
                 </div>
@@ -72,7 +72,7 @@ export default function AnnouncementDetailDrawer({
 
               <button
                 onClick={onClose}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                className="p-2 text-muted hover:text-ink-heading dark:hover:text-on-dark rounded-xl hover:bg-surface-light dark:hover:bg-surface-dark transition-colors cursor-pointer"
                 aria-label="Tutup"
               >
                 <X className="w-5 h-5" />
@@ -80,16 +80,16 @@ export default function AnnouncementDetailDrawer({
             </div>
 
             {/* Sub-bar / Action header */}
-            <div className="px-6 py-3 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800 flex justify-between items-center text-xs">
-              <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                Total: <strong className="text-gray-900 dark:text-zinc-100">{dateAnnouncements.length}</strong> Pengumuman
+            <div className="px-6 py-3 bg-surface-light dark:bg-surface-dark border-b border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center text-xs">
+              <span className="text-xs text-muted dark:text-on-dark-muted">
+                Total: <strong className="font-mono font-semibold text-ink-heading dark:text-on-dark">{dateAnnouncements.length}</strong> Pengumuman
               </span>
               <button
                 onClick={() => {
                   onClose();
                   onCreateNew();
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ink hover:bg-ink/90 dark:bg-surface-dark-elevated dark:hover:bg-surface-dark-elevated/80 text-on-ink dark:text-on-dark rounded-xl text-xs font-semibold uppercase tracking-wider transition-all active:scale-95 shadow-xs cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Buat Baru
@@ -105,28 +105,28 @@ export default function AnnouncementDetailDrawer({
                   return (
                     <div
                       key={a.id}
-                      className="bg-white dark:bg-zinc-850 rounded-2xl border border-gray-100 dark:border-zinc-800 p-5 space-y-3 relative group transition-all"
+                      className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light-soft dark:border-hairline-dark-soft p-5 space-y-3 relative group transition-all"
                     >
                       {/* Badge status */}
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
-                          <Megaphone className="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0" />
+                          <Megaphone className="w-4 h-4 text-accent dark:text-accent-on-dark shrink-0" />
                         </div>
 
                         {status === 'active' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-success-soft text-success-dark dark:text-success-on-dark border border-success-border">
                             <CheckCircle2 className="w-3 h-3" />
                             Aktif
                           </span>
                         )}
                         {status === 'scheduled' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900/40">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-accent-soft text-accent dark:text-accent-on-dark border border-accent/20">
                             <Clock className="w-3 h-3" />
                             Terjadwal
                           </span>
                         )}
                         {status === 'expired' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400 border border-gray-200 dark:border-zinc-700">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark">
                             <AlertCircle className="w-3 h-3" />
                             Kadaluarsa
                           </span>
@@ -135,21 +135,21 @@ export default function AnnouncementDetailDrawer({
 
                       {/* Judul & Isi */}
                       <div className="space-y-1">
-                        <h4 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
+                        <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">
                           {a.title}
                         </h4>
-                        <p className="text-xs text-gray-600 dark:text-zinc-400 leading-relaxed">
+                        <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed">
                           {a.content}
                         </p>
                       </div>
 
                       {/* Info Periode Tayang */}
-                      <div className="pt-2 border-t border-gray-50 dark:border-zinc-800 flex justify-between items-center text-[10px] font-bold text-gray-400">
+                      <div className="pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex justify-between items-center text-[10px] font-mono text-muted dark:text-on-dark-muted">
                         <span>Tayang: {formatDateID(a.created_at)}</span>
                         {a.expires_at ? (
                           <span>Exp: {formatDateID(a.expires_at)}</span>
                         ) : (
-                          <span className="text-emerald-600 dark:text-emerald-400">Tanpa Batas</span>
+                          <span className="text-success-dark dark:text-success-on-dark">Tanpa Batas</span>
                         )}
                       </div>
 
@@ -160,7 +160,7 @@ export default function AnnouncementDetailDrawer({
                             onClose();
                             onEdit(a);
                           }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-gray-700 dark:text-zinc-300 rounded-xl text-[10px] font-black uppercase tracking-wider border border-gray-200 dark:border-zinc-700 transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated text-ink-heading dark:text-on-dark rounded-xl text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
                         >
                           <Edit3 className="w-3 h-3" />
                           Edit
@@ -170,7 +170,7 @@ export default function AnnouncementDetailDrawer({
                             onClose();
                             onDelete(a);
                           }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/30 dark:hover:bg-red-950/60 dark:text-red-400 rounded-xl text-[10px] font-black uppercase tracking-wider border border-red-200 dark:border-red-900/30 transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error-soft hover:bg-error-soft/80 text-error rounded-xl text-xs font-semibold border border-error-border transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3 h-3" />
                           Hapus
@@ -181,15 +181,15 @@ export default function AnnouncementDetailDrawer({
                 })
               ) : (
                 /* Empty state */
-                <div className="h-64 flex flex-col items-center justify-center text-center p-6 bg-gray-50/50 dark:bg-zinc-850/30 border border-dashed border-gray-200 dark:border-zinc-800 rounded-3xl space-y-3">
-                  <div className="p-4 bg-white dark:bg-zinc-800 rounded-2xl shadow-xs text-gray-300 dark:text-zinc-600">
+                <div className="h-64 flex flex-col items-center justify-center text-center p-6 bg-surface-light-raised/40 dark:bg-surface-dark-elevated/30 border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl space-y-3">
+                  <div className="p-4 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-xs text-muted-soft dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft">
                     <Megaphone className="w-8 h-8" />
                   </div>
                   <div>
-                    <h5 className="text-xs font-black text-gray-700 dark:text-zinc-300 uppercase tracking-wider">
+                    <h5 className="text-xs font-bold text-ink-heading dark:text-on-dark uppercase tracking-wider">
                       Tidak Ada Pengumuman
                     </h5>
-                    <p className="text-[11px] text-gray-400 mt-1 max-w-xs leading-relaxed">
+                    <p className="text-xs text-muted dark:text-on-dark-muted mt-1 max-w-xs leading-relaxed">
                       Belum ada pengumuman yang aktif atau dijadwalkan pada tanggal ini.
                     </p>
                   </div>
@@ -198,7 +198,7 @@ export default function AnnouncementDetailDrawer({
                       onClose();
                       onCreateNew();
                     }}
-                    className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xs transition-all active:scale-95"
+                    className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-ink hover:bg-ink/90 dark:bg-surface-dark-elevated dark:hover:bg-surface-dark-elevated/80 text-on-ink dark:text-on-dark rounded-xl text-xs font-semibold uppercase tracking-wider shadow-xs transition-all active:scale-95 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Terbitkan Pengumuman

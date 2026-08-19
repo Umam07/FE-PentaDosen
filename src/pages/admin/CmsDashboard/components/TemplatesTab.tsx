@@ -18,13 +18,13 @@ export default function TemplatesTab({ triggerMessage }: TemplatesTabProps) {
   } = useTemplatesTab(triggerMessage);
 
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 p-6 space-y-6 shadow-sm">
+    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark p-6 space-y-6 shadow-xs">
       <div>
-        <h3 className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
-          Unggah Template Import Excel kustom
+        <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
+          Unggah Template Import Excel Kustom
         </h3>
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-          Dosen akan mengunduh template kustom yang diunggah di sini saat tombol "Download Template" diklik di modul masing-masing.
+        <p className="text-xs text-muted dark:text-on-dark-muted mt-1">
+          Dosen akan mengunduh template kustom yang diunggah di sini saat tombol &quot;Download Template&quot; diklik di modul masing-masing.
         </p>
       </div>
 
@@ -37,27 +37,27 @@ export default function TemplatesTab({ triggerMessage }: TemplatesTabProps) {
         ].map((item) => {
           const t = getTemplateForType(item.type);
           return (
-            <div key={item.type} className="p-5 border border-gray-155 dark:border-zinc-800 rounded-2xl flex flex-col justify-between gap-4 bg-gray-50/20 dark:bg-zinc-800/10">
+            <div key={item.type} className="p-5 border border-hairline-light-soft dark:border-hairline-dark-soft rounded-xl flex flex-col justify-between gap-4 bg-surface-light-raised/40 dark:bg-surface-dark-elevated/20">
               <div className="space-y-1.5">
-                <h4 className="text-xs font-black text-gray-900 dark:text-zinc-100 uppercase tracking-widest flex items-center gap-1.5">
-                  <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                <h4 className="text-xs font-bold text-ink-heading dark:text-on-dark flex items-center gap-2">
+                  <FileSpreadsheet className="w-4 h-4 text-chart-penelitian" />
                   {item.label}
                 </h4>
                 {t ? (
-                  <div className="text-[10px] font-bold text-gray-500">
-                    <p className="truncate">File aktif: <span className="font-extrabold text-gray-700 dark:text-zinc-300">{t.file_name}</span></p>
-                    <p className="mt-0.5 text-gray-400">Diunggah pada: {t.uploaded_at ? t.uploaded_at.substring(0, 16).replace('T', ' ') : ''}</p>
+                  <div className="text-xs text-muted dark:text-on-dark-muted font-mono">
+                    <p className="truncate">File aktif: <span className="font-semibold text-ink-heading dark:text-on-dark">{t.file_name}</span></p>
+                    <p className="mt-0.5 text-muted-soft dark:text-on-dark-muted/70">Diunggah pada: {t.uploaded_at ? t.uploaded_at.substring(0, 16).replace('T', ' ') : ''}</p>
                   </div>
                 ) : (
-                  <p className="text-[10px] font-bold text-amber-500 uppercase tracking-wider italic">
+                  <p className="text-xs text-warning-dark dark:text-warning italic">
                     Belum ada template kustom (menggunakan fallback program ExcelJS)
                   </p>
                 )}
               </div>
 
               <div>
-                <label className={`w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-black uppercase tracking-widest bg-white hover:bg-gray-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-gray-200 dark:border-zinc-700 rounded-xl cursor-pointer shadow-sm text-gray-700 dark:text-zinc-300 ${uploadingType === item.type ? 'opacity-50 pointer-events-none' : ''}`}>
-                  <Upload className="w-4 h-4 text-primary-500" />
+                <label className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl cursor-pointer shadow-xs text-ink-heading dark:text-on-dark transition-colors ${uploadingType === item.type ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <Upload className="w-4 h-4 text-accent dark:text-accent-on-dark" />
                   {uploadingType === item.type ? 'Uploading...' : 'Unggah File Excel'}
                   <input type="file" accept=".xlsx, .xls" className="sr-only" onChange={(e) => handleFileUpload(e, item.type)} disabled={uploadingType === item.type} />
                 </label>

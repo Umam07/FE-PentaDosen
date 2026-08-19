@@ -258,22 +258,22 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
     switch (status) {
       case 'menunggu':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-500/20">
-            <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-warning-soft text-warning-dark border border-warning-border dark:bg-warning/15 dark:text-warning dark:border-warning/30">
+            <Clock className="w-3 h-3 text-warning" />
             Menunggu
           </span>
         );
       case 'dibalas':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-500/20">
-            <MessageSquare className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-accent-soft text-accent border border-accent/20 dark:bg-accent/15 dark:text-accent-on-dark dark:border-accent/30">
+            <MessageSquare className="w-3 h-3 text-accent dark:text-accent-on-dark" />
             Dibalas
           </span>
         );
       case 'selesai':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-500/20">
-            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-success-soft text-success-dark border border-success-border dark:bg-success/15 dark:text-success-on-dark dark:border-success/30">
+            <CheckCircle2 className="w-3 h-3 text-success" />
             Selesai
           </span>
         );
@@ -298,16 +298,16 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
   return (
     <div className="space-y-5">
       {/* Top Header Bar Info */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface-light dark:bg-surface-dark p-5 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/40">
+          <div className="p-3 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-accent dark:text-accent-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft">
             <MessageSquare className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Pesan Masuk Support</h3>
+              <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">Pesan Masuk Support</h3>
             </div>
-            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
               Kelola dan respon obrolan serta kendala teknis dari civitas dosen.
             </p>
           </div>
@@ -315,7 +315,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
 
         <button
           onClick={() => fetchTickets(false)}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-750 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 text-xs font-bold transition-colors cursor-pointer shrink-0"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-colors cursor-pointer shrink-0"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>Refresh</span>
@@ -325,25 +325,25 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
       {/* Main Master-Detail Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
-        {/* SISI KIRI (MASTER): Daftar Tiket & Filter (Tampil Penuh di Mobile jika belum pilih tiket) */}
+        {/* SISI KIRI (MASTER): Daftar Tiket & Filter */}
         <div className={`lg:col-span-5 space-y-4 ${selectedTicket ? 'hidden lg:block' : 'block'}`}>
           
           {/* Search Bar & Filter Status */}
-          <div className="space-y-3 bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-2xs">
+          <div className="space-y-3 bg-surface-light dark:bg-surface-dark p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-xs">
             {/* Search Input */}
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
               <input
                 type="text"
                 placeholder="Cari nama dosen, subjek, pesan..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700/80 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="w-full pl-9 pr-8 py-2 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted hover:text-ink-heading dark:hover:text-on-dark"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -363,14 +363,14 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                   <button
                     key={tab.key}
                     onClick={() => setActiveFilter(tab.key as any)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer select-none whitespace-nowrap ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all cursor-pointer select-none whitespace-nowrap ${
                       isActive
-                        ? 'bg-primary-600 text-white shadow-2xs'
-                        : 'bg-slate-50 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700/60 hover:bg-slate-100 dark:hover:bg-zinc-750'
+                        ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark shadow-xs'
+                        : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft hover:bg-surface-light dark:hover:bg-surface-dark'
                     }`}
                   >
                     <span>{tab.label}</span>
-                    <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-zinc-300'}`}>
+                    <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold ${isActive ? 'bg-white/20 text-on-ink dark:text-on-dark' : 'bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted'}`}>
                       {tab.count}
                     </span>
                   </button>
@@ -382,9 +382,9 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
           {/* List Card Tiket Dosen */}
           <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1">
             {loading ? (
-              <div className="p-8 text-center bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800">
-                <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                <p className="text-xs text-slate-400">Memuat pesan...</p>
+              <div className="p-8 text-center bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                <p className="text-xs text-muted dark:text-on-dark-muted">Memuat pesan...</p>
               </div>
             ) : filteredTickets.length > 0 ? (
               filteredTickets.map((t) => {
@@ -399,20 +399,20 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     onClick={() => handleSelectTicket(t)}
                     className={`p-4 rounded-2xl border transition-all cursor-pointer select-none ${
                       isSelected
-                        ? 'bg-primary-50/70 dark:bg-primary-950/30 border-primary-500 shadow-xs'
-                        : 'bg-white dark:bg-zinc-900 border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
+                        ? 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark shadow-xs'
+                        : 'bg-surface-light dark:bg-surface-dark border-hairline-light-soft dark:border-hairline-dark-soft hover:border-hairline-light dark:hover:border-hairline-dark'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 flex items-center justify-center font-bold text-xs shrink-0 border border-primary-200 dark:border-primary-800">
+                        <div className="w-8 h-8 rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark flex items-center justify-center font-bold text-xs shrink-0 border border-hairline-light-soft dark:border-hairline-dark-soft">
                           {t.user?.name ? t.user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
                         </div>
                         <div className="min-w-0">
-                          <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                          <h4 className="text-xs font-bold text-ink-heading dark:text-on-dark truncate">
                             {t.user?.name || `Dosen #${t.user_id}`}
                           </h4>
-                          <p className="text-[10px] text-slate-500 dark:text-zinc-400 truncate">
+                          <p className="text-[10px] text-muted dark:text-on-dark-muted truncate">
                             {t.user?.email || 'Dosen'}
                           </p>
                         </div>
@@ -426,22 +426,22 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5">
                         {t.image_url && (
-                          <span className="inline-flex items-center gap-0.5 text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.2 rounded border border-indigo-200 dark:border-indigo-800 shrink-0">
+                          <span className="inline-flex items-center gap-0.5 text-[9px] font-bold bg-chart-hki/15 text-chart-hki px-1.5 py-0.2 rounded border border-chart-hki/30 shrink-0">
                             <ImageIcon className="w-2.5 h-2.5" /> Gambar
                           </span>
                         )}
-                        <h5 className="text-xs font-semibold text-slate-800 dark:text-zinc-200 truncate">
+                        <h5 className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate">
                           {t.subject || 'Tanpa Subjek'}
                         </h5>
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-body dark:text-on-dark-soft line-clamp-2 leading-relaxed">
                         {lastMsg.message}
                       </p>
                     </div>
 
-                    <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-zinc-800/60 flex items-center justify-between text-[10px] text-slate-400 dark:text-zinc-500">
+                    <div className="mt-2.5 pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between text-[10px] font-mono text-muted dark:text-on-dark-muted">
                       <span>{formatDate(t.created_at)}</span>
-                      <span className="font-semibold text-primary-600 dark:text-primary-400 flex items-center gap-0.5">
+                      <span className="font-sans font-semibold text-accent dark:text-accent-on-dark flex items-center gap-0.5">
                         <span>Buka Chat</span>
                         <ChevronRight className="w-3 h-3" />
                       </span>
@@ -450,42 +450,42 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                 );
               })
             ) : (
-              <div className="p-8 text-center bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800">
-                <HelpCircle className="w-8 h-8 text-slate-300 dark:text-zinc-600 mx-auto mb-2" />
-                <p className="text-xs font-bold text-slate-600 dark:text-zinc-400">Tidak ada pesan ditemukan</p>
+              <div className="p-8 text-center bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                <HelpCircle className="w-8 h-8 text-muted-soft dark:text-on-dark-muted mx-auto mb-2" />
+                <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">Tidak ada pesan ditemukan</p>
               </div>
             )}
           </div>
 
         </div>
 
-        {/* SISI KANAN (DETAIL): Ruang Percakapan Chat Embedded (Tanpa Pop-Up) */}
+        {/* SISI KANAN (DETAIL): Ruang Percakapan Chat Embedded */}
         <div className={`lg:col-span-7 ${!selectedTicket ? 'hidden lg:block' : 'block'}`}>
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden shadow-2xs min-h-[580px] flex flex-col">
+          <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-xs min-h-[580px] flex flex-col">
             
             {selectedTicket ? (
               <>
                 {/* Embedded Chat Header */}
-                <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-800/40 flex items-center justify-between gap-3">
+                <div className="p-4 sm:p-5 border-b border-hairline-light-soft dark:border-hairline-dark-soft bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     {/* Tombol kembali ke daftar (Mobile view) */}
                     <button
                       onClick={() => setSelectedTicket(null)}
-                      className="lg:hidden p-1.5 rounded-lg bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-slate-900 cursor-pointer"
+                      className="lg:hidden p-1.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark cursor-pointer"
                       title="Kembali ke Daftar Pesan"
                     >
                       <ArrowLeft className="w-4 h-4" />
                     </button>
 
-                    <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 flex items-center justify-center font-black text-sm border border-primary-200 dark:border-primary-800 shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark flex items-center justify-center font-bold text-sm border border-hairline-light-soft dark:border-hairline-dark-soft shrink-0">
                       {selectedTicket.user?.name ? selectedTicket.user.name.charAt(0).toUpperCase() : 'D'}
                     </div>
 
                     <div className="min-w-0">
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
+                      <h4 className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark truncate">
                         {selectedTicket.user?.name || `Dosen ID #${selectedTicket.user_id}`}
                       </h4>
-                      <p className="text-[11px] text-slate-500 dark:text-zinc-400 truncate">
+                      <p className="text-[11px] text-muted dark:text-on-dark-muted truncate">
                         {selectedTicket.user?.email || '-'}
                         {selectedTicket.user?.fakultas ? ` • ${selectedTicket.user.fakultas}` : ''}
                       </p>
@@ -499,7 +499,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     {selectedTicket.status !== 'selesai' && (
                       <button
                         onClick={() => handleUpdateStatus(selectedTicket.id, 'selesai')}
-                        className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold transition-colors cursor-pointer"
+                        className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-success-soft hover:bg-success-soft/80 text-success-dark dark:text-success-on-dark border border-success-border text-xs font-semibold transition-colors cursor-pointer"
                       >
                         <CheckCircle2 className="w-3 h-3" />
                         <span>Selesai</span>
@@ -509,22 +509,22 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                 </div>
 
                 {/* Subjek Info Banner */}
-                <div className="px-5 py-2.5 bg-primary-50/50 dark:bg-primary-950/20 border-b border-primary-100/50 dark:border-primary-900/30 flex items-center justify-between text-xs">
+                <div className="px-5 py-2.5 bg-surface-light-raised/70 dark:bg-surface-dark-elevated/50 border-b border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-primary-700 dark:text-primary-400 shrink-0">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted dark:text-on-dark-muted shrink-0">
                       Subjek:
                     </span>
-                    <span className="font-semibold text-slate-900 dark:text-zinc-100 truncate">
+                    <span className="font-semibold text-ink-heading dark:text-on-dark truncate">
                       {selectedTicket.subject || 'Tanpa Subjek'}
                     </span>
                   </div>
-                  <span className="text-[10px] font-medium text-slate-400 dark:text-zinc-500 shrink-0">
+                  <span className="text-[10px] font-mono text-muted dark:text-on-dark-muted shrink-0">
                     Tiket #{selectedTicket.id}
                   </span>
                 </div>
 
                 {/* Embedded Chat Body / Thread Messages */}
-                <div className="p-4 sm:p-5 flex-1 overflow-y-auto max-h-[380px] bg-slate-50/60 dark:bg-zinc-950/40 space-y-4">
+                <div className="p-4 sm:p-5 flex-1 overflow-y-auto max-h-[380px] bg-surface-light-raised/30 dark:bg-surface-dark-elevated/20 space-y-4">
                   {((selectedTicket.messages && selectedTicket.messages.length > 0)
                     ? selectedTicket.messages
                     : [
@@ -552,27 +552,27 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     return isUser ? (
                       /* Bubble Chat Dosen (Kiri untuk Admin View) */
                       <div key={msg.id || index} className="flex justify-start gap-2.5 max-w-[90%] sm:max-w-[82%] mr-auto">
-                        <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-950/80 text-primary-700 dark:text-primary-300 font-bold flex items-center justify-center text-xs shrink-0 border border-primary-200 dark:border-primary-800 shadow-2xs mt-4">
+                        <div className="w-8 h-8 rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold flex items-center justify-center text-xs shrink-0 border border-hairline-light-soft dark:border-hairline-dark-soft shadow-xs mt-4">
                           {msg.sender_name ? msg.sender_name.charAt(0).toUpperCase() : 'D'}
                         </div>
                         <div className="space-y-1 text-left min-w-0">
-                          <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-zinc-500 font-semibold px-1">
-                            <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-900/40 uppercase tracking-wider text-[9px]">
+                          <div className="flex items-center gap-1.5 text-[10px] text-muted dark:text-on-dark-muted font-semibold px-1">
+                            <span className="font-semibold text-success-dark dark:text-success-on-dark bg-success-soft px-1.5 py-0.2 rounded border border-success-border uppercase tracking-wider text-[9px]">
                               Dosen
                             </span>
                             <span>{msg.sender_name || 'Dosen Pengirim'}</span>
                             <span>•</span>
-                            <span>{formatDate(msg.created_at)}</span>
+                            <span className="font-mono">{formatDate(msg.created_at)}</span>
                           </div>
-                          <div className="bg-white dark:bg-zinc-800/90 text-slate-900 dark:text-zinc-100 p-3.5 rounded-2xl rounded-tl-xs border border-slate-200/80 dark:border-zinc-700/80 shadow-2xs text-xs leading-relaxed font-medium">
+                          <div className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark p-3.5 rounded-2xl rounded-tl-xs border border-hairline-light dark:border-hairline-dark shadow-xs text-xs leading-relaxed font-medium">
                             <p className="whitespace-pre-line">{msg.message}</p>
                             {msg.image_url && (
-                              <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-zinc-700">
-                                <div className="relative group inline-block rounded-xl overflow-hidden bg-slate-950 p-1 border border-slate-700 max-w-xs">
+                              <div className="mt-3 pt-2.5 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
+                                <div className="relative group inline-block rounded-xl overflow-hidden bg-black/80 p-1 border border-hairline-light dark:border-hairline-dark max-w-xs">
                                   <img src={msg.image_url} alt="Lampiran Dosen" className="max-h-44 w-auto object-contain rounded-lg" />
                                   <div
                                     onClick={() => setFullViewImageUrl(msg.image_url!)}
-                                    className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[11px] font-bold cursor-pointer"
+                                    className="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-xs font-semibold cursor-pointer"
                                   >
                                     <Eye className="w-4 h-4" />
                                     <span>Perbesar</span>
@@ -587,20 +587,20 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                       /* Bubble Chat Admin (Kanan untuk Admin View) */
                       <div key={msg.id || index} className="flex justify-end gap-2.5 max-w-[90%] sm:max-w-[82%] ml-auto">
                         <div className="space-y-1 text-right min-w-0">
-                          <div className="flex items-center justify-end gap-1.5 text-[10px] text-slate-400 dark:text-zinc-500 font-semibold px-1">
+                          <div className="flex items-center justify-end gap-1.5 text-[10px] text-muted dark:text-on-dark-muted font-semibold px-1">
                             <span>{msg.sender_name || 'Admin'}</span>
                             <span>•</span>
-                            <span>{formatDate(msg.created_at)}</span>
+                            <span className="font-mono">{formatDate(msg.created_at)}</span>
                           </div>
-                          <div className="bg-primary-600 dark:bg-primary-600 text-white p-3.5 rounded-2xl rounded-tr-xs shadow-2xs text-xs leading-relaxed text-left font-medium border border-primary-500/30">
+                          <div className="bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark p-3.5 rounded-2xl rounded-tr-xs shadow-xs text-xs leading-relaxed text-left font-medium border border-transparent">
                             <p className="whitespace-pre-line">{msg.message}</p>
                             {msg.image_url && (
                               <div className="mt-3 pt-2.5 border-t border-white/20">
-                                <div className="relative group inline-block rounded-xl overflow-hidden bg-slate-950 p-1 border border-white/30 max-w-xs">
+                                <div className="relative group inline-block rounded-xl overflow-hidden bg-black/80 p-1 border border-white/30 max-w-xs">
                                   <img src={msg.image_url} alt="Lampiran Admin" className="max-h-44 w-auto object-contain rounded-lg" />
                                   <div
                                     onClick={() => setFullViewImageUrl(msg.image_url!)}
-                                    className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[11px] font-bold cursor-pointer"
+                                    className="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-xs font-semibold cursor-pointer"
                                   >
                                     <Eye className="w-4 h-4" />
                                     <span>Perbesar</span>
@@ -610,7 +610,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                             )}
                           </div>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-zinc-800 text-white font-black flex items-center justify-center text-xs shrink-0 border border-slate-700 shadow-2xs mt-4">
+                        <div className="w-8 h-8 rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold flex items-center justify-center text-xs shrink-0 border border-hairline-light-soft dark:border-hairline-dark-soft shadow-xs mt-4">
                           A
                         </div>
                       </div>
@@ -619,10 +619,10 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                   <div ref={chatMessagesEndRef} />
                 </div>
 
-                {/* Form Kirim Balasan Langsung di Halaman (Non Pop-Up) */}
-                <form onSubmit={handleSendReply} className="p-4 sm:p-5 border-t border-slate-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
+                {/* Form Kirim Balasan Langsung di Halaman */}
+                <form onSubmit={handleSendReply} className="p-4 sm:p-5 border-t border-hairline-light-soft dark:border-hairline-dark-soft bg-surface-light dark:bg-surface-dark space-y-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+                    <label className="text-xs font-semibold text-ink-heading dark:text-on-dark">
                       Tulis Balasan / Instruksi dari Admin:
                     </label>
                     <textarea
@@ -630,7 +630,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                       placeholder="Ketik balasan untuk dosen pengirim..."
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
-                      className="w-full p-3 bg-slate-50 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 leading-relaxed"
+                      className="w-full p-3 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent leading-relaxed resize-none"
                     />
                   </div>
 
@@ -640,10 +640,10 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                         type="checkbox"
                         checked={markAsCompleted}
                         onChange={(e) => setMarkAsCompleted(e.target.checked)}
-                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                        className="rounded border-hairline-light dark:border-hairline-dark text-accent focus:ring-accent cursor-pointer"
                       />
-                      <span className="text-xs font-medium text-slate-700 dark:text-zinc-300">
-                        Tandai status sebagai <strong className="text-slate-900 dark:text-white">&quot;Selesai&quot;</strong>
+                      <span className="text-xs font-medium text-ink-heading dark:text-on-dark">
+                        Tandai status sebagai <strong className="text-ink-heading dark:text-on-dark">&quot;Selesai&quot;</strong>
                       </span>
                     </label>
 
@@ -651,7 +651,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                       <button
                         type="submit"
                         disabled={submittingReply || !replyText.trim()}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-ink hover:bg-ink/90 dark:bg-surface-dark-elevated dark:hover:bg-surface-dark-elevated/80 text-on-ink dark:text-on-dark text-xs font-semibold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                       >
                         <Send className="w-3.5 h-3.5" />
                         <span>{submittingReply ? 'Mengirim...' : 'Kirim Balasan'}</span>
@@ -661,15 +661,15 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                 </form>
               </>
             ) : (
-              /* Empty State (Saat Belum Ada Tiket yang Dipilih) */
+              /* Empty State */
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center my-auto">
-                <div className="w-14 h-14 bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 rounded-2xl flex items-center justify-center mb-3 border border-primary-100 dark:border-primary-900/40 shadow-2xs">
+                <div className="w-14 h-14 bg-surface-light-raised dark:bg-surface-dark-elevated text-accent dark:text-accent-on-dark rounded-2xl flex items-center justify-center mb-3 border border-hairline-light-soft dark:border-hairline-dark-soft shadow-xs">
                   <MessageSquare className="w-7 h-7" />
                 </div>
-                <h4 className="text-sm font-bold text-slate-800 dark:text-zinc-200 uppercase tracking-tight mb-1">
+                <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark uppercase tracking-tight mb-1">
                   Pilih Pesan Masuk
                 </h4>
-                <p className="text-xs text-slate-400 dark:text-zinc-500 max-w-xs leading-relaxed">
+                <p className="text-xs text-muted dark:text-on-dark-muted max-w-xs leading-relaxed">
                   Klik salah satu tiket pertanyaan dosen dari daftar di sebelah kiri untuk melihat riwayat percakapan dan membalas pesan.
                 </p>
               </div>
@@ -689,17 +689,17 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setFullViewImageUrl(null)}
-              className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+              className="fixed inset-0 bg-ink/60 dark:bg-black/80 backdrop-blur-xs"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-3 flex flex-col"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative max-w-4xl max-h-[90vh] z-10 overflow-hidden rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xl p-4 flex flex-col"
             >
-              <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-800 px-2">
-                <div className="flex items-center gap-2 text-white text-xs font-bold">
-                  <ImageIcon className="w-4 h-4 text-indigo-400" />
+              <div className="flex items-center justify-between pb-3 mb-2 border-b border-hairline-light-soft dark:border-hairline-dark-soft px-2">
+                <div className="flex items-center gap-2 text-ink-heading dark:text-on-dark text-xs font-bold">
+                  <ImageIcon className="w-4 h-4 text-accent dark:text-accent-on-dark" />
                   <span>Pratinjau Tangkapan Layar Kendala Dosen</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -707,14 +707,14 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                     href={fullViewImageUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-ink-heading dark:text-on-dark text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>Tab Baru</span>
                   </a>
                   <button
                     onClick={() => setFullViewImageUrl(null)}
-                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                    className="p-1.5 rounded-xl text-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -725,7 +725,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                 <img
                   src={fullViewImageUrl}
                   alt="Gambar Kendala Dosen"
-                  className="max-h-[80vh] w-auto max-w-full object-contain rounded-xl shadow-md border border-slate-800"
+                  className="max-h-[80vh] w-auto max-w-full object-contain rounded-xl shadow-xs border border-hairline-light-soft dark:border-hairline-dark-soft"
                 />
               </div>
             </motion.div>
