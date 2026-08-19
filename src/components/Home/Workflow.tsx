@@ -64,7 +64,7 @@ export default function Workflow() {
       title: 'Input & Ingest Portofolio',
       subtitle: 'Multi-Source Data Ingest',
       category: 'PENCATATAN TRI DHARMA',
-      description: 'Pencatatan terpusat untuk publikasi ilmiah, HKI, paten, riset, dan pengabdian melalui unggah berkas PDF atau impor massal Excel (.xlsx).',
+      description: 'Pencatatan terpusat untuk publikasi ilmiah, HKI, paten, riset, dan buku melalui unggah berkas PDF atau impor massal Excel (.xlsx).',
       icon: FileText,
       role: 'Dosen Pengampu',
       highlights: [
@@ -84,7 +84,7 @@ export default function Workflow() {
       category: 'PEMROSESAN SISTEM',
       description: 'Pembersihan data ganda berbasis DOI & Fuzzy Matching serta kalkulasi poin akumulasi KPI secara presisi.',
       icon: Settings,
-      role: 'Sistem AI Engine',
+      role: 'Sistem Backend',
       highlights: [
         'Algoritma Fuzzy Matching Bebas Duplikasi',
         'Kalkulasi Poin KPI Sesuai Bobot Aturan',
@@ -124,7 +124,7 @@ export default function Workflow() {
       highlights: [
         'Visualisasi Performa Real-time & Rangking',
         'Ekspor Rekap Laporan Format Excel (.xlsx)',
-        'Proyeksi Pencapaian Target Tri Dharma'
+        'Rekap Portofolio per Dosen & Fakultas'
       ],
       accentColor: 'amber',
       accentBg: 'bg-warning-soft dark:bg-warning/15',
@@ -191,7 +191,7 @@ export default function Workflow() {
             transition={{ duration: 0.5, delay: 0.05 }}
             className="text-3xl sm:text-4xl md:text-5xl font-black text-ink-heading dark:text-on-dark tracking-tight leading-tight mb-4"
           >
-            Alur Kerja Terpadu <span className="text-accent dark:text-accent-on-dark">Penta Dosen</span>
+            Cara Kerja <span className="text-accent dark:text-accent-on-dark">PentaDosen</span>
           </motion.h2>
 
           <motion.p
@@ -201,7 +201,7 @@ export default function Workflow() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-base md:text-lg font-medium text-body dark:text-on-dark-soft leading-relaxed max-w-2xl mx-auto"
           >
-            Proses otomatisasi 5 tahap yang menghubungkan Dosen, Admin Fakultas, dan LPPM dalam satu ekosistem produktivitas yang presisi.
+            5 tahap yang menghubungkan Dosen, Admin Fakultas, dan LPPM — dari sinkronisasi data hingga verifikasi berkas portofolio akademik.
           </motion.p>
         </div>
 

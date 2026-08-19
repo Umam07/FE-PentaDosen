@@ -38,7 +38,7 @@ export default function DepartementHeader({
               Daftar <span className="text-accent dark:text-accent-on-dark">Fakultas</span>
             </motion.h1>
             <p className="text-muted dark:text-on-dark-muted font-medium max-w-xl text-base leading-relaxed">
-              Eksplorasi ekosistem akademik di seluruh Fakultas Universitas. Data disinkronkan langsung dengan basis data kepegawaian.
+              Lihat seluruh fakultas di Universitas YARSI beserta jumlah dosen dan data portofolio akademik yang terdaftar di PentaDosen.
             </p>
           </div>
         </div>

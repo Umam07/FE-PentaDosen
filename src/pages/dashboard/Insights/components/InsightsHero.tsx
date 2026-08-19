@@ -77,8 +77,8 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
             </h1>
 
             <p className="text-body dark:text-on-dark-soft text-base sm:text-lg font-normal leading-relaxed">
-              Pantau distribusi capaian KPI, publisitas riset, dan performa akademis
-              dosen lintas fakultas secara presisi dan real-time.
+              Pantau sebaran publikasi, sitasi riset, dan portofolio Tri Dharma
+              dosen lintas fakultas dalam satu tampilan yang terintegrasi.
             </p>
 
             {onExploreClick && (

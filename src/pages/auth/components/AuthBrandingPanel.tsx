@@ -22,23 +22,23 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
         >
           <div className="space-y-4">
             <p className="text-[11px] font-bold text-accent dark:text-accent-on-dark uppercase tracking-[0.2em]">
-              Portal Akademik & KPI System
+              Platform Penelitian Dosen YARSI
             </p>
             <h1 className="text-4xl font-extrabold text-ink-heading dark:text-on-dark leading-[1.2] tracking-tight">
-              Satu Platform Untuk<br />Penelitian & KPI<br />Akademik Kampus.
+              Satu Ekosistem<br />Portofolio Tri Dharma<br />Dosen YARSI.
             </h1>
           </div>
           
           <p className="text-body dark:text-on-dark-soft text-sm leading-relaxed font-medium max-w-sm">
-            PentaDosen mengintegrasikan rekam jejak akademik, kinerja penelitian, dan monitoring KPI dalam satu interface yang modern.
+            PentaDosen membantu dosen YARSI mengelola publikasi, sitasi, dan dokumen Tri Dharma dalam satu ekosistem yang aman dan modern.
           </p>
 
           {/* Daftar Fitur */}
           <ul className="space-y-4">
             {[
-              'Sinkronisasi Google Scholar & Scopus otomatis',
-              'Visualisasi pencapaian KPI secara real-time',
-              'Penyusunan & verifikasi berkas evaluasi kinerja',
+              'Sinkronisasi data publikasi dari Google Scholar & Scopus',
+              'Kelola penelitian, pengabdian, dan HKI dalam satu tempat',
+              'Pantau rekam jejak akademik & dokumen kinerja dosen',
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-body-strong dark:text-on-dark text-sm font-medium">
                 <div className="p-0.5 bg-ink-soft dark:bg-surface-dark-elevated rounded-md text-ink dark:text-on-dark shrink-0 mt-0.5">
@@ -88,7 +88,7 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
       {/* Bottom: Hak Cipta */}
       <div className="relative z-10">
         <p className="text-muted dark:text-on-dark-muted text-[10px] font-semibold uppercase tracking-wider">
-          © 2026 PentaDosen · KPI & Research System
+          © 2026 PentaDosen · Platform Penelitian Dosen YARSI
         </p>
       </div>
     </div>

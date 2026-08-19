@@ -115,7 +115,7 @@ export default function Features() {
             transition={{ duration: 0.5 }}
             className="text-3xl sm:text-4xl md:text-5xl font-black text-ink-heading dark:text-on-dark tracking-tight leading-tight mb-4"
           >
-            Platform Terpadu Kinerja <span className="text-accent dark:text-accent-on-dark">Penta Dosen</span>
+            Semua yang Dibutuhkan <span className="text-accent dark:text-accent-on-dark">Dosen YARSI</span>
           </motion.h2>
 
           <motion.p
@@ -125,7 +125,7 @@ export default function Features() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-base md:text-lg font-medium text-body dark:text-on-dark-soft leading-relaxed max-w-2xl"
           >
-            Ekosistem terintegrasi untuk otomatisasi sinkronisasi, validasi mutu, dan analisis kinerja Tri Dharma perguruan tinggi secara real-time.
+            Dari sinkronisasi publikasi, pengelolaan dokumen Tri Dharma, hingga verifikasi berkas — semuanya tersedia dalam satu platform.
           </motion.p>
         </div>
 
@@ -373,7 +373,7 @@ export default function Features() {
 
               <div className="mt-2 h-px bg-hairline-light dark:bg-hairline-dark" />
               <div className="mt-2 flex items-center justify-between font-mono text-[10px] font-bold text-muted dark:text-on-dark-muted">
-                <span>Publikasi &middot; HKI &middot; Pengabdian</span>
+                <span>Publikasi &middot; HKI &middot; Buku</span>
                 <span className="text-success dark:text-success-on-dark">▲ 18% dari target</span>
               </div>
             </div>

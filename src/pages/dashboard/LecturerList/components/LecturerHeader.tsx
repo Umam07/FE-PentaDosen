@@ -38,7 +38,7 @@ export default function LecturerHeader({
               Direktori <span className="text-accent dark:text-accent-on-dark">Dosen</span>
             </motion.h1>
             <p className="text-muted dark:text-on-dark-muted font-medium max-w-xl text-base leading-relaxed">
-              Basis data akademis terverifikasi untuk seluruh dosen <span className="text-ink-heading dark:text-on-dark font-extrabold">Penta</span>.
+              Profil dan portofolio akademik seluruh dosen <span className="text-ink-heading dark:text-on-dark font-extrabold">Universitas YARSI</span> yang terdaftar di PentaDosen.
             </p>
           </div>
         </div>

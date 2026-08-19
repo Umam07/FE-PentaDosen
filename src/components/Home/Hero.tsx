@@ -21,8 +21,8 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-ink-heading dark:text-on-dark"
           >
-            Masa Depan Karir <br />
-            <span className="text-accent dark:text-accent-on-dark">Akademik &amp; Riset Dosen</span>
+            Portofolio Riset Dosen<br />
+            <span className="text-accent dark:text-accent-on-dark">YARSI, Lebih Rapi.</span>
           </motion.h1>
 
           {/* Subtitle - Max 20 words max readability */}
@@ -32,7 +32,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-base sm:text-lg md:text-xl font-medium text-body dark:text-on-dark-soft max-w-2xl mx-auto leading-relaxed mb-8"
           >
-            Otomatisasi sinkronisasi data <span className="text-ink-heading dark:text-on-dark font-bold">Google Scholar</span> &amp; <span className="text-ink-heading dark:text-on-dark font-bold">Scopus</span>. Kelola berkas evaluasi lebih cepat, akurat, dan transparan.
+            Sinkronisasi publikasi dari <span className="text-ink-heading dark:text-on-dark font-bold">Google Scholar</span> &amp; <span className="text-ink-heading dark:text-on-dark font-bold">Scopus</span>, kelola dokumen Tri Dharma, dan pantau rekam jejak akademik dosen dalam satu platform.
           </motion.p>
 
           {/* Feature Highlights Pills - High Contrast WCAG AA/AAA */}
@@ -43,9 +43,9 @@ export default function Hero() {
             className="flex flex-wrap items-center justify-center gap-3 mb-10"
           >
             {[
-              { label: 'Auto-Sync Scopus', icon: Database },
-              { label: 'Scoring KPI Real-time', icon: Award },
-              { label: 'Verifikasi LPPM', icon: ShieldCheck }
+              { label: 'Sinkronisasi Scholar & Scopus', icon: Database },
+              { label: 'Penelitian, Publikasi & HKI', icon: Award },
+              { label: 'Terverifikasi LPPM YARSI', icon: ShieldCheck }
             ].map((tag, idx) => (
               <span 
                 key={idx} 
