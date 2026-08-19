@@ -6,16 +6,14 @@ import { IntegrationCardProps } from '../types/konfigurasi.types';
 
 const platformStyles = {
   scholar: {
-    brandBadge: 'border-blue-200/80 bg-blue-50/80 text-blue-700 dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-blue-300',
-    brandIcon: 'border-blue-100 bg-blue-50 text-blue-600 dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-blue-400',
-    primaryButton: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white',
-    inputFocus: 'focus:border-blue-500 focus:ring-1 focus:ring-blue-500',
+    brandBadge: 'border-blue-200/60 bg-blue-50/80 text-chart-scholar dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-chart-scholar-dark',
+    brandIcon: 'border-blue-200/60 bg-blue-50/80 text-chart-scholar dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-chart-scholar-dark',
+    inputFocus: 'focus:border-chart-scholar focus:ring-2 focus:ring-chart-scholar/15',
   },
   scopus: {
-    brandBadge: 'border-orange-200/80 bg-orange-50/80 text-orange-700 dark:border-orange-900/40 dark:bg-orange-950/30 dark:text-orange-300',
-    brandIcon: 'border-orange-100 bg-orange-50 text-orange-600 dark:border-orange-900/40 dark:bg-orange-950/30 dark:text-orange-400',
-    primaryButton: 'bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white',
-    inputFocus: 'focus:border-orange-500 focus:ring-1 focus:ring-orange-500',
+    brandBadge: 'border-orange-200/60 bg-orange-50/80 text-chart-scopus dark:border-orange-900/40 dark:bg-orange-950/30 dark:text-chart-scopus-dark',
+    brandIcon: 'border-orange-200/60 bg-orange-50/80 text-chart-scopus dark:border-orange-900/40 dark:bg-orange-950/30 dark:text-chart-scopus-dark',
+    inputFocus: 'focus:border-chart-scopus focus:ring-2 focus:ring-chart-scopus/15',
   },
 };
 
@@ -70,13 +68,13 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
           </div>
 
           <span
-            className={`inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+            className={`inline-flex w-fit shrink-0 items-center gap-1.5 rounded-pill border px-2.5 py-1 text-[11px] font-semibold ${
               isSynchronized
-                ? 'border-success-border bg-success-soft text-success dark:text-success-on-dark'
+                ? 'border-success-border bg-success-soft text-success dark:border-success-on-dark/30 dark:bg-success/15 dark:text-success-on-dark'
                 : 'border-hairline-light bg-surface-light-raised text-muted dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark-muted'
             }`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${isSynchronized ? 'bg-success' : 'bg-muted'}`} />
+            <span className={`h-1.5 w-1.5 rounded-full ${isSynchronized ? 'bg-success dark:bg-success-on-dark' : 'bg-muted-soft dark:bg-on-dark-muted'}`} />
             {isSynchronized ? 'Tersinkron' : 'Belum sinkron'}
           </span>
         </div>
@@ -118,7 +116,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
                 type="button"
                 onClick={onSave}
                 disabled={saveDisabled}
-                className={`inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-4 text-xs font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${style.primaryButton}`}
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-ink px-4 text-xs font-bold text-on-ink transition-colors hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-ink dark:hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
               >
                 <Save className="h-3.5 w-3.5" />
                 Simpan
@@ -139,7 +137,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
                   type="button"
                   onClick={onDelete}
                   title="Hapus ID"
-                  className="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-error/20 bg-error/10 px-3 text-xs font-bold text-error transition-colors hover:bg-error/20 dark:border-error/30 dark:bg-error/20 dark:text-error-on-dark cursor-pointer"
+                  className="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-error-border bg-error-soft px-3 text-xs font-bold text-error transition-colors hover:bg-error/20 dark:border-error-on-dark/30 dark:bg-error/20 dark:text-error-on-dark cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Hapus
@@ -168,8 +166,8 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
 
       {/* Footer Timestamp */}
       {data?.last_synced && (
-        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-right">
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+        <div className="mt-4 pt-3 border-t border-hairline-light-soft dark:border-hairline-dark-soft text-right">
+          <p className="text-[11px] text-muted dark:text-on-dark-muted font-medium">
             Terakhir disinkronkan: {new Date(data.last_synced).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
           </p>
         </div>

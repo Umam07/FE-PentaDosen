@@ -19,28 +19,28 @@ export const ProfileCompletion: React.FC<ProfileCompletionProps> = ({
   const isComplete = completionPercent === 100;
 
   return (
-    <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div className="rounded-3xl border border-hairline-light bg-surface-light p-6 shadow-xs dark:border-hairline-dark dark:bg-surface-dark">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted dark:text-on-dark-muted">
               Kelengkapan Profil
             </h3>
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+              className={`inline-flex items-center rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold ${
                 isComplete
-                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
-                  : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300'
+                  ? 'border-success-border bg-success-soft text-success dark:border-success-on-dark/30 dark:bg-success/15 dark:text-success-on-dark'
+                  : 'border-warning-border bg-warning-soft text-warning dark:border-warning-on-dark/30 dark:bg-warning/15 dark:text-warning-on-dark'
               }`}
             >
               {isComplete ? 'Lengkap' : 'Perlu Dilengkapi'}
             </span>
           </div>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white tabular-nums">
+            <span className="text-3xl font-extrabold font-mono tracking-tight text-ink-heading dark:text-on-dark tabular-nums">
               {completionPercent}%
             </span>
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            <span className="text-xs font-medium text-muted dark:text-on-dark-muted">
               data akun terisi
             </span>
           </div>
@@ -50,7 +50,7 @@ export const ProfileCompletion: React.FC<ProfileCompletionProps> = ({
           <button
             type="button"
             onClick={() => onNavigateTab('integrasi')}
-            className="inline-flex items-center justify-center self-start sm:self-auto rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white cursor-pointer"
+            className="inline-flex items-center justify-center self-start sm:self-auto rounded-lg bg-ink px-4 py-2 text-xs font-semibold text-on-ink transition-colors hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-ink dark:hover:bg-white cursor-pointer"
           >
             Lengkapi ID Publikasi
           </button>
@@ -61,10 +61,10 @@ export const ProfileCompletion: React.FC<ProfileCompletionProps> = ({
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {completionItems.map((item, index) => (
           <div key={index} className="space-y-2">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
-                  item.done ? 'bg-emerald-500' : 'bg-transparent'
+                  item.done ? 'bg-success dark:bg-success-on-dark' : 'bg-transparent'
                 }`}
               />
             </div>
@@ -72,17 +72,17 @@ export const ProfileCompletion: React.FC<ProfileCompletionProps> = ({
               <span
                 className={`font-medium ${
                   item.done
-                    ? 'text-slate-700 dark:text-slate-200'
-                    : 'text-slate-400 dark:text-slate-500'
+                    ? 'text-body-strong dark:text-on-dark'
+                    : 'text-muted-soft dark:text-on-dark-muted'
                 }`}
               >
                 {item.label}
               </span>
               <span
-                className={`text-[11px] font-semibold ${
+                className={`text-[11px] font-semibold font-mono ${
                   item.done
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : 'text-slate-400 dark:text-slate-500'
+                    ? 'text-success dark:text-success-on-dark'
+                    : 'text-muted-soft dark:text-on-dark-muted'
                 }`}
               >
                 {item.done ? 'Terisi' : 'Belum'}

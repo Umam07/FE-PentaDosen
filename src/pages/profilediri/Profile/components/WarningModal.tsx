@@ -22,7 +22,7 @@ export const WarningModal: React.FC<WarningModalProps> = ({ show, onLengkapi, on
           onNanti();
         }
       }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-canvas-dark/60 backdrop-blur-sm"
     >
       <motion.div
         initial={{ scale: 0.96, opacity: 0, y: 12 }}
@@ -43,7 +43,7 @@ export const WarningModal: React.FC<WarningModalProps> = ({ show, onLengkapi, on
 
         {/* Header Icon */}
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400 mb-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-warning-border bg-warning-soft text-warning dark:border-warning-on-dark/30 dark:bg-warning/15 dark:text-warning-on-dark mb-4">
             <AlertCircle className="h-6 w-6" />
           </div>
 
@@ -60,28 +60,28 @@ export const WarningModal: React.FC<WarningModalProps> = ({ show, onLengkapi, on
         <div className="mt-5 space-y-2 rounded-xl border border-hairline-light bg-surface-light-raised p-3 dark:border-hairline-dark dark:bg-surface-dark-elevated">
           <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#3b6fe0]/10 text-[#3b6fe0] dark:text-[#7fa4ea]">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-blue-200/60 bg-blue-50/80 text-chart-scholar dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-chart-scholar-dark">
                 <GraduationCap className="h-4 w-4" />
               </div>
               <span className="text-xs font-semibold text-body-strong dark:text-on-dark">
                 Google Scholar ID
               </span>
             </div>
-            <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/20">
+            <span className="text-[11px] font-medium text-warning dark:text-warning-on-dark bg-warning-soft dark:bg-warning/15 px-2 py-0.5 rounded-md border border-warning-border dark:border-warning-on-dark/30">
               Belum terhubung
             </span>
           </div>
 
           <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#e07b39]/10 text-[#e07b39] dark:text-[#f09a5a]">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-orange-200/60 bg-orange-50/80 text-chart-scopus dark:border-orange-900/40 dark:bg-orange-950/30 dark:text-chart-scopus-dark">
                 <Globe className="h-4 w-4" />
               </div>
               <span className="text-xs font-semibold text-body-strong dark:text-on-dark">
                 Scopus Author ID
               </span>
             </div>
-            <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/20">
+            <span className="text-[11px] font-medium text-warning dark:text-warning-on-dark bg-warning-soft dark:bg-warning/15 px-2 py-0.5 rounded-md border border-warning-border dark:border-warning-on-dark/30">
               Belum terhubung
             </span>
           </div>

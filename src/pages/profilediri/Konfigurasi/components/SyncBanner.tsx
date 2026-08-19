@@ -17,17 +17,17 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
   const hasConfiguredId = Boolean(scholarId || scopusId);
 
   return (
-    <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
+    <section className="rounded-2xl border border-hairline-light bg-surface-light p-5 shadow-xs dark:border-hairline-dark dark:bg-surface-dark sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-primary-100 bg-primary-50 text-primary-600 dark:border-primary-900/30 dark:bg-primary-950/30 dark:text-primary-400">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-hairline-light bg-surface-light-raised text-body-strong dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark">
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </div>
           <div>
-            <h2 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
+            <h2 className="text-sm font-bold tracking-tight text-ink-heading dark:text-on-dark">
               Sinkronisasi Data Publikasi
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
               Hubungkan ID Scholar dan Scopus untuk memperbarui dokumen, sitasi, dan kalkulasi poin secara otomatis.
             </p>
           </div>
@@ -36,7 +36,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
         <button
           onClick={onSyncAll}
           disabled={loading || !hasConfiguredId}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 text-xs font-bold text-white transition-colors hover:bg-primary-700 active:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50 sm:shrink-0"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-xs font-bold text-on-ink transition-colors hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-ink dark:hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 sm:shrink-0 cursor-pointer"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
           {loading ? 'Menyinkronkan...' : 'Sinkronkan Semua'}

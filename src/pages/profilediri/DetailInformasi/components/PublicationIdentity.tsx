@@ -13,18 +13,18 @@ export const PublicationIdentity: React.FC<PublicationIdentityProps> = ({
   onNavigateTab,
 }) => {
   return (
-    <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+    <div className="rounded-3xl border border-hairline-light bg-surface-light p-6 shadow-xs dark:border-hairline-dark dark:bg-surface-dark sm:p-8">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-hairline-light bg-surface-light-raised text-body-strong dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark">
             <Globe className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm font-bold text-ink-heading dark:text-on-dark">
               Identitas Publikasi & Riset Ilmiah
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-muted dark:text-on-dark-muted">
               Integrasi akun pengindeks internasional untuk sinkronisasi dokumen & sitasi
             </p>
           </div>
@@ -34,7 +34,7 @@ export const PublicationIdentity: React.FC<PublicationIdentityProps> = ({
           <button
             type="button"
             onClick={() => onNavigateTab('integrasi')}
-            className="inline-flex items-center self-start sm:self-auto rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white cursor-pointer"
+            className="inline-flex items-center self-start sm:self-auto rounded-lg border border-hairline-light bg-surface-light-raised px-3.5 py-1.5 text-xs font-semibold text-body-strong transition-colors hover:bg-surface-light hover:text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark dark:hover:bg-surface-dark cursor-pointer"
           >
             Kelola di Konfigurasi ID
           </button>

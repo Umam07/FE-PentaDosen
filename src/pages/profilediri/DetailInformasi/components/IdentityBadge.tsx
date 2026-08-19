@@ -38,25 +38,25 @@ export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
   const profileUrl = getProfileUrl();
 
   return (
-    <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 transition-all hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
+    <div className="flex flex-col justify-between rounded-2xl border border-hairline-light bg-surface-light p-5 transition-all hover:border-ink-border dark:border-hairline-dark dark:bg-surface-dark dark:hover:border-hairline-dark-soft">
       <div>
         {/* Top Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div
-              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${
                 platform === 'scholar'
-                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400'
-                  : 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400'
+                  ? 'border-blue-200/60 bg-blue-50/80 text-chart-scholar dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-chart-scholar-dark'
+                  : 'border-orange-200/60 bg-orange-50/80 text-chart-scopus dark:border-orange-900/40 dark:bg-orange-950/30 dark:text-chart-scopus-dark'
               }`}
             >
               <Icon className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+              <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">
                 {label}
               </h4>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] text-muted dark:text-on-dark-muted">
                 {description}
               </p>
             </div>
@@ -64,15 +64,15 @@ export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
 
           {/* Status Badge */}
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+            className={`inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold ${
               isConnected
-                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
-                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                ? 'border-success-border bg-success-soft text-success dark:border-success-on-dark/30 dark:bg-success/15 dark:text-success-on-dark'
+                : 'border-hairline-light bg-surface-light-raised text-muted dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark-muted'
             }`}
           >
             <span
               className={`h-1.5 w-1.5 rounded-full ${
-                isConnected ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-slate-500'
+                isConnected ? 'bg-success dark:bg-success-on-dark' : 'bg-muted-soft dark:bg-on-dark-muted'
               }`}
             />
             {isConnected ? 'Terhubung' : 'Belum Dihubungkan'}
@@ -80,17 +80,17 @@ export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
         </div>
 
         {/* Value Box */}
-        <div className="mt-4 rounded-xl border border-slate-200/60 bg-slate-50/70 p-3 dark:border-slate-800 dark:bg-slate-800/40">
+        <div className="mt-4 rounded-xl border border-hairline-light bg-surface-light-raised p-3 dark:border-hairline-dark dark:bg-surface-dark-elevated">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-muted dark:text-on-dark-muted">
                 {platform === 'scholar' ? 'Google Scholar ID' : 'Scopus Author ID'}
               </span>
               <p
                 className={`mt-0.5 truncate font-mono text-sm font-semibold ${
                   isConnected
-                    ? 'text-slate-900 dark:text-slate-100'
-                    : 'italic text-slate-400 dark:text-slate-500 font-normal'
+                    ? 'text-ink-heading dark:text-on-dark'
+                    : 'italic text-muted-soft dark:text-on-dark-muted font-normal'
                 }`}
                 title={value || 'Belum dikonfigurasi'}
               >
@@ -104,10 +104,10 @@ export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
                   type="button"
                   onClick={handleCopy}
                   title={copied ? 'Tersalin!' : 'Salin ID'}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-xs dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-light hover:text-ink-heading hover:shadow-xs dark:text-on-dark-muted dark:hover:bg-surface-dark dark:hover:text-on-dark transition-colors"
                 >
                   {copied ? (
-                    <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <Check className="h-4 w-4 text-success dark:text-success-on-dark" />
                   ) : (
                     <Copy className="h-4 w-4" />
                   )}
@@ -119,7 +119,7 @@ export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
                     target="_blank"
                     rel="noopener noreferrer"
                     title={`Buka profil ${label}`}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-xs dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-light hover:text-ink-heading hover:shadow-xs dark:text-on-dark-muted dark:hover:bg-surface-dark dark:hover:text-on-dark transition-colors"
                   >
                     <ExternalLink className="h-4 w-4" />
                   </a>
@@ -132,14 +132,14 @@ export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
 
       {/* Action Footer */}
       {onNavigateTab && (
-        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-          <span className="text-[11px] text-slate-400 dark:text-slate-500">
+        <div className="mt-4 pt-3 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+          <span className="text-[11px] text-muted dark:text-on-dark-muted">
             {isConnected ? 'Sinkronisasi otomatis aktif' : 'Hubungkan untuk menarik data riset'}
           </span>
           <button
             type="button"
             onClick={() => onNavigateTab('integrasi')}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover dark:text-accent-on-dark dark:hover:text-white transition-colors cursor-pointer"
           >
             <span>{isConnected ? 'Kelola ID' : 'Hubungkan Sekarang'}</span>
             <ArrowUpRight className="h-3.5 w-3.5" />
