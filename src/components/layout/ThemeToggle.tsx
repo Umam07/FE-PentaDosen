@@ -53,21 +53,18 @@ export default function ThemeToggle({ isDark, setIsDark }: ThemeToggleProps) {
   return (
     <button
       onClick={handleToggle}
-      className={`relative flex items-center justify-center w-10 h-10 rounded-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border transition-colors flex-shrink-0 active:scale-95 shadow-sm ${
-        isDark 
-          ? 'border-zinc-800 hover:bg-zinc-800' 
-          : 'border-gray-200 hover:bg-gray-100'
-      }`}
+      className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-200 transition-all flex-shrink-0 active:scale-95 shadow-2xs cursor-pointer"
       aria-label="Toggle theme"
     >
       <div className="flex items-center justify-center">
         {isDark ? (
-          <Moon className="w-5 h-5 text-primary-400" />
+          <Moon className="w-[18px] h-[18px] text-slate-200" />
         ) : (
-          <Sun className="w-5 h-5 text-amber-500" />
+          <Sun className="w-[18px] h-[18px] text-amber-500" />
         )}
       </div>
     </button>
   );
 }
+
 

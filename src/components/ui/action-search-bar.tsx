@@ -58,31 +58,31 @@ interface ActionSearchBarProps {
 
 const roleMenus: Record<string, { label: string; path: string; icon: React.ReactNode; category: string }[]> = {
   "dosen": [
-    { label: "Dashboard Poin", path: "/lecturer-dashboard", icon: <Activity className="h-4 w-4 text-emerald-500" />, category: "Menu Utama" },
-    { label: "Publikasi Jurnal Internasional", path: "/publication?kategori=Jurnal Internasional", icon: <FileText className="h-4 w-4 text-blue-500" />, category: "Publikasi" },
-    { label: "Publikasi Jurnal Nasional", path: "/publication?kategori=Jurnal Nasional", icon: <FileText className="h-4 w-4 text-indigo-500" />, category: "Publikasi" },
-    { label: "HKI (Hak Kekayaan Intelektual)", path: "/hki", icon: <Award className="h-4 w-4 text-amber-500" />, category: "Karya Ilmiah" },
-    { label: "Penelitian Dosen", path: "/research", icon: <Beaker className="h-4 w-4 text-purple-500" />, category: "Karya Ilmiah" },
-    { label: "Buku", path: "/buku", icon: <Book className="h-4 w-4 text-pink-500" />, category: "Karya Ilmiah" },
-    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+    { label: "Dashboard Poin", path: "/lecturer-dashboard", icon: <Activity className="h-4 w-4" />, category: "Menu Utama" },
+    { label: "Publikasi Jurnal Internasional", path: "/publication?kategori=Jurnal Internasional", icon: <FileText className="h-4 w-4" />, category: "Publikasi" },
+    { label: "Publikasi Jurnal Nasional", path: "/publication?kategori=Jurnal Nasional", icon: <FileText className="h-4 w-4" />, category: "Publikasi" },
+    { label: "HKI (Hak Kekayaan Intelektual)", path: "/hki", icon: <Award className="h-4 w-4" />, category: "Karya Ilmiah" },
+    { label: "Penelitian Dosen", path: "/research", icon: <Beaker className="h-4 w-4" />, category: "Karya Ilmiah" },
+    { label: "Buku", path: "/buku", icon: <Book className="h-4 w-4" />, category: "Karya Ilmiah" },
+    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4" />, category: "Layanan" },
   ],
   "admin penelitian": [
-    { label: "Panel CMS (Master & User)", path: "/admin/cms", icon: <ShieldAlert className="h-4 w-4 text-red-500" />, category: "Administrator" },
-    { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
-    { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4 text-emerald-500" />, category: "Persetujuan" },
-    { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4 text-violet-500" />, category: "Dokumen" },
-    { label: "Daftar Dosen Universitas", path: "/admin/lecturers", icon: <Users className="h-4 w-4 text-blue-500" />, category: "Keanggotaan" },
-    { label: "Sinkronisasi Data API", path: "/admin/sync", icon: <RefreshCw className="h-4 w-4 text-orange-500" />, category: "Integrasi" },
-    { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4 text-rose-500" />, category: "Sistem Audit" },
-    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+    { label: "Panel CMS (Master & User)", path: "/admin/cms", icon: <ShieldAlert className="h-4 w-4" />, category: "Administrator" },
+    { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4" />, category: "Manajemen Dokumen" },
+    { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4" />, category: "Persetujuan" },
+    { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4" />, category: "Dokumen" },
+    { label: "Daftar Dosen Universitas", path: "/admin/lecturers", icon: <Users className="h-4 w-4" />, category: "Keanggotaan" },
+    { label: "Sinkronisasi Data API", path: "/admin/sync", icon: <RefreshCw className="h-4 w-4" />, category: "Integrasi" },
+    { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4" />, category: "Sistem Audit" },
+    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4" />, category: "Layanan" },
   ],
   "admin fakultas": [
-    { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4 text-cyan-500" />, category: "Manajemen Dokumen" },
-    { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4 text-emerald-500" />, category: "Persetujuan" },
-    { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4 text-violet-500" />, category: "Dokumen" },
-    { label: "Daftar Dosen Fakultas", path: "/admin/lecturers", icon: <Users className="h-4 w-4 text-blue-500" />, category: "Keanggotaan" },
-    { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4 text-rose-500" />, category: "Sistem Audit" },
-    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4 text-slate-500" />, category: "Layanan" },
+    { label: "Semua Dokumen Dosen", path: "/admin/documents/all", icon: <FolderOpen className="h-4 w-4" />, category: "Manajemen Dokumen" },
+    { label: "Verifikasi Dokumen", path: "/admin/verify", icon: <CheckSquare className="h-4 w-4" />, category: "Persetujuan" },
+    { label: "Input Dosen Mandiri", path: "/admin/input-document", icon: <PlusCircle className="h-4 w-4" />, category: "Dokumen" },
+    { label: "Daftar Dosen Fakultas", path: "/admin/lecturers", icon: <Users className="h-4 w-4" />, category: "Keanggotaan" },
+    { label: "Log Aktivitas Sistem", path: "/admin/activity-logs", icon: <Activity className="h-4 w-4" />, category: "Sistem Audit" },
+    { label: "Panduan & Bantuan", path: "/help", icon: <HelpCircle className="h-4 w-4" />, category: "Layanan" },
   ]
 };
 
@@ -125,7 +125,6 @@ function ActionSearchBar({
 
   // Tentukan role user yang sedang login (default: dosen)
   const userRole = user?.role?.toLowerCase() || "dosen";
-  // Normalisasi ke key yang ada di roleMenus, fallback ke "dosen"
   const resolvedRole = roleMenus[userRole] ? userRole : "dosen";
 
   // Keyboard shortcut listener
@@ -185,15 +184,15 @@ function ActionSearchBar({
                   value={menu.label}
                   onSelect={() => handleItemSelect(menu.path)}
                 >
-                  <div className="flex items-center gap-4 w-full">
-                    <div className="p-2 rounded-xl bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350 shrink-0">
+                  <div className="flex items-center gap-3.5 w-full">
+                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
                       {menu.icon}
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="font-semibold text-gray-900 dark:text-zinc-100 text-sm">
+                      <span className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
                         {menu.label}
                       </span>
-                      <span className="text-xs text-gray-400 dark:text-zinc-500">
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">
                         {menu.category}
                       </span>
                     </div>
@@ -213,15 +212,15 @@ function ActionSearchBar({
                   onSelect={() => handleItemSelect(act.path || "", act)}
                 >
                   <div className="flex items-center gap-3 w-full">
-                    <div className="p-2 rounded-xl bg-ink-soft dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft shrink-0">
+                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
                       {act.icon}
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <span className="font-semibold text-gray-900 dark:text-zinc-100 text-sm">
+                      <span className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
                         {act.label}
                       </span>
                       {act.description && (
-                        <span className="text-xs text-gray-400 dark:text-zinc-500">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
                           {act.description}
                         </span>
                       )}
@@ -241,13 +240,13 @@ function ActionSearchBar({
       {/* Search Trigger Button */}
       <button
         onClick={() => setOpen(true)}
-        className="w-full h-9 flex items-center justify-between px-3 py-1.5 text-xs lg:text-sm rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark transition-all text-muted dark:text-on-dark-muted shadow-inner group overflow-hidden"
+        className="w-full h-10 flex items-center justify-between px-3.5 py-2 text-xs rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850 hover:bg-white dark:hover:bg-slate-800 transition-all text-slate-500 dark:text-slate-400 shadow-2xs group overflow-hidden cursor-pointer"
       >
-        <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-          <Search className="h-4 w-4 text-muted group-hover:text-ink-heading dark:group-hover:text-on-dark transition-colors shrink-0" />
+        <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+          <Search className="h-4 w-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0" />
           <span className="truncate">{placeholder}</span>
         </div>
-        <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 font-mono text-[9px] font-bold text-gray-400 dark:text-zinc-500 shadow-sm shrink-0">
+        <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-1.5 font-mono text-[10px] font-semibold text-slate-500 dark:text-slate-400 shadow-2xs shrink-0">
           Ctrl+K
         </kbd>
       </button>
@@ -268,17 +267,17 @@ function ActionSearchBar({
                   value={menu.label}
                   onSelect={() => handleItemSelect(menu.path)}
                 >
-                  <div className="flex items-center gap-4 w-full">
-                    <div className="p-2 rounded-xl bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350 shrink-0">
+                  <div className="flex items-center gap-3.5 w-full">
+                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
                       {menu.icon}
                     </div>
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-bold tracking-tight">{menu.label}</span>
-                      <span className="text-xs font-medium text-gray-400 lowercase tracking-normal">
+                      <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white tracking-tight">{menu.label}</span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">
                         {menu.category}
                       </span>
                     </div>
-                    <ChevronRight className="ml-auto w-4 h-4 text-gray-350 dark:text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ChevronRight className="ml-auto w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </CommandItem>
               ))}
@@ -294,20 +293,20 @@ function ActionSearchBar({
                   value={act.label}
                   onSelect={() => handleItemSelect(act.path || "", act)}
                 >
-                  <div className="flex items-center gap-4 w-full">
-                    <div className="p-2 rounded-xl bg-primary-500/10 text-primary-500 shrink-0">
-                      <User className="h-5 w-5" />
+                  <div className="flex items-center gap-3.5 w-full">
+                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+                      <User className="h-4 w-4" />
                     </div>
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-bold tracking-tight">{act.label}</span>
+                      <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white tracking-tight">{act.label}</span>
                       {act.description && (
-                        <span className="text-xs font-medium text-gray-400 lowercase tracking-normal">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
                           {act.description}
                         </span>
                       )}
                     </div>
                     {act.end && (
-                      <span className="ml-auto text-[9px] font-black tracking-widest text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded">
+                      <span className="ml-auto text-[10px] font-semibold font-mono text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700/80">
                         {act.end}
                       </span>
                     )}
@@ -323,14 +322,14 @@ function ActionSearchBar({
               value="Pengaturan Profil Diri"
               onSelect={() => handleItemSelect("/profile")}
             >
-              <div className="flex items-center gap-4 w-full">
-                <div className="p-2 rounded-xl bg-gray-55 dark:bg-zinc-800 text-gray-700 dark:text-zinc-350 shrink-0">
-                  <User className="h-5 w-5 text-blue-500" />
+              <div className="flex items-center gap-3.5 w-full">
+                <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+                  <User className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-bold tracking-tight">Pengaturan Profil Diri</span>
-                  <span className="text-xs font-medium text-gray-400 lowercase tracking-normal">
-                    kelola profil dan integrasi ID Scopus/Scholar
+                  <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white tracking-tight">Pengaturan Profil Diri</span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Kelola profil dan integrasi ID Scopus/Scholar
                   </span>
                 </div>
                  <CommandShortcut>Ctrl+I</CommandShortcut>
@@ -343,14 +342,14 @@ function ActionSearchBar({
                  window.dispatchEvent(new CustomEvent("penta-logout"));
                }}
             >
-              <div className="flex items-center gap-4 w-full">
-                <div className="p-2 rounded-xl bg-red-500/10 text-red-500 shrink-0">
-                  <LogOut className="h-5 w-5" />
+              <div className="flex items-center gap-3.5 w-full">
+                <div className="p-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200/60 dark:border-red-800/60 shrink-0">
+                  <LogOut className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-bold text-red-650 dark:text-red-400 tracking-tight">Keluar dari Sistem</span>
-                  <span className="text-xs font-medium text-red-400/70 lowercase tracking-normal">
-                    akhiri sesi login saat ini
+                  <span className="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400 tracking-tight">Keluar dari Sistem</span>
+                  <span className="text-[11px] text-red-500/70 dark:text-red-400/70">
+                    Akhiri sesi login saat ini
                   </span>
                 </div>
                  <CommandShortcut>Ctrl+Shift+Q</CommandShortcut>
@@ -364,3 +363,4 @@ function ActionSearchBar({
 }
 
 export { ActionSearchBar };
+
