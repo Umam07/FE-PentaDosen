@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  X, History, Loader2, Upload, CheckCircle, XCircle,
+  X, History, Loader2, Upload, CheckCircle2,
   ShieldCheck, Building2, University, User, Clock,
   FileCheck, AlertCircle, RefreshCw
 } from 'lucide-react';
@@ -31,65 +31,65 @@ function getStepConfig(action: string) {
   if (a.includes('diunggah') || a.includes('upload')) {
     return {
       icon: Upload,
-      bgGradient: 'from-blue-500 to-blue-600',
-      ringColor: 'ring-blue-100 dark:ring-blue-900/40',
-      cardBg: 'bg-blue-50/60 dark:bg-blue-950/20',
-      cardBorder: 'border-blue-100 dark:border-blue-900/30',
-      badgeBg: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+      bgColor: 'bg-blue-600 dark:bg-blue-500',
+      iconColor: 'text-white',
+      cardBg: 'bg-zinc-50 dark:bg-zinc-800/40',
+      cardBorder: 'border-zinc-200/80 dark:border-zinc-800',
+      badgeBg: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border-blue-200 dark:border-blue-800/40',
       label: 'Dosen',
     };
   }
   if (a.includes('diperbarui') || a.includes('update')) {
     return {
       icon: RefreshCw,
-      bgGradient: 'from-violet-500 to-violet-600',
-      ringColor: 'ring-violet-100 dark:ring-violet-900/40',
-      cardBg: 'bg-violet-50/60 dark:bg-violet-950/20',
-      cardBorder: 'border-violet-100 dark:border-violet-900/30',
-      badgeBg: 'bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300',
+      bgColor: 'bg-violet-600 dark:bg-violet-500',
+      iconColor: 'text-white',
+      cardBg: 'bg-zinc-50 dark:bg-zinc-800/40',
+      cardBorder: 'border-zinc-200/80 dark:border-zinc-800',
+      badgeBg: 'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300 border-violet-200 dark:border-violet-800/40',
       label: 'Dosen',
     };
   }
   if (a.includes('verifikasi fakultas') || a.includes('diverifikasi fakultas')) {
     return {
       icon: Building2,
-      bgGradient: 'from-indigo-500 to-indigo-600',
-      ringColor: 'ring-indigo-100 dark:ring-indigo-900/40',
-      cardBg: 'bg-indigo-50/60 dark:bg-indigo-950/20',
-      cardBorder: 'border-indigo-100 dark:border-indigo-900/30',
-      badgeBg: 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300',
+      bgColor: 'bg-indigo-600 dark:bg-indigo-500',
+      iconColor: 'text-white',
+      cardBg: 'bg-zinc-50 dark:bg-zinc-800/40',
+      cardBorder: 'border-zinc-200/80 dark:border-zinc-800',
+      badgeBg: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/40',
       label: 'Admin Fakultas',
     };
   }
   if (a.includes('disetujui') || a.includes('approved') || a.includes('lppm') || a.includes('penelitian')) {
     return {
       icon: ShieldCheck,
-      bgGradient: 'from-emerald-500 to-emerald-600',
-      ringColor: 'ring-emerald-100 dark:ring-emerald-900/40',
-      cardBg: 'bg-emerald-50/60 dark:bg-emerald-950/20',
-      cardBorder: 'border-emerald-100 dark:border-emerald-900/30',
-      badgeBg: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+      bgColor: 'bg-emerald-600 dark:bg-emerald-500',
+      iconColor: 'text-white',
+      cardBg: 'bg-zinc-50 dark:bg-zinc-800/40',
+      cardBorder: 'border-zinc-200/80 dark:border-zinc-800',
+      badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/40',
       label: 'Admin Penelitian',
     };
   }
   if (a.includes('ditolak') || a.includes('reject')) {
     return {
-      icon: XCircle,
-      bgGradient: 'from-red-500 to-red-600',
-      ringColor: 'ring-red-100 dark:ring-red-900/40',
-      cardBg: 'bg-red-50/60 dark:bg-red-950/20',
-      cardBorder: 'border-red-100 dark:border-red-900/30',
-      badgeBg: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
-      label: a.includes('lppm') || a.includes('penelitian') ? 'Admin Penelitian' : 'Admin Fakultas',
+      icon: AlertCircle,
+      bgColor: 'bg-rose-600 dark:bg-rose-500',
+      iconColor: 'text-white',
+      cardBg: 'bg-rose-50/40 dark:bg-rose-950/20',
+      cardBorder: 'border-rose-200/80 dark:border-rose-900/30',
+      badgeBg: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200 dark:border-rose-800/40',
+      label: a.includes('lppm') || a.includes('penelitian') ? 'Admin LPPM' : 'Admin Fakultas',
     };
   }
   return {
     icon: FileCheck,
-    bgGradient: 'from-gray-400 to-gray-500',
-    ringColor: 'ring-gray-100 dark:ring-zinc-800',
-    cardBg: 'bg-gray-50/60 dark:bg-zinc-800/50',
-    cardBorder: 'border-gray-100 dark:border-zinc-700',
-    badgeBg: 'bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-zinc-300',
+    bgColor: 'bg-zinc-600 dark:bg-zinc-500',
+    iconColor: 'text-white',
+    cardBg: 'bg-zinc-50 dark:bg-zinc-800/40',
+    cardBorder: 'border-zinc-200/80 dark:border-zinc-800',
+    badgeBg: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
     label: 'Sistem',
   };
 }
@@ -133,197 +133,140 @@ export function DocumentHistoryModal({ isOpen, onClose, docId, title }: Document
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 sm:p-6">
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-gray-950/70 backdrop-blur-md"
+            className="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm"
           />
 
-          {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 24 }}
+            initial={{ opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 24 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-xl bg-white dark:bg-zinc-950 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[88vh] border border-gray-100 dark:border-zinc-800"
+            exit={{ opacity: 0, scale: 0.95, y: 16 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="relative w-full max-w-xl bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[88vh] border border-zinc-200 dark:border-zinc-800 z-10"
           >
-            {/* ── Header ── */}
-            <div className="relative px-7 pt-7 pb-5 bg-gradient-to-br from-slate-50 to-white dark:from-zinc-900 dark:to-zinc-950 border-b border-gray-100/80 dark:border-zinc-800 flex-shrink-0 overflow-hidden">
-              {/* Decorative blobs */}
-              <div className="absolute -top-10 -right-10 w-36 h-36 bg-primary-500/5 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -bottom-8 -left-8 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="flex items-start justify-between gap-4 relative">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl shadow-lg shadow-primary-500/20">
-                    <History className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">
-                      Riwayat Dokumen
-                    </h3>
-                    <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-0.5 line-clamp-1 max-w-[260px]">
-                      {title}
-                    </p>
-                  </div>
+            <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/80 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-lg">
+                  <History className="w-5 h-5" />
                 </div>
-                <button
-                  onClick={onClose}
-                  className="shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-xl transition-all"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                    Riwayat Perjalanan Dokumen
+                  </h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-1 max-w-sm">
+                    {title}
+                  </p>
+                </div>
               </div>
-
-              {!loading && history.length > 0 && (
-                <div className="mt-4 flex items-center gap-2">
-                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-zinc-500">
-                    Total Aktivitas:
-                  </span>
-                  <span className="text-[9px] font-black bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    {history.length} Langkah
-                  </span>
-                </div>
-              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-2 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                aria-label="Tutup Riwayat"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            {/* ── Body ── */}
-            <div className="p-6 overflow-y-auto flex-1">
+            <div className="p-6 overflow-y-auto flex-1 space-y-4">
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-16 gap-4">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-full bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center">
-                      <Loader2 className="w-7 h-7 animate-spin text-primary-500" />
-                    </div>
-                    <div className="absolute inset-0 rounded-full bg-primary-500/10 animate-ping" />
-                  </div>
-                  <p className="text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-[0.2em]">
-                    Memuat Riwayat...
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                  <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
+                  <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                    Memuat Riwayat Dokumen...
                   </p>
                 </div>
               ) : history.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="w-16 h-16 bg-gray-50 dark:bg-zinc-800 rounded-[1.25rem] flex items-center justify-center mb-4 shadow-inner">
-                    <History className="w-8 h-8 text-gray-200 dark:text-zinc-600" />
+                  <div className="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 rounded-xl flex items-center justify-center mb-3">
+                    <History className="w-6 h-6 text-zinc-400" />
                   </div>
-                  <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
-                    Belum ada riwayat
+                  <p className="text-sm font-bold text-zinc-700 dark:text-zinc-300">
+                    Belum ada riwayat tercatat
                   </p>
-                  <p className="text-[10px] font-bold text-gray-300 dark:text-zinc-600 uppercase tracking-wider mt-1">
-                    Aktivitas akan tercatat di sini
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                    Semua jejak verifikasi dan aksi dokumen akan tampil di sini.
                   </p>
                 </div>
               ) : (
-                <div className="relative">
-                  {/* Vertical connector */}
-                  <div className="absolute left-[27px] top-7 bottom-7 w-0.5 bg-gradient-to-b from-gray-200 via-gray-100 to-transparent dark:from-zinc-700 dark:via-zinc-800 dark:to-transparent" />
+                <div className="relative pl-6 space-y-4 pt-1">
+                  <div className="absolute left-[11px] top-3 bottom-3 w-px bg-zinc-200 dark:bg-zinc-800" />
 
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     {history.map((item, idx) => {
                       const cfg = getStepConfig(item.action);
                       const StepIcon = cfg.icon;
                       const RoleIcon = getRoleIcon(item.user?.role);
                       const { date, time } = formatDateTime(item.created_at);
-                      const isLast = idx === history.length - 1;
+                      const isLatest = idx === history.length - 1;
 
                       return (
-                        <motion.div
+                        <div
                           key={item.id}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.07, duration: 0.28, ease: 'easeOut' }}
-                          className="relative flex items-start gap-4"
+                          className="relative flex items-start gap-3"
                         >
-                          {/* Step icon */}
-                          <div className={`relative z-10 shrink-0 w-[54px] h-[54px] flex items-center justify-center rounded-2xl bg-gradient-to-br ${cfg.bgGradient} shadow-lg ring-4 ${cfg.ringColor}`}>
-                            <StepIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
-                            {isLast && (
-                              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-white dark:bg-zinc-950 flex items-center justify-center">
-                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                              </span>
-                            )}
+                          <div className={`absolute -left-6 top-1.5 w-6 h-6 rounded-full flex items-center justify-center ${cfg.bgColor} ${cfg.iconColor} border-2 border-white dark:border-zinc-900 z-10`}>
+                            <StepIcon className="w-3 h-3" />
                           </div>
 
-                          {/* Card */}
-                          <div className={`flex-1 ${cfg.cardBg} border ${cfg.cardBorder} rounded-2xl p-4 min-w-0`}>
-                            {/* Title + badge */}
+                          <div className={`flex-1 ${cfg.cardBg} border ${cfg.cardBorder} rounded-xl p-3.5 min-w-0 ${isLatest ? 'shadow-sm' : ''}`}>
                             <div className="flex items-start justify-between gap-2 flex-wrap">
-                              <p className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight leading-snug">
-                                {item.action}
-                              </p>
-                              <span className={`shrink-0 text-[8px] font-black px-2 py-1 rounded-lg uppercase tracking-wider ${cfg.badgeBg}`}>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                                  {item.action}
+                                </p>
+                                {isLatest && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
+                                    Terkini
+                                  </span>
+                                )}
+                              </div>
+                              <span className={`shrink-0 text-[9px] font-bold px-2 py-0.5 rounded border ${cfg.badgeBg}`}>
                                 {cfg.label}
                               </span>
                             </div>
 
-                            {/* Actor + timestamp */}
-                            <div className="flex items-center flex-wrap gap-2 mt-2.5">
-                              <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
-                                <RoleIcon className="w-3.5 h-3.5 shrink-0 opacity-70" />
+                            <div className="flex items-center flex-wrap gap-2 mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">
+                              <div className="flex items-center gap-1 font-medium text-zinc-700 dark:text-zinc-300">
+                                <RoleIcon className="w-3 h-3 text-zinc-400 shrink-0" />
                                 <span>{item.user?.name || 'Sistem'}</span>
                               </div>
-                              <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-zinc-600 shrink-0" />
-                              <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-                                <Clock className="w-3 h-3 shrink-0 opacity-60" />
+                              <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                              <div className="flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-zinc-400 shrink-0" />
                                 <span>{date}</span>
-                                <span className="font-black bg-white/80 dark:bg-zinc-900/70 px-1.5 py-0.5 rounded-md border border-gray-100 dark:border-zinc-700/50">
-                                  {time}
-                                </span>
+                                <span>({time})</span>
                               </div>
                             </div>
 
-                            {/* Notes */}
                             {item.notes && (
-                              <div className="mt-3 flex items-start gap-2.5 p-3 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/40 rounded-xl">
-                                <AlertCircle className="w-3.5 h-3.5 text-red-500 shrink-0 mt-0.5" />
-                                <div>
-                                  <p className="text-[9px] font-black uppercase tracking-wider text-red-500 mb-1">Catatan Penolakan</p>
-                                  <p className="text-xs font-semibold text-red-700 dark:text-red-300 leading-relaxed">{item.notes}</p>
-                                </div>
+                              <div className="mt-2.5 p-2.5 bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/70 dark:border-rose-900/30 rounded-lg">
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-0.5">
+                                  Catatan Penolakan / Feedback
+                                </p>
+                                <p className="text-xs font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed">
+                                  {item.notes}
+                                </p>
                               </div>
                             )}
                           </div>
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </div>
-
-                  {/* Final status tail */}
-                  {history.length > 0 && (() => {
-                    const last = history[history.length - 1];
-                    const isApproved = last.action.toLowerCase().includes('disetujui');
-                    const isRejected = last.action.toLowerCase().includes('ditolak');
-                    if (!isApproved && !isRejected) return null;
-                    return (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: history.length * 0.07 + 0.1 }}
-                        className={`mt-5 ml-[70px] flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-[10px] font-black uppercase tracking-wider ${
-                          isApproved
-                            ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400'
-                            : 'bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400'
-                        }`}
-                      >
-                        {isApproved
-                          ? <><CheckCircle className="w-4 h-4 shrink-0" /> Dokumen telah disetujui sepenuhnya</>
-                          : <><XCircle className="w-4 h-4 shrink-0" /> Dokumen ditolak — perlu perbaikan</>
-                        }
-                      </motion.div>
-                    );
-                  })()}
                 </div>
               )}
             </div>
 
-            {/* ── Footer ── */}
-            <div className="px-6 py-4 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex-shrink-0">
+            <div className="px-6 py-3.5 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/80 flex justify-end">
               <button
+                type="button"
                 onClick={onClose}
-                className="w-full py-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-600 dark:text-zinc-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                className="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-xl text-xs font-bold transition-colors"
               >
                 Tutup
               </button>
