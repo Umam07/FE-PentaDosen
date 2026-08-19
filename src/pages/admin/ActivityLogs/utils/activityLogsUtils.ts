@@ -23,15 +23,15 @@ export const getInitials = (name: string): string => {
 export const getUserBg = (role: string): string => {
   const r = role?.toLowerCase() || '';
   if (r.includes('penelitian') || r.includes('lppm')) {
-    return 'bg-indigo-50 text-indigo-700 border-indigo-200/60 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/40';
+    return 'bg-accent-soft text-accent border-accent/20 dark:bg-accent-soft/20 dark:text-accent-on-dark dark:border-accent/30';
   }
   if (r.includes('fakultas')) {
-    return 'bg-sky-50 text-sky-700 border-sky-200/60 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/40';
+    return 'bg-chart-scholar/10 text-chart-scholar border-chart-scholar/20 dark:text-chart-scholar-dark dark:border-chart-scholar/30';
   }
   if (r.includes('dosen')) {
-    return 'bg-emerald-50 text-emerald-700 border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40';
+    return 'bg-success-soft text-success-dark border-success-border dark:bg-success/15 dark:text-success-on-dark dark:border-success/30';
   }
-  return 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
+  return 'bg-surface-light-raised text-body border-hairline-light dark:bg-surface-dark-elevated dark:text-on-dark dark:border-hairline-dark';
 };
 
 /**
@@ -51,100 +51,100 @@ export const getActionConfig = (action: string): ActionConfig => {
   
   if (a.includes('login')) {
     return { 
-      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50', 
-      dot: 'bg-emerald-500', 
+      badge: 'bg-success-soft text-success-dark border-success-border dark:bg-success/15 dark:text-success-on-dark dark:border-success/30', 
+      dot: 'bg-success', 
       icon: React.createElement(UserIcon, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-emerald-100 dark:ring-emerald-900/30', 
-      iconBg: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' 
+      ring: 'ring-success/20', 
+      iconBg: 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark' 
     };
   }
   
   if (a.includes('logout')) {
     return { 
-      badge: 'bg-rose-50 text-rose-700 border-rose-200/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/50', 
-      dot: 'bg-rose-500', 
+      badge: 'bg-error-soft text-error border-error-border dark:bg-error/15 dark:text-error-on-dark dark:border-error/30', 
+      dot: 'bg-error', 
       icon: React.createElement(LogOut, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-rose-100 dark:ring-rose-900/30', 
-      iconBg: 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400' 
+      ring: 'ring-error/20', 
+      iconBg: 'bg-error-soft dark:bg-error/15 text-error dark:text-error-on-dark' 
     };
   }
   
   if (a.includes('sync')) {
     return { 
-      badge: 'bg-blue-50 text-blue-700 border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800/50', 
-      dot: 'bg-blue-500', 
+      badge: 'bg-accent-soft text-accent border-accent/20 dark:bg-accent/15 dark:text-accent-on-dark dark:border-accent/30', 
+      dot: 'bg-accent', 
       icon: React.createElement(RefreshCw, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-blue-100 dark:ring-blue-900/30', 
-      iconBg: 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400' 
+      ring: 'ring-accent/20', 
+      iconBg: 'bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark' 
     };
   }
   
   if (a.includes('verify')) {
     return { 
-      badge: 'bg-amber-50 text-amber-700 border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50', 
-      dot: 'bg-amber-500', 
+      badge: 'bg-warning-soft text-warning-dark border-warning-border dark:bg-warning/15 dark:text-warning dark:border-warning/30', 
+      dot: 'bg-warning', 
       icon: React.createElement(Shield, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-amber-100 dark:ring-amber-900/30', 
-      iconBg: 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400' 
+      ring: 'ring-warning/20', 
+      iconBg: 'bg-warning-soft dark:bg-warning/15 text-warning-dark dark:text-warning' 
     };
   }
   
   if (a.includes('submit') || a.includes('upload')) {
     return { 
-      badge: 'bg-indigo-50 text-indigo-700 border-indigo-200/60 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50', 
-      dot: 'bg-indigo-500', 
+      badge: 'bg-accent-soft text-accent border-accent/20 dark:bg-accent/15 dark:text-accent-on-dark dark:border-accent/30', 
+      dot: 'bg-accent', 
       icon: React.createElement(FileText, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-indigo-100 dark:ring-indigo-900/30', 
-      iconBg: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400' 
+      ring: 'ring-accent/20', 
+      iconBg: 'bg-accent-soft dark:bg-accent/15 text-accent dark:text-accent-on-dark' 
     };
   }
   
   if (a.includes('journal')) {
     return { 
-      badge: 'bg-sky-50 text-sky-700 border-sky-200/60 dark:bg-sky-950/40 dark:text-sky-400 dark:border-sky-800/50', 
-      dot: 'bg-sky-500', 
+      badge: 'bg-chart-scholar/10 text-chart-scholar border-chart-scholar/20 dark:text-chart-scholar-dark dark:border-chart-scholar/30', 
+      dot: 'bg-chart-scholar', 
       icon: React.createElement(BookOpen, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-sky-100 dark:ring-sky-900/30', 
-      iconBg: 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400' 
+      ring: 'ring-chart-scholar/20', 
+      iconBg: 'bg-chart-scholar/10 dark:bg-chart-scholar/20 text-chart-scholar dark:text-chart-scholar-dark' 
     };
   }
   
   if (a.includes('hki')) {
     return { 
-      badge: 'bg-cyan-50 text-cyan-700 border-cyan-200/60 dark:bg-cyan-950/40 dark:text-cyan-400 dark:border-cyan-800/50', 
-      dot: 'bg-cyan-500', 
+      badge: 'bg-chart-hki/10 text-chart-hki border-chart-hki/20 dark:text-chart-hki-dark dark:border-chart-hki/30', 
+      dot: 'bg-chart-hki', 
       icon: React.createElement(Award, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-cyan-100 dark:ring-cyan-900/30', 
-      iconBg: 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400' 
+      ring: 'ring-chart-hki/20', 
+      iconBg: 'bg-chart-hki/10 dark:bg-chart-hki/20 text-chart-hki dark:text-chart-hki-dark' 
     };
   }
   
   if (a.includes('research')) {
     return { 
-      badge: 'bg-teal-50 text-teal-700 border-teal-200/60 dark:bg-teal-950/40 dark:text-teal-400 dark:border-teal-800/50', 
-      dot: 'bg-teal-500', 
+      badge: 'bg-chart-penelitian/10 text-chart-penelitian border-chart-penelitian/20 dark:text-chart-penelitian-dark dark:border-chart-penelitian/30', 
+      dot: 'bg-chart-penelitian', 
       icon: React.createElement(Beaker, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-teal-100 dark:ring-teal-900/30', 
-      iconBg: 'bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400' 
+      ring: 'ring-chart-penelitian/20', 
+      iconBg: 'bg-chart-penelitian/10 dark:bg-chart-penelitian/20 text-chart-penelitian dark:text-chart-penelitian-dark' 
     };
   }
   
   if (a.includes('book')) {
     return { 
-      badge: 'bg-orange-50 text-orange-700 border-orange-200/60 dark:bg-orange-950/40 dark:text-orange-400 dark:border-orange-800/50', 
-      dot: 'bg-orange-500', 
+      badge: 'bg-chart-buku/10 text-chart-buku border-chart-buku/20 dark:text-chart-buku-dark dark:border-chart-buku/30', 
+      dot: 'bg-chart-buku', 
       icon: React.createElement(Book, { className: 'w-3.5 h-3.5' }), 
-      ring: 'ring-orange-100 dark:ring-orange-900/30', 
-      iconBg: 'bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400' 
+      ring: 'ring-chart-buku/20', 
+      iconBg: 'bg-chart-buku/10 dark:bg-chart-buku/20 text-chart-buku dark:text-chart-buku-dark' 
     };
   }
   
   return { 
-    badge: 'bg-gray-50 text-gray-700 border-gray-200/60 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700', 
-    dot: 'bg-gray-400', 
+    badge: 'bg-surface-light-raised text-body border-hairline-light dark:bg-surface-dark-elevated dark:text-on-dark-soft dark:border-hairline-dark', 
+    dot: 'bg-muted', 
     icon: React.createElement(Activity, { className: 'w-3.5 h-3.5' }), 
-    ring: 'ring-gray-100 dark:ring-zinc-800', 
-    iconBg: 'bg-gray-50 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400' 
+    ring: 'ring-hairline-light dark:ring-hairline-dark', 
+    iconBg: 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted' 
   };
 };
 

@@ -9,10 +9,10 @@ export default function ActivityLogsHeader({
   exportDisabled
 }: ActivityLogsHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
       <div>
-        <h1 className="text-3xl font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight">Log Aktivitas</h1>
-        <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-ink-heading dark:text-on-dark tracking-tight">Log Aktivitas</h1>
+        <p className="text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-widest mt-1">
           Riwayat &amp; Audit Trail Aktivitas Dosen &amp; Administrator
         </p>
       </div>
@@ -20,13 +20,13 @@ export default function ActivityLogsHeader({
         <button
           onClick={onExportExcel}
           disabled={exportDisabled}
-          className="flex items-center justify-center px-6 py-3.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-xs text-xs font-black uppercase tracking-widest text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
+          className="flex items-center justify-center px-4 py-2.5 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-semibold uppercase tracking-wider text-ink-heading dark:text-on-dark transition-all disabled:opacity-40 active:scale-95 cursor-pointer shadow-xs"
         >
-          <FileDown className="h-4 w-4 mr-2 text-primary-600 dark:text-primary-400" />
+          <FileDown className="h-4 w-4 mr-2 text-accent dark:text-accent-on-dark" />
           Export to excel
         </button>
-        <div className="flex items-center bg-primary-50/80 dark:bg-primary-950/40 px-5 py-3.5 rounded-2xl border border-primary-100 dark:border-primary-900/40">
-          <span className="text-[11px] font-black text-primary-700 dark:text-primary-300 uppercase tracking-[0.2em]">
+        <div className="flex items-center bg-surface-light-raised dark:bg-surface-dark-elevated px-4 py-2.5 rounded-xl border border-hairline-light dark:border-hairline-dark">
+          <span className="text-[10px] font-semibold font-mono text-muted dark:text-on-dark-muted uppercase tracking-wider">
             {loading ? 'MEMUAT...' : `${totalItems} Aktivitas Tercatat`}
           </span>
         </div>
