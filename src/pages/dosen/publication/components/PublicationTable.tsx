@@ -3,7 +3,7 @@ import {
   FileText, Upload, CheckCircle, XCircle, Clock, 
   Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 import { calculateScholarPoints } from '../../dashboard/pointsCalculator';
@@ -57,7 +57,6 @@ export default function PublicationTable({
 
   const [expandedPoints, setExpandedPoints] = useState<Record<string | number, boolean>>({});
   const [updatingCorrespondingId, setUpdatingCorrespondingId] = useState<string | number | null>(null);
-  const [isEditingCorrespondingMap, setIsEditingCorrespondingMap] = useState<Record<string | number, boolean>>({});
 
   const getBreakdown = (doc: any) => {
     const isJI = doc.category === 'Jurnal Internasional';
@@ -87,7 +86,6 @@ export default function PublicationTable({
     const totalAuthors = Number(doc.total_authors) || 1;
     const authorOrder = Number(doc.author_order) || (role === 'First Author' || role === 'Single Author' ? 1 : 2);
     const isCorresponding = !!doc.is_corresponding;
-    const isHyper = !!doc.is_hyperauthor || totalAuthors > 16;
     
     let q = 'None';
     let basePoints = 10;
@@ -189,9 +187,9 @@ export default function PublicationTable({
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
 
   return (
-    <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-xs">
-      <div className="p-5 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-        <h3 className="text-base font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Riwayat Publikasi</h3>
+    <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
+      <div className="p-5 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">Riwayat Publikasi</h3>
       </div>
 
       {/* Year Filter */}
@@ -202,91 +200,91 @@ export default function PublicationTable({
       />
       
       <div className="w-full overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-800 text-xs">
-          <thead className="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-800">
+        <table className="min-w-full divide-y divide-slate-200/80 dark:divide-slate-800 text-xs">
+          <thead className="bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-slate-800">
             <tr>
-              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Judul Publikasi</th>
-              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Dokumen</th>
-              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Status</th>
-              <th className="px-4 lg:px-6 py-3.5 text-right sm:text-left text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Poin KPI</th>
-              <th className="px-4 py-3.5 w-12 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Detail</th>
-              <th className="px-4 py-3.5 w-16 text-center text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Aksi</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Judul Publikasi</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Dokumen</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Status</th>
+              <th className="px-4 lg:px-6 py-3.5 text-right sm:text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Poin KPI</th>
+              <th className="px-4 py-3.5 w-12 text-center text-xs font-semibold text-slate-600 dark:text-slate-300">Detail</th>
+              <th className="px-4 py-3.5 w-16 text-center text-xs font-semibold text-slate-600 dark:text-slate-300">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-900">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 bg-white dark:bg-slate-900">
             {isTableLoading ? (
               <phantom-ui loading={true} animation="shimmer" className="contents">
                 {[1, 2, 3].map((i) => (
-                  <tr key={`skeleton-${i}`} className="bg-white dark:bg-zinc-900 border-b border-gray-50 dark:border-zinc-800 last:border-0">
+                  <tr key={`skeleton-${i}`} className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 last:border-0">
                     <td className="px-4 lg:px-8 py-4 lg:py-5">
                       <div className="flex items-center gap-3 lg:gap-4">
-                        <div className="h-8 w-8 lg:h-9 lg:w-9 bg-gray-100 dark:bg-zinc-800 rounded-lg shrink-0"></div>
+                        <div className="h-8 w-8 lg:h-9 lg:w-9 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0"></div>
                         <div className="space-y-2 w-full max-w-[120px] sm:max-w-[200px]">
-                          <div className="h-3 lg:h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded"></div>
-                          <div className="h-2 lg:h-3 w-2/3 bg-gray-100 dark:bg-zinc-800 rounded"></div>
+                          <div className="h-3 lg:h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                          <div className="h-2 lg:h-3 w-2/3 bg-slate-100 dark:bg-slate-800 rounded"></div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
-                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-gray-200 dark:bg-zinc-700 rounded-xl"></div></td>
-                    <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-gray-200 dark:bg-zinc-700 rounded-lg"></div></td>
-                    <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
-                    <td className="px-4 py-4 w-16"><div className="h-4 w-10 bg-gray-100 dark:bg-zinc-800 rounded mx-auto"></div></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-slate-200 dark:bg-slate-700 rounded-xl"></div></td>
+                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-slate-200 dark:bg-slate-700 rounded-xl"></div></td>
+                    <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-slate-200 dark:bg-slate-700 rounded-lg"></div></td>
+                    <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-slate-100 dark:bg-slate-800 rounded mx-auto"></div></td>
+                    <td className="px-4 py-4 w-16"><div className="h-4 w-10 bg-slate-100 dark:bg-slate-800 rounded mx-auto"></div></td>
                   </tr>
                 ))}
               </phantom-ui>
             ) : currentDocuments.length > 0 ? (
               currentDocuments.map((doc: any) => (
-                <tr key={doc.id} className="hover:bg-gray-50/70 dark:hover:bg-zinc-800/40 transition-colors group">
+                <tr key={doc.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group">
                   {/* Informasi Publikasi */}
                   <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                     <div className="flex items-center gap-3 lg:gap-4">
-                      <div className="p-2 bg-gray-50 dark:bg-zinc-800 rounded-lg group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors shrink-0">
-                        <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-gray-400 dark:text-zinc-500 group-hover:text-primary-600 dark:group-hover:text-primary-400" />
+                      <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors shrink-0">
+                        <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-slate-600 dark:text-slate-400" />
                       </div>
                       <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-md">
-                        <p className="text-[11px] sm:text-xs lg:text-sm font-extrabold text-gray-900 dark:text-zinc-100 truncate tracking-tight uppercase" title={doc.title}>{doc.title}</p>
-                        <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest truncate mt-0.5" title={doc.category}>
-                          <span>{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'} • </span>
-                          {doc.category}
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate" title={doc.title}>{doc.title}</p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5" title={doc.category}>
+                          <span className="font-mono">{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'} • </span>
+                          <span>{doc.category}</span>
                         </p>
                         {(() => {
                           const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
                           const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
                           const isExternal = doc.source === 'scopus' || doc.source === 'scholar';
                           return (
-                            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                               {isExternal ? (
-                                <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent flex items-center gap-1">
-                                  🌐 API {doc.source === 'scopus' ? 'Scopus' : 'Scholar'}
+                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
+                                  API {doc.source === 'scopus' ? 'Scopus' : 'Scholar'}
                                 </span>
                               ) : (
-                                <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent flex items-center gap-1">
-                                  ✍️ Input Manual
+                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
+                                  Manual
                                 </span>
                               )}
                               {(doc.source === 'scholar' || Number(doc.citations || 0) > 0) && (
-                                <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent flex items-center gap-1">
-                                  📊 {doc.citations || 0} Sitasi
+                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold font-mono rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
+                                  {doc.citations || 0} Sitasi
                                 </span>
                               )}
                               {isCrossIndexed && (
-                                <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent flex items-center gap-1">
-                                  🔗 Cross-Indexed
+                                <span className="px-2 py-0.5 border border-teal-200/80 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-[10px] font-semibold rounded-md bg-teal-50 dark:bg-teal-950/30 flex items-center gap-1">
+                                  Cross-Indexed
                                 </span>
                               )}
                               {doc.quartile && (
-                                <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent">
+                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold font-mono rounded-md bg-slate-50 dark:bg-slate-800/60">
                                   {doc.quartile}
                                 </span>
                               )}
                               {doc.author_role && (
-                                <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent">
+                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60">
                                   {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
                                 </span>
                               )}
                               {doc.is_hyperauthor && (
-                                <span className="px-1.5 py-0.5 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded bg-transparent">
+                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60">
                                   Hyper
                                 </span>
                               )}
@@ -294,18 +292,18 @@ export default function PublicationTable({
                                {(doc.category === 'Jurnal Internasional' || doc.source === 'scopus') && (
                                  <>
                                    {doc.is_corresponding && doc.is_corresponding_confirmed && (
-                                     <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-200/60 dark:border-emerald-900/40 flex items-center gap-1">
+                                     <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold rounded-md border border-emerald-200/60 dark:border-emerald-900/40 flex items-center gap-1">
                                        ✓ Corresponding
                                      </span>
                                    )}
                                    {!doc.is_corresponding && doc.is_corresponding_confirmed && (
-                                     <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-200/60 dark:border-emerald-900/40">
+                                     <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200/60 dark:border-slate-700/60">
                                        Non-Corresponding
                                      </span>
                                    )}
                                    {!doc.is_corresponding_confirmed && Number(doc.total_authors || 1) > 1 && (
-                                     <span className="px-1.5 py-0.5 bg-orange-500 text-white dark:bg-orange-600 text-[8px] font-black uppercase rounded shadow-xs">
-                                       ⚠️ Perlu Konfirmasi
+                                     <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40 text-[10px] font-semibold rounded-md">
+                                       Perlu Konfirmasi
                                      </span>
                                    )}
                                  </>
@@ -315,18 +313,18 @@ export default function PublicationTable({
                                {(doc.category === 'Jurnal Nasional' || doc.source === 'scholar') && (
                                  <>
                                    {doc.sinta_rank && doc.sinta_rank !== 'Non-SINTA' && (
-                                     <span className="px-1.5 py-0.5 bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-400 text-[8px] font-black uppercase rounded border border-sky-200/60 dark:border-sky-900/40 font-bold">
+                                     <span className="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-300 text-[10px] font-semibold font-mono rounded-md border border-sky-200/60 dark:border-sky-900/40">
                                        {doc.sinta_rank}
                                      </span>
                                    )}
                                    {doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
-                                     <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 text-[8px] font-black uppercase rounded border border-slate-200 dark:border-zinc-700">
+                                     <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700">
                                        Non-SINTA
                                      </span>
                                    )}
                                    {!doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
-                                     <span className="px-1.5 py-0.5 bg-blue-600 text-white dark:bg-blue-600 text-[8px] font-black uppercase rounded shadow-xs">
-                                       ⚠️ Perlu Konfirmasi SINTA
+                                     <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40 text-[10px] font-semibold rounded-md">
+                                       Perlu Konfirmasi SINTA
                                      </span>
                                    )}
                                  </>
@@ -353,11 +351,7 @@ export default function PublicationTable({
                                   <button
                                     type="button"
                                     onClick={() => setExpandedPoints(prev => ({ ...prev, [doc.id]: !prev[doc.id] }))}
-                                    className={`px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border ${
-                                      isExpanded
-                                        ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 border-primary-200 dark:border-primary-900/50'
-                                        : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50/60 dark:hover:bg-primary-950/20'
-                                    }`}
+                                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer shadow-2xs"
                                   >
                                     {isExpanded ? '▲ Sembunyikan' : '▼ Rincian Poin'}
                                   </button>
@@ -387,17 +381,17 @@ export default function PublicationTable({
                     {doc.file_url && doc.file_url !== '-' ? (
                       <button
                         onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[10px] font-black uppercase tracking-widest transition-colors whitespace-nowrap"
+                        className="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-md border border-slate-200/80 dark:border-slate-700/80 transition-colors cursor-pointer"
                       >
-                        <FileText className="w-3.5 h-3.5 mr-1" /> Lihat Dokumen
+                        <FileText className="w-3.5 h-3.5 mr-1 text-slate-500" /> Lihat
                       </button>
                     ) : (
-                      <label className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20 text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer whitespace-nowrap">
+                      <label className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 px-2.5 py-1 rounded-md transition-colors">
                         {uploadingPdfId === doc.id ? (
                           <span className="animate-pulse">Uploading...</span>
                         ) : (
                           <>
-                            Upload File
+                            Upload
                             <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
                           </>
                         )}
@@ -414,15 +408,15 @@ export default function PublicationTable({
                       const isVerified = st.includes('verified') || st.includes('fakultas');
 
                       return (
-                        <div className={`inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl font-black text-[9px] lg:text-[10px] uppercase tracking-widest whitespace-nowrap ${
-                          isApproved ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30' :
-                          isRejected ? 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-900/30' :
-                          isVerified ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30' :
-                          'bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30'
+                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-semibold text-[11px] border ${
+                          isApproved ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40' :
+                          isRejected ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200/60 dark:border-rose-900/40' :
+                          isVerified ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200/60 dark:border-sky-900/40' :
+                          'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/40'
                         }`}>
-                          {isApproved && <CheckCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5 text-emerald-600 dark:text-emerald-400" />}
-                          {isRejected && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5 text-red-600 dark:text-red-400" />}
-                          {(!isApproved && !isRejected) && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 lg:mr-1.5" />}
+                          {isApproved && <CheckCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-emerald-600 dark:text-emerald-400" />}
+                          {isRejected && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-rose-600 dark:text-rose-400" />}
+                          {(!isApproved && !isRejected) && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-amber-600 dark:text-amber-400" />}
                           <span className="hidden sm:inline">{isVerified ? 'Verified (Fakultas)' : isApproved ? 'Approved' : isRejected ? 'Rejected' : doc.status || 'Pending'}</span>
                           <span className="sm:hidden">{isApproved ? 'OK' : isRejected ? 'NO' : isVerified ? 'V-FAK' : 'Wait'}</span>
                         </div>
@@ -431,9 +425,9 @@ export default function PublicationTable({
                   </td>
 
                   {/* Poin */}
-                  <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
-                    <span className="text-[11px] sm:text-xs lg:text-sm font-black text-primary-800 dark:text-primary-400 tracking-tighter whitespace-nowrap">
-                      +{Math.round((doc.source === 'scholar' || Number(doc.citations || 0) > 0) ? calculateScholarPoints(doc) : (doc.awarded_points ?? 0))} PTS
+                  <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle text-right sm:text-left">
+                    <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-slate-900 dark:text-zinc-100 whitespace-nowrap">
+                      +{Math.round((doc.source === 'scholar' || Number(doc.citations || 0) > 0) ? calculateScholarPoints(doc) : (doc.awarded_points ?? 0))} Pts
                     </span>
                   </td>
 
@@ -442,7 +436,7 @@ export default function PublicationTable({
                     <button
                       type="button"
                       onClick={() => setSelectedDocForDetail(doc)}
-                      className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-primary-600 dark:hover:text-primary-400 transition-all flex items-center justify-center mx-auto"
+                      className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all flex items-center justify-center mx-auto cursor-pointer"
                       title="Lihat Detail"
                     >
                       <Info className="w-4 h-4" />
@@ -454,22 +448,22 @@ export default function PublicationTable({
                     {doc.source ? (
                       <div className="flex items-center justify-center gap-1">
                         <button type="button" onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
-                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-gray-400 hover:text-red-600 transition-all" title="Hapus Publikasi">
+                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer" title="Hapus Publikasi">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     ) : isDocLocked(doc) ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-50 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 text-[9px] font-black uppercase tracking-widest cursor-not-allowed" title="Dokumen sudah diverifikasi — tidak dapat diubah">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-[10px] font-semibold cursor-not-allowed border border-slate-200/60 dark:border-slate-700/60" title="Dokumen sudah diverifikasi — tidak dapat diubah">
                         <Lock className="w-3 h-3" /> Terkunci
                       </span>
                     ) : (
                       <div className="flex items-center justify-center gap-1">
                         <button type="button" onClick={() => openEditModal(doc)}
-                          className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/30 text-gray-400 hover:text-blue-600 transition-all" title="Edit Publikasi">
+                          className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all cursor-pointer" title="Edit Publikasi">
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button type="button" onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
-                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-gray-400 hover:text-red-600 transition-all" title="Hapus Publikasi">
+                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer" title="Hapus Publikasi">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -479,11 +473,8 @@ export default function PublicationTable({
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-4 lg:px-8 py-16 text-center">
-                  <div className="flex flex-col items-center">
-                     <FileText className="w-12 h-12 text-gray-200 dark:text-zinc-700 mb-4" />
-                     <p className="text-sm font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest italic">Inventory Empty</p>
-                  </div>
+                <td colSpan={6} className="px-4 lg:px-8 py-16 text-center text-slate-400 font-medium text-xs">
+                  Belum ada data publikasi.
                 </td>
               </tr>
             )}
@@ -493,14 +484,14 @@ export default function PublicationTable({
 
       {/* === Pagination Controls === */}
       {!isTableLoading && filteredDocuments.length > 0 && (
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="px-6 py-4 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-500 dark:text-zinc-400">
-              Menampilkan <span className="font-semibold text-gray-800 dark:text-zinc-200">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredDocuments.length)}</span> dari <span className="font-semibold text-gray-800 dark:text-zinc-200">{filteredDocuments.length}</span> Dokumen
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              Menampilkan <span className="font-semibold font-mono text-slate-900 dark:text-white">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredDocuments.length)}</span> dari <span className="font-semibold font-mono text-slate-900 dark:text-white">{filteredDocuments.length}</span> Dokumen
             </span>
-            <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700 hidden sm:block" />
+            <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
             <div className="hidden sm:flex items-center gap-2">
-              <span className="text-xs text-gray-400">Limit:</span>
+              <span className="text-xs text-slate-400">Limit:</span>
               <DropdownSelect
                 value={itemsPerPage}
                 onChange={(val) => {
@@ -524,7 +515,7 @@ export default function PublicationTable({
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
+              className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -535,14 +526,14 @@ export default function PublicationTable({
                 .map((p, index, array) => (
                   <React.Fragment key={p}>
                     {index > 0 && array[index - 1] !== p - 1 && (
-                      <span className="px-1 text-gray-300 dark:text-zinc-600 text-xs">...</span>
+                      <span className="px-1 text-slate-400 dark:text-slate-600 text-xs">...</span>
                     )}
                     <button
                       onClick={() => setCurrentPage(p)}
-                      className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-all ${
+                      className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-semibold font-mono transition-all cursor-pointer ${
                         currentPage === p 
-                          ? 'bg-primary-600 text-white shadow-xs' 
-                          : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-primary-600'
+                          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs' 
+                          : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       {p}
@@ -554,7 +545,7 @@ export default function PublicationTable({
             <button
               disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="p-2 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-primary-600 hover:border-primary-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs"
+              className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -564,3 +555,4 @@ export default function PublicationTable({
     </section>
   );
 }
+

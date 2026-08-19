@@ -22,10 +22,10 @@ export default function PublicationStats({
   isCrossIndexedActive
 }: PublicationStatsProps) {
   const statItems = [
-    { label: 'Total Dokumen', value: stats.total, icon: FileText, color: 'slate' },
-    { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'emerald' },
-    { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'amber' },
-    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'indigo' },
+    { label: 'Total Dokumen', value: stats.total, icon: FileText, color: 'neutral' },
+    { label: 'Disetujui', value: stats.approved, icon: CheckCircle, color: 'approved' },
+    { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'pending' },
+    { label: 'Total Poin KPI', value: stats.points, icon: Sparkles, color: 'neutral' },
     {
       label: 'Irisan (Cross-Indexed)',
       value: stats.crossIndexed ?? 0,
@@ -54,28 +54,29 @@ export default function PublicationStats({
               : 'border-slate-200/80 dark:border-slate-800'
           }`}
         >
-          <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${
-            item.color === 'slate' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' :
-            item.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
-            item.color === 'amber' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' :
-            item.color === 'teal' ? 'bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400' :
-            'bg-slate-100 dark:bg-slate-800 text-primary-600 dark:text-primary-400'
+          <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 border ${
+            item.color === 'approved' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-900/40' :
+            item.color === 'pending' ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200/60 dark:border-amber-900/40' :
+            item.color === 'teal' ? 'bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 border-teal-200/60 dark:border-teal-900/40' :
+            'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80'
           }`}>
             <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
           </div>
           <div className="min-w-0 flex-1 w-full">
-            <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-1">
+            <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-0.5">
               <div className="flex items-center justify-between gap-1">
-                <p className="text-[9px] sm:text-[10px] font-black text-gray-500 dark:text-zinc-400 uppercase tracking-wider truncate" title={item.label}>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate" title={item.label}>
                   {item.label}
                 </p>
               </div>
               <div className="flex flex-wrap items-baseline justify-between gap-1.5 mt-0.5">
-                <p className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900 dark:text-zinc-100">{item.value}</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
+                  {item.value}
+                </p>
                 {item.isClickable && (
-                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider transition-all border whitespace-nowrap ${
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all border whitespace-nowrap ${
                     item.isActive
-                      ? 'bg-teal-600 border-teal-600 text-white shadow-sm'
+                      ? 'bg-teal-600 border-teal-600 text-white shadow-xs'
                       : 'bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-300 border-teal-200/60 dark:border-teal-800/40 group-hover:bg-teal-500 group-hover:border-teal-500 group-hover:text-white'
                   }`}>
                     <Filter className="w-2.5 h-2.5" />
@@ -90,3 +91,4 @@ export default function PublicationStats({
     </section>
   );
 }
+
