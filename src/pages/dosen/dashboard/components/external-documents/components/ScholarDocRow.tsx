@@ -15,36 +15,33 @@ export default function ScholarDocRow({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: idx * 0.05 }}
-      className="group flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] border border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-zinc-700 hover:shadow-xl transition-all duration-300 overflow-hidden"
+      transition={{ delay: idx * 0.02 }}
+      className="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-2xs transition-all overflow-hidden"
     >
-      <div className="h-[3px] w-full bg-slate-200 dark:bg-zinc-700 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
-
       <div className="flex items-start gap-4 p-5">
         <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
-          {/* Kotak indikator sitasi versi compact netral */}
-          <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center shadow-2xs">
-            <span className="text-base font-black text-slate-800 dark:text-slate-100 leading-none tabular-nums">{citations}</span>
-            <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Sitasi</span>
+          <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center">
+            <span className="text-base font-bold font-mono text-slate-800 dark:text-slate-100 leading-none tabular-nums">{citations}</span>
+            <span className="text-[9px] font-medium text-slate-400 mt-0.5">Sitasi</span>
           </div>
-          <div className="px-2 py-0.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40 rounded-full text-[8px] font-black tracking-wide whitespace-nowrap">
+          <div className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 rounded-lg text-xs font-bold font-mono tabular-nums whitespace-nowrap">
             +{Math.round(docPoints)} pts
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-            <span className="px-2 py-0.5 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase tracking-wider rounded-full bg-slate-50/50 dark:bg-slate-800/30">
-              Scholar
+          <div className="flex flex-wrap items-center gap-1.5 mb-2">
+            <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold rounded-md bg-slate-50 dark:bg-slate-800/50">
+              Google Scholar
             </span>
             {isAlsoScopus && (
-              <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase tracking-wider rounded-full border border-emerald-200/60 dark:border-emerald-900/40">
+              <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-semibold rounded-md border border-emerald-200/60 dark:border-emerald-800/40">
                 ✓ Scopus {scopusQuartile && scopusQuartile !== 'None' ? `(${scopusQuartile})` : ''}
               </span>
             )}
-            <span className="ml-auto text-[8px] font-bold text-slate-400 flex items-center gap-1 flex-shrink-0">
+            <span className="ml-auto text-xs text-slate-400 flex items-center gap-1 flex-shrink-0 font-mono">
               <Calendar className="w-3.5 h-3.5" /> {doc.year || '—'}
             </span>
           </div>
@@ -53,14 +50,14 @@ export default function ScholarDocRow({
             href={doc.link || `https://scholar.google.com/scholar?q=${encodeURIComponent(doc.title)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[13px] font-black text-slate-800 dark:text-slate-100 leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition-colors block line-clamp-2 mb-3"
+            className="text-sm font-bold text-slate-900 dark:text-white leading-snug hover:underline block line-clamp-2 mb-2"
           >
             {doc.title}
           </a>
 
           {doc.author && (
             <div className="flex flex-wrap items-center gap-3 mb-3">
-              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 italic truncate max-w-[320px]">
+              <span className="text-xs text-slate-500 dark:text-slate-400 italic truncate max-w-[320px]">
                 {doc.author}
               </span>
             </div>
@@ -69,10 +66,7 @@ export default function ScholarDocRow({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${showBreakdown
-                  ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 border-blue-200 dark:border-blue-900/50'
-                  : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50/60 dark:hover:bg-blue-950/20'
-                }`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
             >
               {showBreakdown ? '▲ Sembunyikan' : '▼ Rincian Poin'}
             </button>
@@ -83,43 +77,43 @@ export default function ScholarDocRow({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-3 rounded-2xl border border-blue-100 dark:border-blue-900/30 overflow-hidden"
+              className="mt-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden"
             >
-              <div className="px-4 py-2.5 bg-blue-50 dark:bg-blue-950/30 border-b border-blue-100 dark:border-blue-900/30">
-                <p className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">Rincian Perhitungan Poin (SINTA GS)</p>
+              <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/80 dark:border-slate-800">
+                <p className="text-xs font-bold text-slate-900 dark:text-white">Rincian Perhitungan Poin (SINTA GS)</p>
               </div>
-              <div className="p-4 space-y-2 bg-white dark:bg-slate-900">
+              <div className="p-4 space-y-2 bg-white dark:bg-slate-900 text-xs">
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
-                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Dokumen GS</p>
-                    <p className="text-[9px] font-medium text-slate-400">Poin flat per publikasi Google Scholar</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-200">Dokumen GS</p>
+                    <p className="text-[11px] text-slate-400">Poin flat per publikasi Google Scholar</p>
                   </div>
-                  <span className="text-[11px] font-black text-blue-600 flex-shrink-0">+0.50</span>
+                  <span className="font-bold font-mono text-slate-900 dark:text-white flex-shrink-0">+0.50</span>
                 </div>
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
-                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">Dokumen Tersitasi</p>
-                    <p className="text-[9px] font-medium text-slate-400">Poin tambahan flat jika sitasi &gt; 0</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-200">Dokumen Tersitasi</p>
+                    <p className="text-[11px] text-slate-400">Poin tambahan flat jika sitasi &gt; 0</p>
                   </div>
-                  <span className="text-[11px] font-black text-blue-600 flex-shrink-0">
+                  <span className="font-bold font-mono text-slate-900 dark:text-white flex-shrink-0">
                     +{((citations) > 0 ? 0.50 : 0.00).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-start py-1.5 border-b border-slate-100 dark:border-slate-800 gap-2">
                   <div>
-                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300">
+                    <p className="font-semibold text-slate-800 dark:text-slate-200">
                       Sitasi (×{Math.min(citations, 500)} × 0.25)
                       {citations > 500 && ' (Cut-off 500)'}
                     </p>
-                    <p className="text-[9px] font-medium text-slate-400">Nilai bobot per sitasi yang didapat</p>
+                    <p className="text-[11px] text-slate-400">Nilai bobot per sitasi yang didapat</p>
                   </div>
-                  <span className="text-[11px] font-black text-blue-600 flex-shrink-0">
+                  <span className="font-bold font-mono text-slate-900 dark:text-white flex-shrink-0">
                     +{(Math.min(citations, 500) * 0.25).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2">
-                  <span className="text-[10px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Total Poin</span>
-                  <span className="text-base font-black text-blue-600">{Math.round(docPoints)} pts</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">Total Poin</span>
+                  <span className="font-bold font-mono text-slate-900 dark:text-white">{Math.round(docPoints)} Pts</span>
                 </div>
               </div>
             </motion.div>
@@ -131,7 +125,7 @@ export default function ScholarDocRow({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Buka dokumen "${doc.title}" di Google Scholar`}
-          className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-blue-500 hover:text-white transition-all flex-shrink-0 self-start"
+          className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all flex-shrink-0 self-start cursor-pointer"
         >
           <ExternalLink className="w-4 h-4" />
         </a>
@@ -139,3 +133,4 @@ export default function ScholarDocRow({
     </motion.div>
   );
 }
+

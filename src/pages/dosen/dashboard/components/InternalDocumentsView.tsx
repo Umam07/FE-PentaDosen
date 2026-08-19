@@ -82,7 +82,7 @@ export default function InternalDocumentsView({
   return (
     <div className="space-y-8">
       {/* Card wrapper */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 p-5 sm:p-8 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-8 shadow-xs">
 
         {/* ── Top Tab Bar: Dokumen | Metriks Penilaian ── */}
         <div className="flex items-center gap-5 sm:gap-8 pb-3 border-b border-slate-100 dark:border-slate-800 mb-8 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
@@ -93,22 +93,22 @@ export default function InternalDocumentsView({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`group/tab relative pb-3 flex items-center gap-2 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest whitespace-nowrap shrink-0 transition-colors ${
+              className={`group/tab relative pb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                 activeTab === tab.id
-                  ? 'text-primary-600 dark:text-primary-400'
-                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  ? 'text-slate-900 dark:text-white font-bold'
+                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
               }`}
             >
-              <tab.icon className="w-3.5 h-3.5" />
+              <tab.icon className="w-4 h-4" />
               {tab.label}
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="internal-main-tab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary-600 dark:bg-primary-500 rounded-full"
+                  className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-slate-900 dark:bg-white rounded-full"
                 />
               )}
               {activeTab !== tab.id && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-200 dark:bg-slate-700 rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-slate-200 dark:bg-slate-700 rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
               )}
             </button>
           ))}
@@ -126,7 +126,7 @@ export default function InternalDocumentsView({
               className="space-y-8"
             >
               {/* Statistics Cards Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mb-8">
                 {docCategories.map((cat) => {
                   const catDocs = allInternalDocs.filter(
                     (d) => d.category?.toLowerCase().includes(cat.id.toLowerCase())
@@ -137,41 +137,38 @@ export default function InternalDocumentsView({
                     0
                   );
                   const count = approvedCatDocs.length;
+                  const isSelected = categoryFilter === cat.id;
 
                   return (
                     <div
                       key={cat.id}
                       onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
-                      className={`p-5 rounded-3xl border cursor-pointer transition-all ${
-                        categoryFilter === cat.id
-                          ? 'bg-primary-50/30 dark:bg-primary-950/10 border-primary-200 dark:border-primary-800 shadow-md shadow-primary-500/5'
-                          : 'bg-slate-50/40 dark:bg-slate-950/20 border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800'
+                      className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                        isSelected
+                          ? 'bg-slate-100/90 dark:bg-slate-800 border-slate-400/80 dark:border-slate-600 shadow-2xs'
+                          : 'bg-slate-50/50 dark:bg-slate-850/50 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                       }`}
                     >
                       <phantom-ui loading={loading} animation="shimmer" className="block space-y-1">
-                        <div className="flex items-center justify-between gap-3 mb-3">
+                        <div className="flex items-center justify-between gap-2 mb-2">
                           <div className={`p-2 rounded-xl border transition-colors flex items-center justify-center ${
-                            categoryFilter === cat.id
-                              ? 'bg-primary-100/80 dark:bg-primary-900/40 border-primary-200 dark:border-primary-800/60'
-                              : 'bg-slate-100 dark:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60'
+                            isSelected
+                              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent'
+                              : 'bg-white dark:bg-slate-800 border-slate-200/80 dark:border-slate-700 text-slate-700 dark:text-slate-300'
                           }`}>
-                            <cat.icon className={`w-4 h-4 ${
-                              categoryFilter === cat.id
-                                ? 'text-primary-600 dark:text-primary-400'
-                                : 'text-slate-500 dark:text-slate-400'
-                            }`} />
+                            <cat.icon className="w-4 h-4" />
                           </div>
-                          <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                          <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                             Poin
                           </span>
                         </div>
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
+                        <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 truncate">
                           {cat.label}
                         </p>
-                        <h4 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight mt-1">
-                          +{points} <span className="text-xs font-black text-slate-400 dark:text-slate-500">PTS</span>
+                        <h4 className="text-xl font-bold font-mono text-slate-900 dark:text-white tracking-tight tabular-nums mt-0.5">
+                          +{points} <span className="text-xs font-semibold text-slate-500">Pts</span>
                         </h4>
-                        <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 mt-1">
+                        <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 mt-1">
                           {count} Dokumen Disetujui
                         </p>
                       </phantom-ui>
@@ -187,18 +184,18 @@ export default function InternalDocumentsView({
                     <button
                       key={cat.id}
                       onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
-                      className={`group/cat relative pb-2 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
+                      className={`group/cat relative pb-2 flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer ${
                         categoryFilter === cat.id
-                          ? 'text-primary-600 dark:text-primary-400'
-                          : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                          ? 'text-slate-900 dark:text-white font-bold'
+                          : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
                       }`}
                     >
-                      <cat.icon className="w-3 h-3" />
+                      <cat.icon className="w-3.5 h-3.5" />
                       {cat.label}
                       {categoryFilter === cat.id && (
                         <motion.div
                           layoutId="internal-cat-indicator"
-                          className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary-600 dark:bg-primary-500 rounded-full"
+                          className="absolute bottom-0 left-0 right-0 h-[2px] bg-slate-900 dark:bg-white rounded-full"
                         />
                       )}
                       {categoryFilter !== cat.id && (
@@ -209,7 +206,7 @@ export default function InternalDocumentsView({
                 </div>
 
                 {/* Badge informasi jumlah dokumen yang netral & non-interaktif */}
-                <div className="flex-shrink-0 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <div className="flex-shrink-0 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold font-mono flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
                   {filteredDocs.length} Dokumen
                 </div>
@@ -227,12 +224,12 @@ export default function InternalDocumentsView({
                   {renderActiveTable()}
                   {isPublic && filteredDocs.length > 5 && (
                     <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl mt-4">
-                      <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 text-center">
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-3 text-center">
                         + {filteredDocs.length - 5} Dokumen Internal Lainnya Tersedia
                       </p>
                       <button
                         onClick={() => window.location.href = '/login'}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-all shadow-sm"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer"
                       >
                         <Lock className="w-3.5 h-3.5" />
                         <span>Login untuk Lihat Semua</span>
@@ -242,8 +239,8 @@ export default function InternalDocumentsView({
                 </div>
               ) : (
                 <div className="py-24 text-center">
-                  <Search className="w-12 h-12 mx-auto mb-4 text-slate-200" />
-                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <Search className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-700" />
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Tidak ada data ditemukan
                   </p>
                 </div>

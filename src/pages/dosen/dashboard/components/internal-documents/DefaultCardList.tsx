@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, FileText, Info } from 'lucide-react';
-import { getCategoryTheme } from '../../utils';
 import Pagination from '../Pagination';
 import type { DocTableBaseProps } from './internal-documents.types';
 import { formatTanggal } from './utils/formatting';
@@ -17,57 +16,56 @@ export default function DefaultCardList({
   isPublic = false,
 }: DocTableBaseProps) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-sm">
-      <div className="p-6 grid grid-cols-1 gap-4">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-2xs">
+      <div className="p-5 grid grid-cols-1 gap-3.5">
         {filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc, idx) => {
-          const theme = getCategoryTheme(doc.category);
           const dateStr = doc.published_at || doc.tahun_pelaksanaan;
           return (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              className={`group flex items-center gap-6 p-6 rounded-3xl border transition-all ${theme.bg} ${theme.border}`}
+              transition={{ delay: idx * 0.03 }}
+              className="group flex items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-850 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
             >
-              <div className={`w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm transition-colors ${theme.iconBg}`}>
-                <span className="text-lg font-black text-slate-900 dark:text-white leading-none">
+              <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-200/80 dark:border-slate-700 shrink-0">
+                <span className="text-base font-bold font-mono text-slate-900 dark:text-white leading-none tabular-nums">
                   {Math.round(Number(doc.awarded_points) || 0)}
                 </span>
-                <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter mt-1">
-                  PTS
+                <span className="text-[9px] font-semibold text-slate-400 uppercase mt-0.5">
+                  Pts
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className={`px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-widest ${theme.badgeBg} ${theme.badgeText}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">
                     {doc.category}
                   </span>
-                  <span className="text-[8px] font-bold text-slate-400 uppercase flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
+                  <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-mono">
+                    <Calendar className="w-3 h-3 text-slate-400" />
                     {formatTanggal(dateStr)}
                   </span>
                 </div>
                 <h3
                   onClick={() => setSelectedDocForDetail(doc)}
-                  className="text-sm font-black text-slate-800 dark:text-slate-200 leading-snug line-clamp-1 cursor-pointer hover:text-primary-600 transition-colors"
+                  className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug line-clamp-1 cursor-pointer hover:underline transition-colors"
                 >
                   {doc.title}
                 </h3>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="hidden sm:flex flex-col items-end text-right gap-1">
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div className="hidden sm:flex flex-col items-end text-right">
+                  <span className="text-[10px] text-slate-400">
                     ID Dokumen
                   </span>
-                  <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">
-                    {doc.id_dokumen || 'INTERNAL-' + doc.id}
+                  <span className="text-xs font-mono font-semibold text-slate-600 dark:text-slate-400">
+                    {doc.id_dokumen || 'INT-' + doc.id}
                   </span>
                 </div>
                 {doc.file_url && doc.file_url !== '-' ? (
                   <button
                     onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
-                    className="p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 transition-all flex items-center justify-center shadow-sm"
+                    className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition-all flex items-center justify-center cursor-pointer"
                     title="Lihat Dokumen"
                   >
                     <FileText className="w-4 h-4" />
@@ -75,7 +73,7 @@ export default function DefaultCardList({
                 ) : null}
                 <button
                   onClick={() => setSelectedDocForDetail(doc)}
-                  className="p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-primary-600 hover:border-primary-200 transition-all flex items-center justify-center shadow-sm"
+                  className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition-all flex items-center justify-center cursor-pointer"
                   title="Lihat Detail"
                 >
                   <Info className="w-4 h-4" />
@@ -97,3 +95,4 @@ export default function DefaultCardList({
     </div>
   );
 }
+

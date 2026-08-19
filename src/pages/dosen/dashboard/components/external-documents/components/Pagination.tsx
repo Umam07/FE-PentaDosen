@@ -17,14 +17,14 @@ export default function Pagination({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   return (
-    <div className="relative z-10 px-8 py-8 border-t border-slate-100 dark:border-slate-800 bg-gray-50/5 flex flex-col sm:flex-row items-center justify-between gap-6 mt-10">
+    <div className="relative z-10 px-6 py-4 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 rounded-b-2xl">
       <div className="flex items-center gap-4">
-        <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
-          Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)} of {totalItems}
+        <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+          Menampilkan <span className="font-bold text-slate-900 dark:text-white tabular-nums">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)}</span> dari <span className="font-bold text-slate-900 dark:text-white tabular-nums">{totalItems}</span> Dokumen
         </span>
-        <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
+        <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
         <div className="hidden sm:flex items-center gap-2">
-          <span className="text-[10px] font-black uppercase text-slate-300 tracking-widest">Limit:</span>
+          <span className="text-xs text-slate-400">Limit:</span>
           <DropdownSelect
             value={itemsPerPage}
             onChange={(val) => { setItemsPerPage(val); onPageChange(1); }}
@@ -41,29 +41,29 @@ export default function Pagination({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         <button
           disabled={currentPage === 1}
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           aria-label="Halaman sebelumnya"
-          className="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+          className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {Array.from({ length: totalPages }, (_, i) => i + 1)
             .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
             .map((p, index, array) => (
               <React.Fragment key={p}>
                 {index > 0 && array[index - 1] !== p - 1 && (
-                  <span className="px-2 text-slate-300 font-bold">...</span>
+                  <span className="px-1 text-slate-400 font-mono text-xs">...</span>
                 )}
                 <button
                   onClick={() => onPageChange(p)}
-                  className={`min-w-[44px] h-11 flex items-center justify-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === p
-                      ? 'bg-primary-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-zinc-900 text-slate-500 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 hover:text-primary-600 shadow-sm'
+                  className={`min-w-[34px] h-8 flex items-center justify-center rounded-xl text-xs font-semibold font-mono tabular-nums transition-all cursor-pointer ${currentPage === p
+                      ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-2xs'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                     }`}
                 >
                   {p}
@@ -76,11 +76,12 @@ export default function Pagination({
           disabled={currentPage === totalPages || totalPages === 0}
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           aria-label="Halaman berikutnya"
-          className="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-400 hover:text-primary-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+          className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
   );
 }
+
