@@ -277,17 +277,17 @@ export default function ExternalDocumentsView({
                               </div>
                             )}
 
-                            {/* Right-Aligned Unified Toolbar: Search -> Status (Perlu Update) -> Article -> Tahun */}
-                            <div className="flex flex-wrap items-center justify-end gap-2 w-full">
-                              {/* 1. Search */}
-                              <div className="relative w-full sm:w-48 md:w-56 shrink-0">
-                                <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            {/* Consolidated Filter Toolbar: Search (Left) + Unified Filter Groups (Right) */}
+                            <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
+                              {/* 1. Search Box */}
+                              <div className="relative w-full sm:w-64 xl:w-72 2xl:w-80 shrink-0">
+                                <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 <input
                                   type="text"
                                   value={searchTerm}
                                   onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                                   placeholder="Cari judul, jurnal, penulis..."
-                                  className="w-full pl-8 pr-7 py-1.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent transition-all shadow-2xs"
+                                  className="w-full pl-8.5 pr-7 py-1.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent transition-all shadow-2xs"
                                 />
                                 {searchTerm && (
                                   <button
@@ -300,68 +300,87 @@ export default function ExternalDocumentsView({
                                 )}
                               </div>
 
-                              {/* 2. Status Korespondensi (Perlu Update) */}
-                              <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-0.5 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs shrink-0">
-                                {[
-                                  { id: 'all', label: 'Semua' },
-                                  { id: 'unconfirmed', label: 'Perlu Update', count: unconfirmedScopusCount },
-                                  { id: 'confirmed', label: 'Selesai' }
-                                ].map((opt) => (
-                                  <button
-                                    key={opt.id}
-                                    onClick={() => { setScopusFilter(opt.id as any); setCurrentPage(1); }}
-                                    className={`flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                                      scopusFilter === opt.id
-                                        ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
-                                        : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
-                                    }`}
-                                  >
-                                    <span>{opt.label}</span>
-                                    {opt.count !== undefined && opt.count > 0 && (
-                                      <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
-                                        scopusFilter === opt.id
-                                          ? 'bg-white/20 text-white dark:bg-black/20 dark:text-ink'
-                                          : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark'
-                                      }`}>
-                                        {opt.count}
-                                      </span>
-                                    )}
-                                  </button>
-                                ))}
-                              </div>
-
-                              {/* 3. Tipe Dokumen (Article) */}
-                              <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-0.5 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs shrink-0">
-                                {[
-                                  { id: 'all', label: 'Semua Tipe' },
-                                  { id: 'article', label: 'Article' },
-                                  { id: 'non-article', label: 'Non-Article' }
-                                ].map((opt) => (
-                                  <button
-                                    key={opt.id}
-                                    onClick={() => { setArticleFilter(opt.id as any); setCurrentPage(1); }}
-                                    className={`flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                                      articleFilter === opt.id
-                                        ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
-                                        : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
-                                    }`}
-                                  >
-                                    <span>{opt.label}</span>
-                                  </button>
-                                ))}
-                              </div>
-
-                              {/* 4. Filter Tahun */}
-                              {availableYearsScopus.length > 0 && (
-                                <div className="relative z-30 shrink-0">
-                                  <YearFilterBar
-                                    availableYears={availableYearsScopus}
-                                    selectedYear={filterYearExt}
-                                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                    className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
-                                  />
+                              {/* 2. Group Filter Cluster (Status — separator — Tipe — separator — Tahun) */}
+                              <div className="overflow-x-auto no-scrollbar pb-0.5 xl:pb-0 flex items-center justify-start xl:justify-end gap-2.5 shrink-0">
+                                {/* Grup Status */}
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <span className="text-[11px] text-muted dark:text-on-dark-muted font-normal select-none">
+                                    Status:
+                                  </span>
+                                  <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-0.5 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs shrink-0">
+                                    {[
+                                      { id: 'all', label: 'Semua' },
+                                      { id: 'unconfirmed', label: 'Perlu Update', count: unconfirmedScopusCount },
+                                      { id: 'confirmed', label: 'Selesai' }
+                                    ].map((opt) => (
+                                      <button
+                                        key={opt.id}
+                                        onClick={() => { setScopusFilter(opt.id as any); setCurrentPage(1); }}
+                                        className={`flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                                          scopusFilter === opt.id
+                                            ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
+                                            : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
+                                        }`}
+                                      >
+                                        <span>{opt.label}</span>
+                                        {opt.count !== undefined && opt.count > 0 && (
+                                          <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
+                                            scopusFilter === opt.id
+                                              ? 'bg-white/20 text-white dark:bg-black/20 dark:text-ink'
+                                              : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark'
+                                          }`}>
+                                            {opt.count}
+                                          </span>
+                                        )}
+                                      </button>
+                                    ))}
+                                  </div>
                                 </div>
-                              )}
+
+                                {/* Separator Vertikal Tipis 1 */}
+                                <div className="h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
+
+                                {/* Grup Tipe */}
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <span className="text-[11px] text-muted dark:text-on-dark-muted font-normal select-none">
+                                    Tipe:
+                                  </span>
+                                  <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-0.5 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs shrink-0">
+                                    {[
+                                      { id: 'all', label: 'Semua' },
+                                      { id: 'article', label: 'Article' },
+                                      { id: 'non-article', label: 'Non-Article' }
+                                    ].map((opt) => (
+                                      <button
+                                        key={opt.id}
+                                        onClick={() => { setArticleFilter(opt.id as any); setCurrentPage(1); }}
+                                        className={`flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                                          articleFilter === opt.id
+                                            ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
+                                            : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
+                                        }`}
+                                      >
+                                        <span>{opt.label}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Separator Vertikal Tipis 2 & Filter Tahun */}
+                                {availableYearsScopus.length > 0 && (
+                                  <>
+                                    <div className="h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
+                                    <div className="relative z-30 shrink-0">
+                                      <YearFilterBar
+                                        availableYears={availableYearsScopus}
+                                        selectedYear={filterYearExt}
+                                        onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                                        className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                                      />
+                                    </div>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
                         );
