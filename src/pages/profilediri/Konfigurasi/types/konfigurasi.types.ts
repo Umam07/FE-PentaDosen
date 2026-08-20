@@ -70,6 +70,6 @@ export interface IntegrationCardProps {
   onChange: (value: string) => void;
   onCheck: () => Promise<void>;
   onSave: () => Promise<void>;
-  onDelete: () => void;
+  onDelete?: () => void;
   onSync: () => Promise<void>;
 }

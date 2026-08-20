@@ -1,8 +1,6 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { Globe, Hash } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Globe, Hash, ShieldCheck } from 'lucide-react';
 import { KonfigurasiProps } from './Konfigurasi/types/konfigurasi.types';
-import { useKonfigurasi } from './Konfigurasi/hooks/useKonfigurasi';
-import { DeleteConfirmModal } from './Konfigurasi/components/DeleteConfirmModal';
 import { SyncBanner } from './Konfigurasi/components/SyncBanner';
 import { IntegrationCard } from './Konfigurasi/components/IntegrationCard';
 
@@ -29,16 +27,8 @@ export default function Konfigurasi({
   handleSyncScopus,
   handleSyncAll,
   handleSyncSinta,
-  handleDeleteScholarId,
-  handleDeleteScopusId,
   tabVariants,
 }: KonfigurasiProps) {
-  // Menggunakan custom hook untuk mengelola state dan konfirmasi hapus
-  const { showDeleteConfirm, setShowDeleteConfirm, confirmDelete } = useKonfigurasi(
-    handleDeleteScholarId,
-    handleDeleteScopusId
-  );
-
   return (
     <motion.div
       key="integrasi"
@@ -48,17 +38,6 @@ export default function Konfigurasi({
       exit="exit"
       className="space-y-6"
     >
-      {/* Modal Konfirmasi Hapus */}
-      <AnimatePresence>
-        {showDeleteConfirm.type && (
-          <DeleteConfirmModal
-            type={showDeleteConfirm.type}
-            onClose={() => setShowDeleteConfirm({ type: null })}
-            onConfirm={confirmDelete}
-          />
-        )}
-      </AnimatePresence>
-
       {/* Banner Sinkronisasi Publikasi */}
       <SyncBanner
         loading={loading}
@@ -89,7 +68,6 @@ export default function Konfigurasi({
           }}
           onCheck={handleCheckId}
           onSave={handleSaveScholarId}
-          onDelete={() => setShowDeleteConfirm({ type: 'scholar' })}
           onSync={handleSync}
         />
 
@@ -112,7 +90,6 @@ export default function Konfigurasi({
           }}
           onCheck={handleCheckScopusId}
           onSave={handleSaveScopusId}
-          onDelete={() => setShowDeleteConfirm({ type: 'scopus' })}
           onSync={handleSyncScopus}
         />
       </div>
