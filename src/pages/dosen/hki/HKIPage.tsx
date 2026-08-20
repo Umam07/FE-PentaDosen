@@ -35,7 +35,14 @@ export default function HKI({ user }: { user: UserSession }) {
   }, [hki.message, hki.messageType]);
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <main id="main-content" className="w-full space-y-6 pb-12">
+      {/* Accessible Skip to Content */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Lewati ke Konten Utama
+      </a>
 
       {/* Header Halaman */}
       <HKIHeader
@@ -173,6 +180,6 @@ export default function HKI({ user }: { user: UserSession }) {
           onUploadPdf={hki.handleUploadPdf}
         />
       )}
-    </div>
+    </main>
   );
 }
