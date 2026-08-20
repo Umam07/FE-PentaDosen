@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowRight, X, GraduationCap, Globe } from 'lucide-react';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface WarningModalProps {
   show: boolean;
@@ -10,6 +11,20 @@ interface WarningModalProps {
 }
 
 export const WarningModal: React.FC<WarningModalProps> = ({ show, onLengkapi, onNanti }) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onNanti();
+    };
+    if (show) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [show, onNanti]);
+
   if (!show) return null;
 
   return createPortal(

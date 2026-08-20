@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { Rocket, RefreshCw, Layers, ArrowRight, ArrowLeft, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import PentaDosenLogo from "./PentaDosenLogo"
+import { lockBodyScroll, unlockBodyScroll } from "../../lib/utils"
 
 function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ")
@@ -251,6 +252,22 @@ export function OnboardingDialog() {
       navigate("/profile?tab=integrasi")
     }
   }, [navigate])
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleComplete()
+      }
+    }
+    if (open) {
+      document.addEventListener('keydown', handleKeyDown)
+      lockBodyScroll()
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+        unlockBodyScroll()
+      }
+    }
+  }, [open])
 
   const isFirstSlide = activeIndex === 0
   const isLastSlide = activeIndex === slides.length - 1

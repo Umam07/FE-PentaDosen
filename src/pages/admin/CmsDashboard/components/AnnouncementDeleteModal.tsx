@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Announcement } from '../types/cmsDashboard.types';
 import { cmsDashboardService } from '../services/cmsDashboardService';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface AnnouncementDeleteModalProps {
   isOpen: boolean;
@@ -23,6 +24,20 @@ export default function AnnouncementDeleteModal({
   triggerMessage
 }: AnnouncementDeleteModalProps) {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   const handleDeleteInternal = async () => {
     if (!announcement) return;

@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image as ImageIcon, ExternalLink, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { ImagePreviewModalProps } from '../types/faqHelp.types';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 export default function ImagePreviewModal({
   fullViewImageUrl,
   onClose,
 }: ImagePreviewModalProps) {
+  const isOpen = Boolean(fullViewImageUrl);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
   return (
     <AnimatePresence>
       {fullViewImageUrl && (

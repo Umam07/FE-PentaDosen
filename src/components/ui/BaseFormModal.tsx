@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { XCircle, LucideIcon } from 'lucide-react';
+import { lockBodyScroll, unlockBodyScroll } from '../../lib/utils';
 
 interface BaseFormModalProps {
   isOpen: boolean;
@@ -23,19 +24,19 @@ export function BaseFormModal({
   maxWidthClass = 'max-w-6xl',
   children
 }: BaseFormModalProps) {
-  // Close on Escape key
+  // Close on Escape key & lock body scroll
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
     }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
   }, [isOpen, onClose]);
 
   return (

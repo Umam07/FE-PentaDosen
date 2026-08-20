@@ -130,3 +130,23 @@ export function uploadWithProgress(
   });
 }
 
+let bodyLockCount = 0;
+let originalBodyOverflow = '';
+
+export function lockBodyScroll(): void {
+  if (typeof document === 'undefined') return;
+  if (bodyLockCount === 0) {
+    originalBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+  }
+  bodyLockCount++;
+}
+
+export function unlockBodyScroll(): void {
+  if (typeof document === 'undefined') return;
+  bodyLockCount = Math.max(0, bodyLockCount - 1);
+  if (bodyLockCount === 0) {
+    document.body.style.overflow = originalBodyOverflow || '';
+  }
+}
+

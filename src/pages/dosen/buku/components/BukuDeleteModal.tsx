@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface BukuDeleteModalProps {
   isOpen: boolean;
@@ -24,6 +25,20 @@ export default function BukuDeleteModal({
   onShowMessage
 }: BukuDeleteModalProps) {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   const handleDeleteInternal = async () => {
     if (!deleteDoc) return;

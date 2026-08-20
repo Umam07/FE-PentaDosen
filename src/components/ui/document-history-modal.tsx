@@ -6,6 +6,7 @@ import {
   ShieldCheck, Building2, University, User, Clock,
   FileCheck, AlertCircle, RefreshCw
 } from 'lucide-react';
+import { lockBodyScroll, unlockBodyScroll } from '../../lib/utils';
 
 export interface DocumentHistoryModalProps {
   isOpen: boolean;
@@ -128,6 +129,20 @@ export function DocumentHistoryModal({ isOpen, onClose, docId, title }: Document
         .finally(() => setLoading(false));
     }
   }, [isOpen, docId]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   const modalContent = (
     <AnimatePresence>

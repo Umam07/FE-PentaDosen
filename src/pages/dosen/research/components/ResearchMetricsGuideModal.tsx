@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Beaker, BarChart2, Info } from 'lucide-react';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface ResearchMetricsGuideModalProps {
   isOpen: boolean;
@@ -8,17 +9,30 @@ interface ResearchMetricsGuideModalProps {
 }
 
 export default function ResearchMetricsGuideModal({ isOpen, onClose }: ResearchMetricsGuideModalProps) {
-  if (!isOpen) return null;
-
   const researchMetrics = [
     { label: 'Penelitian Hibah Luar Negeri', pts: 10, desc: 'Penelitian tingkat internasional' },
     { label: 'Penelitian Hibah Eksternal (Dikti)', pts: 6, desc: 'Hibah nasional / kementerian' },
     { label: 'Penelitian Internal Institusi', pts: 3, desc: 'Pendanaan internal kampus' },
   ];
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-900/60 backdrop-blur-xs">
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-900/60 backdrop-blur-xs">
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -144,6 +158,7 @@ export default function ResearchMetricsGuideModal({ isOpen, onClose }: ResearchM
           </div>
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 }
