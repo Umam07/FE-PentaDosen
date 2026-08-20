@@ -252,16 +252,16 @@ export default function ExternalDocumentsView({
                         }).length;
 
                         return (
-                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 sm:p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-3">
+                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2.5">
                             {/* Alert Banner Ramping Terintegrasi */}
                             {unconfirmedScopusCount > 0 && (
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-2.5 sm:px-3.5 bg-warning-soft dark:bg-warning/10 border border-warning-border dark:border-warning/30 rounded-xl text-xs">
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                  <div className="w-6 h-6 rounded-lg bg-warning-soft dark:bg-warning/20 flex items-center justify-center shrink-0">
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 bg-warning-soft dark:bg-warning/10 border border-warning-border dark:border-warning/30 rounded-xl text-xs">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div className="w-5 h-5 rounded-md bg-warning-soft dark:bg-warning/20 flex items-center justify-center shrink-0">
                                     <AlertTriangle className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
                                   </div>
-                                  <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">
-                                    <span className="font-bold text-warning dark:text-warning-on-dark">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi status korespondensi
+                                  <p className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate">
+                                    <span className="font-bold text-warning dark:text-warning-on-dark">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi korespondensi
                                   </p>
                                 </div>
                                 <button
@@ -270,56 +270,42 @@ export default function ExternalDocumentsView({
                                     setScopusFilter(scopusFilter === 'unconfirmed' ? 'all' : 'unconfirmed');
                                     setCurrentPage(1);
                                   }}
-                                  className="self-start sm:self-auto px-3 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer text-center shrink-0 bg-warning hover:bg-warning/90 dark:bg-warning-on-dark dark:hover:bg-warning-on-dark/90 text-white dark:text-ink shadow-2xs"
+                                  className="self-start sm:self-auto px-2.5 py-0.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer text-center shrink-0 bg-warning hover:bg-warning/90 dark:bg-warning-on-dark dark:hover:bg-warning-on-dark/90 text-white dark:text-ink shadow-2xs"
                                 >
                                   {scopusFilter === 'unconfirmed' ? 'Tampilkan Semua' : 'Filter Perlu Update'}
                                 </button>
                               </div>
                             )}
 
-                            {/* Baris Atas: Search Input Box + Filter Tahun */}
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                              <div className="relative flex-1">
-                                <Search className="w-4 h-4 text-muted dark:text-on-dark-muted absolute left-3 top-1/2 -translate-y-1/2" />
-                                <input
-                                  type="text"
-                                  value={searchTerm}
-                                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                                  placeholder="Cari judul publikasi, jurnal, atau penulis..."
-                                  className="w-full pl-9 pr-8 py-2 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
-                                />
-                                {searchTerm && (
-                                  <button
-                                    type="button"
-                                    onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
-                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
-                                  >
-                                    <X className="w-3.5 h-3.5" />
-                                  </button>
-                                )}
-                              </div>
-
-                              {/* Right: Year Filter */}
-                              {availableYearsScopus.length > 0 && (
-                                <div className="relative z-30 shrink-0 self-start sm:self-auto">
-                                  <YearFilterBar
-                                    availableYears={availableYearsScopus}
-                                    selectedYear={filterYearExt}
-                                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                    className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                            {/* Single Unified Filter & Search Bar */}
+                            <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5">
+                              {/* Left Controls: Compact Search + Status + Tipe */}
+                              <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                                {/* Compact Search Input */}
+                                <div className="relative w-full sm:w-56 md:w-60 shrink-0">
+                                  <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                  <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                                    placeholder="Cari judul, jurnal, penulis..."
+                                    className="w-full pl-8 pr-7 py-1.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent transition-all shadow-2xs"
                                   />
+                                  {searchTerm && (
+                                    <button
+                                      type="button"
+                                      onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  )}
                                 </div>
-                              )}
-                            </div>
 
-                            {/* Baris Bawah: Segmented Filter Controls */}
-                            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2 border-t border-hairline-light/60 dark:border-hairline-dark/60">
-                              {/* Filter 1: Status Korespondensi */}
-                              <div className="flex items-center gap-2">
-                                <span className="text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
-                                  Status:
-                                </span>
-                                <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+                                <div className="hidden sm:block h-5 w-px bg-hairline-light dark:bg-hairline-dark" />
+
+                                {/* Filter Status */}
+                                <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-0.5 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
                                     { id: 'all', label: 'Semua' },
                                     { id: 'unconfirmed', label: 'Perlu Update', count: unconfirmedScopusCount },
@@ -328,7 +314,7 @@ export default function ExternalDocumentsView({
                                     <button
                                       key={opt.id}
                                       onClick={() => { setScopusFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                      className={`flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                         scopusFilter === opt.id
                                           ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
                                           : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
@@ -347,26 +333,18 @@ export default function ExternalDocumentsView({
                                     </button>
                                   ))}
                                 </div>
-                              </div>
 
-                              {/* Separator */}
-                              <div className="hidden sm:block h-6 w-px bg-hairline-light dark:bg-hairline-dark" />
-
-                              {/* Filter 2: Tipe Dokumen */}
-                              <div className="flex items-center gap-2">
-                                <span className="text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
-                                  Tipe:
-                                </span>
-                                <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+                                {/* Filter Tipe */}
+                                <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-0.5 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
-                                    { id: 'all', label: 'Semua' },
+                                    { id: 'all', label: 'Semua Tipe' },
                                     { id: 'article', label: 'Article' },
                                     { id: 'non-article', label: 'Non-Article' }
                                   ].map((opt) => (
                                     <button
                                       key={opt.id}
                                       onClick={() => { setArticleFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                      className={`flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                         articleFilter === opt.id
                                           ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
                                           : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
@@ -377,6 +355,18 @@ export default function ExternalDocumentsView({
                                   ))}
                                 </div>
                               </div>
+
+                              {/* Right: Year Filter */}
+                              {availableYearsScopus.length > 0 && (
+                                <div className="relative z-30 shrink-0 self-start lg:self-auto ml-auto lg:ml-0">
+                                  <YearFilterBar
+                                    availableYears={availableYearsScopus}
+                                    selectedYear={filterYearExt}
+                                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                                    className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                                  />
+                                </div>
+                              )}
                             </div>
                           </div>
                         );
@@ -525,10 +515,10 @@ export default function ExternalDocumentsView({
                     {/* Document List Table */}
                     <div className="space-y-3.5">
                       {/* Unified Compact Toolbar for Google Scholar */}
-                      <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 sm:p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-3">
-                        <div className="flex items-center gap-2.5 px-1 text-xs">
-                          <div className="w-5 h-5 rounded-lg bg-accent text-on-ink flex items-center justify-center shrink-0">
-                            <Info className="w-3 h-3" />
+                      <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2">
+                        <div className="flex items-center gap-2 px-1 text-xs">
+                          <div className="w-4 h-4 rounded-md bg-accent text-on-ink flex items-center justify-center shrink-0">
+                            <Info className="w-2.5 h-2.5" />
                           </div>
                           <p className="text-xs text-body dark:text-on-dark-soft">
                             <span className="font-bold text-accent dark:text-accent-on-dark">Skema Google Scholar:</span> Dihitung dari dokumen, jumlah sitasi, &amp; bonus tersitasi.
@@ -536,29 +526,29 @@ export default function ExternalDocumentsView({
                         </div>
 
                         {/* Search Input Box + Year Filter for Scholar */}
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1 border-t border-hairline-light/60 dark:border-hairline-dark/60">
-                          <div className="relative flex-1">
-                            <Search className="w-4 h-4 text-muted dark:text-on-dark-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 pt-1.5 border-t border-hairline-light/60 dark:border-hairline-dark/60">
+                          <div className="relative w-full sm:w-64 md:w-72 shrink-0">
+                            <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                             <input
                               type="text"
                               value={searchTerm}
                               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                              placeholder="Cari judul publikasi atau jurnal Scholar..."
-                              className="w-full pl-9 pr-8 py-2 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                              placeholder="Cari judul publikasi atau jurnal..."
+                              className="w-full pl-8 pr-7 py-1.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent transition-all shadow-2xs"
                             />
                             {searchTerm && (
                               <button
                                 type="button"
                                 onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
                               >
-                                <X className="w-3.5 h-3.5" />
+                                <X className="w-3 h-3" />
                               </button>
                             )}
                           </div>
 
                           {!isPublic && availableYearsScholar.length > 0 && (
-                            <div className="relative z-30 shrink-0 self-start sm:self-auto">
+                            <div className="relative z-30 shrink-0 ml-auto sm:ml-0">
                               <YearFilterBar
                                 availableYears={availableYearsScholar}
                                 selectedYear={filterYearExt}
@@ -676,29 +666,29 @@ export default function ExternalDocumentsView({
                 </div>
 
                 {/* Search Bar + Year Filter for Cross-Indexed */}
-                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 sm:p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                  <div className="relative flex-1">
-                    <Search className="w-4 h-4 text-muted dark:text-on-dark-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
+                  <div className="relative w-full sm:w-64 md:w-72 shrink-0">
+                    <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       value={searchTerm}
                       onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                       placeholder="Cari judul publikasi atau jurnal..."
-                      className="w-full pl-9 pr-8 py-2 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                      className="w-full pl-8 pr-7 py-1.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent transition-all shadow-2xs"
                     />
                     {searchTerm && (
                       <button
                         type="button"
                         onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <X className="w-3 h-3" />
                       </button>
                     )}
                   </div>
 
                   {!isPublic && availableYearsCross.length > 0 && (
-                    <div className="relative z-30 shrink-0 self-start sm:self-auto">
+                    <div className="relative z-30 shrink-0 ml-auto sm:ml-0">
                       <YearFilterBar
                         availableYears={availableYearsCross}
                         selectedYear={filterYearExt}
