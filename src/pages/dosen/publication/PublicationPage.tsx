@@ -351,7 +351,7 @@ export default function Publication({ user }: { user: UserSession }) {
               });
             }
           }}
-          onUploadPdf={pub.handleUploadPdf}
+          onUploadPdf={!pub.activeDetailDoc?.source ? pub.handleUploadPdf : undefined}
         />
       )}
     </div>

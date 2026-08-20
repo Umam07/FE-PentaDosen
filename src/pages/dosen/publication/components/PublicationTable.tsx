@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   FileText, Upload, CheckCircle, XCircle, Clock, 
-  Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock
+  Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock, RefreshCw
 } from 'lucide-react';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
@@ -382,6 +382,14 @@ export default function PublicationTable({
                       >
                         <FileText className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" /> Lihat
                       </button>
+                    ) : doc.source ? (
+                      <span 
+                        className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark whitespace-nowrap"
+                        title="Publikasi tersinkronisasi via API, tidak memerlukan unggah berkas manual"
+                      >
+                        <RefreshCw className="w-3 h-3 text-muted dark:text-on-dark-muted" />
+                        <span>Sinkron API</span>
+                      </span>
                     ) : (
                       <label className="inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark cursor-pointer bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors">
                         {uploadingPdfId === doc.id ? (
