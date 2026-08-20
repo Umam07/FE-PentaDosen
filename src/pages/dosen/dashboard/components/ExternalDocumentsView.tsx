@@ -670,54 +670,53 @@ export default function ExternalDocumentsView({
                   </div>
                 </div>
 
-                {/* Info banner cross-indexed */}
-                <div className="flex items-start gap-3 p-4 bg-success-soft dark:bg-success/10 border border-success-border dark:border-success/30 rounded-xl">
-                  <div className="w-6 h-6 rounded-lg bg-success text-on-ink flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Info className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-success-dark dark:text-success-on-dark">Deduplikasi Otomatis — Poin Scopus Digunakan</p>
-                    <p className="text-xs text-body dark:text-on-dark-soft mt-0.5">
-                      Ketika judul ada di Scopus &amp; Scholar, sistem memakai poin Scopus (kalkulasi SINTA) karena lebih besar.
+                {/* Unified Compact Toolbar for Cross-Indexed */}
+                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2 relative z-20">
+                  <div className="flex items-center gap-2 px-1 text-xs">
+                    <div className="w-4 h-4 rounded-md bg-success text-on-ink flex items-center justify-center shrink-0">
+                      <Info className="w-2.5 h-2.5" />
+                    </div>
+                    <p className="text-xs text-body dark:text-on-dark-soft">
+                      <span className="font-bold text-success dark:text-success-on-dark">Deduplikasi Otomatis:</span> Ketika judul ada di Scopus &amp; Scholar, sistem memakai poin Scopus (kalkulasi SINTA) karena lebih besar.
                     </p>
                   </div>
-                </div>
 
-                {/* Search Bar + Year Filter for Cross-Indexed */}
-                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark flex flex-wrap items-center justify-end gap-2 relative z-20">
-                  <div className="relative w-full sm:w-48 md:w-56 shrink-0">
-                    <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                      placeholder="Cari judul publikasi atau jurnal..."
-                      className="w-full pl-8 pr-7 py-1.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent transition-all shadow-2xs"
-                    />
-                    {searchTerm && (
-                      <button
-                        type="button"
-                        onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
+                  {/* Search Bar + Year Filter for Cross-Indexed */}
+                  <div className="flex flex-wrap items-center justify-end gap-2 pt-1.5 border-t border-hairline-light/60 dark:border-hairline-dark/60">
+                    <div className="relative w-full sm:w-48 md:w-56 shrink-0">
+                      <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                        placeholder="Cari judul publikasi atau jurnal..."
+                        className="w-full pl-8 pr-7 py-1.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent transition-all shadow-2xs"
+                      />
+                      {searchTerm && (
+                        <button
+                          type="button"
+                          onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    {!isPublic && availableYearsCross.length > 0 && (
+                      <>
+                        <div className="hidden sm:block h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
+                        <div className="relative z-30 shrink-0">
+                          <YearFilterBar
+                            availableYears={availableYearsCross}
+                            selectedYear={filterYearExt}
+                            onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                            className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                          />
+                        </div>
+                      </>
                     )}
                   </div>
-
-                  {!isPublic && availableYearsCross.length > 0 && (
-                    <>
-                      <div className="hidden sm:block h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
-                      <div className="relative z-30 shrink-0">
-                        <YearFilterBar
-                          availableYears={availableYearsCross}
-                          selectedYear={filterYearExt}
-                          onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                          className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
-                        />
-                      </div>
-                    </>
-                  )}
                 </div>
 
                 {loading ? (
