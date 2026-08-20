@@ -73,23 +73,23 @@ export default function BukuLinkingModal({
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-950/60 backdrop-blur-xs"
+            className="absolute inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-xs"
           />
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden"
+            className="relative w-full max-w-lg bg-surface-light dark:bg-surface-dark rounded-3xl shadow-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden"
           >
             <div className="p-6 sm:p-8">
               <div className="flex items-center gap-3.5 mb-6">
-                <div className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-2xl text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80">
+                <div className="p-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark">
                   <Link className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">Pilih Asal Penelitian</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Hubungkan buku ini dengan penelitian yang relevan</p>
+                  <h3 className="text-base sm:text-lg font-bold text-ink-heading dark:text-on-dark tracking-tight">Hubungkan ke Penelitian</h3>
+                  <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Pilih penelitian asal yang melandasi penerbitan buku ini</p>
                 </div>
               </div>
 
@@ -97,22 +97,23 @@ export default function BukuLinkingModal({
                 {approvedResearch.length > 0 ? (
                   approvedResearch.map((res: any) => (
                     <button
+                      type="button"
                       key={res.id}
                       disabled={isLinkingLoading}
                       onClick={() => handleLinkToResearchInternal(res.id)}
-                      className="w-full text-left p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all group cursor-pointer"
+                      className="w-full text-left p-4 rounded-xl border border-hairline-light dark:border-hairline-dark hover:border-ink-border dark:hover:border-hairline-light-soft bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-all group cursor-pointer shadow-2xs"
                     >
                       <div className="flex justify-between items-start gap-3">
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs font-semibold text-slate-900 dark:text-zinc-100 tracking-tight leading-snug group-hover:text-slate-900 dark:group-hover:text-white">
+                          <p className="text-xs font-semibold text-ink-heading dark:text-on-dark tracking-tight leading-snug">
                             {res.judul_penelitian}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">{res.tahun}</span>
-                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200/60 dark:border-slate-700/60">{res.program}</span>
+                            <span className="text-[11px] font-mono text-muted dark:text-on-dark-muted">{res.tahun}</span>
+                            <span className="px-2 py-0.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md border border-hairline-light dark:border-hairline-dark">{res.program}</span>
                           </div>
                         </div>
-                        <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0">
+                        <div className="p-1.5 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg text-muted dark:text-on-dark-muted group-hover:text-ink-heading dark:group-hover:text-on-dark transition-colors shrink-0">
                           <ChevronRight className="w-4 h-4" />
                         </div>
                       </div>
@@ -120,16 +121,17 @@ export default function BukuLinkingModal({
                   ))
                 ) : (
                   <div className="py-12 text-center">
-                    <AlertCircle className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                    <p className="text-xs font-medium text-slate-400 dark:text-slate-500">Tidak ada penelitian yang disetujui</p>
+                    <AlertCircle className="w-10 h-10 text-muted-soft dark:text-on-dark-muted mx-auto mb-3" />
+                    <p className="text-xs font-medium text-muted dark:text-on-dark-muted">Tidak ada penelitian yang disetujui</p>
                   </div>
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+              <div className="mt-6 pt-4 border-t border-hairline-light dark:border-hairline-dark">
                 <button 
+                  type="button"
                   onClick={onClose}
-                  className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                  className="w-full py-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-hairline-light dark:hover:bg-surface-dark text-body dark:text-on-dark-soft text-xs font-semibold rounded-lg transition-all cursor-pointer"
                 >
                   Batalkan
                 </button>
@@ -141,4 +143,5 @@ export default function BukuLinkingModal({
     </AnimatePresence>
   );
 }
+
 

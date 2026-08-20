@@ -19,7 +19,7 @@ import { DocumentDetailDrawer } from '../../../components/ui/document-detail-dra
 export default function Buku({ user }: { user: UserSession }) {
   const buku = useBuku(user);
 
-  const paginatedDocs = buku.filteredDocuments.slice(
+  const currentDocuments = buku.filteredDocuments.slice(
     (buku.currentPage - 1) * buku.itemsPerPage,
     buku.currentPage * buku.itemsPerPage
   );
@@ -35,7 +35,14 @@ export default function Buku({ user }: { user: UserSession }) {
   }, [buku.message, buku.messageType]);
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <main id="main-content" className="w-full space-y-6 pb-12">
+      {/* Accessible Skip to Content */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Lewati ke Konten Utama
+      </a>
 
       {/* Header Halaman */}
       <BukuHeader
@@ -59,14 +66,12 @@ export default function Buku({ user }: { user: UserSession }) {
       {/* Tabel Buku */}
       <BukuTable
         isTableLoading={buku.isTableLoading}
-        filterKategori={buku.filterKategori}
-        setFilterKategori={buku.setFilterKategori}
         currentPage={buku.currentPage}
         setCurrentPage={buku.setCurrentPage}
         itemsPerPage={buku.itemsPerPage}
         setItemsPerPage={buku.setItemsPerPage}
+        currentDocuments={currentDocuments}
         filteredDocuments={buku.filteredDocuments}
-        paginatedDocs={paginatedDocs}
         setSelectedDocForDetail={buku.setSelectedDocForDetail}
         setPreviewDoc={buku.setPreviewDoc}
         uploadingPdfId={buku.uploadingPdfId}
@@ -173,6 +178,7 @@ export default function Buku({ user }: { user: UserSession }) {
           onUploadPdf={buku.handleUploadPdf}
         />
       )}
-    </div>
+    </main>
   );
 }
+

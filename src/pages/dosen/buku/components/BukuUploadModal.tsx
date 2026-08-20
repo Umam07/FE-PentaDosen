@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Upload, Sparkles, Archive, AlertCircle,
-  CalendarDays, FileText, XCircle, BookOpen
+  CalendarDays, FileText, XCircle, BookOpen, Zap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
@@ -37,7 +37,7 @@ export default function BukuUploadModal({
   const [file, setFile] = useState<File | null>(null);
   
   const [loading, setLoading] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const duplicateFound = useMemo(() => {
@@ -47,8 +47,6 @@ export default function BukuUploadModal({
       doc.is_kpi_counted
     );
   }, [title, documents]);
-
-  const selectedCat = BUKU_CATEGORIES.find(c => c.value === category);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -81,7 +79,7 @@ export default function BukuUploadModal({
     }
 
     if (duplicateFound) {
-      onShowMessage('Dokumen ini sudah terdata.', 'error');
+      onShowMessage('Buku ini sudah terdata dalam sistem.', 'error');
       return;
     }
 
@@ -111,13 +109,13 @@ export default function BukuUploadModal({
         setCurrentPage(1);
         setIsTableLoading(false);
       } else {
-        let errorMsg = res.data?.message || 'Gagal mengunggah.';
+        let errorMsg = res.data?.message || 'Gagal mengunggah buku.';
         if (res.data?.errors && res.data.errors.title) {
           errorMsg = res.data.errors.title[0];
         }
         onShowMessage(errorMsg, 'error');
       }
-    } catch (err) {
+    } catch {
       onShowMessage('Terjadi kesalahan saat mengunggah.', 'error');
     } finally {
       setLoading(false);
@@ -132,64 +130,59 @@ export default function BukuUploadModal({
       title="Unggah Buku Baru"
       subtitle="Daftarkan Buku Ajar, Referensi, atau Monograf"
       icon={Upload}
-      iconColorClass="text-slate-700 dark:text-slate-200"
       maxWidthClass="max-w-4xl"
     >
       <form onSubmit={handleUpload} className="space-y-6">
-        {duplicateFound && (
-          <div className="flex items-start gap-2 p-3.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/60 rounded-xl text-xs font-medium text-amber-800 dark:text-amber-300">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" /> Judul buku ini sudah ada di database.
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           <button
             type="button"
             onClick={() => setDocType('kpi')}
-            className={`group relative flex items-center p-4 rounded-xl border-2 transition-all cursor-pointer ${
+            className={`group relative flex items-center p-3.5 rounded-2xl border-2 transition-all cursor-pointer ${
               docType === 'kpi'
-                ? 'border-slate-900 dark:border-white bg-slate-50 dark:bg-slate-800/80 ring-2 ring-slate-900/10 dark:ring-white/10'
-                : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/40'
+                ? 'border-ink dark:border-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated ring-2 ring-ink/10 dark:ring-on-dark/10'
+                : 'border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:border-ink-border dark:hover:border-hairline-dark'
             }`}
           >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-              docType === 'kpi' ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-200/70'
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mr-3 transition-colors ${
+              docType === 'kpi' ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink' : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted'
             }`}>
-              <Sparkles className={`w-5 h-5 ${docType === 'kpi' ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`} />
+              <Sparkles className="w-4 h-4 text-warning" />
             </div>
             <div className="text-left min-w-0">
-              <p className={`text-xs font-bold tracking-tight ${docType === 'kpi' ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
-                KPI Dosen
+              <p className="text-xs font-bold text-ink-heading dark:text-on-dark">
+                Dokumen KPI Dosen
               </p>
-              <p className="text-[10px] font-normal text-slate-500 dark:text-slate-400">Automated Scoring</p>
+              <p className="text-[11px] text-muted dark:text-on-dark-muted">Dihitung otomatis dalam metrik penilaian</p>
             </div>
           </button>
 
           <button
             type="button"
             onClick={() => setDocType('arsip')}
-            className={`group relative flex items-center p-4 rounded-xl border-2 transition-all cursor-pointer ${
+            className={`group relative flex items-center p-3.5 rounded-2xl border-2 transition-all cursor-pointer ${
               docType === 'arsip'
-                ? 'border-slate-900 dark:border-white bg-slate-50 dark:bg-slate-800/80 ring-2 ring-slate-900/10 dark:ring-white/10'
-                : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/40'
+                ? 'border-ink dark:border-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated ring-2 ring-ink/10 dark:ring-on-dark/10'
+                : 'border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:border-ink-border dark:hover:border-hairline-dark'
             }`}
           >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors ${
-              docType === 'arsip' ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-200/70'
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mr-3 transition-colors ${
+              docType === 'arsip' ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink' : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted'
             }`}>
-              <Archive className={`w-5 h-5 ${docType === 'arsip' ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`} />
+              <Archive className="w-4 h-4" />
             </div>
             <div className="text-left min-w-0">
-              <p className={`text-xs font-bold tracking-tight ${docType === 'arsip' ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
-                Arsip Umum
+              <p className="text-xs font-bold text-ink-heading dark:text-on-dark">
+                Arsip Pribadi / Umum
               </p>
-              <p className="text-[10px] font-normal text-slate-500 dark:text-slate-400">Penyimpanan Saja (0 Pts)</p>
+              <p className="text-[11px] text-muted dark:text-on-dark-muted">Penyimpanan mandiri (0 Poin KPI)</p>
             </div>
           </button>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="buku-title" className="text-xs font-semibold text-slate-700 dark:text-slate-300 ml-1">Judul Buku</label>
+        <div className="space-y-1.5">
+          <label htmlFor="buku-title" className="text-xs font-semibold text-body-strong dark:text-on-dark-soft">
+            Judul Buku <span className="text-error">*</span>
+          </label>
           <input 
             type="text"
             id="buku-title"
@@ -197,17 +190,34 @@ export default function BukuUploadModal({
             value={title} 
             onChange={e => setTitle(e.target.value)} 
             placeholder="Masukkan judul buku..."
-            className="w-full px-4 py-2.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:bg-white dark:focus:bg-slate-900 focus:ring-3 focus:ring-accent/15 focus:border-accent transition-all outline-none text-sm text-slate-900 dark:text-white" 
+            className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark placeholder:text-muted/60 dark:placeholder:text-on-dark-muted/60" 
           />
+          {docType === 'kpi' && title.length > 3 && !duplicateFound && (
+            <p className="text-[11px] font-semibold text-muted dark:text-on-dark-muted flex items-center bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-lg w-fit mt-1 border border-hairline-light dark:border-hairline-dark">
+              <Zap className="w-3.5 h-3.5 mr-1.5 text-warning fill-current" />
+              Sistem verifikasi otomatis siap memproses
+            </p>
+          )}
+          {duplicateFound && (
+            <div className="p-3 rounded-xl bg-warning-soft dark:bg-warning/15 border border-warning-border dark:border-warning/30 flex items-start gap-3">
+              <AlertCircle className="w-4 h-4 text-warning dark:text-warning-on-dark shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-bold text-ink-heading dark:text-on-dark">Dokumen Sudah Terdata</p>
+                <p className="text-[11px] text-body dark:text-on-dark-soft leading-relaxed mt-0.5">
+                  Buku dengan judul ini sudah terhitung dalam poin KPI. Pengunggahan dibatasi untuk menghindari duplikasi data.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Kategori Buku Card Selection (Responsive grid) */}
-        <div className="space-y-3">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 ml-1 flex items-center">
-            <BookOpen className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
-            Kategori Buku
+        {/* Kategori Buku Card Selection */}
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft flex items-center">
+            <BookOpen className="w-3.5 h-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
+            Kategori Buku <span className="text-error ml-0.5">*</span>
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {BUKU_CATEGORIES.map((opt) => {
               const IconComp = opt.icon;
               return (
@@ -217,75 +227,75 @@ export default function BukuUploadModal({
                   onClick={() => setCategory(opt.value)}
                   className={`group relative flex flex-col items-center p-3 rounded-xl border-2 transition-all cursor-pointer ${
                     category === opt.value
-                      ? 'border-slate-900 dark:border-white bg-slate-50 dark:bg-slate-800/80 ring-2 ring-slate-900/10 dark:ring-white/10'
-                      : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/40'
+                      ? 'border-ink dark:border-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated ring-2 ring-ink/10 dark:ring-on-dark/10'
+                      : 'border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:border-ink-border dark:hover:border-hairline-dark'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all ${
-                    category === opt.value ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-200/70'
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-1.5 transition-all ${
+                    category === opt.value ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink' : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft'
                   }`}>
                     {IconComp && (
-                      <IconComp className={`w-4 h-4 ${category === opt.value ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`} />
+                      <IconComp className="w-4 h-4" />
                     )}
                   </div>
-                  <p className={`text-xs font-bold text-center tracking-tight ${
-                    category === opt.value ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'
-                  }`}>
+                  <p className="text-xs font-bold text-center tracking-tight text-ink-heading dark:text-on-dark">
                     {opt.label}
                   </p>
-                  <p className="text-[11px] font-semibold font-mono mt-1 text-slate-600 dark:text-slate-400 tabular-nums">+{opt.points} Pts</p>
+                  <p className="text-[11px] font-semibold font-mono tabular-nums mt-0.5 text-muted dark:text-on-dark-muted">+{opt.points} Pts</p>
                 </button>
               );
             })}
           </div>
         </div>
 
-        <div className="space-y-2 relative">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 ml-1 flex items-center">
-            <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-slate-500" />
-            Tanggal Terbit
+        <div className="space-y-1.5 relative">
+          <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft flex items-center">
+            <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
+            Tanggal Terbit <span className="text-error ml-0.5">*</span>
           </label>
           <DatePicker date={date} onDateChange={setDate} placeholder="Pilih tanggal terbit" />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 ml-1">File Buku (PDF)</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft">
+            File Buku (PDF) <span className="text-error">*</span>
+          </label>
           {file ? (
-            <div className="relative p-4 sm:p-5 bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col gap-4">
+            <div className="relative p-4 bg-surface-light-raised/60 dark:bg-surface-dark-elevated/60 border border-hairline-light dark:border-hairline-dark rounded-2xl flex flex-col gap-3">
               <button 
                 type="button"
                 onClick={() => setFile(null)}
                 disabled={loading}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                className="absolute top-3.5 right-3.5 text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
               >
                 <XCircle className="w-5 h-5" />
               </button>
 
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
-                  <FileText className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl flex items-center justify-center shrink-0 shadow-2xs">
+                  <FileText className="w-5 h-5 text-muted dark:text-on-dark-muted" />
                 </div>
                 
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white truncate pr-6">
+                  <p className="text-xs font-bold text-ink-heading dark:text-on-dark truncate pr-6">
                     {file.name}
                   </p>
-                  <p className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5">
                     {(file.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 mt-1">
-                <div className="flex-1 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div className="flex-1 bg-surface-light-raised dark:bg-surface-dark h-1.5 rounded-full overflow-hidden">
                   <motion.div 
-                    className="bg-slate-900 dark:bg-zinc-100 h-full rounded-full"
+                    className="bg-ink dark:bg-on-dark h-full rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${uploadProgress !== null ? uploadProgress : 100}%` }}
                     transition={{ duration: 0.1 }}
                   />
                 </div>
-                <span className="text-xs font-mono font-semibold text-slate-600 dark:text-slate-400 min-w-[35px] text-right">
+                <span className="text-xs font-mono font-semibold text-muted dark:text-on-dark-muted min-w-[30px] text-right">
                   {uploadProgress !== null ? `${uploadProgress}%` : '100%'}
                 </span>
               </div>
@@ -296,7 +306,7 @@ export default function BukuUploadModal({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => document.getElementById('buku-file-input-modal')?.click()}
-              className="relative group mt-1 flex justify-center px-6 py-8 border-2 rounded-xl transition-all duration-200 cursor-pointer border-slate-200 dark:border-slate-800 border-dashed bg-slate-50/40 dark:bg-slate-850/40 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600"
+              className="relative group mt-1 flex justify-center px-6 py-7 border-2 border-dashed rounded-2xl transition-all cursor-pointer border-hairline-light dark:border-hairline-dark bg-surface-light-raised/40 dark:bg-surface-dark-elevated/40 hover:bg-surface-light-raised dark:hover:bg-surface-dark hover:border-muted dark:hover:border-hairline-light-soft"
             >
               <input
                 id="buku-file-input-modal"
@@ -305,16 +315,16 @@ export default function BukuUploadModal({
                 className="sr-only"
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
               />
-              <div className="space-y-3 text-center">
-                <div className="mx-auto h-12 w-12 rounded-xl flex items-center justify-center transition-all bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 shadow-xs">
-                  <Upload className="h-6 w-6 text-slate-500 group-hover:text-slate-800 dark:group-hover:text-slate-200" />
+              <div className="space-y-2 text-center">
+                <div className="mx-auto h-10 w-10 rounded-xl flex items-center justify-center transition-all bg-surface-light dark:bg-surface-dark-elevated shadow-2xs border border-hairline-light dark:border-hairline-dark">
+                  <Upload className="h-5 w-5 text-muted dark:text-on-dark-muted" />
                 </div>
-                <div className="flex flex-col gap-1 px-4">
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                    Tarik & Lepaskan File PDF
+                <div className="flex flex-col gap-0.5 px-4">
+                  <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">
+                    Pilih File PDF Buku
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[250px]">
-                    Klik atau seret file buku ke sini
+                  <p className="text-[11px] text-muted dark:text-on-dark-muted">
+                    Klik untuk memilih atau seret file ke area ini
                   </p>
                 </div>
               </div>
@@ -322,18 +332,18 @@ export default function BukuUploadModal({
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-hairline-light dark:border-hairline-dark">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 border border-slate-200/80 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl text-xs font-semibold transition-all cursor-pointer flex-1 sm:flex-none"
+            className="px-4 py-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-hairline-light dark:hover:bg-surface-dark text-body dark:text-on-dark-soft rounded-lg text-xs font-semibold transition-all cursor-pointer"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={loading || !!duplicateFound}
-            className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer flex-1 sm:flex-none"
+            className="px-5 py-2.5 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {loading ? 'Mengunggah...' : 'Kirim Buku'}
           </button>
@@ -342,4 +352,5 @@ export default function BukuUploadModal({
     </BaseFormModal>
   );
 }
+
 
