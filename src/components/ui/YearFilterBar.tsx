@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Calendar, ChevronDown, Check, Search, X } from 'lucide-react';
+import { ChevronDown, Check, Search, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export interface YearFilterBarProps {
@@ -62,7 +62,7 @@ export default function YearFilterBar({
       : 'px-3.5 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between sm:justify-start gap-3 bg-gray-50/20 dark:bg-zinc-900/20';
 
   const labelCls =
-    'flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-zinc-500 shrink-0';
+    'flex items-center gap-1.5 text-[11px] text-muted dark:text-on-dark-muted font-normal select-none shrink-0';
 
   const isFiltered = selectedYear !== null;
 
@@ -70,7 +70,6 @@ export default function YearFilterBar({
     <div className={`${containerCls} ${className}`}>
       {/* Label */}
       <div className={labelCls}>
-        <Calendar className="w-4 h-4 text-muted dark:text-on-dark-soft" />
         <span>Filter Tahun:</span>
       </div>
 
