@@ -9,6 +9,7 @@ interface ScopusTableProps {
   isAlsoScholarCheck: (title: string) => boolean;
   onRefresh?: () => void;
   isPublic?: boolean;
+  children?: React.ReactNode;
 }
 
 export default function ScopusTable({
@@ -16,6 +17,7 @@ export default function ScopusTable({
   isAlsoScholarCheck,
   onRefresh,
   isPublic = false,
+  children,
 }: ScopusTableProps) {
   const [expandedRow, setExpandedRow] = useState<string | number | null>(null);
   const [updatingId, setUpdatingId] = useState<string | number | null>(null);
@@ -428,6 +430,7 @@ export default function ScopusTable({
         })}
       </div>
 
+      {children}
     </div>
   );
 }

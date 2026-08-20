@@ -7,12 +7,14 @@ interface CrossIndexedTableProps {
   documents: any[];
   scopusPublications?: any[];
   isPublic?: boolean;
+  children?: React.ReactNode;
 }
 
 export default function CrossIndexedTable({
   documents,
   scopusPublications = [],
   isPublic = false,
+  children,
 }: CrossIndexedTableProps) {
   const [expandedRow, setExpandedRow] = useState<string | number | null>(null);
 
@@ -320,6 +322,7 @@ export default function CrossIndexedTable({
         })}
       </div>
 
+      {children}
     </div>
   );
 }

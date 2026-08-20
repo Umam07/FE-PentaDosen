@@ -17,7 +17,7 @@ export default function Pagination({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   return (
-    <div className="relative z-10 px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 rounded-b-2xl">
+    <div className="relative z-10 px-4 sm:px-6 py-3.5 sm:py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-2xl">
       <div className="flex items-center gap-4">
         <span className="text-xs text-muted dark:text-on-dark-muted font-mono">
           Menampilkan <span className="font-bold text-ink-heading dark:text-on-dark tabular-nums">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)}</span> dari <span className="font-bold text-ink-heading dark:text-on-dark tabular-nums">{totalItems}</span> Dokumen

@@ -1,7 +1,7 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  TrendingUp, Calendar, Search, Lock, AlertTriangle, Info
+  TrendingUp, Calendar, Search, Lock, AlertTriangle, Info, ChevronDown, X
 } from 'lucide-react';
 
 const ProfileTrendChart = lazy(() =>
@@ -34,11 +34,16 @@ export default function ExternalDocumentsView({
   loading = false,
   isPublic = false
 }: ExternalDocumentsViewProps) {
+  const [isScopusChartOpen, setIsScopusChartOpen] = useState(false);
+  const [isScholarChartOpen, setIsScholarChartOpen] = useState(false);
+
   const {
     currentPage,
     setCurrentPage,
     itemsPerPage,
     setItemsPerPage,
+    searchTerm,
+    setSearchTerm,
     scopusFilter,
     setScopusFilter,
     articleFilter,
@@ -68,11 +73,11 @@ export default function ExternalDocumentsView({
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="space-y-8"
+      className="space-y-6"
     >
       {/* Main Content Card */}
-      <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-8 lg:p-10 shadow-2xs min-h-[500px] relative overflow-hidden">
-        <div className="space-y-8 sm:space-y-10 relative z-10">
+      <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-7 shadow-2xs min-h-[500px] relative overflow-hidden">
+        <div className="space-y-6 sm:space-y-7 relative z-10">
           {/* Nested Publication Sub-tabs - Underline Style */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline-light dark:border-hairline-dark pb-2">
             <div className="flex items-center gap-5 sm:gap-8 pb-3 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
@@ -123,37 +128,37 @@ export default function ExternalDocumentsView({
             const scholarOnlyCount = scholarList.length - crossTitles.size;
 
             return (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {/* Scopus-only */}
-                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
-                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Scopus-Only</p>
-                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(scopusOnly)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
-                   <p className="text-xs font-mono text-muted dark:text-on-dark-muted mt-1">{scopusOnlyCount} dokumen</p>
+                <div className="p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">Scopus-Only</p>
+                   <p className="text-lg font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums mt-0.5">{Math.round(scopusOnly)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5">{scopusOnlyCount} dokumen</p>
                 </div>
                 {/* Scholar-only */}
-                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
-                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Scholar-Only</p>
-                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(scholarOnly)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
-                   <p className="text-xs font-mono text-muted dark:text-on-dark-muted mt-1">{scholarOnlyCount} dokumen</p>
+                <div className="p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">Scholar-Only</p>
+                   <p className="text-lg font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums mt-0.5">{Math.round(scholarOnly)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5">{scholarOnlyCount} dokumen</p>
                 </div>
                 {/* Cross-indexed */}
-                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
-                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Cross-Indexed</p>
-                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(crossPts)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
-                   <p className="text-xs font-mono text-muted dark:text-on-dark-muted mt-1">{crossTitles.size} irisan</p>
+                <div className="p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">Cross-Indexed</p>
+                   <p className="text-lg font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums mt-0.5">{Math.round(crossPts)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5">{crossTitles.size} irisan</p>
                 </div>
                 {/* Grand Total */}
-                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
-                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Total (No Double)</p>
-                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(grandTotal)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
-                   <p className="text-xs text-muted dark:text-on-dark-muted mt-1">Scopus + Scholar</p>
+                <div className="p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">Total (No Double)</p>
+                   <p className="text-lg font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums mt-0.5">{Math.round(grandTotal)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-[11px] text-muted dark:text-on-dark-muted mt-0.5">Scopus + Scholar</p>
                 </div>
               </div>
             );
           })()}
 
           {/* Publication Content */}
-          <div className="space-y-12">
+          <div className="space-y-6">
             <AnimatePresence mode="wait">
               {publicationSubTab === 'scopus' ? (
                 <motion.div
@@ -162,11 +167,11 @@ export default function ExternalDocumentsView({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.15 }}
-                  className="space-y-8"
+                  className="space-y-6"
                 >
                 {loading ? (
-                  <div className="space-y-6">
-                    <div className="h-64 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark animate-pulse" />
+                  <div className="space-y-4">
+                    <div className="h-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark animate-pulse" />
                     <div className="space-y-3">
                       {[1, 2, 3].map(i => (
                         <div key={i} className="h-24 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl animate-pulse" />
@@ -175,42 +180,70 @@ export default function ExternalDocumentsView({
                   </div>
                 ) : scopusChartData.chartData.length > 0 ? (
                   <>
-                    <div className="relative group/chart-container">
-                      <div className="relative bg-surface-light-raised dark:bg-surface-dark-elevated p-6 sm:p-8 lg:p-10 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-2xs transition-all duration-300">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-                          <div className="flex items-center gap-3.5">
-                            <div className="w-11 h-11 bg-surface-light dark:bg-surface-dark text-chart-scopus dark:text-chart-scopus-dark rounded-xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark shadow-xs">
-                              <TrendingUp className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">Analisis Tren Scopus</h4>
-                              <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Statistik Publikasi &amp; Sitasi</p>
-                            </div>
+                    {/* Collapsible Scopus Trend Chart Container */}
+                    <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-2xs overflow-hidden transition-all duration-200">
+                      <button
+                        type="button"
+                        onClick={() => setIsScopusChartOpen(!isScopusChartOpen)}
+                        className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-surface-light dark:hover:bg-surface-dark/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-surface-light dark:bg-surface-dark text-chart-scopus dark:text-chart-scopus-dark rounded-xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark shadow-2xs shrink-0">
+                            <TrendingUp className="w-5 h-5" />
                           </div>
-                          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
-                            <Calendar className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
-                            <span className="text-xs font-semibold text-body dark:text-on-dark-soft">Statistik Tahunan</span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">Analisis Tren Scopus</h4>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-pill border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted">
+                                {scopusChartData.chartData.length} Tahun
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Statistik Publikasi &amp; Sitasi Tahunan</p>
                           </div>
                         </div>
 
-                        <div className="h-[350px] w-full">
-                          <Suspense fallback={<div className="h-[350px] w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl animate-pulse" />}>
-                            <ProfileTrendChart
-                              chartData={scopusChartData.chartData}
-                              leftDomainMax={scopusChartData.leftMax}
-                              rightDomainMax={scopusChartData.rightMax}
-                              barColor="#d9823b"
-                              barGradientColor="#efa466"
-                              lineColor="#858078"
-                              areaGradientColor="#858078"
-                              gradientId="scopus"
-                            />
-                          </Suspense>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs font-semibold text-body dark:text-on-dark-soft hidden sm:inline-block">
+                            {isScopusChartOpen ? 'Tutup Grafik' : 'Lihat Statistik Tahunan'}
+                          </span>
+                          <div className={`p-1.5 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted transition-transform duration-200 ${isScopusChartOpen ? 'rotate-180 text-ink-heading dark:text-on-dark' : ''}`}>
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
                         </div>
-                      </div>
+                      </button>
+
+                      {/* Expandable Chart Content */}
+                      <AnimatePresence initial={false}>
+                        {isScopusChartOpen && (
+                          <motion.div
+                            key="scopus-chart-content"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            className="border-t border-hairline-light dark:border-hairline-dark p-4 sm:p-6"
+                          >
+                            <div className="h-[320px] w-full">
+                              <Suspense fallback={<div className="h-[320px] w-full bg-surface-light dark:bg-surface-dark rounded-xl animate-pulse" />}>
+                                <ProfileTrendChart
+                                  chartData={scopusChartData.chartData}
+                                  leftDomainMax={scopusChartData.leftMax}
+                                  rightDomainMax={scopusChartData.rightMax}
+                                  barColor="#d9823b"
+                                  barGradientColor="#efa466"
+                                  lineColor="#858078"
+                                  areaGradientColor="#858078"
+                                  gradientId="scopus"
+                                />
+                              </Suspense>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
-                    <div className="space-y-5">
-                      {/* Consolidated Toolbar Container (Notice, Formula Tooltip, and Filters) */}
+
+                    <div className="space-y-3.5">
+                      {/* Consolidated Toolbar Container (Compact Single-Row Layout) */}
                       {!isPublic && (() => {
                         const unconfirmedScopusCount = scopusList.filter((doc) => {
                           const totalAuthors = Number(doc.total_authors) || 1;
@@ -219,22 +252,17 @@ export default function ExternalDocumentsView({
                         }).length;
 
                         return (
-                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-4 sm:p-5 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-4">
-                            {/* Baris 1: Alert Banner jika ada dokumen butuh konfirmasi */}
+                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 sm:p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-3">
+                            {/* Alert Banner Ramping Terintegrasi */}
                             {unconfirmedScopusCount > 0 && (
-                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-warning-soft dark:bg-warning/10 border border-warning-border dark:border-warning/30 rounded-xl">
-                                <div className="flex items-center gap-3 min-w-0">
-                                  <div className="w-8 h-8 rounded-lg bg-warning-soft dark:bg-warning/20 flex items-center justify-center shrink-0">
-                                    <AlertTriangle className="w-4 h-4 text-warning dark:text-warning-on-dark" />
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-2.5 sm:px-3.5 bg-warning-soft dark:bg-warning/10 border border-warning-border dark:border-warning/30 rounded-xl text-xs">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="w-6 h-6 rounded-lg bg-warning-soft dark:bg-warning/20 flex items-center justify-center shrink-0">
+                                    <AlertTriangle className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
                                   </div>
-                                  <div className="min-w-0">
-                                    <p className="text-xs font-semibold text-ink-heading dark:text-on-dark leading-tight">
-                                      <span className="font-bold text-warning dark:text-warning-on-dark">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi status korespondensi
-                                    </p>
-                                    <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5 hidden sm:block">
-                                      Konfirmasi status korespondensi untuk kalkulasi poin SINTA
-                                    </p>
-                                  </div>
+                                  <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">
+                                    <span className="font-bold text-warning dark:text-warning-on-dark">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi status korespondensi
+                                  </p>
                                 </div>
                                 <button
                                   type="button"
@@ -242,43 +270,56 @@ export default function ExternalDocumentsView({
                                     setScopusFilter(scopusFilter === 'unconfirmed' ? 'all' : 'unconfirmed');
                                     setCurrentPage(1);
                                   }}
-                                  className="w-full sm:w-auto px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center shrink-0 shadow-xs bg-warning hover:bg-warning/90 dark:bg-warning-on-dark dark:hover:bg-warning-on-dark/90 text-white dark:text-ink"
+                                  className="self-start sm:self-auto px-3 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer text-center shrink-0 bg-warning hover:bg-warning/90 dark:bg-warning-on-dark dark:hover:bg-warning-on-dark/90 text-white dark:text-ink shadow-2xs"
                                 >
                                   {scopusFilter === 'unconfirmed' ? 'Tampilkan Semua' : 'Filter Perlu Update'}
                                 </button>
                               </div>
                             )}
 
-                            {/* Baris 2: Judul & Info Tooltip */}
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-ink-heading dark:text-on-dark">
-                                  Dokumen Scopus Indexed
-                                </span>
-                                {/* Info Tooltip Formula Penilaian Scopus */}
-                                <div className="relative group inline-block">
+                            {/* Baris Atas: Search Input Box + Filter Tahun */}
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                              <div className="relative flex-1">
+                                <Search className="w-4 h-4 text-muted dark:text-on-dark-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                                <input
+                                  type="text"
+                                  value={searchTerm}
+                                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                                  placeholder="Cari judul publikasi, jurnal, atau penulis..."
+                                  className="w-full pl-9 pr-8 py-2 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                                />
+                                {searchTerm && (
                                   <button
                                     type="button"
-                                    aria-label="Info Formula Penilaian Scopus"
-                                    className="p-1 rounded-lg text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
+                                    onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
                                   >
-                                    <Info className="w-3.5 h-3.5" />
+                                    <X className="w-3.5 h-3.5" />
                                   </button>
-                                  <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block group-focus-within:block w-72 p-3 bg-surface-dark text-on-dark text-xs rounded-xl shadow-xl border border-hairline-dark z-50 pointer-events-none">
-                                    <p className="font-semibold text-warning-on-dark mb-1">Formula Penilaian Scopus SINTA</p>
-                                    <p className="text-on-dark-soft text-[11px] leading-relaxed">
-                                      Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Didasarkan pada peran penulis (First/Member) &amp; status korespondensi.
-                                    </p>
-                                  </div>
-                                </div>
+                                )}
                               </div>
+
+                              {/* Right: Year Filter */}
+                              {availableYearsScopus.length > 0 && (
+                                <div className="relative z-30 shrink-0 self-start sm:self-auto">
+                                  <YearFilterBar
+                                    availableYears={availableYearsScopus}
+                                    selectedYear={filterYearExt}
+                                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                                    className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                                  />
+                                </div>
+                              )}
                             </div>
 
-                            {/* Baris 3: Filter Chips & Filter Tahun */}
-                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1 border-t border-hairline-light dark:border-hairline-dark">
-                              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                                {/* Filter Korespondensi */}
-                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+                            {/* Baris Bawah: Segmented Filter Controls */}
+                            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2 border-t border-hairline-light/60 dark:border-hairline-dark/60">
+                              {/* Filter 1: Status Korespondensi */}
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
+                                  Status:
+                                </span>
+                                <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
                                     { id: 'all', label: 'Semua' },
                                     { id: 'unconfirmed', label: 'Perlu Update', count: unconfirmedScopusCount },
@@ -287,7 +328,7 @@ export default function ExternalDocumentsView({
                                     <button
                                       key={opt.id}
                                       onClick={() => { setScopusFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center ${
+                                      className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                         scopusFilter === opt.id
                                           ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
                                           : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
@@ -306,9 +347,17 @@ export default function ExternalDocumentsView({
                                     </button>
                                   ))}
                                 </div>
+                              </div>
 
-                                {/* Filter Tipe Dokumen */}
-                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+                              {/* Separator */}
+                              <div className="hidden sm:block h-6 w-px bg-hairline-light dark:bg-hairline-dark" />
+
+                              {/* Filter 2: Tipe Dokumen */}
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
+                                  Tipe:
+                                </span>
+                                <div className="inline-flex items-center bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
                                     { id: 'all', label: 'Semua' },
                                     { id: 'article', label: 'Article' },
@@ -317,7 +366,7 @@ export default function ExternalDocumentsView({
                                     <button
                                       key={opt.id}
                                       onClick={() => { setArticleFilter(opt.id as any); setCurrentPage(1); }}
-                                      className={`flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center ${
+                                      className={`flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                         articleFilter === opt.id
                                           ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
                                           : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
@@ -328,64 +377,54 @@ export default function ExternalDocumentsView({
                                   ))}
                                 </div>
                               </div>
-
-                              {/* Year Filter */}
-                              {availableYearsScopus.length > 0 && (
-                                <div className="w-full sm:w-auto shrink-0 relative z-30">
-                                  <YearFilterBar
-                                    availableYears={availableYearsScopus}
-                                    selectedYear={filterYearExt}
-                                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                    className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs w-full sm:w-auto"
-                                  />
-                                </div>
-                              )}
                             </div>
                           </div>
                         );
                       })()}
 
-                      {/* Standard Table View */}
+                      {/* Standard Table View with Attached Sticky Pagination */}
                       {filteredScopusList.length > 0 ? (
                         <ScopusTable
                           documents={isPublic ? filteredScopusList.slice(0, 5) : filteredScopusList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
                           isAlsoScholarCheck={(title) => crossIndexedDocs.some((c) => normalizeTitle(c.title) === normalizeTitle(title))}
                           onRefresh={onRefresh}
                           isPublic={isPublic}
-                        />
+                        >
+                          {!isPublic && (
+                            <Pagination
+                              totalItems={filteredScopusList?.length || 0}
+                              currentPage={currentPage}
+                              onPageChange={setCurrentPage}
+                              itemsPerPage={itemsPerPage}
+                              setItemsPerPage={setItemsPerPage}
+                            />
+                          )}
+                        </ScopusTable>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-12 text-muted dark:text-on-dark-muted space-y-3 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl">
                           <Search className="w-6 h-6 opacity-40" />
                           <div className="text-center">
                             <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">Tidak Ada Dokumen</p>
-                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
+                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
+                              {searchTerm ? `Tidak ada dokumen yang cocok dengan kata kunci "${searchTerm}".` : 'Tidak ada dokumen yang cocok dengan filter yang dipilih.'}
+                            </p>
                           </div>
                         </div>
                       )}
 
-                      {isPublic ? (
-                        filteredScopusList.length > 5 && (
-                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
-                            <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
-                              + {filteredScopusList.length - 5} Dokumen Scopus Lainnya Tersedia
-                            </p>
-                            <button
-                              onClick={() => window.location.href = '/login'}
-                              className="flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
-                            >
-                              <Lock className="w-3.5 h-3.5" />
-                              <span>Login untuk Lihat Semua</span>
-                            </button>
-                          </div>
-                        )
-                      ) : (
-                        <Pagination
-                          totalItems={filteredScopusList?.length || 0}
-                          currentPage={currentPage}
-                          onPageChange={setCurrentPage}
-                          itemsPerPage={itemsPerPage}
-                          setItemsPerPage={setItemsPerPage}
-                        />
+                      {isPublic && filteredScopusList.length > 5 && (
+                        <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
+                          <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
+                            + {filteredScopusList.length - 5} Dokumen Scopus Lainnya Tersedia
+                          </p>
+                          <button
+                            onClick={() => window.location.href = '/login'}
+                            className="flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                          >
+                            <Lock className="w-3.5 h-3.5" />
+                            <span>Login untuk Lihat Semua</span>
+                          </button>
+                        </div>
                       )}
                     </div>
                   </>
@@ -408,11 +447,11 @@ export default function ExternalDocumentsView({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.15 }}
-                  className="space-y-8"
+                  className="space-y-6"
                 >
                 {loading ? (
-                  <div className="space-y-6">
-                    <div className="h-64 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark animate-pulse" />
+                  <div className="space-y-4">
+                    <div className="h-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark animate-pulse" />
                     <div className="space-y-3">
                       {[1, 2, 3].map(i => (
                         <div key={i} className="h-24 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl animate-pulse" />
@@ -421,108 +460,158 @@ export default function ExternalDocumentsView({
                   </div>
                 ) : scholarChartData.chartData.length > 0 ? (
                   <>
-                    <div className="relative group/chart-container">
-                      <div className="relative bg-surface-light-raised dark:bg-surface-dark-elevated p-6 sm:p-8 lg:p-10 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-2xs transition-all duration-300">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-                          <div className="flex items-center gap-3.5">
-                            <div className="w-11 h-11 bg-surface-light dark:bg-surface-dark text-chart-scholar dark:text-chart-scholar-dark rounded-xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark shadow-xs">
-                              <TrendingUp className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">Tren Google Scholar</h4>
-                              <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Analisis Publikasi &amp; Sitasi</p>
-                            </div>
+                    {/* Collapsible Scholar Trend Chart Container */}
+                    <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-2xs overflow-hidden transition-all duration-200">
+                      <button
+                        type="button"
+                        onClick={() => setIsScholarChartOpen(!isScholarChartOpen)}
+                        className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-surface-light dark:hover:bg-surface-dark/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-surface-light dark:bg-surface-dark text-chart-scholar dark:text-chart-scholar-dark rounded-xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark shadow-2xs shrink-0">
+                            <TrendingUp className="w-5 h-5" />
                           </div>
-                          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
-                            <Calendar className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
-                            <span className="text-xs font-semibold text-body dark:text-on-dark-soft">Statistik Tahunan</span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">Tren Google Scholar</h4>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-pill border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted">
+                                {scholarChartData.chartData.length} Tahun
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Analisis Publikasi &amp; Sitasi Tahunan</p>
                           </div>
                         </div>
 
-                        <div className="h-[350px] w-full">
-                          <Suspense fallback={<div className="h-[350px] w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl animate-pulse" />}>
-                            <ProfileTrendChart
-                              chartData={scholarChartData.chartData}
-                              leftDomainMax={scholarChartData.leftMax}
-                              rightDomainMax={scholarChartData.rightMax}
-                              barColor="#4a78d0"
-                              barGradientColor="#86a8e5"
-                              lineColor="#858078"
-                              areaGradientColor="#858078"
-                              gradientId="scholar"
-                            />
-                          </Suspense>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs font-semibold text-body dark:text-on-dark-soft hidden sm:inline-block">
+                            {isScholarChartOpen ? 'Tutup Grafik' : 'Lihat Statistik Tahunan'}
+                          </span>
+                          <div className={`p-1.5 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted transition-transform duration-200 ${isScholarChartOpen ? 'rotate-180 text-ink-heading dark:text-on-dark' : ''}`}>
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
                         </div>
-                      </div>
+                      </button>
+
+                      {/* Expandable Chart Content */}
+                      <AnimatePresence initial={false}>
+                        {isScholarChartOpen && (
+                          <motion.div
+                            key="scholar-chart-content"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            className="border-t border-hairline-light dark:border-hairline-dark p-4 sm:p-6"
+                          >
+                            <div className="h-[320px] w-full">
+                              <Suspense fallback={<div className="h-[320px] w-full bg-surface-light dark:bg-surface-dark rounded-xl animate-pulse" />}>
+                                <ProfileTrendChart
+                                  chartData={scholarChartData.chartData}
+                                  leftDomainMax={scholarChartData.leftMax}
+                                  rightDomainMax={scholarChartData.rightMax}
+                                  barColor="#4a78d0"
+                                  barGradientColor="#86a8e5"
+                                  lineColor="#858078"
+                                  areaGradientColor="#858078"
+                                  gradientId="scholar"
+                                />
+                              </Suspense>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
 
                     {/* Document List Table */}
-                    <div className="space-y-4 sm:space-y-5">
-                      {/* Skema poin GS banner */}
-                      <div className="flex items-start gap-3 p-4 bg-accent-soft dark:bg-accent/10 border border-accent-border dark:border-accent/30 rounded-xl">
-                        <div className="w-6 h-6 rounded-lg bg-accent text-on-ink flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Info className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-accent dark:text-accent-on-dark">Skema Poin Google Scholar</p>
-                          <p className="text-xs text-body dark:text-on-dark-soft mt-0.5">
-                            Dihitung berdasarkan dokumen Google Scholar, jumlah sitasi, &amp; bonus tersitasi.
+                    <div className="space-y-3.5">
+                      {/* Unified Compact Toolbar for Google Scholar */}
+                      <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 sm:p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-3">
+                        <div className="flex items-center gap-2.5 px-1 text-xs">
+                          <div className="w-5 h-5 rounded-lg bg-accent text-on-ink flex items-center justify-center shrink-0">
+                            <Info className="w-3 h-3" />
+                          </div>
+                          <p className="text-xs text-body dark:text-on-dark-soft">
+                            <span className="font-bold text-accent dark:text-accent-on-dark">Skema Google Scholar:</span> Dihitung dari dokumen, jumlah sitasi, &amp; bonus tersitasi.
                           </p>
+                        </div>
+
+                        {/* Search Input Box + Year Filter for Scholar */}
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1 border-t border-hairline-light/60 dark:border-hairline-dark/60">
+                          <div className="relative flex-1">
+                            <Search className="w-4 h-4 text-muted dark:text-on-dark-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                            <input
+                              type="text"
+                              value={searchTerm}
+                              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                              placeholder="Cari judul publikasi atau jurnal Scholar..."
+                              className="w-full pl-9 pr-8 py-2 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                            />
+                            {searchTerm && (
+                              <button
+                                type="button"
+                                onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+
+                          {!isPublic && availableYearsScholar.length > 0 && (
+                            <div className="relative z-30 shrink-0 self-start sm:self-auto">
+                              <YearFilterBar
+                                availableYears={availableYearsScholar}
+                                selectedYear={filterYearExt}
+                                onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                                className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      {/* Year Filter for Scholar */}
-                      {!isPublic && availableYearsScholar.length > 0 && (
-                        <div className="relative z-30">
-                          <YearFilterBar
-                            availableYears={availableYearsScholar}
-                            selectedYear={filterYearExt}
-                            onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                            className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs"
-                          />
-                        </div>
-                      )}
-
-                      {/* Standard Scholar Table */}
+                      {/* Standard Scholar Table with Attached Sticky Pagination */}
                       {filteredScholarList.length > 0 ? (
                         <ScholarTable
                           documents={isPublic ? filteredScholarList.slice(0, 5) : filteredScholarList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
                           scopusPublications={scopusPublications}
                           isPublic={isPublic}
-                        />
+                        >
+                          {!isPublic && (
+                            <Pagination
+                              totalItems={filteredScholarList?.length || 0}
+                              currentPage={currentPage}
+                              onPageChange={setCurrentPage}
+                              itemsPerPage={itemsPerPage}
+                              setItemsPerPage={setItemsPerPage}
+                            />
+                          )}
+                        </ScholarTable>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-12 text-muted dark:text-on-dark-muted space-y-3 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl">
                           <Search className="w-6 h-6 opacity-40" />
                           <div className="text-center">
                             <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">Tidak Ada Dokumen</p>
-                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
+                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
+                              {searchTerm ? `Tidak ada dokumen yang cocok dengan kata kunci "${searchTerm}".` : 'Tidak ada dokumen yang cocok dengan filter yang dipilih.'}
+                            </p>
                           </div>
                         </div>
                       )}
 
-                      {isPublic ? (
-                        filteredScholarList.length > 5 && (
-                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
-                            <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
-                              + {filteredScholarList.length - 5} Dokumen Google Scholar Lainnya Tersedia
-                            </p>
-                            <button
-                              onClick={() => window.location.href = '/login'}
-                              className="flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
-                            >
-                              <Lock className="w-3.5 h-3.5" />
-                              <span>Login untuk Lihat Semua</span>
-                            </button>
-                          </div>
-                        )
-                      ) : (
-                        <Pagination
-                          totalItems={filteredScholarList?.length || 0}
-                          currentPage={currentPage}
-                          onPageChange={setCurrentPage}
-                          itemsPerPage={itemsPerPage}
-                          setItemsPerPage={setItemsPerPage}
-                        />
+                      {isPublic && filteredScholarList.length > 5 && (
+                        <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
+                          <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
+                            + {filteredScholarList.length - 5} Dokumen Google Scholar Lainnya Tersedia
+                          </p>
+                          <button
+                            onClick={() => window.location.href = '/login'}
+                            className="flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                          >
+                            <Lock className="w-3.5 h-3.5" />
+                            <span>Login untuk Lihat Semua</span>
+                          </button>
+                        </div>
                       )}
                     </div>
                   </>
@@ -586,17 +675,39 @@ export default function ExternalDocumentsView({
                   </div>
                 </div>
 
-                {/* Year Filter for Cross-Indexed */}
-                {!isPublic && availableYearsCross.length > 0 && (
-                  <div className="relative z-30">
-                    <YearFilterBar
-                      availableYears={availableYearsCross}
-                      selectedYear={filterYearExt}
-                      onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                      className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs"
+                {/* Search Bar + Year Filter for Cross-Indexed */}
+                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-3 sm:p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-muted dark:text-on-dark-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                      placeholder="Cari judul publikasi atau jurnal..."
+                      className="w-full pl-9 pr-8 py-2 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
                     />
+                    {searchTerm && (
+                      <button
+                        type="button"
+                        onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-on-dark p-0.5 rounded-md cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                )}
+
+                  {!isPublic && availableYearsCross.length > 0 && (
+                    <div className="relative z-30 shrink-0 self-start sm:self-auto">
+                      <YearFilterBar
+                        availableYears={availableYearsCross}
+                        selectedYear={filterYearExt}
+                        onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                        className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                      />
+                    </div>
+                  )}
+                </div>
 
                 {loading ? (
                   <div className="space-y-4">
@@ -611,7 +722,17 @@ export default function ExternalDocumentsView({
                         documents={isPublic ? filteredCrossIndexedDocs.slice(0, 5) : filteredCrossIndexedDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
                         scopusPublications={scopusPublications}
                         isPublic={isPublic}
-                      />
+                      >
+                        {!isPublic && (
+                          <Pagination
+                            totalItems={filteredCrossIndexedDocs?.length || 0}
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                            itemsPerPage={itemsPerPage}
+                            setItemsPerPage={setItemsPerPage}
+                          />
+                        )}
+                      </CrossIndexedTable>
                     ) : (
                       <div className="flex flex-col items-center justify-center py-20 text-muted dark:text-on-dark-muted space-y-3">
                         <div className="text-center">
@@ -621,7 +742,7 @@ export default function ExternalDocumentsView({
                     )}
                   </>
                 )}
-                {isPublic ? (
+                {isPublic && (
                   filteredCrossIndexedDocs.length > 5 && (
                     <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
                       <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
@@ -636,14 +757,6 @@ export default function ExternalDocumentsView({
                       </button>
                     </div>
                   )
-                ) : (
-                  <Pagination
-                    totalItems={filteredCrossIndexedDocs?.length || 0}
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                    itemsPerPage={itemsPerPage}
-                    setItemsPerPage={setItemsPerPage}
-                  />
                 )}
                 </motion.div>
               ) : publicationSubTab === 'metriks' ? (

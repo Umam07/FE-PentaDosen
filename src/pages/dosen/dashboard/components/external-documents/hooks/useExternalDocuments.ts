@@ -17,15 +17,17 @@ export function useExternalDocuments({
 }: UseExternalDocumentsProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
   const [scopusFilter, setScopusFilter] = useState<'all' | 'unconfirmed' | 'confirmed'>('all');
   const [articleFilter, setArticleFilter] = useState<'all' | 'article' | 'non-article'>('all');
   const currentYear = new Date().getFullYear();
   const [filterYearExt, setFilterYearExt] = useState<number | null>(null);
 
-  // Reset page and year filter when switching tabs
+  // Reset page and year/search filter when switching tabs
   useEffect(() => {
     setCurrentPage(1);
     setFilterYearExt(null);
+    setSearchTerm('');
   }, [publicationSubTab]);
 
   const scopusList = scopusPublications || [];
@@ -84,6 +86,18 @@ export function useExternalDocuments({
   const filteredScopusList = useMemo(() => {
     let result = scopusList;
 
+    // Search filter
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase().trim();
+      result = result.filter((doc: any) =>
+        (doc.title && doc.title.toLowerCase().includes(q)) ||
+        (doc.journal_name && doc.journal_name.toLowerCase().includes(q)) ||
+        (doc.creator && doc.creator.toLowerCase().includes(q)) ||
+        (doc.authors && doc.authors.toLowerCase().includes(q)) ||
+        (doc.doi && doc.doi.toLowerCase().includes(q))
+      );
+    }
+
     // Year filter
     if (filterYearExt) {
       result = result.filter((doc: any) => extractDocYear(doc) === filterYearExt);
@@ -116,23 +130,47 @@ export function useExternalDocuments({
     }
 
     return result;
-  }, [scopusList, scopusFilter, articleFilter, filterYearExt]);
+  }, [scopusList, scopusFilter, articleFilter, filterYearExt, searchTerm]);
 
   const filteredScholarList = useMemo(() => {
-    if (!filterYearExt) return scholarList;
-    return scholarList.filter((doc: any) => extractDocYear(doc) === filterYearExt);
-  }, [scholarList, filterYearExt]);
+    let result = scholarList;
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase().trim();
+      result = result.filter((doc: any) =>
+        (doc.title && doc.title.toLowerCase().includes(q)) ||
+        (doc.journal && doc.journal.toLowerCase().includes(q)) ||
+        (doc.authors && doc.authors.toLowerCase().includes(q))
+      );
+    }
+    if (filterYearExt) {
+      result = result.filter((doc: any) => extractDocYear(doc) === filterYearExt);
+    }
+    return result;
+  }, [scholarList, filterYearExt, searchTerm]);
 
   const filteredCrossIndexedDocs = useMemo(() => {
-    if (!filterYearExt) return crossIndexedDocs;
-    return crossIndexedDocs.filter((doc: any) => extractDocYear(doc) === filterYearExt);
-  }, [crossIndexedDocs, filterYearExt]);
+    let result = crossIndexedDocs;
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase().trim();
+      result = result.filter((doc: any) =>
+        (doc.title && doc.title.toLowerCase().includes(q)) ||
+        (doc.journal && doc.journal.toLowerCase().includes(q)) ||
+        (doc.authors && doc.authors.toLowerCase().includes(q))
+      );
+    }
+    if (filterYearExt) {
+      result = result.filter((doc: any) => extractDocYear(doc) === filterYearExt);
+    }
+    return result;
+  }, [crossIndexedDocs, filterYearExt, searchTerm]);
 
   return {
     currentPage,
     setCurrentPage,
     itemsPerPage,
     setItemsPerPage,
+    searchTerm,
+    setSearchTerm,
     scopusFilter,
     setScopusFilter,
     articleFilter,

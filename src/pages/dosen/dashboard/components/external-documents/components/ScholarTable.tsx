@@ -7,12 +7,14 @@ interface ScholarTableProps {
   documents: any[];
   scopusPublications?: any[];
   isPublic?: boolean;
+  children?: React.ReactNode;
 }
 
 export default function ScholarTable({
   documents,
   scopusPublications = [],
   isPublic = false,
+  children,
 }: ScholarTableProps) {
   const [expandedRow, setExpandedRow] = useState<string | number | null>(null);
 
@@ -332,6 +334,7 @@ export default function ScholarTable({
         })}
       </div>
 
+      {children}
     </div>
   );
 }
