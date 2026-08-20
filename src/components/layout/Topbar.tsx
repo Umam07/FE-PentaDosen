@@ -156,7 +156,7 @@ export default function Topbar({
         {/* Mobile Search Button */}
         <button 
           onClick={() => setIsSearchOpen(true)}
-          className="flex sm:hidden items-center justify-center w-9 h-9 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light text-muted hover:text-ink-heading rounded-lg transition-all border border-hairline-light dark:border-hairline-dark flex-shrink-0"
+          className="flex sm:hidden items-center justify-center w-9 h-9 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark rounded-lg transition-all border border-hairline-light dark:border-hairline-dark flex-shrink-0 cursor-pointer"
         >
            <Search className="w-4 h-4" />
         </button>

@@ -71,10 +71,10 @@ export default function ExternalDocumentsView({
       className="space-y-8"
     >
       {/* Main Content Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-8 lg:p-10 shadow-2xs min-h-[500px] relative overflow-hidden">
+      <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-8 lg:p-10 shadow-2xs min-h-[500px] relative overflow-hidden">
         <div className="space-y-8 sm:space-y-10 relative z-10">
           {/* Nested Publication Sub-tabs - Underline Style */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline-light dark:border-hairline-dark pb-2">
             <div className="flex items-center gap-5 sm:gap-8 pb-3 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
               {[
                 { id: 'scopus', label: 'Scopus Indexed' },
@@ -87,8 +87,8 @@ export default function ExternalDocumentsView({
                   onClick={() => setPublicationSubTab(sub.id as any)}
                   className={`group/tab relative pb-3 text-xs sm:text-sm font-bold tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                     publicationSubTab === sub.id
-                      ? 'text-slate-950 dark:text-white'
-                      : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                      ? 'text-ink-heading dark:text-on-dark'
+                      : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
                   }`}
                 >
                   {sub.label}
@@ -96,12 +96,12 @@ export default function ExternalDocumentsView({
                   {publicationSubTab === sub.id && (
                     <motion.div
                       layoutId="insights-subtab-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-slate-950 dark:bg-white rounded-full"
+                      className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-ink dark:bg-on-dark rounded-full"
                     />
                   )}
                   {/* Hover underline */}
                   {publicationSubTab !== sub.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-slate-300 dark:bg-slate-700 rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-hairline-light dark:bg-hairline-dark rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
                   )}
                 </button>
               ))}
@@ -125,28 +125,28 @@ export default function ExternalDocumentsView({
             return (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
                 {/* Scopus-only */}
-                <div className="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-                   <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Scopus-Only</p>
-                   <p className="text-xl font-bold font-mono text-slate-900 dark:text-white tabular-nums">{Math.round(scopusOnly)} <span className="text-xs font-normal text-slate-500">Pts</span></p>
-                   <p className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-1">{scopusOnlyCount} dokumen</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Scopus-Only</p>
+                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(scopusOnly)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-xs font-mono text-muted dark:text-on-dark-muted mt-1">{scopusOnlyCount} dokumen</p>
                 </div>
                 {/* Scholar-only */}
-                <div className="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-                   <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Scholar-Only</p>
-                   <p className="text-xl font-bold font-mono text-slate-900 dark:text-white tabular-nums">{Math.round(scholarOnly)} <span className="text-xs font-normal text-slate-500">Pts</span></p>
-                   <p className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-1">{scholarOnlyCount} dokumen</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Scholar-Only</p>
+                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(scholarOnly)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-xs font-mono text-muted dark:text-on-dark-muted mt-1">{scholarOnlyCount} dokumen</p>
                 </div>
                 {/* Cross-indexed */}
-                <div className="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-                   <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Cross-Indexed</p>
-                   <p className="text-xl font-bold font-mono text-slate-900 dark:text-white tabular-nums">{Math.round(crossPts)} <span className="text-xs font-normal text-slate-500">Pts</span></p>
-                   <p className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-1">{crossTitles.size} irisan</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Cross-Indexed</p>
+                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(crossPts)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-xs font-mono text-muted dark:text-on-dark-muted mt-1">{crossTitles.size} irisan</p>
                 </div>
                 {/* Grand Total */}
-                <div className="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-                   <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Total (No Double)</p>
-                   <p className="text-xl font-bold font-mono text-slate-900 dark:text-white tabular-nums">{Math.round(grandTotal)} <span className="text-xs font-normal text-slate-500">Pts</span></p>
-                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Scopus + Scholar</p>
+                <div className="p-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                   <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-1">Total (No Double)</p>
+                   <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">{Math.round(grandTotal)} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span></p>
+                   <p className="text-xs text-muted dark:text-on-dark-muted mt-1">Scopus + Scholar</p>
                 </div>
               </div>
             );
@@ -166,43 +166,43 @@ export default function ExternalDocumentsView({
                 >
                 {loading ? (
                   <div className="space-y-6">
-                    <div className="h-64 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-800 animate-pulse" />
+                    <div className="h-64 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark animate-pulse" />
                     <div className="space-y-3">
                       {[1, 2, 3].map(i => (
-                        <div key={i} className="h-24 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl animate-pulse" />
+                        <div key={i} className="h-24 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl animate-pulse" />
                       ))}
                     </div>
                   </div>
                 ) : scopusChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
-                      <div className="relative bg-slate-50/70 dark:bg-slate-800/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs transition-all duration-300">
+                      <div className="relative bg-surface-light-raised dark:bg-surface-dark-elevated p-6 sm:p-8 lg:p-10 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-2xs transition-all duration-300">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                           <div className="flex items-center gap-3.5">
-                            <div className="w-11 h-11 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center border border-amber-200/60 dark:border-amber-800/60 shadow-xs">
+                            <div className="w-11 h-11 bg-surface-light dark:bg-surface-dark text-chart-scopus dark:text-chart-scopus-dark rounded-xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark shadow-xs">
                               <TrendingUp className="w-5 h-5" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-bold text-slate-900 dark:text-white">Analisis Tren Scopus</h4>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Statistik Publikasi &amp; Sitasi</p>
+                              <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">Analisis Tren Scopus</h4>
+                              <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Statistik Publikasi &amp; Sitasi</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
-                            <Calendar className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Statistik Tahunan</span>
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+                            <Calendar className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
+                            <span className="text-xs font-semibold text-body dark:text-on-dark-soft">Statistik Tahunan</span>
                           </div>
                         </div>
 
                         <div className="h-[350px] w-full">
-                          <Suspense fallback={<div className="h-[350px] w-full bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />}>
+                          <Suspense fallback={<div className="h-[350px] w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl animate-pulse" />}>
                             <ProfileTrendChart
                               chartData={scopusChartData.chartData}
                               leftDomainMax={scopusChartData.leftMax}
                               rightDomainMax={scopusChartData.rightMax}
-                              barColor="#f59e0b"
-                              barGradientColor="#fbbf24"
-                              lineColor="#64748b"
-                              areaGradientColor="#64748b"
+                              barColor="#d9823b"
+                              barGradientColor="#efa466"
+                              lineColor="#858078"
+                              areaGradientColor="#858078"
                               gradientId="scopus"
                             />
                           </Suspense>
@@ -219,19 +219,19 @@ export default function ExternalDocumentsView({
                         }).length;
 
                         return (
-                          <div className="bg-slate-50/70 dark:bg-slate-800/40 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-4">
+                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-4 sm:p-5 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-4">
                             {/* Baris 1: Alert Banner jika ada dokumen butuh konfirmasi */}
                             {unconfirmedScopusCount > 0 && (
-                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/40 rounded-xl">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-warning-soft dark:bg-warning/10 border border-warning-border dark:border-warning/30 rounded-xl">
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
-                                    <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                                  <div className="w-8 h-8 rounded-lg bg-warning-soft dark:bg-warning/20 flex items-center justify-center shrink-0">
+                                    <AlertTriangle className="w-4 h-4 text-warning dark:text-warning-on-dark" />
                                   </div>
                                   <div className="min-w-0">
-                                    <p className="text-xs font-semibold text-slate-900 dark:text-white leading-tight">
-                                      <span className="font-bold text-amber-700 dark:text-amber-400">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi status korespondensi
+                                    <p className="text-xs font-semibold text-ink-heading dark:text-on-dark leading-tight">
+                                      <span className="font-bold text-warning dark:text-warning-on-dark">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi status korespondensi
                                     </p>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block">
+                                    <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5 hidden sm:block">
                                       Konfirmasi status korespondensi untuk kalkulasi poin SINTA
                                     </p>
                                   </div>
@@ -242,7 +242,7 @@ export default function ExternalDocumentsView({
                                     setScopusFilter(scopusFilter === 'unconfirmed' ? 'all' : 'unconfirmed');
                                     setCurrentPage(1);
                                   }}
-                                  className="w-full sm:w-auto px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center shrink-0 shadow-xs bg-amber-600 hover:bg-amber-700 text-white"
+                                  className="w-full sm:w-auto px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center shrink-0 shadow-xs bg-warning hover:bg-warning/90 dark:bg-warning-on-dark dark:hover:bg-warning-on-dark/90 text-white dark:text-ink"
                                 >
                                   {scopusFilter === 'unconfirmed' ? 'Tampilkan Semua' : 'Filter Perlu Update'}
                                 </button>
@@ -252,7 +252,7 @@ export default function ExternalDocumentsView({
                             {/* Baris 2: Judul & Info Tooltip */}
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-slate-900 dark:text-white">
+                                <span className="text-xs font-bold text-ink-heading dark:text-on-dark">
                                   Dokumen Scopus Indexed
                                 </span>
                                 {/* Info Tooltip Formula Penilaian Scopus */}
@@ -260,13 +260,13 @@ export default function ExternalDocumentsView({
                                   <button
                                     type="button"
                                     aria-label="Info Formula Penilaian Scopus"
-                                    className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
+                                    className="p-1 rounded-lg text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
                                   >
                                     <Info className="w-3.5 h-3.5" />
                                   </button>
-                                  <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block group-focus-within:block w-72 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl border border-slate-800 z-50 pointer-events-none">
-                                    <p className="font-semibold text-amber-300 mb-1">Formula Penilaian Scopus SINTA</p>
-                                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                                  <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block group-focus-within:block w-72 p-3 bg-surface-dark text-on-dark text-xs rounded-xl shadow-xl border border-hairline-dark z-50 pointer-events-none">
+                                    <p className="font-semibold text-warning-on-dark mb-1">Formula Penilaian Scopus SINTA</p>
+                                    <p className="text-on-dark-soft text-[11px] leading-relaxed">
                                       Base SKS (Q1=40, Q2=38, Q3=35, Q4=33) · Didasarkan pada peran penulis (First/Member) &amp; status korespondensi.
                                     </p>
                                   </div>
@@ -275,10 +275,10 @@ export default function ExternalDocumentsView({
                             </div>
 
                             {/* Baris 3: Filter Chips & Filter Tahun */}
-                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1 border-t border-slate-200/80 dark:border-slate-800">
+                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1 border-t border-hairline-light dark:border-hairline-dark">
                               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                                 {/* Filter Korespondensi */}
-                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
                                     { id: 'all', label: 'Semua' },
                                     { id: 'unconfirmed', label: 'Perlu Update', count: unconfirmedScopusCount },
@@ -289,16 +289,16 @@ export default function ExternalDocumentsView({
                                       onClick={() => { setScopusFilter(opt.id as any); setCurrentPage(1); }}
                                       className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center ${
                                         scopusFilter === opt.id
-                                          ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
-                                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                          ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
+                                          : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
                                       }`}
                                     >
                                       <span>{opt.label}</span>
                                       {opt.count !== undefined && opt.count > 0 && (
                                         <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
                                           scopusFilter === opt.id
-                                            ? 'bg-white/20 text-white dark:bg-black/20 dark:text-zinc-900'
-                                            : 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
+                                            ? 'bg-white/20 text-white dark:bg-black/20 dark:text-ink'
+                                            : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark'
                                         }`}>
                                           {opt.count}
                                         </span>
@@ -308,7 +308,7 @@ export default function ExternalDocumentsView({
                                 </div>
 
                                 {/* Filter Tipe Dokumen */}
-                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+                                <div className="w-full sm:w-auto grid grid-cols-3 sm:flex items-center gap-1 bg-surface-light dark:bg-surface-dark p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
                                   {[
                                     { id: 'all', label: 'Semua' },
                                     { id: 'article', label: 'Article' },
@@ -319,8 +319,8 @@ export default function ExternalDocumentsView({
                                       onClick={() => { setArticleFilter(opt.id as any); setCurrentPage(1); }}
                                       className={`flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center ${
                                         articleFilter === opt.id
-                                          ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
-                                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                          ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-xs'
+                                          : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
                                       }`}
                                     >
                                       <span>{opt.label}</span>
@@ -336,7 +336,7 @@ export default function ExternalDocumentsView({
                                     availableYears={availableYearsScopus}
                                     selectedYear={filterYearExt}
                                     onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                    className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs w-full sm:w-auto"
+                                    className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs w-full sm:w-auto"
                                   />
                                 </div>
                               )}
@@ -354,24 +354,24 @@ export default function ExternalDocumentsView({
                           isPublic={isPublic}
                         />
                       ) : (
-                        <div className="flex flex-col items-center justify-center py-12 text-slate-400 space-y-3 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                        <div className="flex flex-col items-center justify-center py-12 text-muted dark:text-on-dark-muted space-y-3 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl">
                           <Search className="w-6 h-6 opacity-40" />
                           <div className="text-center">
-                            <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">Tidak Ada Dokumen</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
+                            <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">Tidak Ada Dokumen</p>
+                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
                           </div>
                         </div>
                       )}
 
                       {isPublic ? (
                         filteredScopusList.length > 5 && (
-                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-850/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl mt-4">
-                            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-3 text-center">
+                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
+                            <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
                               + {filteredScopusList.length - 5} Dokumen Scopus Lainnya Tersedia
                             </p>
                             <button
                               onClick={() => window.location.href = '/login'}
-                              className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                              className="flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
                             >
                               <Lock className="w-3.5 h-3.5" />
                               <span>Login untuk Lihat Semua</span>
@@ -390,13 +390,13 @@ export default function ExternalDocumentsView({
                     </div>
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-20 text-slate-400 space-y-4">
-                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-700">
+                  <div className="flex flex-col items-center justify-center py-20 text-muted dark:text-on-dark-muted space-y-4">
+                    <div className="w-16 h-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark">
                       <Search className="w-6 h-6 opacity-50" />
                     </div>
                     <div className="text-center">
-                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Data Tidak Ditemukan</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Sinkronisasi ID Scopus Anda di menu Konfigurasi.</p>
+                      <p className="text-sm font-semibold text-ink-heading dark:text-on-dark">Data Tidak Ditemukan</p>
+                      <p className="text-xs text-muted dark:text-on-dark-muted mt-1">Sinkronisasi ID Scopus Anda di menu Konfigurasi.</p>
                     </div>
                   </div>
                 )}
@@ -412,43 +412,43 @@ export default function ExternalDocumentsView({
                 >
                 {loading ? (
                   <div className="space-y-6">
-                    <div className="h-64 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-800 animate-pulse" />
+                    <div className="h-64 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark animate-pulse" />
                     <div className="space-y-3">
                       {[1, 2, 3].map(i => (
-                        <div key={i} className="h-24 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl animate-pulse" />
+                        <div key={i} className="h-24 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl animate-pulse" />
                       ))}
                     </div>
                   </div>
                 ) : scholarChartData.chartData.length > 0 ? (
                   <>
                     <div className="relative group/chart-container">
-                      <div className="relative bg-slate-50/70 dark:bg-slate-800/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs transition-all duration-300">
+                      <div className="relative bg-surface-light-raised dark:bg-surface-dark-elevated p-6 sm:p-8 lg:p-10 rounded-2xl border border-hairline-light dark:border-hairline-dark shadow-2xs transition-all duration-300">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                           <div className="flex items-center gap-3.5">
-                            <div className="w-11 h-11 bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 rounded-xl flex items-center justify-center border border-sky-200/60 dark:border-sky-800/60 shadow-xs">
+                            <div className="w-11 h-11 bg-surface-light dark:bg-surface-dark text-chart-scholar dark:text-chart-scholar-dark rounded-xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark shadow-xs">
                               <TrendingUp className="w-5 h-5" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-bold text-slate-900 dark:text-white">Tren Google Scholar</h4>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Analisis Publikasi &amp; Sitasi</p>
+                              <h4 className="text-sm font-bold text-ink-heading dark:text-on-dark">Tren Google Scholar</h4>
+                              <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Analisis Publikasi &amp; Sitasi</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
-                            <Calendar className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Statistik Tahunan</span>
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+                            <Calendar className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
+                            <span className="text-xs font-semibold text-body dark:text-on-dark-soft">Statistik Tahunan</span>
                           </div>
                         </div>
 
                         <div className="h-[350px] w-full">
-                          <Suspense fallback={<div className="h-[350px] w-full bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />}>
+                          <Suspense fallback={<div className="h-[350px] w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl animate-pulse" />}>
                             <ProfileTrendChart
                               chartData={scholarChartData.chartData}
                               leftDomainMax={scholarChartData.leftMax}
                               rightDomainMax={scholarChartData.rightMax}
-                              barColor="#0284c7"
-                              barGradientColor="#38bdf8"
-                              lineColor="#64748b"
-                              areaGradientColor="#64748b"
+                              barColor="#4a78d0"
+                              barGradientColor="#86a8e5"
+                              lineColor="#858078"
+                              areaGradientColor="#858078"
                               gradientId="scholar"
                             />
                           </Suspense>
@@ -459,13 +459,13 @@ export default function ExternalDocumentsView({
                     {/* Document List Table */}
                     <div className="space-y-4 sm:space-y-5">
                       {/* Skema poin GS banner */}
-                      <div className="flex items-start gap-3 p-4 bg-sky-50/60 dark:bg-sky-950/20 border border-sky-200/60 dark:border-sky-900/40 rounded-xl">
-                        <div className="w-6 h-6 rounded-lg bg-sky-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="flex items-start gap-3 p-4 bg-accent-soft dark:bg-accent/10 border border-accent-border dark:border-accent/30 rounded-xl">
+                        <div className="w-6 h-6 rounded-lg bg-accent text-on-ink flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Info className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-sky-950 dark:text-sky-300">Skema Poin Google Scholar</p>
-                          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                          <p className="text-xs font-bold text-accent dark:text-accent-on-dark">Skema Poin Google Scholar</p>
+                          <p className="text-xs text-body dark:text-on-dark-soft mt-0.5">
                             Dihitung berdasarkan dokumen Google Scholar, jumlah sitasi, &amp; bonus tersitasi.
                           </p>
                         </div>
@@ -478,7 +478,7 @@ export default function ExternalDocumentsView({
                             availableYears={availableYearsScholar}
                             selectedYear={filterYearExt}
                             onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                            className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs"
+                            className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs"
                           />
                         </div>
                       )}
@@ -491,24 +491,24 @@ export default function ExternalDocumentsView({
                           isPublic={isPublic}
                         />
                       ) : (
-                        <div className="flex flex-col items-center justify-center py-12 text-slate-400 space-y-3 bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                        <div className="flex flex-col items-center justify-center py-12 text-muted dark:text-on-dark-muted space-y-3 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl">
                           <Search className="w-6 h-6 opacity-40" />
                           <div className="text-center">
-                            <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">Tidak Ada Dokumen</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
+                            <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">Tidak Ada Dokumen</p>
+                            <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">Tidak ada dokumen yang cocok dengan filter yang dipilih.</p>
                           </div>
                         </div>
                       )}
 
                       {isPublic ? (
                         filteredScholarList.length > 5 && (
-                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-850/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl mt-4">
-                            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-3 text-center">
+                          <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
+                            <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
                               + {filteredScholarList.length - 5} Dokumen Google Scholar Lainnya Tersedia
                             </p>
                             <button
                               onClick={() => window.location.href = '/login'}
-                              className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                              className="flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
                             >
                               <Lock className="w-3.5 h-3.5" />
                               <span>Login untuk Lihat Semua</span>
@@ -527,12 +527,12 @@ export default function ExternalDocumentsView({
                     </div>
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-20 text-slate-400 space-y-4">
-                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-700">
+                  <div className="flex flex-col items-center justify-center py-20 text-muted dark:text-on-dark-muted space-y-4">
+                    <div className="w-16 h-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark">
                       <Search className="w-6 h-6 opacity-50" />
                     </div>
                     <div className="text-center">
-                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Belum Ada Data</p>
+                      <p className="text-sm font-semibold text-ink-heading dark:text-on-dark">Belum Ada Data</p>
                     </div>
                   </div>
                 )}
@@ -548,39 +548,39 @@ export default function ExternalDocumentsView({
                 >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex flex-col">
-                    <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                    <h4 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark">
                       Daftar Publikasi Terindeks Ganda
                     </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
                       Poin diambil dari Scopus (lebih besar)
                     </p>
                   </div>
-                  <div className="flex items-center justify-between sm:justify-end gap-3 bg-slate-50/70 dark:bg-slate-800/40 sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-slate-200/80 dark:border-slate-800 sm:border-none">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 bg-surface-light-raised dark:bg-surface-dark-elevated sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-hairline-light dark:border-hairline-dark sm:border-none">
                     <div className="text-left sm:text-right">
-                      <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-none">
+                      <p className="text-xs font-medium text-muted dark:text-on-dark-muted leading-none">
                         Total Poin
                       </p>
-                      <p className="text-base sm:text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">
+                      <p className="text-base sm:text-lg font-bold font-mono text-success dark:text-success-on-dark mt-1 tabular-nums">
                         {Math.round(crossIndexedDocs.reduce((acc: number, doc: any) => {
                           const sd = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
                           return acc + calculateScopusBreakdown(sd || doc).totalPoints;
-                        }, 0))} <span className="text-xs font-normal text-slate-500">Pts</span>
+                        }, 0))} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span>
                       </p>
                     </div>
-                    <div className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-mono font-bold shadow-2xs">
+                    <div className="px-3 py-1.5 bg-success text-on-ink rounded-xl text-xs font-mono font-bold shadow-2xs">
                       {filteredCrossIndexedDocs?.length || 0} Total
                     </div>
                   </div>
                 </div>
 
                 {/* Info banner cross-indexed */}
-                <div className="flex items-start gap-3 p-4 bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 rounded-xl">
-                  <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="flex items-start gap-3 p-4 bg-success-soft dark:bg-success/10 border border-success-border dark:border-success/30 rounded-xl">
+                  <div className="w-6 h-6 rounded-lg bg-success text-on-ink flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Info className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-emerald-950 dark:text-emerald-300">Deduplikasi Otomatis — Poin Scopus Digunakan</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs font-bold text-success-dark dark:text-success-on-dark">Deduplikasi Otomatis — Poin Scopus Digunakan</p>
+                    <p className="text-xs text-body dark:text-on-dark-soft mt-0.5">
                       Ketika judul ada di Scopus &amp; Scholar, sistem memakai poin Scopus (kalkulasi SINTA) karena lebih besar.
                     </p>
                   </div>
@@ -593,7 +593,7 @@ export default function ExternalDocumentsView({
                       availableYears={availableYearsCross}
                       selectedYear={filterYearExt}
                       onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                      className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs"
+                      className="rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-2xs"
                     />
                   </div>
                 )}
@@ -601,7 +601,7 @@ export default function ExternalDocumentsView({
                 {loading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="h-24 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl animate-pulse" />
+                      <div key={i} className="h-24 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl animate-pulse" />
                     ))}
                   </div>
                 ) : (
@@ -613,9 +613,9 @@ export default function ExternalDocumentsView({
                         isPublic={isPublic}
                       />
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-20 text-slate-400 space-y-3">
+                      <div className="flex flex-col items-center justify-center py-20 text-muted dark:text-on-dark-muted space-y-3">
                         <div className="text-center">
-                          <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Belum Ada Publikasi Terindeks Ganda</p>
+                          <p className="text-sm font-semibold text-ink-heading dark:text-on-dark">Belum Ada Publikasi Terindeks Ganda</p>
                         </div>
                       </div>
                     )}
@@ -623,13 +623,13 @@ export default function ExternalDocumentsView({
                 )}
                 {isPublic ? (
                   filteredCrossIndexedDocs.length > 5 && (
-                    <div className="flex flex-col items-center justify-center py-6 px-4 bg-slate-50/50 dark:bg-slate-850/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl mt-4">
-                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-3 text-center">
+                    <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-2xl mt-4">
+                      <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
                         + {filteredCrossIndexedDocs.length - 5} Dokumen Terindeks Ganda Lainnya Tersedia
                       </p>
                       <button
                         onClick={() => window.location.href = '/login'}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                        className="flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer"
                       >
                         <Lock className="w-3.5 h-3.5" />
                         <span>Login untuk Lihat Semua</span>

@@ -17,14 +17,14 @@ export default function Pagination({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   return (
-    <div className="relative z-10 px-6 py-4 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 rounded-b-2xl">
+    <div className="relative z-10 px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 rounded-b-2xl">
       <div className="flex items-center gap-4">
-        <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-          Menampilkan <span className="font-bold text-slate-900 dark:text-white tabular-nums">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)}</span> dari <span className="font-bold text-slate-900 dark:text-white tabular-nums">{totalItems}</span> Dokumen
+        <span className="text-xs text-muted dark:text-on-dark-muted font-mono">
+          Menampilkan <span className="font-bold text-ink-heading dark:text-on-dark tabular-nums">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, totalItems)}</span> dari <span className="font-bold text-ink-heading dark:text-on-dark tabular-nums">{totalItems}</span> Dokumen
         </span>
-        <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
+        <div className="h-4 w-px bg-hairline-light dark:bg-hairline-dark hidden sm:block" />
         <div className="hidden sm:flex items-center gap-2">
-          <span className="text-xs text-slate-400">Limit:</span>
+          <span className="text-xs text-muted dark:text-on-dark-muted">Limit:</span>
           <DropdownSelect
             value={itemsPerPage}
             onChange={(val) => { setItemsPerPage(val); onPageChange(1); }}
@@ -46,7 +46,7 @@ export default function Pagination({
           disabled={currentPage === 1}
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           aria-label="Halaman sebelumnya"
-          className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+          className="p-2 rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -57,13 +57,13 @@ export default function Pagination({
             .map((p, index, array) => (
               <React.Fragment key={p}>
                 {index > 0 && array[index - 1] !== p - 1 && (
-                  <span className="px-1 text-slate-400 font-mono text-xs">...</span>
+                  <span className="px-1 text-muted dark:text-on-dark-muted font-mono text-xs">...</span>
                 )}
                 <button
                   onClick={() => onPageChange(p)}
                   className={`min-w-[34px] h-8 flex items-center justify-center rounded-xl text-xs font-semibold font-mono tabular-nums transition-all cursor-pointer ${currentPage === p
-                      ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-2xs'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-2xs'
+                      : 'bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                     }`}
                 >
                   {p}
@@ -76,7 +76,7 @@ export default function Pagination({
           disabled={currentPage === totalPages || totalPages === 0}
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           aria-label="Halaman berikutnya"
-          className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+          className="p-2 rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

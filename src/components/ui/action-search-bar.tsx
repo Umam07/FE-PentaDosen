@@ -185,14 +185,14 @@ function ActionSearchBar({
                   onSelect={() => handleItemSelect(menu.path)}
                 >
                   <div className="flex items-center gap-3.5 w-full">
-                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+                    <div className="p-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
                       {menu.icon}
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
+                      <span className="font-semibold text-ink-heading dark:text-on-dark text-xs sm:text-sm">
                         {menu.label}
                       </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                      <span className="text-[11px] text-muted dark:text-on-dark-muted">
                         {menu.category}
                       </span>
                     </div>
@@ -212,15 +212,15 @@ function ActionSearchBar({
                   onSelect={() => handleItemSelect(act.path || "", act)}
                 >
                   <div className="flex items-center gap-3 w-full">
-                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+                    <div className="p-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
                       {act.icon}
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <span className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
+                      <span className="font-semibold text-ink-heading dark:text-on-dark text-xs sm:text-sm">
                         {act.label}
                       </span>
                       {act.description && (
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                        <span className="text-[11px] text-muted dark:text-on-dark-muted">
                           {act.description}
                         </span>
                       )}
@@ -240,13 +240,13 @@ function ActionSearchBar({
       {/* Search Trigger Button */}
       <button
         onClick={() => setOpen(true)}
-        className="w-full h-10 flex items-center justify-between px-3.5 py-2 text-xs rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850 hover:bg-white dark:hover:bg-slate-800 transition-all text-slate-500 dark:text-slate-400 shadow-2xs group overflow-hidden cursor-pointer"
+        className="w-full h-10 flex items-center justify-between px-3.5 py-2 text-xs rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark transition-all text-muted dark:text-on-dark-muted shadow-2xs group overflow-hidden cursor-pointer"
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
-          <Search className="h-4 w-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0" />
+          <Search className="h-4 w-4 text-muted dark:text-on-dark-muted group-hover:text-ink-heading dark:group-hover:text-on-dark transition-colors shrink-0" />
           <span className="truncate">{placeholder}</span>
         </div>
-        <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-1.5 font-mono text-[10px] font-semibold text-slate-500 dark:text-slate-400 shadow-2xs shrink-0">
+        <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center justify-center rounded border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark px-1.5 font-mono text-[10px] font-semibold text-muted dark:text-on-dark-muted shadow-2xs shrink-0">
           Ctrl+K
         </kbd>
       </button>
@@ -268,16 +268,16 @@ function ActionSearchBar({
                   onSelect={() => handleItemSelect(menu.path)}
                 >
                   <div className="flex items-center gap-3.5 w-full">
-                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+                    <div className="p-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
                       {menu.icon}
                     </div>
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white tracking-tight">{menu.label}</span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                      <span className="text-xs sm:text-sm font-semibold text-ink-heading dark:text-on-dark tracking-tight">{menu.label}</span>
+                      <span className="text-[11px] text-muted dark:text-on-dark-muted">
                         {menu.category}
                       </span>
                     </div>
-                    <ChevronRight className="ml-auto w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ChevronRight className="ml-auto w-4 h-4 text-muted dark:text-on-dark-muted opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </CommandItem>
               ))}
@@ -294,19 +294,19 @@ function ActionSearchBar({
                   onSelect={() => handleItemSelect(act.path || "", act)}
                 >
                   <div className="flex items-center gap-3.5 w-full">
-                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+                    <div className="p-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
                       <User className="h-4 w-4" />
                     </div>
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white tracking-tight">{act.label}</span>
+                      <span className="text-xs sm:text-sm font-semibold text-ink-heading dark:text-on-dark tracking-tight">{act.label}</span>
                       {act.description && (
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                        <span className="text-[11px] text-muted dark:text-on-dark-muted">
                           {act.description}
                         </span>
                       )}
                     </div>
                     {act.end && (
-                      <span className="ml-auto text-[10px] font-semibold font-mono text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700/80">
+                      <span className="ml-auto text-[10px] font-semibold font-mono text-body dark:text-on-dark-soft bg-surface-light dark:bg-surface-dark px-2 py-0.5 rounded-md border border-hairline-light dark:border-hairline-dark">
                         {act.end}
                       </span>
                     )}
@@ -323,12 +323,12 @@ function ActionSearchBar({
               onSelect={() => handleItemSelect("/profile")}
             >
               <div className="flex items-center gap-3.5 w-full">
-                <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+                <div className="p-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
                   <User className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white tracking-tight">Pengaturan Profil Diri</span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                  <span className="text-xs sm:text-sm font-semibold text-ink-heading dark:text-on-dark tracking-tight">Pengaturan Profil Diri</span>
+                  <span className="text-[11px] text-muted dark:text-on-dark-muted">
                     Kelola profil dan integrasi ID Scopus/Scholar
                   </span>
                 </div>
@@ -343,12 +343,12 @@ function ActionSearchBar({
                }}
             >
               <div className="flex items-center gap-3.5 w-full">
-                <div className="p-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200/60 dark:border-red-800/60 shrink-0">
+                <div className="p-2 rounded-xl bg-error-soft dark:bg-error/15 text-error dark:text-error-on-dark border border-error-border dark:border-error/30 shrink-0">
                   <LogOut className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400 tracking-tight">Keluar dari Sistem</span>
-                  <span className="text-[11px] text-red-500/70 dark:text-red-400/70">
+                  <span className="text-xs sm:text-sm font-semibold text-error dark:text-error-on-dark tracking-tight">Keluar dari Sistem</span>
+                  <span className="text-[11px] text-error/80 dark:text-error-on-dark/80">
                     Akhiri sesi login saat ini
                   </span>
                 </div>

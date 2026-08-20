@@ -18,21 +18,21 @@ export default function JurnalTable({
   const currentItems = filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-2xs">
+    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
       
       {/* ── 1. Desktop / Tablet Table View (md and above) ── */}
       <div className="hidden md:block w-full overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200/80 dark:divide-slate-800 text-xs">
-          <thead className="bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-slate-800">
+        <table className="min-w-full divide-y divide-hairline-light dark:divide-hairline-dark text-xs">
+          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
             <tr>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Judul Publikasi</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Dokumen</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Status</th>
-              <th className="px-6 py-3.5 text-right text-xs font-semibold text-slate-600 dark:text-slate-300">Poin KPI</th>
-              <th className="px-6 py-3.5 w-12 text-center text-xs font-semibold text-slate-600 dark:text-slate-300">Detail</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Judul Publikasi</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Dokumen</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Status</th>
+              <th className="px-6 py-3.5 text-right text-xs font-semibold text-body dark:text-on-dark-soft">Poin KPI</th>
+              <th className="px-6 py-3.5 w-12 text-center text-xs font-semibold text-body dark:text-on-dark-soft">Detail</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 bg-white dark:bg-slate-900">
+          <tbody className="divide-y divide-hairline-light dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
             {currentItems.map((doc, idx) => {
               const docDate = formatTanggal(doc.published_at);
               return (
@@ -41,35 +41,35 @@ export default function JurnalTable({
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.02 }}
-                  className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors group"
+                  className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors group"
                 >
                   <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60 flex-shrink-0">
+                      <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark flex-shrink-0">
                         <FileText className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold text-slate-900 dark:text-white truncate max-w-xs lg:max-w-sm" title={doc.title}>
+                        <p className="font-bold text-ink-heading dark:text-on-dark truncate max-w-xs lg:max-w-sm" title={doc.title}>
                           {doc.title}
                         </p>
-                        <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                        <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5">
                           <span>{docDate} • </span>
                           {doc.category}
                         </p>
                         {(doc.quartile || doc.author_role) && (
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             {doc.quartile && (
-                              <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-mono font-semibold rounded border border-slate-200/60 dark:border-slate-700/60">
+                              <span className="px-1.5 py-0.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-[10px] font-mono font-semibold rounded border border-hairline-light dark:border-hairline-dark">
                                 {doc.quartile}
                               </span>
                             )}
                             {doc.author_role && (
-                              <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-semibold rounded border border-slate-200/60 dark:border-slate-700/60">
+                              <span className="px-1.5 py-0.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft text-[10px] font-semibold rounded border border-hairline-light dark:border-hairline-dark">
                                 {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
                               </span>
                             )}
                             {doc.is_hyperauthor && (
-                              <span className="px-1.5 py-0.5 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 text-[10px] font-semibold rounded border border-rose-200/60 dark:border-rose-900/40">
+                              <span className="px-1.5 py-0.5 bg-danger-soft dark:bg-danger/20 text-danger dark:text-danger-on-dark text-[10px] font-semibold rounded border border-danger-border dark:border-danger/30">
                                 Hyper
                               </span>
                             )}
@@ -82,36 +82,36 @@ export default function JurnalTable({
                     {doc.file_url && doc.file_url !== '-' ? (
                       <button
                         onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 transition-colors whitespace-nowrap cursor-pointer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark-soft text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors whitespace-nowrap cursor-pointer"
                       >
                         <FileText className="w-3.5 h-3.5" /> Lihat
                       </button>
                     ) : (
-                      <span className="text-xs text-slate-400">Tidak Ada</span>
+                      <span className="text-xs text-muted-soft dark:text-on-dark-muted">Tidak Ada</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                       doc.status === 'Approved'
-                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/40'
+                        ? 'bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
                         : doc.status === 'Rejected'
-                        ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200/60 dark:border-rose-800/40'
+                        ? 'bg-danger-soft dark:bg-danger/20 text-danger dark:text-danger-on-dark border-danger-border dark:border-danger/30'
                         : doc.status === 'Verified by Fakultas'
-                        ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200/60 dark:border-sky-800/40'
-                        : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/40'
+                        ? 'bg-accent-soft dark:bg-accent/10 text-accent dark:text-accent-on-dark border-accent-border dark:border-accent/30'
+                        : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
                     }`}>
                       {doc.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <span className="font-mono font-bold text-slate-900 dark:text-white text-xs tabular-nums">
-                      +{Math.round(Number(doc.awarded_points) || 0)} <span className="text-[11px] font-normal text-slate-500">Pts</span>
+                    <span className="font-mono font-bold text-ink-heading dark:text-on-dark text-xs tabular-nums">
+                      +{Math.round(Number(doc.awarded_points) || 0)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span>
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <button
                       onClick={() => setSelectedDocForDetail(doc)}
-                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
                       title="Lihat Detail"
                     >
                       <Info className="w-4 h-4" />
@@ -125,11 +125,11 @@ export default function JurnalTable({
       </div>
 
       {/* ── 2. Mobile Responsive Stack Cards View (< md) ── */}
-      <div className="block md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+      <div className="block md:hidden divide-y divide-hairline-light dark:divide-hairline-dark">
         {currentItems.map((doc, idx) => {
           const docDate = formatTanggal(doc.published_at);
           return (
-            <div key={doc.id || idx} className="p-4 space-y-3 bg-white dark:bg-slate-900">
+            <div key={doc.id || idx} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark">
               
               {/* Header: Title, Icon & Detail Trigger */}
               <div className="flex items-start justify-between gap-3">
@@ -137,18 +137,18 @@ export default function JurnalTable({
                   className="flex items-start gap-2.5 flex-1 min-w-0 cursor-pointer"
                   onClick={() => setSelectedDocForDetail(doc)}
                 >
-                  <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 shrink-0 mt-0.5 border border-slate-200/60 dark:border-slate-700/60">
+                  <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg text-muted dark:text-on-dark-muted shrink-0 mt-0.5 border border-hairline-light dark:border-hairline-dark">
                     <FileText className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white line-clamp-2 leading-snug">
+                    <p className="text-xs font-bold text-ink-heading dark:text-on-dark line-clamp-2 leading-snug">
                       {doc.title}
                     </p>
-                    <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5">
+                    <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5 flex items-center gap-1.5">
                       <span>{doc.category}</span>
                       <span>•</span>
                       <span className="flex items-center gap-1">
-                        <CalendarDays className="w-3 h-3 text-slate-400" />
+                        <CalendarDays className="w-3 h-3 text-muted" />
                         {docDate}
                       </span>
                     </p>
@@ -157,7 +157,7 @@ export default function JurnalTable({
 
                 <button
                   onClick={() => setSelectedDocForDetail(doc)}
-                  className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 shrink-0 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                  className="p-1.5 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted shrink-0 hover:bg-surface-light dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark cursor-pointer"
                   title="Lihat Detail"
                 >
                   <Info className="w-3.5 h-3.5" />
@@ -168,17 +168,17 @@ export default function JurnalTable({
               {(doc.quartile || doc.author_role || doc.is_hyperauthor) && (
                 <div className="flex flex-wrap items-center gap-1.5 text-xs">
                   {doc.quartile && (
-                    <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-semibold border border-slate-200/60 dark:border-slate-700/60">
+                    <span className="px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-mono font-semibold border border-hairline-light dark:border-hairline-dark">
                       {doc.quartile}
                     </span>
                   )}
                   {doc.author_role && (
-                    <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200/60 dark:border-slate-700/60">
+                    <span className="px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft font-semibold border border-hairline-light dark:border-hairline-dark">
                       {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
                     </span>
                   )}
                   {doc.is_hyperauthor && (
-                    <span className="px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 font-semibold border border-rose-200/60 dark:border-rose-900/40">
+                    <span className="px-2 py-0.5 rounded-md bg-danger-soft dark:bg-danger/20 text-danger dark:text-danger-on-dark font-semibold border border-danger-border dark:border-danger/30">
                       Hyperauthor
                     </span>
                   )}
@@ -187,7 +187,7 @@ export default function JurnalTable({
 
               {/* Rejection Feedback Note */}
               {doc.status === 'Rejected' && doc.catatan && (
-                <div className="text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/30 p-2.5 rounded-xl border border-rose-200/60 dark:border-rose-900/40">
+                <div className="text-xs font-semibold text-danger dark:text-danger-on-dark bg-danger-soft dark:bg-danger/20 p-2.5 rounded-xl border border-danger-border dark:border-danger/30">
                   Catatan: {doc.catatan}
                 </div>
               )}
@@ -197,10 +197,10 @@ export default function JurnalTable({
                 <div className="flex items-center gap-2">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-medium text-xs border ${
                     doc.status === 'Approved'
-                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/40'
+                      ? 'bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
                       : doc.status === 'Rejected'
-                      ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200/60 dark:border-rose-800/40'
-                      : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/40'
+                      ? 'bg-danger-soft dark:bg-danger/20 text-danger dark:text-danger-on-dark border-danger-border dark:border-danger/30'
+                      : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
                   }`}>
                     {doc.status}
                   </span>
@@ -208,15 +208,15 @@ export default function JurnalTable({
                   {doc.file_url && doc.file_url !== '-' && (
                     <button
                       onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft text-xs font-semibold border border-hairline-light dark:border-hairline-dark hover:bg-surface-light dark:hover:bg-surface-dark cursor-pointer"
                     >
                       <FileText className="w-3 h-3" /> File
                     </button>
                   )}
                 </div>
 
-                <div className="text-xs font-bold font-mono text-slate-900 dark:text-white tabular-nums">
-                  +{Math.round(Number(doc.awarded_points) || 0)} <span className="text-[11px] font-normal text-slate-500">Pts</span>
+                <div className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">
+                  +{Math.round(Number(doc.awarded_points) || 0)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span>
                 </div>
               </div>
 

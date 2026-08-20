@@ -34,7 +34,7 @@ export const PublicationIdentity: React.FC<PublicationIdentityProps> = ({
           <button
             type="button"
             onClick={() => onNavigateTab('integrasi')}
-            className="inline-flex items-center self-start sm:self-auto rounded-lg border border-hairline-light bg-surface-light-raised px-3.5 py-1.5 text-xs font-semibold text-body-strong transition-colors hover:bg-surface-light hover:text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark dark:hover:bg-surface-dark cursor-pointer"
+            className="inline-flex items-center self-start sm:self-auto rounded-lg border border-hairline-light bg-surface-light-raised px-3.5 py-1.5 text-xs font-semibold text-body-strong transition-colors hover:bg-surface-light hover:text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark dark:hover:bg-surface-dark dark:hover:text-on-dark cursor-pointer"
           >
             Kelola di Konfigurasi ID
           </button>

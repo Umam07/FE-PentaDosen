@@ -284,6 +284,8 @@ components:
     backgroundColor: "{colors.surface-light}"
     textColor: "{colors.ink-heading}"
     border: "1px solid {colors.hairline-light}"
+    hoverBackgroundColor: "{colors.surface-light-raised}"
+    hoverTextColor: "{colors.ink-heading}"
     typography: "{typography.button}"
     rounded: "{rounded.lg}"
     padding: 12px 22px
@@ -293,6 +295,8 @@ components:
     backgroundColor: "{colors.surface-dark-elevated}"
     textColor: "{colors.on-dark}"
     border: "1px solid {colors.hairline-dark}"
+    hoverBackgroundColor: "{colors.surface-dark}"
+    hoverTextColor: "{colors.on-dark}"
     typography: "{typography.button}"
     rounded: "{rounded.lg}"
     padding: 12px 22px
@@ -423,11 +427,13 @@ components:
   # ================================================================
   metric-card-light:
     backgroundColor: "{colors.surface-light-raised}"
+    hoverBackgroundColor: "{colors.surface-light}"
     border: "1px solid {colors.hairline-light-soft}"
     rounded: "{rounded.xl}"
 
   metric-card-dark:
     backgroundColor: "{colors.surface-dark-elevated}"
+    hoverBackgroundColor: "{colors.surface-dark}"
     border: "1px solid {colors.hairline-dark-soft}"
     rounded: "{rounded.xl}"
 
@@ -457,7 +463,7 @@ components:
     rounded: "{rounded.pill}"
 
   # ================================================================
-  # DATA TABLE / INPUT
+  # DATA TABLE / INPUT / SEARCH
   # ================================================================
   table-row:
     backgroundColor: transparent
@@ -466,6 +472,26 @@ components:
     padding: 16px 20px
     borderBottom: "1px solid {colors.hairline-light}"
     darkBorderBottom: "1px solid {colors.hairline-dark-soft}"
+
+  search-bar-trigger:
+    backgroundColor: "{colors.surface-light-raised}"
+    darkBackgroundColor: "{colors.surface-dark-elevated}"
+    hoverBackgroundColor: "{colors.surface-light}"
+    darkHoverBackgroundColor: "{colors.surface-dark}"
+    border: "1px solid {colors.hairline-light}"
+    darkBorder: "1px solid {colors.hairline-dark}"
+    textColor: "{colors.muted}"
+    darkTextColor: "{colors.on-dark-muted}"
+    rounded: "{rounded.xl}"
+    height: 40px
+
+  command-dialog:
+    backgroundColor: "{colors.surface-light}"
+    darkBackgroundColor: "{colors.surface-dark}"
+    border: "1px solid {colors.hairline-light}"
+    darkBorder: "1px solid {colors.hairline-dark}"
+    overlayColor: "rgba(23, 20, 18, 0.6)"
+    rounded: "{rounded.3xl}"
 
   text-input-light:
     backgroundColor: "{colors.surface-light}"

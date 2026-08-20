@@ -116,7 +116,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
                     onClick={onSync}
                     disabled={loading}
                     aria-label={`Sinkronkan data ${title}`}
-                    className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-hairline-light bg-surface-light px-4 text-xs font-bold text-body-strong transition-colors hover:bg-surface-light-raised hover:text-ink-heading disabled:cursor-not-allowed disabled:opacity-50 dark:border-hairline-dark dark:bg-surface-dark dark:text-on-dark dark:hover:bg-surface-dark-elevated cursor-pointer shadow-xs"
+                    className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-hairline-light bg-surface-light px-4 text-xs font-bold text-body-strong transition-colors hover:bg-surface-light-raised hover:text-ink-heading disabled:cursor-not-allowed disabled:opacity-50 dark:border-hairline-dark dark:bg-surface-dark dark:text-on-dark dark:hover:bg-surface-dark-elevated dark:hover:text-on-dark cursor-pointer shadow-xs"
                   >
                     <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
                     Sync Data

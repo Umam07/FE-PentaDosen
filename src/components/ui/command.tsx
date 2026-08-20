@@ -15,7 +15,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-3xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100",
+      "flex h-full w-full flex-col overflow-hidden rounded-3xl bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark",
       className
     )}
     {...props}
@@ -74,7 +74,7 @@ const CommandDialog = ({ children, open, onOpenChange }: CommandDialogProps) => 
             {/* Animated backdrop */}
             <DialogPrimitive.Overlay asChild forceMount>
               <motion.div
-                className="fixed inset-0 z-[101] bg-slate-950/60 backdrop-blur-xs"
+                className="fixed inset-0 z-[101] bg-canvas-dark/60 backdrop-blur-xs"
                 variants={overlayVariants}
                 initial="hidden"
                 animate="visible"
@@ -90,8 +90,8 @@ const CommandDialog = ({ children, open, onOpenChange }: CommandDialogProps) => 
                   "overflow-hidden",
                   "w-[92vw] max-w-2xl",
                   "rounded-3xl",
-                  "bg-white/98 dark:bg-slate-900/98 backdrop-blur-2xl",
-                  "border border-slate-200/80 dark:border-slate-800",
+                  "bg-surface-light/98 dark:bg-surface-dark/98 backdrop-blur-2xl",
+                  "border border-hairline-light dark:border-hairline-dark",
                   "shadow-2xl",
                   "outline-none"
                 )}
@@ -108,7 +108,7 @@ const CommandDialog = ({ children, open, onOpenChange }: CommandDialogProps) => 
                     "[&_[cmdk-group-heading]]:text-[10px]",
                     "[&_[cmdk-group-heading]]:uppercase",
                     "[&_[cmdk-group-heading]]:tracking-wider",
-                    "[&_[cmdk-group-heading]]:text-slate-400 dark:[&_[cmdk-group-heading]]:text-slate-500",
+                    "[&_[cmdk-group-heading]]:text-muted dark:[&_[cmdk-group-heading]]:text-on-dark-muted",
                     "[&_[cmdk-group]]:px-2",
                     "[&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5",
                     "[&_[cmdk-input]]:h-16",
@@ -132,10 +132,10 @@ const CommandInput = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
   <div
-    className="flex items-center gap-3 border-b border-slate-200/80 dark:border-slate-800 px-4.5"
+    className="flex items-center gap-3 border-b border-hairline-light dark:border-hairline-dark px-4.5"
     cmdk-input-wrapper=""
   >
-    <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+    <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted shrink-0">
       <Search className="h-4 w-4" />
     </div>
     <CommandPrimitive.Input
@@ -143,8 +143,8 @@ const CommandInput = React.forwardRef<
       className={cn(
         "flex h-16 w-full rounded-md bg-transparent py-3",
         "text-sm font-medium outline-none",
-        "placeholder:text-slate-400 dark:placeholder:text-slate-500",
-        "text-slate-900 dark:text-slate-100",
+        "placeholder:text-muted dark:placeholder:text-on-dark-muted",
+        "text-ink-heading dark:text-on-dark",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
@@ -177,14 +177,14 @@ const CommandEmpty = React.forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className="flex flex-col items-center justify-center py-12 gap-2 text-slate-400 dark:text-slate-500"
+    className="flex flex-col items-center justify-center py-12 gap-2 text-muted dark:text-on-dark-muted"
     {...props}
   >
-    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-1">
+    <div className="w-12 h-12 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center mb-1">
       <Search className="w-5 h-5 opacity-40" />
     </div>
-    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Hasil tidak ditemukan</span>
-    <span className="text-[11px] text-slate-400 dark:text-slate-500">Coba kata kunci pencarian yang lain</span>
+    <span className="text-xs font-bold text-ink-heading dark:text-on-dark">Hasil tidak ditemukan</span>
+    <span className="text-[11px] text-muted dark:text-on-dark-muted">Coba kata kunci pencarian yang lain</span>
   </CommandPrimitive.Empty>
 ));
 
@@ -197,14 +197,14 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      "overflow-hidden p-1 text-slate-900 dark:text-slate-100",
+      "overflow-hidden p-1 text-ink-heading dark:text-on-dark",
       "[&_[cmdk-group-heading]]:px-3",
       "[&_[cmdk-group-heading]]:pt-3 [&_[cmdk-group-heading]]:pb-1.5",
       "[&_[cmdk-group-heading]]:text-[10px]",
       "[&_[cmdk-group-heading]]:font-bold",
       "[&_[cmdk-group-heading]]:uppercase",
       "[&_[cmdk-group-heading]]:tracking-wider",
-      "[&_[cmdk-group-heading]]:text-slate-400 dark:[&_[cmdk-group-heading]]:text-slate-500",
+      "[&_[cmdk-group-heading]]:text-muted dark:[&_[cmdk-group-heading]]:text-on-dark-muted",
       className
     )}
     {...props}
@@ -220,7 +220,7 @@ const CommandSeparator = React.forwardRef<
   <CommandPrimitive.Separator
     ref={ref}
     className={cn(
-      "-mx-1 my-1.5 h-px bg-slate-100 dark:bg-slate-800",
+      "-mx-1 my-1.5 h-px bg-hairline-light dark:bg-hairline-dark",
       className
     )}
     {...props}
@@ -236,12 +236,12 @@ const CommandItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer select-none items-center rounded-xl px-3.5 py-3 gap-3",
-      "text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300",
+      "text-xs sm:text-sm font-semibold text-body dark:text-on-dark-soft",
       "outline-none transition-all duration-150",
-      "data-[selected='true']:bg-slate-100/80 dark:data-[selected='true']:bg-slate-800/80",
-      "data-[selected='true']:text-slate-900 dark:data-[selected='true']:text-white",
+      "data-[selected='true']:bg-surface-light-raised dark:data-[selected='true']:bg-surface-dark-elevated",
+      "data-[selected='true']:text-ink-heading dark:data-[selected='true']:text-on-dark",
       "before:absolute before:left-0 before:inset-y-2 before:w-[3px] before:rounded-full before:bg-transparent before:transition-colors",
-      "data-[selected='true']:before:bg-slate-900 dark:data-[selected='true']:before:bg-white",
+      "data-[selected='true']:before:bg-accent dark:data-[selected='true']:before:bg-accent-on-dark",
       "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
       className
     )}
@@ -261,9 +261,9 @@ const CommandShortcut = ({
         "ml-auto shrink-0",
         "text-[10px] font-mono font-semibold",
         "px-2 py-0.5 rounded-md",
-        "bg-white dark:bg-slate-800",
-        "text-slate-500 dark:text-slate-400",
-        "border border-slate-200 dark:border-slate-700",
+        "bg-surface-light dark:bg-surface-dark-elevated",
+        "text-muted dark:text-on-dark-muted",
+        "border border-hairline-light dark:border-hairline-dark",
         "shadow-2xs",
         className
       )}

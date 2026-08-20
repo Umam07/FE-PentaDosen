@@ -80,7 +80,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
             {stats.map((stat, i) => (
               <div
                 key={i}
-                className="flex min-h-[88px] items-center gap-4 rounded-xl border border-hairline-light bg-surface-light-raised p-4 transition-all duration-200 hover:border-hairline-light hover:bg-surface-light dark:border-hairline-dark dark:bg-surface-dark-elevated dark:hover:border-hairline-dark"
+                className="flex min-h-[88px] items-center gap-4 rounded-xl border border-hairline-light bg-surface-light-raised p-4 transition-all duration-200 hover:border-hairline-light hover:bg-surface-light dark:border-hairline-dark dark:bg-surface-dark-elevated dark:hover:border-hairline-dark dark:hover:bg-surface-dark"
               >
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-hairline-light bg-surface-light text-body-strong shadow-none dark:border-hairline-dark dark:bg-surface-dark dark:text-on-dark">
                   <stat.icon className="h-5 w-5" />
