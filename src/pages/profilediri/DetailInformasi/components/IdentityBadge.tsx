@@ -64,18 +64,13 @@ export const IdentityBadge: React.FC<IdentityBadgeProps> = ({
 
           {/* Status Badge */}
           <span
-            className={`inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold ${
+            className={`inline-flex items-center rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold transition-colors ${
               isConnected
-                ? 'border-success-border bg-success-soft text-success dark:border-success-on-dark/30 dark:bg-success/15 dark:text-success-on-dark'
-                : 'border-hairline-light bg-surface-light-raised text-muted dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark-muted'
+                ? 'border-hairline-light bg-surface-light-raised text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark'
+                : 'border-hairline-light-soft bg-transparent text-muted dark:border-hairline-dark-soft dark:text-on-dark-muted'
             }`}
           >
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                isConnected ? 'bg-success dark:bg-success-on-dark' : 'bg-muted-soft dark:bg-on-dark-muted'
-              }`}
-            />
-            {isConnected ? 'Terhubung' : 'Belum Dihubungkan'}
+            {isConnected ? 'Tersinkron' : 'Belum Sinkron'}
           </span>
         </div>
 

@@ -67,14 +67,13 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
           </div>
 
           <span
-            className={`inline-flex w-fit shrink-0 items-center gap-1.5 rounded-pill border px-2.5 py-1 text-[11px] font-semibold ${
+            className={`inline-flex w-fit shrink-0 items-center rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold transition-colors ${
               isSynchronized
-                ? 'border-success-border bg-success-soft text-success dark:border-success-on-dark/30 dark:bg-success/15 dark:text-success-on-dark'
-                : 'border-hairline-light bg-surface-light-raised text-muted dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark-muted'
+                ? 'border-hairline-light bg-surface-light-raised text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark'
+                : 'border-hairline-light-soft bg-transparent text-muted dark:border-hairline-dark-soft dark:text-on-dark-muted'
             }`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${isSynchronized ? 'bg-success dark:bg-success-on-dark' : 'bg-muted-soft dark:bg-on-dark-muted'}`} />
-            {isSynchronized ? 'Tersinkron' : 'Belum sinkron'}
+            {isSynchronized ? 'Tersinkron' : 'Belum Sinkron'}
           </span>
         </div>
 
