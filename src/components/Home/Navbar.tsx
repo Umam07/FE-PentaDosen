@@ -64,10 +64,10 @@ export default function Navbar() {
     <>
       <motion.header
         layout
-        initial={{ opacity: 0, y: -100 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ 
-          duration: 0.6, 
+          duration: 0.5, 
           ease: [0.22, 1, 0.36, 1] 
         }}
         className={`fixed left-0 right-0 z-50 transition-all duration-700 mx-auto ${
@@ -83,6 +83,8 @@ export default function Navbar() {
               <img 
                 src="/YARSI-KOTAK-e1739161183276.png" 
                 alt="Universitas YARSI" 
+                width={200}
+                height={203}
                 className="h-7 sm:h-9 w-auto object-contain shrink-0"
               />
               <div className="h-5 sm:h-7 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />

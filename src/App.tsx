@@ -4,12 +4,14 @@
  */
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './components/layout/Layout';
-import { LogOut, AlertCircle, ArrowRight } from 'lucide-react';
+import { AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ScrollToTop from './components/layout/ScrollToTop';
-import { OnboardingDialog } from './components/ui/onboarding-dialog';
 import Toaster from './components/ui/toast';
+
+// Lazy load layout and dialog components
+const Layout = lazy(() => import('./components/layout/Layout'));
+const OnboardingDialog = lazy(() => import('./components/ui/onboarding-dialog').then(m => ({ default: m.OnboardingDialog })));
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
@@ -242,7 +244,11 @@ export default function App() {
         </Routes>
       </Suspense>
 
-      {user?.role === 'dosen' && <OnboardingDialog />}
+      {user?.role === 'dosen' && (
+        <Suspense fallback={null}>
+          <OnboardingDialog />
+        </Suspense>
+      )}
       {/* Session Expired Modal */}
       <AnimatePresence>
         {isSessionExpired && (

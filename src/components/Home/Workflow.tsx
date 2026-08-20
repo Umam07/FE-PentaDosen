@@ -55,9 +55,9 @@ export default function Workflow() {
         'Deteksi Otomatis ID Peneliti (Scopus & Scholar)'
       ],
       accentColor: 'blue',
-      accentBg: 'bg-accent/15 dark:bg-accent/20',
+      accentBg: 'bg-accent/10 dark:bg-accent/20',
       accentBorder: 'border-accent/30 dark:border-accent/40',
-      accentText: 'text-accent dark:text-accent-on-dark'
+      accentText: 'text-accent-hover dark:text-accent-on-dark'
     },
     {
       id: 2,
@@ -91,9 +91,9 @@ export default function Workflow() {
         'Audit Trail Perhitungan Transparan'
       ],
       accentColor: 'violet',
-      accentBg: 'bg-[#7c5cf0]/15 dark:bg-[#7c5cf0]/20',
-      accentBorder: 'border-[#7c5cf0]/30 dark:border-[#7c5cf0]/40',
-      accentText: 'text-[#7c5cf0] dark:text-[#a78bfa]'
+      accentBg: 'bg-[#5b21b6]/10 dark:bg-[#7c5cf0]/20',
+      accentBorder: 'border-[#5b21b6]/25 dark:border-[#7c5cf0]/40',
+      accentText: 'text-[#5b21b6] dark:text-[#c4b5fd]'
     },
     {
       id: 4,
@@ -219,7 +219,7 @@ export default function Workflow() {
                   className={`relative flex items-center justify-center gap-2 px-3 py-2.5 sm:px-3.5 sm:py-3 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 shrink-0 sm:shrink cursor-pointer ${
                     isActive 
                       ? 'text-ink-heading dark:text-on-dark font-bold' 
-                      : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
+                      : 'text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark'
                   }`}
                 >
                   {isActive && (
@@ -233,13 +233,13 @@ export default function Workflow() {
                   <span className={`relative z-10 w-6 h-6 rounded-md font-mono text-xs flex items-center justify-center font-bold transition-colors shrink-0 ${
                     isActive 
                       ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark shadow-xs' 
-                      : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted'
+                      : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark font-bold'
                   }`}>
                     0{step.id}
                   </span>
 
                   <span className="relative z-10 flex items-center gap-1.5 whitespace-nowrap truncate">
-                    <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${isActive ? 'text-ink-heading dark:text-on-dark' : 'text-muted'}`} />
+                    <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${isActive ? 'text-ink-heading dark:text-on-dark' : 'text-body dark:text-on-dark-soft'}`} />
                     <span className="truncate">{step.title.split(' ')[0]}</span>
                   </span>
                 </button>
@@ -282,8 +282,8 @@ export default function Workflow() {
                       {currentStep.category}
                     </span>
 
-                    <span className="text-3xl sm:text-4xl font-mono font-black text-muted-soft dark:text-on-dark-muted/40 select-none">
-                      0{currentStep.id} <span className="text-sm font-sans font-medium text-muted">/ 05</span>
+                    <span className="text-3xl sm:text-4xl font-mono font-black text-body-strong/80 dark:text-on-dark select-none">
+                      0{currentStep.id} <span className="text-sm font-sans font-medium text-body dark:text-on-dark-muted">/ 05</span>
                     </span>
                   </div>
 
@@ -292,7 +292,7 @@ export default function Workflow() {
                     {currentStep.title}
                   </h3>
                   
-                  <p className="text-xs font-mono font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest mb-4">
+                  <p className="text-xs font-mono font-bold text-body-strong dark:text-on-dark-soft uppercase tracking-widest mb-4">
                     {currentStep.subtitle}
                   </p>
 
@@ -317,7 +317,7 @@ export default function Workflow() {
                   {/* Role Badge & Controls Footer */}
                   <div className="flex items-center justify-between gap-3 pt-4 border-t border-hairline-light dark:border-hairline-dark">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs font-medium text-muted dark:text-on-dark-muted shrink-0">Aktor Utama:</span>
+                      <span className="text-xs font-medium text-body dark:text-on-dark-soft shrink-0">Aktor Utama:</span>
                       <span className="h-9 sm:h-10 inline-flex items-center gap-1.5 px-3 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-xs font-bold text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark truncate">
                         <User className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark shrink-0" />
                         <span className="truncate">{currentStep.role}</span>
@@ -330,7 +330,7 @@ export default function Workflow() {
                         className={`h-9 sm:h-10 px-3.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                           isPlaying
                             ? 'bg-warning-soft dark:bg-warning/20 border-warning-border dark:border-warning/30 text-warning dark:text-warning-on-dark'
-                            : 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark'
+                            : 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark text-body-strong dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark'
                         }`}
                         title={isPlaying ? 'Pause Auto Play' : 'Play Auto Flow'}
                       >
@@ -341,7 +341,7 @@ export default function Workflow() {
                       <div className="flex items-center gap-1.5 shrink-0">
                         <button
                           onClick={handlePrev}
-                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink-soft dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark transition-colors cursor-pointer flex items-center justify-center shrink-0"
+                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink-soft dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-body-strong dark:text-on-dark transition-colors cursor-pointer flex items-center justify-center shrink-0"
                           aria-label="Tahap Sebelumnya"
                         >
                           <ChevronLeft className="w-4 h-4" />

@@ -14,10 +14,18 @@ export default function Home() {
         keywords="PentaDosen, Penta Dosen, pentadosen, penta dosen, pentadosen yarsi, penta dosen yarsi, penelitian dosen, penelitian dosen yarsi, portofolio dosen yarsi, publikasi dosen yarsi, Universitas YARSI, Dosen YARSI, Tri Dharma Dosen, Google Scholar, Scopus, HKI, LPPM YARSI, DUK Team, pentadosen site, pentadosen.site"
         canonical="https://www.pentadosen.site/"
       />
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-hidden"
+      >
+        Lewati ke Konten Utama
+      </a>
       <Navbar />
-      <Hero />
-      <Features />
-      <Workflow />
+      <main id="main-content">
+        <Hero />
+        <Features />
+        <Workflow />
+      </main>
       <Footer />
     </div>
   );

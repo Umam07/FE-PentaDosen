@@ -758,13 +758,53 @@ Gunakan pendekatan visual berikut sebagai default:
 
 Angka ini adalah panduan visual, bukan aturan matematika. Tujuannya menjaga restraint.
 
-## Accessibility & Comfort
+## Accessibility & Technical Standards (WCAG 2.1 AA & Axe Core Compliance)
 
-- Jangan memakai warna sebagai satu-satunya penyampai status; sertakan label, icon, atau pola yang sesuai.
-- Jangan menggunakan pure white sebagai teks utama dark mode pada area besar.
-- Jangan memakai semantic color dengan saturasi tinggi di dark mode.
-- Pastikan teks utama dan angka KPI tetap memiliki kontras yang jelas.
-- Untuk data padat, prioritaskan hierarchy typographic dan spacing sebelum menambah warna.
+Seluruh halaman dan komponen PentaDosen **WAJIB** memenuhi standar aksesibilitas WCAG 2.1 AA (Skor 100 di PageSpeed Insights / Lighthouse / Axe Core). Ikuti aturan teknis berikut saat membuat atau merefaktor UI:
+
+### 1. Struktur Semantik & Landmark Wajib (`landmark-one-main`)
+- **Main Landmark:** Setiap file halaman utama (orchestrator page) **WAJIB** membungkus area konten utamanya di dalam tag `<main id="main-content">`.
+- **Header & Footer:** Navigasi atas dibungkus `<header>` atau `<nav>`, footer dibungkus `<footer>`.
+- **Accessible Skip Link:** Sertakan tombol skip-to-content tersembunyi (`sr-only focus:not-sr-only`) di bagian atas page untuk pengguna keyboard/screen reader:
+  ```tsx
+  <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg">
+    Lewati ke Konten Utama
+  </a>
+  ```
+
+### 2. Urutan Hierarki Heading (`heading-order`)
+- **Jangan melompati level heading:** Urutan heading harus berjenjang menurun secara berurutan (`<h1>` → `<h2>` → `<h3>` → `<h4>`). Dilarang melompat langsung dari `<h2>` ke `<h4>`.
+- **Satu `<h1>` per halaman:** Hanya gunakan satu tag `<h1>` untuk judul utama/headline halaman.
+- **Section & Cards:** Judul section besar menggunakan `<h2>`, kartu fitur/widget menggunakan `<h3>`, dan sub-elemen/label kartu menggunakan `<h4>` atau `<p className="font-bold ...">`.
+
+### 3. Rasio Kontras Warna Teks (Minimum 4.5:1 untuk Teks Normal, 3:1 untuk Teks Besar)
+- **Teks Normal (< 18px / < 14px bold):** Wajib memiliki rasio kontras minimal **4.5:1** terhadap latar belakangnya.
+- **Teks Besar (≥ 18px / ≥ 14px bold) & Komponen UI:** Wajib memiliki rasio kontras minimal **3.0:1**.
+- **Aturan Pemakaian Token Kontras:**
+  - Latar Terang (`canvas-light` / `surface-light` / `surface-light-raised`):
+    - Gunakan `text-ink-heading` (`#191918`) atau `text-body-strong` (`#201f1c`) untuk teks primer & judul (kontras > 12:1).
+    - Gunakan `text-body` (`#3c3a37`) untuk teks sekunder/deskripsi (kontras > 9:1).
+    - Gunakan `text-muted` (`#54524d`) untuk teks metadata/sub-teks (kontras > 6.2:1).
+    - **DILARANG** menggunakan teks dengan opasitas rendah (misal `opacity-40`, `text-muted-soft` tanpa dark variant) pada teks informatif atau angka metrik.
+  - Latar Gelap (`canvas-dark` / `surface-dark` / `surface-dark-elevated`):
+    - Gunakan `text-on-dark` (`#ece4db`) untuk teks primer (kontras > 14:1).
+    - Gunakan `text-on-dark-soft` (`#d8cfc5`) untuk teks sekunder (kontras > 9:1).
+    - Gunakan `text-on-dark-muted` (`#b8ada0`) untuk metadata (kontras > 6.4:1).
+  - Teks Semantik pada Background Tint Lembut:
+    - Status sukses pada badge `bg-success-soft`: gunakan `text-success-dark` / `text-success` (`#15693b` / `#125430`), jangan teks hijau muda pucat.
+    - Status warning pada badge `bg-warning-soft`: gunakan `text-warning` (`#945400`), jangan kuning terang.
+    - Tautan/tombol biru pada `bg-accent/10` atau `bg-accent/15`: gunakan `text-accent-hover` (`#1d4ed8`) di light mode dan `text-accent-on-dark` (`#7ea7ff`) di dark mode.
+
+### 4. Tombol Interaktif, Tautan & Form (`interactive-a11y`)
+- **Nama Aksesibel Tombol:** Semua tombol yang hanya menampilkan ikon (misal: ThemeToggle, tombol filter, tombol copy, tombol hapus) **WAJIB** memiliki atribut `aria-label` yang deskriptif.
+- **Tautan Eksternal:** Seluruh `target="_blank"` wajib menyertakan `rel="noopener noreferrer"`.
+- **Target Sentuh Minimum:** Elemen interaktif harus memiliki area sentuh minimal 40x40px atau padding yang memadai (`p-2.5` / `p-3`).
+- **Focus Ring / Indikator Fokus:** Pertahankan outline fokus (`focus-visible:ring-2 focus-visible:ring-accent`) untuk navigasi keyboard yang jelas.
+
+### 5. Aksesibilitas Gerak & Animasi (`prefers-reduced-motion`)
+- Seluruh animasi looping/infinite (seperti ping dot, spinner, sheen sweep) **WAJIB** menghormati preferensi gerak pengguna:
+  - Gunakan class `motion-reduce:hidden` atau `motion-reduce:animate-none` pada CSS animasi berulang.
+  - Gunakan `useReducedMotion()` dari `motion/react` saat mengontrol animasi angka bertambah (`CountUp`) atau transisi berat.
 
 ## Do's
 

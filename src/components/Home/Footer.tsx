@@ -1,9 +1,29 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useState, useEffect, useRef } from 'react';
 import { MapPin, Mail, Phone, ArrowRight, ExternalLink, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PentaDosenLogo from '../ui/PentaDosenLogo';
 
 export default function Footer() {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [shouldLoadMap, setShouldLoadMap] = useState(false);
+
+  useEffect(() => {
+    if (!mapContainerRef.current || shouldLoadMap) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldLoadMap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '300px' }
+    );
+
+    observer.observe(mapContainerRef.current);
+    return () => observer.disconnect();
+  }, [shouldLoadMap]);
+
   const handleScrollTo = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const element = document.querySelector(href);
@@ -27,6 +47,8 @@ export default function Footer() {
               <img 
                 src="/YARSI-KOTAK-e1739161183276.png" 
                 alt="Universitas YARSI" 
+                width={200}
+                height={203}
                 className="h-8 w-auto object-contain"
               />
               <div className="h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark" />
@@ -91,15 +113,19 @@ export default function Footer() {
               
               {/* Modern Interactive Maps Card */}
               <div className="rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark overflow-hidden transition-all duration-300 hover:border-ink-border dark:hover:border-hairline-dark-soft group/map shadow-sm">
-                {/* Embedded Map Container */}
-                <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-canvas-light dark:bg-canvas-dark">
-                  <iframe
-                    title="Lokasi Universitas YARSI"
-                    src="https://maps.google.com/maps?q=Universitas+YARSI,+Jl.+Letjen+Suprapto+No.+Kav.+1,+Cempaka+Putih,+Jakarta+Pusat&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                    className="w-full h-full border-0 opacity-90 group-hover/map:opacity-100 transition-opacity duration-300"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
+                {/* Embedded Map Container (Lazy-loaded via IntersectionObserver) */}
+                <div ref={mapContainerRef} className="relative h-36 sm:h-40 w-full overflow-hidden bg-canvas-light dark:bg-canvas-dark">
+                  {shouldLoadMap ? (
+                    <iframe
+                      title="Lokasi Universitas YARSI"
+                      src="https://maps.google.com/maps?q=Universitas+YARSI,+Jl.+Letjen+Suprapto+No.+Kav.+1,+Cempaka+Putih,+Jakarta+Pusat&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                      className="w-full h-full border-0 opacity-90 group-hover/map:opacity-100 transition-opacity duration-300"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-surface-light-raised dark:bg-surface-dark-elevated" />
+                  )}
                   {/* Floating Badge (Clean static text badge, no dot) */}
                   <div className="absolute top-3 left-3 bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur-md px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark shadow-sm pointer-events-none">
                     <span className="text-[10px] font-bold text-ink-heading dark:text-on-dark uppercase tracking-wider">Kampus YARSI</span>
@@ -123,7 +149,7 @@ export default function Footer() {
                     href="https://maps.google.com/?q=Universitas+YARSI+Jakarta"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-accent dark:text-accent-on-dark bg-accent/10 hover:bg-accent/20 border border-accent/20 transition-colors flex-shrink-0 self-start sm:self-center"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-accent-hover dark:text-accent-on-dark bg-accent/15 hover:bg-accent/25 border border-accent/30 transition-colors flex-shrink-0 self-start sm:self-center"
                   >
                     <span>Buka Maps</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -140,15 +166,15 @@ export default function Footer() {
                   className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 group/contact shadow-sm"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center text-muted dark:text-on-dark-muted group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:border-accent/30 transition-all flex-shrink-0">
+                    <div className="w-9 h-9 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center text-body dark:text-on-dark-soft group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:border-accent/30 transition-all flex-shrink-0">
                       <Mail className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Email</p>
+                      <p className="text-[10px] font-bold text-body dark:text-on-dark-soft uppercase tracking-wider">Email</p>
                       <p className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate mt-0.5">teamduk.ta@gmail.com</p>
                     </div>
                   </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:translate-x-0.5 group-hover/contact:-translate-y-0.5 transition-all flex-shrink-0" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-body dark:text-on-dark-soft group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:translate-x-0.5 group-hover/contact:-translate-y-0.5 transition-all flex-shrink-0" />
                 </a>
 
                 {/* Phone Card */}
@@ -157,15 +183,15 @@ export default function Footer() {
                   className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 group/contact shadow-sm"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center text-muted dark:text-on-dark-muted group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:border-accent/30 transition-all flex-shrink-0">
+                    <div className="w-9 h-9 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center text-body dark:text-on-dark-soft group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:border-accent/30 transition-all flex-shrink-0">
                       <Phone className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Telepon</p>
+                      <p className="text-[10px] font-bold text-body dark:text-on-dark-soft uppercase tracking-wider">Telepon</p>
                       <p className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate mt-0.5">+62 (21) 420-6675</p>
                     </div>
                   </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:translate-x-0.5 group-hover/contact:-translate-y-0.5 transition-all flex-shrink-0" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-body dark:text-on-dark-soft group-hover/contact:text-accent dark:group-hover/contact:text-accent-on-dark group-hover/contact:translate-x-0.5 group-hover/contact:-translate-y-0.5 transition-all flex-shrink-0" />
                 </a>
 
               </div>

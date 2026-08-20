@@ -29,7 +29,7 @@ export default defineConfig(({mode}) => {
               if (id.includes('react-pdf') || id.includes('pdfjs-dist')) {
                 return 'vendor-pdf';
               }
-              if (id.includes('xlsx') || id.includes('file-saver')) {
+              if (id.includes('xlsx') || id.includes('file-saver') || id.includes('exceljs')) {
                 return 'vendor-xlsx';
               }
             }

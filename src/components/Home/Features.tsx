@@ -76,13 +76,10 @@ function IconBadge({ icon: Icon }: { icon: ElementType }) {
   );
 }
 
-function CardHead({ icon, label }: { icon: ElementType; label: string }) {
+function CardHead({ icon }: { icon: ElementType }) {
   return (
-    <div className="mb-5 flex items-start justify-between gap-4">
+    <div className="mb-5 flex items-start">
       <IconBadge icon={icon} />
-      <span className="mt-1 text-[11px] font-mono font-bold uppercase tracking-wider text-muted dark:text-on-dark-muted">
-        {label}
-      </span>
     </div>
   );
 }
@@ -140,7 +137,7 @@ export default function Features() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
 
               <div className="md:col-span-6">
-                <CardHead icon={LineChart} label="Automated API Sync" />
+                <CardHead icon={LineChart} />
 
                 <h3 className="text-xl md:text-2xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-3">
                   Sinkronisasi Publikasi Otomatis
@@ -195,7 +192,7 @@ export default function Features() {
           {/* CARD 2: Verifikasi Berjenjang LPPM (Span 4) */}
           <FeatureCard className="md:col-span-4" delay={0.1}>
             <div>
-              <CardHead icon={ShieldCheck} label="Quality Assurance" />
+              <CardHead icon={ShieldCheck} />
 
               <h3 className="text-xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2.5">
                 Verifikasi &amp; Validasi Multilevel
@@ -209,7 +206,7 @@ export default function Features() {
             {/* Approval Flow Indicator */}
             <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-4 border border-hairline-light dark:border-hairline-dark">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted dark:text-on-dark-muted">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-body dark:text-on-dark-soft">
                   Alur Persetujuan
                 </span>
                 <span className="text-[10px] font-mono font-bold bg-success-soft text-success-dark dark:bg-success/15 dark:text-success-on-dark px-2.5 py-0.5 rounded-full border border-success-border dark:border-success/30">
@@ -235,7 +232,7 @@ export default function Features() {
           {/* CARD 3: Autentikasi SSO Kampus (Span 4) */}
           <FeatureCard className="md:col-span-4" delay={0.15}>
             <div>
-              <CardHead icon={Lock} label="Single Sign-On" />
+              <CardHead icon={Lock} />
 
               <h3 className="text-xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2.5">
                 Autentikasi LDAP Kampus
@@ -261,8 +258,8 @@ export default function Features() {
 
               <div className="my-3 h-px bg-hairline-light dark:bg-hairline-dark" />
 
-              <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-muted dark:text-on-dark-muted">
-                <Lock className="w-3 h-3 text-muted dark:text-on-dark-muted" />
+              <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-body dark:text-on-dark-soft">
+                <Lock className="w-3 h-3 text-body dark:text-on-dark-soft" />
                 LDAP &middot; OAuth 2.0 &middot; TLS
               </div>
             </div>
@@ -276,7 +273,7 @@ export default function Features() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
 
               <div className="md:col-span-6">
-                <CardHead icon={FileText} label="Digital Asset Management" />
+                <CardHead icon={FileText} />
 
                 <h3 className="text-xl md:text-2xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-3">
                   Arsip Dokumen Tri Dharma
@@ -335,7 +332,7 @@ export default function Features() {
           {/* CARD 5: Kalkulasi KPI Presisi (Span 6) */}
           <FeatureCard className="md:col-span-6" delay={0.25}>
             <div>
-              <CardHead icon={Cpu} label="Rules Engine" />
+              <CardHead icon={Cpu} />
 
               <h3 className="text-xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2.5">
                 Kalkulasi Poin KPI Otomatis
@@ -349,12 +346,12 @@ export default function Features() {
             {/* KPI Accumulation Mini Chart */}
             <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-4 border border-hairline-light dark:border-hairline-dark">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted dark:text-on-dark-muted">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-body dark:text-on-dark-soft">
                   Akumulasi KPI
                 </span>
                 <span className="font-mono text-sm font-black text-ink-heading dark:text-on-dark">
                   +<CountUp to={348.5} decimals={1} />{' '}
-                  <span className="text-[10px] font-bold text-muted dark:text-on-dark-muted">poin</span>
+                  <span className="text-[10px] font-bold text-body dark:text-on-dark-soft">poin</span>
                 </span>
               </div>
 
@@ -372,7 +369,7 @@ export default function Features() {
               </div>
 
               <div className="mt-2 h-px bg-hairline-light dark:bg-hairline-dark" />
-              <div className="mt-2 flex items-center justify-between font-mono text-[10px] font-bold text-muted dark:text-on-dark-muted">
+              <div className="mt-2 flex items-center justify-between font-mono text-[10px] font-bold text-body dark:text-on-dark-soft">
                 <span>Publikasi &middot; HKI &middot; Buku</span>
                 <span className="text-success dark:text-success-on-dark">▲ 18% dari target</span>
               </div>
@@ -382,7 +379,7 @@ export default function Features() {
           {/* CARD 6: Data Export to Excel (Span 6) */}
           <FeatureCard className="md:col-span-6" delay={0.3}>
             <div>
-              <CardHead icon={BarChart3} label="Data Export" />
+              <CardHead icon={BarChart3} />
 
               <h3 className="text-xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2.5">
                 Ekspor Data Dokumen
@@ -408,18 +405,18 @@ export default function Features() {
               </div>
 
               <div className="space-y-1.5 font-mono text-[10px] overflow-hidden">
-                <div className="grid grid-cols-12 gap-2 bg-surface-light dark:bg-surface-dark p-2 rounded-lg font-bold text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark">
+                <div className="grid grid-cols-12 gap-2 bg-surface-light dark:bg-surface-dark p-2 rounded-lg font-bold text-body-strong dark:text-on-dark-soft border border-hairline-light-soft dark:border-hairline-dark">
                   <span className="col-span-2 shrink-0">NO</span>
                   <span className="col-span-6 truncate">KATEGORI DOKUMEN</span>
                   <span className="col-span-4 text-right truncate">STATUS</span>
                 </div>
                 <div className="grid grid-cols-12 gap-2 p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark text-body dark:text-on-dark-soft">
-                  <span className="col-span-2 font-bold text-muted dark:text-on-dark-muted">01</span>
+                  <span className="col-span-2 font-bold text-body-strong dark:text-on-dark-soft">01</span>
                   <span className="col-span-6 truncate font-medium">Jurnal Internasional Q1</span>
                   <span className="col-span-4 text-right text-success dark:text-success-on-dark font-bold truncate">Terverifikasi</span>
                 </div>
                 <div className="grid grid-cols-12 gap-2 p-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark text-body dark:text-on-dark-soft">
-                  <span className="col-span-2 font-bold text-muted dark:text-on-dark-muted">02</span>
+                  <span className="col-span-2 font-bold text-body-strong dark:text-on-dark-soft">02</span>
                   <span className="col-span-6 truncate font-medium">Sertifikat HKI & Paten</span>
                   <span className="col-span-4 text-right text-success dark:text-success-on-dark font-bold truncate">Terverifikasi</span>
                 </div>

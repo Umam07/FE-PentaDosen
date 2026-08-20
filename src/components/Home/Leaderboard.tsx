@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, BarChart3, BookOpen, Users, FileText, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { Trophy, ChevronRight, BarChart3, BookOpen, Users, FileText, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
@@ -34,12 +34,11 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
   const totalDocs = (stats?.total_docs || 0) + (stats?.total_research || 0) + (stats?.total_scholar || 0) + (stats?.total_scopus || 0);
   const scopusCount = stats?.total_scopus || 0;
   const scholarCount = stats?.total_scholar || 0;
-  const internalCount = (stats?.total_research || 0) + (stats?.total_docs || 0);
-
-  const docsSum = totalDocs > 0 ? totalDocs : 1;
-  const scopusPercent = totalDocs > 0 ? Math.max(5, Math.round((scopusCount / docsSum) * 100)) : 35;
-  const scholarPercent = totalDocs > 0 ? Math.max(5, Math.round((scholarCount / docsSum) * 100)) : 45;
-  const internalPercent = Math.max(0, 100 - scopusPercent - scholarPercent);
+  const internalCount = (stats?.total_docs || 0) + (stats?.total_research || 0);
+  
+  const scopusPercent = totalDocs > 0 ? (scopusCount / totalDocs) * 100 : 0;
+  const scholarPercent = totalDocs > 0 ? (scholarCount / totalDocs) * 100 : 0;
+  const internalPercent = totalDocs > 0 ? (internalCount / totalDocs) * 100 : 0;
 
   const content = loading ? (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch animate-pulse">
@@ -49,70 +48,99 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
   ) : (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
       
-      {/* Top 5 Lecturers List */}
+      {/* Top 5 Lecturers List (Identical to InsightsLeaderboard) */}
       <motion.div 
         initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="lg:col-span-6 bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-6 lg:p-8 flex flex-col justify-between shadow-sm"
+        className="lg:col-span-6 bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-6 sm:p-8 flex flex-col justify-between shadow-xs"
       >
         <div>
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-hairline-light dark:border-hairline-dark">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-warning-soft dark:bg-surface-dark-elevated border border-warning-border dark:border-hairline-dark">
-                <Trophy className="w-5 h-5 text-warning dark:text-warning-on-dark" />
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark rounded-xl">
+                <Trophy className="w-5 h-5" />
               </div>
-              <HeadingTag className="text-base font-bold text-ink-heading dark:text-on-dark uppercase tracking-tight">Top 5 Peringkat Dosen</HeadingTag>
+              <HeadingTag className="text-lg font-bold text-ink-heading dark:text-on-dark tracking-tight">Top 5 Peringkat Dosen</HeadingTag>
             </div>
             <button 
               onClick={() => navigate('/lecturers')}
-              className="text-xs font-bold text-accent dark:text-accent-on-dark hover:text-accent-hover flex items-center gap-1 group cursor-pointer"
+              className="text-xs font-semibold text-accent dark:text-accent-on-dark hover:text-accent-hover dark:hover:text-accent-on-dark flex items-center gap-0.5 transition-colors cursor-pointer"
             >
-              LIHAT SEMUA
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              <span>Lihat Semua</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
  
           <div className="space-y-3">
-            {leaderboard.slice(0, 5).map((user: any, index: number) => (
-              <button 
-                key={user.id}
-                onClick={() => navigate(`/lecturer/${user.id}`)}
-                className="w-full flex items-center gap-3.5 p-3 rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-all group border border-hairline-light dark:border-hairline-dark hover:border-ink-border dark:hover:border-hairline-dark cursor-pointer"
-              >
-                {/* Rank Badge */}
-                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 font-mono text-xs font-extrabold ${
-                  index === 0 ? 'bg-warning text-white' : 
-                  index === 1 ? 'bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark' : 
-                  index === 2 ? 'bg-[#9a6125] text-white' :
-                  'bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft'
-                }`}>
-                  {index + 1}
-                </div>
+            {leaderboard.slice(0, 5).map((user: any, index: number) => {
+              const isFirst = index === 0;
+              const isSecond = index === 1;
+              const isThird = index === 2;
 
-                {/* Lecturer Photo / Avatar */}
-                <div className="w-10 h-10 rounded-lg bg-ink-soft dark:bg-surface-dark-elevated flex items-center justify-center font-bold text-xs shrink-0 border border-hairline-light dark:border-hairline-dark overflow-hidden">
-                  {user.thumbnail ? (
-                    <img src={user.thumbnail} alt={user.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-body dark:text-on-dark-soft uppercase">
-                      {user.name?.charAt(0)}
-                    </span>
-                  )}
-                </div>
+              return (
+                <button 
+                  key={user.id}
+                  onClick={() => navigate(`/lecturer/${user.id}`)}
+                  className={`w-full flex items-center gap-3.5 p-3 rounded-2xl transition-all group border text-left cursor-pointer focus:outline-hidden ${
+                    isFirst 
+                      ? 'bg-warning-soft/60 dark:bg-warning/10 border-warning-border dark:border-warning/30' 
+                      : 'bg-surface-light-raised/70 dark:bg-surface-dark-elevated/40 border-hairline-light dark:border-hairline-dark hover:border-hairline-light-soft dark:hover:border-hairline-dark-soft'
+                  }`}
+                >
+                  {/* Rank Badge */}
+                  <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 font-extrabold text-xs">
+                    {isFirst ? (
+                      <span className="w-full h-full rounded-xl bg-warning text-on-ink flex items-center justify-center shadow-xs">1</span>
+                    ) : isSecond ? (
+                      <span className="w-full h-full rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark flex items-center justify-center">2</span>
+                    ) : isThird ? (
+                      <span className="w-full h-full rounded-xl bg-warning-soft text-warning border border-warning-border flex items-center justify-center">3</span>
+                    ) : (
+                      <span className="font-mono text-muted dark:text-on-dark-muted">{index + 1}</span>
+                    )}
+                  </div>
 
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-sm font-bold text-ink-heading dark:text-on-dark truncate group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors uppercase tracking-tight">{user.name}</p>
-                  <p className="text-xs font-medium text-muted dark:text-on-dark-muted truncate">{user.program_studi}</p>
-                </div>
-                
-                <div className="text-right shrink-0">
-                  <p className="text-sm font-mono font-bold text-ink-heading dark:text-on-dark">{Math.round(user.total_kpi_points).toLocaleString()}</p>
-                  <p className="text-[9px] font-mono font-bold text-muted dark:text-on-dark-muted uppercase">Poin KPI</p>
-                </div>
-              </button>
-            ))}
+                  {/* Lecturer Photo / Avatar */}
+                  <div className="w-10 h-10 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center font-bold text-xs shrink-0 border border-hairline-light dark:border-hairline-dark overflow-hidden">
+                    {user.thumbnail ? (
+                      <img 
+                        src={user.thumbnail} 
+                        alt={user.name} 
+                        width={40}
+                        height={40}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <span className="text-body-strong dark:text-on-dark">
+                        {user.name?.charAt(0)}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Name and Program Studi */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-ink-heading dark:text-on-dark truncate group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
+                      {user.name}
+                    </p>
+                    <p className="text-[11px] text-muted dark:text-on-dark-muted truncate">
+                      {user.program_studi}
+                    </p>
+                  </div>
+                  
+                  {/* Score */}
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-mono font-black text-ink-heading dark:text-on-dark">
+                      {Math.round(user.total_kpi_points).toLocaleString()}
+                    </p>
+                    <p className="text-[10px] text-muted dark:text-on-dark-muted">Poin</p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </motion.div>
@@ -132,13 +160,13 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
               <div className="p-2 rounded-lg bg-ink-soft dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark">
                 <BarChart3 className="w-5 h-5 text-accent dark:text-accent-on-dark" />
               </div>
-              <HeadingTag className="text-base font-bold text-ink-heading dark:text-on-dark uppercase tracking-tight">Statistik Produktivitas</HeadingTag>
+              <HeadingTag className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">Statistik Produktivitas</HeadingTag>
             </div>
             <button 
               onClick={() => navigate('/insights')}
               className="text-xs font-bold text-accent dark:text-accent-on-dark hover:text-accent-hover flex items-center gap-1 group cursor-pointer"
             >
-              LIHAT INSIGHT
+              <span>Lihat Insight</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
@@ -146,10 +174,10 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
           {/* Featured Highlight: Total Akumulasi Poin KPI & Source Distribution */}
           <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-4 sm:p-5 border border-hairline-light-soft dark:border-hairline-dark-soft mb-4">
             <div className="flex items-center justify-between gap-2 mb-1.5">
-              <span className="text-[11px] font-mono font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
+              <span className="text-xs font-mono font-bold text-body-strong dark:text-on-dark-soft">
                 Total Akumulasi Poin KPI
               </span>
-              <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-ink-soft dark:bg-canvas-dark text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-ink-soft dark:bg-canvas-dark text-body-strong dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark">
                 Universitas YARSI
               </span>
             </div>
@@ -158,7 +186,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
               <span className="text-3xl sm:text-4xl font-mono font-black text-ink-heading dark:text-on-dark tracking-tight">
                 {stats?.total_points ? Math.round(stats.total_points).toLocaleString() : '0'}
               </span>
-              <span className="text-xs font-mono font-bold text-muted dark:text-on-dark-muted uppercase">
+              <span className="text-xs font-mono font-bold text-body dark:text-on-dark-soft">
                 Poin Agregat
               </span>
             </div>
@@ -182,7 +210,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                   title={`Riset Internal: ${internalCount} dokumen`} 
                 />
               </div>
-              <div className="flex items-center justify-between text-[10px] font-mono text-muted dark:text-on-dark-muted pt-0.5">
+              <div className="flex items-center justify-between text-[10px] font-mono text-body dark:text-on-dark-soft pt-0.5">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-chart-scopus dark:bg-chart-scopus-dark" />
                   Scopus <span className="text-ink-heading dark:text-on-dark font-bold">({scopusCount.toLocaleString()})</span>
@@ -226,7 +254,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                 className="bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft hover:border-hairline-light dark:hover:border-hairline-dark p-3 sm:p-3.5 rounded-xl flex flex-col justify-between transition-all group"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono font-bold text-muted dark:text-on-dark-muted uppercase truncate">
+                  <span className="text-[11px] font-mono font-bold text-body-strong dark:text-on-dark-soft truncate">
                     {item.label}
                   </span>
                   <div className="w-6 h-6 rounded-md bg-ink-soft dark:bg-surface-dark flex items-center justify-center text-body dark:text-on-dark-soft shrink-0">
@@ -237,7 +265,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                   <div className="text-base sm:text-lg font-mono font-bold text-ink-heading dark:text-on-dark">
                     {item.val.toLocaleString()}
                   </div>
-                  <p className="text-[10px] text-muted dark:text-on-dark-muted font-medium truncate mt-0.5">
+                  <p className="text-[10px] text-body dark:text-on-dark-soft font-medium truncate mt-0.5">
                     {item.sub}
                   </p>
                 </div>
@@ -249,15 +277,15 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
         {/* Footer Row: Average KPI & Insights CTA */}
         <div className="mt-6 pt-5 border-t border-hairline-light dark:border-hairline-dark flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
-            <h4 className="text-xs font-bold text-ink-heading dark:text-on-dark">Rerata Nilai KPI Dosen</h4>
-            <p className="text-[11px] text-muted dark:text-on-dark-muted">Total Poin KPI / Jumlah Dosen Terdaftar</p>
+            <h3 className="text-xs font-bold text-ink-heading dark:text-on-dark">Rerata Nilai KPI Dosen</h3>
+            <p className="text-[11px] text-body dark:text-on-dark-soft">Total Poin KPI / Jumlah Dosen Terdaftar</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="bg-surface-light-raised dark:bg-surface-dark-elevated px-3.5 py-2 rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-center sm:text-right min-w-[90px]">
               <p className="text-lg font-mono font-bold text-accent dark:text-accent-on-dark">
                 {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
               </p>
-              <p className="text-[9px] font-mono font-bold uppercase text-muted dark:text-on-dark-muted tracking-wider">Poin Rerata</p>
+              <p className="text-[10px] font-mono font-bold text-body dark:text-on-dark-soft">Poin Rerata</p>
             </div>
             <button 
               onClick={() => navigate('/insights')}
@@ -295,8 +323,8 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-warning-soft dark:bg-surface-dark-elevated border border-warning-border dark:border-hairline-dark mb-6"
           >
             <Trophy className="w-4 h-4 text-warning dark:text-warning-on-dark" />
-            <span className="text-xs font-mono font-bold text-warning dark:text-warning-on-dark uppercase tracking-wider">
-              PRESTASI AKADEMIK
+            <span className="text-xs font-mono font-bold text-warning dark:text-warning-on-dark">
+              Prestasi Akademik
             </span>
           </motion.div>
           

@@ -14,11 +14,11 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-4xl mx-auto mb-14 md:mb-20 relative">
           
-          {/* Headline - Sharp, bold sans-serif without gradients */}
+          {/* Headline - Sharp, bold sans-serif with smooth entrance animation */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-ink-heading dark:text-on-dark"
           >
             Portofolio Riset Dosen<br />
@@ -27,9 +27,9 @@ export default function Hero() {
 
           {/* Subtitle - Max 20 words max readability */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
             className="text-base sm:text-lg md:text-xl font-medium text-body dark:text-on-dark-soft max-w-2xl mx-auto leading-relaxed mb-8"
           >
             Sinkronisasi publikasi dari <span className="text-ink-heading dark:text-on-dark font-bold">Google Scholar</span> &amp; <span className="text-ink-heading dark:text-on-dark font-bold">Scopus</span>, kelola dokumen Tri Dharma, dan pantau rekam jejak akademik dosen dalam satu platform.
@@ -37,9 +37,9 @@ export default function Hero() {
 
           {/* Feature Highlights Pills - High Contrast WCAG AA/AAA */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25 }}
+            transition={{ duration: 0.5, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-wrap items-center justify-center gap-3 mb-10"
           >
             {[
@@ -59,9 +59,9 @@ export default function Hero() {
 
           {/* CTAs - Solid colors, crisp hover states */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
           >
             <Link
@@ -84,9 +84,9 @@ export default function Hero() {
               to="/lecturers"
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-surface-light dark:bg-surface-dark-elevated hover:bg-surface-light-raised dark:hover:bg-surface-dark active:scale-[0.98] border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark font-bold text-base px-7 py-4 rounded-lg transition-all duration-200 group shadow-sm"
             >
-              <Users className="w-5 h-5 text-muted dark:text-on-dark-muted" />
+              <Users className="w-5 h-5 text-body dark:text-on-dark-soft" />
               <span>Direktori Dosen</span>
-              <ArrowUpRight className="w-4 h-4 text-muted group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-4 h-4 text-body dark:text-on-dark-soft group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Link>
           </motion.div>
         </div>
