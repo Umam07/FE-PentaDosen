@@ -76,7 +76,7 @@ export default function ExternalDocumentsView({
       className="space-y-6"
     >
       {/* Main Content Card */}
-      <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-7 shadow-2xs min-h-[500px] relative overflow-hidden">
+      <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-7 shadow-2xs min-h-[500px] relative">
         <div className="space-y-6 sm:space-y-7 relative z-10">
           {/* Nested Publication Sub-tabs - Underline Style */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline-light dark:border-hairline-dark pb-2">
@@ -252,7 +252,7 @@ export default function ExternalDocumentsView({
                         }).length;
 
                         return (
-                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2.5">
+                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2.5 relative z-20">
                             {/* Alert Banner Ramping Terintegrasi */}
                             {unconfirmedScopusCount > 0 && (
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 bg-warning-soft dark:bg-warning/10 border border-warning-border dark:border-warning/30 rounded-xl text-xs">
@@ -301,7 +301,7 @@ export default function ExternalDocumentsView({
                               </div>
 
                               {/* 2. Group Filter Cluster (Status — separator — Tipe — separator — Tahun) */}
-                              <div className="overflow-x-auto no-scrollbar pb-0.5 xl:pb-0 flex items-center justify-start xl:justify-end gap-2.5 shrink-0">
+                              <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2.5 shrink-0">
                                 {/* Grup Status */}
                                 <div className="flex items-center gap-1.5 shrink-0">
                                   <span className="text-[11px] text-muted dark:text-on-dark-muted font-normal select-none">

@@ -107,7 +107,7 @@ export default function YearFilterBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute left-0 top-full mt-1.5 z-[999] min-w-[170px] w-full bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-xl py-1.5"
+              className="absolute right-0 top-full mt-1.5 z-[999] min-w-[170px] bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-xl py-1.5"
             >
               {/* Filter Pencarian/Search Input jika opsi tahun > 10 */}
               {sortedYears.length > 10 && (
