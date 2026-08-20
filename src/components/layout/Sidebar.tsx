@@ -56,41 +56,52 @@ export default function Sidebar({
   // Track which parent items are "open" (expanded dropdown)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
+  const isChildActive = (child: NavChild) => {
+    const childPathBase = child.path.split('?')[0];
+    if (currentPath !== childPathBase) return false;
+
+    const childSearch = child.path.includes('?') ? '?' + child.path.split('?')[1] : '';
+    if (!childSearch && !currentSearch) return true;
+
+    const normCurrent = decodeURIComponent(currentSearch || '').trim().toLowerCase();
+    const normChild = decodeURIComponent(childSearch).trim().toLowerCase();
+    if (normCurrent === normChild) return true;
+
+    if (child.categoryFilter) {
+      const searchParams = new URLSearchParams(currentSearch);
+      const currentCategory = searchParams.get('kategori') || '';
+      return currentCategory.toLowerCase() === child.categoryFilter.toLowerCase();
+    }
+
+    return false;
+  };
+
+  const isParentActive = (item: NavItem) => {
+    if (item.children && item.children.length > 0) {
+      return item.children.some(child => isChildActive(child)) || currentPath === item.path.split('?')[0];
+    }
+    const itemPathBase = item.path.split('?')[0];
+    const itemSearch = item.path.includes('?') ? '?' + item.path.split('?')[1] : '';
+    if (currentPath !== itemPathBase) return false;
+    if (!itemSearch && !currentSearch) return true;
+    return decodeURIComponent(currentSearch || '').trim().toLowerCase() === decodeURIComponent(itemSearch).trim().toLowerCase();
+  };
+
   // Auto-open group if current path belongs to a child
   useEffect(() => {
-    const currentFullPath = currentPath + currentSearch;
     navItems.forEach(item => {
       if (item.children) {
-        const hasActiveChild = item.children.some(child => {
-          const childPathBase = child.path.split('?')[0];
-          const childSearch = child.path.includes('?') ? '?' + child.path.split('?')[1] : '';
-          return currentPath === childPathBase && currentSearch === childSearch;
-        });
-        // Also open if parent path matches
+        const hasActiveChild = item.children.some(child => isChildActive(child));
         const parentActive = currentPath === item.path.split('?')[0];
         if (hasActiveChild || parentActive) {
           setOpenGroups(prev => ({ ...prev, [item.name]: true }));
         }
       }
     });
-  }, [currentPath, currentSearch]);
+  }, [currentPath, currentSearch, navItems]);
 
   const toggleGroup = (name: string) => {
     setOpenGroups(prev => ({ ...prev, [name]: !prev[name] }));
-  };
-
-  const isChildActive = (child: NavChild) => {
-    const childPathBase = child.path.split('?')[0];
-    const childSearch = child.path.includes('?') ? '?' + child.path.split('?')[1] : '';
-    return currentPath === childPathBase && currentSearch === childSearch;
-  };
-
-  const isParentActive = (item: NavItem) => {
-    // Active if current path matches parent, or any child is active
-    if (item.children) {
-      return item.children.some(child => isChildActive(child));
-    }
-    return currentPath === item.path;
   };
 
   const handleChildClick = (child: NavChild) => {
@@ -183,6 +194,33 @@ export default function Sidebar({
 
               // === ITEM WITH CHILDREN (dropdown group) ===
               if (hasChildren) {
+                const isCollapsedBtn = isCollapsed && !isMobile;
+                const parentBgClasses = isCollapsedBtn
+                  ? parentActive
+                    ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent dark:border-accent-on-dark'
+                    : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent'
+                  : parentActive
+                    ? isOpen
+                      ? 'text-ink-heading dark:text-on-dark font-bold bg-surface-light-raised/80 dark:bg-surface-dark-elevated/50 border border-hairline-light/80 dark:border-hairline-dark/80 shadow-xs'
+                      : 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent dark:border-accent-on-dark shadow-xs'
+                    : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent';
+
+                const parentIconClasses = isCollapsedBtn
+                  ? parentActive
+                    ? 'text-on-ink dark:text-on-dark'
+                    : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark'
+                  : parentActive
+                    ? isOpen
+                      ? 'text-accent dark:text-accent-on-dark'
+                      : 'text-on-ink dark:text-on-dark'
+                    : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark';
+
+                const chevronClasses = parentActive
+                  ? isOpen
+                    ? 'text-ink-heading dark:text-on-dark'
+                    : 'text-on-ink/70 dark:text-on-dark/70'
+                  : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark';
+
                 return (
                   <div key={item.name} className="relative">
                     {/* Parent Button */}
@@ -196,13 +234,9 @@ export default function Sidebar({
                           toggleGroup(item.name);
                         }
                       }}
-                      className={`group relative w-full flex items-center text-sm rounded-lg transition-all duration-200 ${
-                        parentActive
-                          ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border-l-2 border-accent dark:border-accent-on-dark'
-                          : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark border border-transparent'
-                      } ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
+                      className={`group relative w-full flex items-center text-sm rounded-lg transition-all duration-200 ${parentBgClasses} ${isCollapsed && !isMobile ? 'justify-center p-0 h-10 w-10 mx-auto' : 'px-4 py-3'}`}
                     >
-                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentActive ? 'text-on-ink dark:text-on-dark' : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark'}`} />
+                      <Icon className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${isCollapsed && !isMobile ? '' : 'mr-3'} ${parentIconClasses}`} />
                       
                       {showLabels ? (
                         <>
@@ -218,7 +252,7 @@ export default function Sidebar({
                             transition={{ duration: 0.25 }}
                             className="flex-shrink-0 ml-1"
                           >
-                            <ChevronDown className={`w-3.5 h-3.5 ${parentActive ? 'text-on-ink/70 dark:text-on-dark/70' : 'text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark'}`} />
+                            <ChevronDown className={`w-3.5 h-3.5 ${chevronClasses}`} />
                           </motion.div>
                         </>
                       ) : (
@@ -248,21 +282,18 @@ export default function Sidebar({
                                 <button
                                   key={child.name}
                                   onClick={() => handleChildClick(child)}
-                                  className={`group w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all duration-200 ${
+                                  className={`group w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 ${
                                     childActive
-                                      ? 'bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-semibold'
+                                      ? 'bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark shadow-xs border-l-2 border-accent dark:border-accent-on-dark font-bold'
                                       : 'text-muted dark:text-on-dark-muted hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
                                   }`}
                                 >
                                   <ChildIcon className={`h-3.5 w-3.5 flex-shrink-0 transition-colors ${childActive ? 'text-accent dark:text-accent-on-dark' : 'text-muted-soft dark:text-on-dark-muted group-hover:text-ink-heading dark:group-hover:text-on-dark'}`} />
                                   <span className="truncate">{child.name}</span>
                                   {child.points !== undefined && (
-                                    <div className={`ml-auto px-1.5 py-0.5 rounded-md text-[9px] font-semibold font-mono tracking-wider flex-shrink-0 ${childActive ? 'bg-ink text-on-ink dark:bg-surface-dark dark:text-on-dark' : 'bg-surface-light-raised text-muted dark:bg-surface-dark dark:text-on-dark-muted group-hover:bg-ink-soft group-hover:text-ink-heading dark:group-hover:text-on-dark'}`}>
+                                    <div className={`ml-auto px-1.5 py-0.5 rounded-md text-[9px] font-semibold font-mono tracking-wider flex-shrink-0 ${childActive ? 'bg-surface-dark-elevated text-on-dark dark:bg-canvas-dark dark:text-on-dark' : 'bg-surface-light-raised text-muted dark:bg-surface-dark dark:text-on-dark-muted group-hover:bg-ink-soft group-hover:text-ink-heading dark:group-hover:text-on-dark'}`}>
                                       +{child.points} PTS
                                     </div>
-                                  )}
-                                  {childActive && child.points === undefined && (
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent-on-dark flex-shrink-0" />
                                   )}
                                 </button>
                               );
@@ -278,7 +309,7 @@ export default function Sidebar({
               // === PLAIN ITEM (no children) ===
               const itemPathBase = item.path.split('?')[0];
               const itemSearch = item.path.includes('?') ? '?' + item.path.split('?')[1] : '';
-              const isActive = currentPath === itemPathBase && currentSearch === itemSearch;
+              const isActive = currentPath === itemPathBase && decodeURIComponent(currentSearch || '').trim().toLowerCase() === decodeURIComponent(itemSearch).trim().toLowerCase();
               
               return (
                 <Link
