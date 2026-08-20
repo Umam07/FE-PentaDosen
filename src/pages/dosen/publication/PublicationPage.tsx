@@ -292,6 +292,56 @@ export default function Publication({ user }: { user: UserSession }) {
           isKpiCounted={pub.activeDetailDoc.is_kpi_counted}
           fileUrl={pub.activeDetailDoc.file_url}
           docId={pub.activeDetailDoc.id}
+          customMetadata={
+            <div className="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/80 dark:border-slate-700/80 text-xs">
+              <div>
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none mb-1">
+                  Jumlah Sitasi
+                </p>
+                <p className="text-xs font-bold font-mono tabular-nums text-slate-800 dark:text-slate-200">
+                  {pub.activeDetailDoc.citations ?? 0} Sitasi
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none mb-1">
+                  Sumber Data
+                </p>
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  {pub.activeDetailDoc.source ? `API ${pub.activeDetailDoc.source.toUpperCase()}` : 'Manual / Internal'}
+                </p>
+              </div>
+              {pub.activeDetailDoc.quartile && (
+                <div>
+                  <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none mb-1">
+                    Quartile
+                  </p>
+                  <p className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200">
+                    {pub.activeDetailDoc.quartile}
+                  </p>
+                </div>
+              )}
+              {pub.activeDetailDoc.sinta_rank && (
+                <div>
+                  <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none mb-1">
+                    Peringkat SINTA
+                  </p>
+                  <p className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200">
+                    {pub.activeDetailDoc.sinta_rank}
+                  </p>
+                </div>
+              )}
+              {pub.activeDetailDoc.author_role && (
+                <div>
+                  <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none mb-1">
+                    Peran Penulis
+                  </p>
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    {pub.activeDetailDoc.author_role}
+                  </p>
+                </div>
+              )}
+            </div>
+          }
           onPreviewClick={() => {
             if (pub.activeDetailDoc?.file_url) {
               pub.setPreviewDoc({

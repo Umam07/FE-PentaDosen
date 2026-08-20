@@ -263,11 +263,9 @@ export default function PublicationTable({
                                   Manual
                                 </span>
                               )}
-                              {(doc.source === 'scholar' || Number(doc.citations || 0) > 0) && (
-                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold font-mono rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
-                                  {doc.citations || 0} Sitasi
-                                </span>
-                              )}
+                              <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold font-mono rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
+                                {doc.citations ?? 0} Sitasi
+                              </span>
                               {isCrossIndexed && (
                                 <span className="px-2 py-0.5 border border-teal-200/80 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-[10px] font-semibold rounded-md bg-teal-50 dark:bg-teal-950/30 flex items-center gap-1">
                                   Cross-Indexed

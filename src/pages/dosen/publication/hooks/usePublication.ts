@@ -344,7 +344,8 @@ export function usePublication(user: UserSession) {
       points: Math.round(src.reduce((acc, d) => {
         const pts = d.source === 'scholar' ? calculateScholarPoints(d) : (Number(d.awarded_points) || 0);
         return acc + pts;
-      }, 0))
+      }, 0)),
+      citations: src.reduce((acc, d) => acc + (Number(d.citations) || 0), 0)
     };
   }, [filteredDocuments]);
 
