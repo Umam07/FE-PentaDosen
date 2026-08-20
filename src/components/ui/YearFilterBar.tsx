@@ -70,7 +70,7 @@ export default function YearFilterBar({
     <div className={`${containerCls} ${className}`}>
       {/* Label */}
       <div className={labelCls}>
-        <span>Filter Tahun:</span>
+        <span>Tahun:</span>
       </div>
 
       {/* Custom Dropdown Filter Tahun */}
