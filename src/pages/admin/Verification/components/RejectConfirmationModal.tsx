@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RejectConfirmationModalProps } from '../types/verification.types';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 export default function RejectConfirmationModal({
   rejectingItem,
@@ -11,6 +12,21 @@ export default function RejectConfirmationModal({
   actionLoading,
   onConfirm
 }: RejectConfirmationModalProps) {
+  const isOpen = Boolean(rejectingItem);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
   return (
     <AnimatePresence>
       {rejectingItem && (

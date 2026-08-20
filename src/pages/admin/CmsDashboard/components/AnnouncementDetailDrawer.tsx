@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Calendar as CalendarIcon, Megaphone, Edit3, Trash2, Plus, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Announcement } from '../types/cmsDashboard.types';
@@ -8,6 +8,7 @@ import {
   getAnnouncementStatus,
   isAnnouncementOnDate
 } from '../utils/calendarUtils';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface AnnouncementDetailDrawerProps {
   isOpen: boolean;
@@ -28,6 +29,20 @@ export default function AnnouncementDetailDrawer({
   onDelete,
   onCreateNew
 }: AnnouncementDetailDrawerProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
+
   if (!selectedDateString) return null;
 
   // Filter pengumuman yang aktif/terjadwal/kadaluarsa pada tanggal terpilih

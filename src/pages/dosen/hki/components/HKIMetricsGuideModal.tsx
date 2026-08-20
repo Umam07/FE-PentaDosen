@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShieldCheck, BarChart2, Info } from 'lucide-react';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface HKIMetricsGuideModalProps {
   isOpen: boolean;
@@ -8,11 +9,24 @@ interface HKIMetricsGuideModalProps {
 }
 
 export default function HKIMetricsGuideModal({ isOpen, onClose }: HKIMetricsGuideModalProps) {
-  if (!isOpen) return null;
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-900/60 backdrop-blur-xs">
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-900/60 backdrop-blur-xs">
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -148,6 +162,7 @@ export default function HKIMetricsGuideModal({ isOpen, onClose }: HKIMetricsGuid
           </div>
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 }

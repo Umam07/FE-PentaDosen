@@ -1,5 +1,7 @@
+import React, { useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface ResearchDeleteModalProps {
   isOpen: boolean;
@@ -16,6 +18,20 @@ export default function ResearchDeleteModal({
   onDelete,
   isDeleteLoading,
 }: ResearchDeleteModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {isOpen && deleteDoc && (

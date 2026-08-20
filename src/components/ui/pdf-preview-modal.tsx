@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { buildDownloadFilename, downloadWithFilename } from '../../lib/utils';
+import { buildDownloadFilename, downloadWithFilename, lockBodyScroll, unlockBodyScroll } from '../../lib/utils';
 
 // Configure PDF.js worker using unpkg CDN matching pdfjs version
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -108,12 +108,12 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
 
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
     }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
   }, [isOpen, onClose, numPages]);
 
   const handleDownload = async () => {

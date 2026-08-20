@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Sparkles, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface BulkCorrespondenceModalProps {
   isOpen: boolean;
@@ -41,7 +42,19 @@ export default function BulkCorrespondenceModal({
     }
   }, [isOpen, unconfirmedDocs, isNationalJournal]);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   const handleSetAll = (val: boolean) => {
     const next: Record<string | number, boolean> = {};
@@ -86,7 +99,8 @@ export default function BulkCorrespondenceModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      {isOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -315,6 +329,7 @@ export default function BulkCorrespondenceModal({
           </div>
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 }

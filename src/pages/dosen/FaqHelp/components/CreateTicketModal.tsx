@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MessageSquare, X, Image as ImageIcon, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { CreateTicketModalProps } from '../types/faqHelp.types';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 export default function CreateTicketModal({
   isOpen,
@@ -17,6 +18,19 @@ export default function CreateTicketModal({
   onRemoveImage,
   onSubmit,
 }: CreateTicketModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !submittingTicket) onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose, submittingTicket]);
   return (
     <AnimatePresence>
       {isOpen && (

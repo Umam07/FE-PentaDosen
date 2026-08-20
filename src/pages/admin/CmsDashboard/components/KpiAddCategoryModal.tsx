@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Plus, Layers, Zap, ShieldCheck, Book, FileSpreadsheet } from 'lucide-react';
 import { cmsDashboardService } from '../services/cmsDashboardService';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface KpiAddCategoryModalProps {
   isOpen: boolean;
@@ -24,6 +25,20 @@ export default function KpiAddCategoryModal({
   const [authorRole, setAuthorRole] = useState<'first' | 'member' | 'single' | 'standalone'>('first');
   const [weightValue, setWeightValue] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   const handleGroupChange = (group: 'scopus' | 'hki' | 'buku' | 'lain') => {
     setMainGroup(group);

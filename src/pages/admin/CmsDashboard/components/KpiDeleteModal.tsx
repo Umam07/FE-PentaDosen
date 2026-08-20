@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cmsDashboardService } from '../services/cmsDashboardService';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface KpiDeleteModalProps {
   isOpen: boolean;
@@ -22,6 +23,20 @@ export default function KpiDeleteModal({
   triggerMessage
 }: KpiDeleteModalProps) {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   const handleDeleteInternal = async () => {
     if (!category) return;

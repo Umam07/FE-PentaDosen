@@ -8,7 +8,7 @@ import {
   Building2, ShieldCheck, RefreshCw, User,
   FileText, ArrowRight
 } from 'lucide-react';
-import { buildDownloadFilename, downloadWithFilename } from '../../lib/utils';
+import { buildDownloadFilename, downloadWithFilename, lockBodyScroll, unlockBodyScroll } from '../../lib/utils';
 
 export interface DocumentDetailDrawerProps {
   isOpen: boolean;
@@ -192,15 +192,21 @@ export function DocumentDetailDrawer({
     }
   }, [isOpen, docId, category]);
 
-  // Handle ESC key to close drawer
+  // Handle ESC key to close drawer & lock body scroll
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
   }, [isOpen, onClose]);
 
   const handleDownload = async () => {

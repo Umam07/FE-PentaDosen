@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, ChevronRight, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface HKILinkingModalProps {
   isOpen: boolean;
@@ -22,6 +23,20 @@ export default function HKILinkingModal({
   onShowMessage
 }: HKILinkingModalProps) {
   const [isLinkingLoading, setIsLinkingLoading] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
 
   const handleLinkToResearchInternal = async (penelitianId: number) => {
     if (!docToLink) return;

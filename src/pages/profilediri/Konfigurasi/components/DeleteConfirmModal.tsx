@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
 import { IntegrationTone } from '../types/konfigurasi.types';
+import { lockBodyScroll, unlockBodyScroll } from '../../../../lib/utils';
 
 interface DeleteConfirmModalProps {
   type: IntegrationTone | null;
@@ -15,6 +16,22 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const isOpen = Boolean(type);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      lockBodyScroll();
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen, onClose]);
+
   if (!type) return null;
 
   const platformName = type === 'scholar' ? 'Google Scholar' : 'Scopus';
