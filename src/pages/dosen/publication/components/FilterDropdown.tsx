@@ -12,7 +12,7 @@ export interface FilterOption {
   label: string;
   /** Jumlah dokumen/item pada opsi ini */
   count: number;
-  /** Menandakan apakah item membutuhkan penanda khusus (misal dot orange untuk urgent) */
+  /** Menandakan apakah item membutuhkan penanda khusus */
   isUrgent?: boolean;
 }
 
@@ -40,7 +40,7 @@ export interface FilterDropdownProps {
 
 /**
  * FilterDropdown
- * Komponen dropdown spesifik per kategori filter publikasi dengan styling netral slate/zinc standar.
+ * Komponen dropdown filter publikasi dengan styling Warm Neutral Design System.
  */
 export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   categoryLabel,
@@ -52,35 +52,25 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   onSelectOption,
   className = '',
 }) => {
-  // Cari opsi yang sedang aktif dari list options
   const activeOption = options.find((opt) => opt.id === activeValue) || options[0];
-  
-  // Tentukan apakah filter sedang aktif (opsi terpilih ≠ default 'all')
   const isFiltered = activeValue !== defaultValue;
-  
-  // Tentukan apakah opsi terpilih merupakan kategori urgent (misal "Perlu Konfirmasi")
-  const isUrgentActive = Boolean(activeOption?.isUrgent);
 
-  // Trigger Button View (Tombol dropdown tertutup)
-  // Styling Netral Slate/Zinc:
-  // - Default (isFiltered = false): Teks netral `text-slate-700 dark:text-zinc-200`, border netral `border-slate-200 dark:border-zinc-700/80`
-  // - Aktif (isFiltered = true): Teks hitam pekat `text-slate-900 dark:text-zinc-50`, border `border-slate-400 dark:border-zinc-500`, bg `bg-slate-100/80 dark:bg-zinc-800`
   const triggerElement = (
     <div
-      className={`flex items-center justify-between gap-2 px-3.5 py-2 rounded-xl text-xs transition-all border cursor-pointer ${
+      className={`flex items-center justify-between gap-2 px-3.5 py-2 rounded-lg text-xs transition-all border cursor-pointer ${
         isFiltered
-          ? 'border-slate-400 dark:border-zinc-500 text-slate-900 dark:text-zinc-50 font-bold bg-slate-100/80 dark:bg-zinc-800 shadow-2xs'
-          : 'border-slate-200 dark:border-zinc-700/80 text-slate-700 dark:text-zinc-200 font-medium bg-white dark:bg-zinc-800/80 hover:bg-slate-50 dark:hover:bg-zinc-700/60 hover:border-slate-300 dark:hover:border-zinc-600'
+          ? 'border-hairline-dark/40 dark:border-hairline-light/40 text-ink-heading dark:text-on-dark font-bold bg-surface-light-raised dark:bg-surface-dark-elevated shadow-2xs'
+          : 'border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft font-medium bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:border-ink-border dark:hover:border-hairline-light'
       }`}
     >
       <div className="flex items-center gap-1.5 truncate">
         <span className="truncate">
-          {categoryLabel}: <span className={isFiltered ? 'font-black text-slate-900 dark:text-zinc-50' : 'font-semibold text-slate-800 dark:text-zinc-100'}>{activeOption?.label || activeValue}</span> ({activeOption?.count ?? 0})
+          {categoryLabel}: <span className={isFiltered ? 'font-bold text-ink-heading dark:text-on-dark' : 'font-semibold text-body-strong dark:text-on-dark'}>{activeOption?.label || activeValue}</span> ({activeOption?.count ?? 0})
         </span>
       </div>
       <ChevronDown
         className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
-          isFiltered ? 'text-slate-700 dark:text-zinc-300' : 'text-slate-400 dark:text-zinc-500'
+          isFiltered ? 'text-ink-heading dark:text-on-dark' : 'text-muted dark:text-on-dark-muted'
         } ${isOpen ? 'rotate-180' : ''}`}
       />
     </div>
@@ -94,7 +84,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       className={className}
     >
       {/* Panel Opsi Dropdown */}
-      <div className="py-1 space-y-0.5 max-h-60 overflow-y-auto">
+      <div className="py-1 space-y-0.5 max-h-60 overflow-y-auto bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-lg">
         {options.map((option) => {
           const isSelected = option.id === activeValue;
           const isDisabled = option.count === 0;
@@ -110,18 +100,17 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   onOpenChange(false);
                 }
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 text-xs rounded-lg transition-colors text-left ${
+              className={`w-full flex items-center justify-between px-3 py-2 text-xs rounded-lg transition-colors text-left cursor-pointer ${
                 isDisabled
-                  ? 'opacity-50 cursor-not-allowed text-slate-400 dark:text-zinc-600'
+                  ? 'opacity-40 cursor-not-allowed text-muted dark:text-on-dark-muted'
                   : isSelected
-                  ? 'bg-slate-100 dark:bg-zinc-700/80 text-slate-900 dark:text-zinc-50 font-bold'
-                  : 'text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800/60'
+                  ? 'bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold'
+                  : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
               }`}
             >
               <div className="flex items-center gap-2 truncate pr-2">
-                {/* Checkmark icon jika opsi aktif */}
                 {isSelected ? (
-                  <Check className="w-3.5 h-3.5 text-slate-900 dark:text-zinc-100 shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-ink-heading dark:text-on-dark shrink-0" />
                 ) : (
                   <span className="w-3.5 h-3.5 shrink-0" />
                 )}
@@ -129,8 +118,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 <span className="truncate">{option.label}</span>
               </div>
 
-              {/* Count di kanan */}
-              <span className="text-[11px] font-medium text-slate-400 dark:text-zinc-500 shrink-0 ml-2">
+              <span className="text-[11px] font-medium font-mono text-muted dark:text-on-dark-muted shrink-0 ml-2">
                 ({option.count})
               </span>
             </button>

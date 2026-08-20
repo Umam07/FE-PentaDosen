@@ -3,7 +3,6 @@ import {
   FileText, Upload, CheckCircle, XCircle, Clock, 
   Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 import { calculateScholarPoints } from '../../dashboard/pointsCalculator';
@@ -187,9 +186,9 @@ export default function PublicationTable({
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
 
   return (
-    <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
-      <div className="p-5 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
-        <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">Riwayat Publikasi</h3>
+    <section className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
+      <div className="p-5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark">
+        <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">Riwayat Publikasi</h3>
       </div>
 
       {/* Year Filter */}
@@ -200,51 +199,51 @@ export default function PublicationTable({
       />
       
       <div className="w-full overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200/80 dark:divide-slate-800 text-xs">
-          <thead className="bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-slate-800">
+        <table className="min-w-full divide-y divide-hairline-light dark:divide-hairline-dark text-xs">
+          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
             <tr>
-              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Judul Publikasi</th>
-              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Dokumen</th>
-              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Status</th>
-              <th className="px-4 lg:px-6 py-3.5 text-right sm:text-left text-xs font-semibold text-slate-600 dark:text-slate-300">Poin KPI</th>
-              <th className="px-4 py-3.5 w-12 text-center text-xs font-semibold text-slate-600 dark:text-slate-300">Detail</th>
-              <th className="px-4 py-3.5 w-16 text-center text-xs font-semibold text-slate-600 dark:text-slate-300">Aksi</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Judul Publikasi</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Dokumen</th>
+              <th className="px-4 lg:px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Status</th>
+              <th className="px-4 lg:px-6 py-3.5 text-right sm:text-left text-xs font-semibold text-body dark:text-on-dark-soft">Poin KPI</th>
+              <th className="px-4 py-3.5 w-12 text-center text-xs font-semibold text-body dark:text-on-dark-soft">Detail</th>
+              <th className="px-4 py-3.5 w-16 text-center text-xs font-semibold text-body dark:text-on-dark-soft">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 bg-white dark:bg-slate-900">
+          <tbody className="divide-y divide-hairline-light dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
             {isTableLoading ? (
               <phantom-ui loading={true} animation="shimmer" className="contents">
                 {[1, 2, 3].map((i) => (
-                  <tr key={`skeleton-${i}`} className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 last:border-0">
-                    <td className="px-4 lg:px-8 py-4 lg:py-5">
+                  <tr key={`skeleton-${i}`} className="border-b border-hairline-light dark:border-hairline-dark last:border-0">
+                    <td className="px-4 lg:px-6 py-4 lg:py-5">
                       <div className="flex items-center gap-3 lg:gap-4">
-                        <div className="h-8 w-8 lg:h-9 lg:w-9 bg-slate-100 dark:bg-slate-800 rounded-lg shrink-0"></div>
+                        <div className="h-8 w-8 lg:h-9 lg:w-9 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg shrink-0"></div>
                         <div className="space-y-2 w-full max-w-[120px] sm:max-w-[200px]">
-                          <div className="h-3 lg:h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
-                          <div className="h-2 lg:h-3 w-2/3 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                          <div className="h-3 lg:h-4 w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded"></div>
+                          <div className="h-2 lg:h-3 w-2/3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded"></div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-slate-200 dark:bg-slate-700 rounded-xl"></div></td>
-                    <td className="px-4 lg:px-8 py-4"><div className="h-6 w-16 lg:w-20 bg-slate-200 dark:bg-slate-700 rounded-xl"></div></td>
-                    <td className="px-4 lg:px-8 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-slate-200 dark:bg-slate-700 rounded-lg"></div></td>
-                    <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-slate-100 dark:bg-slate-800 rounded mx-auto"></div></td>
-                    <td className="px-4 py-4 w-16"><div className="h-4 w-10 bg-slate-100 dark:bg-slate-800 rounded mx-auto"></div></td>
+                    <td className="px-4 lg:px-6 py-4"><div className="h-6 w-16 lg:w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg"></div></td>
+                    <td className="px-4 lg:px-6 py-4"><div className="h-6 w-16 lg:w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg"></div></td>
+                    <td className="px-4 lg:px-6 py-4 flex justify-end sm:justify-start"><div className="h-6 lg:h-8 w-10 lg:w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg"></div></td>
+                    <td className="px-4 py-4 w-12"><div className="h-4 w-4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded mx-auto"></div></td>
+                    <td className="px-4 py-4 w-16"><div className="h-4 w-10 bg-surface-light-raised dark:bg-surface-dark-elevated rounded mx-auto"></div></td>
                   </tr>
                 ))}
               </phantom-ui>
             ) : currentDocuments.length > 0 ? (
               currentDocuments.map((doc: any) => (
-                <tr key={doc.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group">
+                <tr key={doc.id} className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors group">
                   {/* Informasi Publikasi */}
-                  <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
-                    <div className="flex items-center gap-3 lg:gap-4">
-                      <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors shrink-0">
-                        <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-slate-600 dark:text-slate-400" />
+                  <td className="px-4 lg:px-6 py-4 lg:py-5 align-middle cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
+                    <div className="flex items-start gap-3 lg:gap-4">
+                      <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg group-hover:bg-hairline-light dark:group-hover:bg-surface-dark transition-colors shrink-0 mt-0.5 border border-hairline-light dark:border-hairline-dark text-muted dark:text-on-dark-muted">
+                        <FileText className="h-4 w-4 lg:h-5 lg:w-5" />
                       </div>
                       <div className="min-w-0 flex-1 max-w-[150px] sm:max-w-[250px] lg:max-w-md">
-                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate" title={doc.title}>{doc.title}</p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5" title={doc.category}>
+                        <p className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark truncate" title={doc.title}>{doc.title}</p>
+                        <p className="text-[11px] text-muted dark:text-on-dark-muted truncate mt-0.5" title={doc.category}>
                           <span className="font-mono">{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'} • </span>
                           <span>{doc.category}</span>
                         </p>
@@ -255,78 +254,78 @@ export default function PublicationTable({
                           return (
                             <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                               {isExternal ? (
-                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
+                                <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center gap-1">
                                   API {doc.source === 'scopus' ? 'Scopus' : 'Scholar'}
                                 </span>
                               ) : (
-                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
+                                <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center gap-1">
                                   Manual
                                 </span>
                               )}
-                              <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold font-mono rounded-md bg-slate-50 dark:bg-slate-800/60 flex items-center gap-1">
+                              <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center gap-1">
                                 {doc.citations ?? 0} Sitasi
                               </span>
                               {isCrossIndexed && (
-                                <span className="px-2 py-0.5 border border-teal-200/80 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-[10px] font-semibold rounded-md bg-teal-50 dark:bg-teal-950/30 flex items-center gap-1">
+                                <span className="px-2 py-0.5 border border-success-border dark:border-success/30 text-success-dark dark:text-success-on-dark text-[10px] font-semibold rounded-md bg-success-soft dark:bg-success/15 flex items-center gap-1">
                                   Cross-Indexed
                                 </span>
                               )}
                               {doc.quartile && (
-                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold font-mono rounded-md bg-slate-50 dark:bg-slate-800/60">
+                                <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark text-[10px] font-bold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
                                   {doc.quartile}
                                 </span>
                               )}
                               {doc.author_role && (
-                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60">
+                                <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
                                   {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
                                 </span>
                               )}
                               {doc.is_hyperauthor && (
-                                <span className="px-2 py-0.5 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md bg-slate-50 dark:bg-slate-800/60">
+                                <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
                                   Hyper
                                 </span>
                               )}
-                               {/* Corresponding Author Status Badge for Jurnal Internasional */}
-                               {(doc.category === 'Jurnal Internasional' || doc.source === 'scopus') && (
-                                 <>
-                                   {doc.is_corresponding && doc.is_corresponding_confirmed && (
-                                     <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold rounded-md border border-emerald-200/60 dark:border-emerald-900/40 flex items-center gap-1">
-                                       ✓ Corresponding
-                                     </span>
-                                   )}
-                                   {!doc.is_corresponding && doc.is_corresponding_confirmed && (
-                                     <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200/60 dark:border-slate-700/60">
-                                       Non-Corresponding
-                                     </span>
-                                   )}
-                                   {!doc.is_corresponding_confirmed && Number(doc.total_authors || 1) > 1 && (
-                                     <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40 text-[10px] font-semibold rounded-md">
-                                       Perlu Konfirmasi
-                                     </span>
-                                   )}
-                                 </>
-                               )}
+                              {/* Corresponding Author Status Badge for Jurnal Internasional */}
+                              {(doc.category === 'Jurnal Internasional' || doc.source === 'scopus') && (
+                                <>
+                                  {doc.is_corresponding && doc.is_corresponding_confirmed && (
+                                    <span className="px-2 py-0.5 bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark text-[10px] font-semibold rounded-md border border-success-border dark:border-success/30 flex items-center gap-1">
+                                      ✓ Corresponding
+                                    </span>
+                                  )}
+                                  {!doc.is_corresponding && doc.is_corresponding_confirmed && (
+                                    <span className="px-2 py-0.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md border border-hairline-light dark:border-hairline-dark">
+                                      Non-Corresponding
+                                    </span>
+                                  )}
+                                  {!doc.is_corresponding_confirmed && Number(doc.total_authors || 1) > 1 && (
+                                    <span className="px-2 py-0.5 bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border border-warning-border dark:border-warning/30 text-[10px] font-semibold rounded-md">
+                                      Perlu Konfirmasi
+                                    </span>
+                                  )}
+                                </>
+                              )}
 
-                               {/* SINTA Status Badge for Jurnal Nasional */}
-                               {(doc.category === 'Jurnal Nasional' || doc.source === 'scholar') && (
-                                 <>
-                                   {doc.sinta_rank && doc.sinta_rank !== 'Non-SINTA' && (
-                                     <span className="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-300 text-[10px] font-semibold font-mono rounded-md border border-sky-200/60 dark:border-sky-900/40">
-                                       {doc.sinta_rank}
-                                     </span>
-                                   )}
-                                   {doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
-                                     <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700">
-                                       Non-SINTA
-                                     </span>
-                                   )}
-                                   {!doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
-                                     <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40 text-[10px] font-semibold rounded-md">
-                                       Perlu Konfirmasi SINTA
-                                     </span>
-                                   )}
-                                 </>
-                               )}
+                              {/* SINTA Status Badge for Jurnal Nasional */}
+                              {(doc.category === 'Jurnal Nasional' || doc.source === 'scholar') && (
+                                <>
+                                  {doc.sinta_rank && doc.sinta_rank !== 'Non-SINTA' && (
+                                    <span className="px-2 py-0.5 bg-accent-soft dark:bg-accent/15 text-accent-hover dark:text-accent-on-dark text-[10px] font-semibold font-mono rounded-md border border-accent-border dark:border-accent/30">
+                                      {doc.sinta_rank}
+                                    </span>
+                                  )}
+                                  {doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
+                                    <span className="px-2 py-0.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md border border-hairline-light dark:border-hairline-dark">
+                                      Non-SINTA
+                                    </span>
+                                  )}
+                                  {!doc.is_sinta_confirmed && (!doc.sinta_rank || doc.sinta_rank === 'Non-SINTA') && (
+                                    <span className="px-2 py-0.5 bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border border-warning-border dark:border-warning/30 text-[10px] font-semibold rounded-md">
+                                      Perlu Konfirmasi SINTA
+                                    </span>
+                                  )}
+                                </>
+                              )}
                             </div>
                           );
                         })()}
@@ -349,7 +348,7 @@ export default function PublicationTable({
                                   <button
                                     type="button"
                                     onClick={() => setExpandedPoints(prev => ({ ...prev, [doc.id]: !prev[doc.id] }))}
-                                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer shadow-2xs"
+                                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark cursor-pointer shadow-2xs"
                                   >
                                     {isExpanded ? '▲ Sembunyikan' : '▼ Rincian Poin'}
                                   </button>
@@ -375,20 +374,21 @@ export default function PublicationTable({
                   </td>
 
                   {/* Dokumen */}
-                  <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                  <td className="px-4 lg:px-6 py-4 lg:py-5 align-middle">
                     {doc.file_url && doc.file_url !== '-' ? (
                       <button
                         onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
-                        className="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-1 rounded-md border border-slate-200/80 dark:border-slate-700/80 transition-colors cursor-pointer"
+                        className="inline-flex items-center text-xs font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
                       >
-                        <FileText className="w-3.5 h-3.5 mr-1 text-slate-500" /> Lihat
+                        <FileText className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" /> Lihat
                       </button>
                     ) : (
-                      <label className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 px-2.5 py-1 rounded-md transition-colors">
+                      <label className="inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark cursor-pointer bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors">
                         {uploadingPdfId === doc.id ? (
                           <span className="animate-pulse">Uploading...</span>
                         ) : (
                           <>
+                            <Upload className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" />
                             Upload
                             <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
                           </>
@@ -398,7 +398,7 @@ export default function PublicationTable({
                   </td>
 
                   {/* Status */}
-                  <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle">
+                  <td className="px-4 lg:px-6 py-4 lg:py-5 align-middle">
                     {(() => {
                       const st = (doc.status || '').toLowerCase();
                       const isApproved = st === 'approved';
@@ -407,14 +407,14 @@ export default function PublicationTable({
 
                       return (
                         <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-semibold text-[11px] border ${
-                          isApproved ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40' :
-                          isRejected ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200/60 dark:border-rose-900/40' :
-                          isVerified ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200/60 dark:border-sky-900/40' :
-                          'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/40'
+                          isApproved ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30' :
+                          isRejected ? 'bg-error-soft dark:bg-error/15 text-error dark:text-error-on-dark border-error-border dark:border-error/30' :
+                          isVerified ? 'bg-accent-soft dark:bg-accent/15 text-accent-hover dark:text-accent-on-dark border-accent-border dark:border-accent/30' :
+                          'bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
                         }`}>
-                          {isApproved && <CheckCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-emerald-600 dark:text-emerald-400" />}
-                          {isRejected && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-rose-600 dark:text-rose-400" />}
-                          {(!isApproved && !isRejected) && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-amber-600 dark:text-amber-400" />}
+                          {isApproved && <CheckCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-success dark:text-success-on-dark" />}
+                          {isRejected && <XCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-error dark:text-error-on-dark" />}
+                          {(!isApproved && !isRejected) && <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 mr-1 text-warning dark:text-warning-on-dark" />}
                           <span className="hidden sm:inline">{isVerified ? 'Verified (Fakultas)' : isApproved ? 'Approved' : isRejected ? 'Rejected' : doc.status || 'Pending'}</span>
                           <span className="sm:hidden">{isApproved ? 'OK' : isRejected ? 'NO' : isVerified ? 'V-FAK' : 'Wait'}</span>
                         </div>
@@ -423,8 +423,8 @@ export default function PublicationTable({
                   </td>
 
                   {/* Poin */}
-                  <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle text-right sm:text-left">
-                    <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-slate-900 dark:text-zinc-100 whitespace-nowrap">
+                  <td className="px-4 lg:px-6 py-4 lg:py-5 align-middle text-right sm:text-left">
+                    <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-ink-heading dark:text-on-dark whitespace-nowrap">
                       +{Math.round(doc.source === 'scholar' ? calculateScholarPoints(doc) : (doc.awarded_points ?? 0))} Pts
                     </span>
                   </td>
@@ -434,8 +434,9 @@ export default function PublicationTable({
                     <button
                       type="button"
                       onClick={() => setSelectedDocForDetail(doc)}
-                      className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all flex items-center justify-center mx-auto cursor-pointer"
+                      className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all flex items-center justify-center mx-auto cursor-pointer"
                       title="Lihat Detail"
+                      aria-label="Lihat Detail Publikasi"
                     >
                       <Info className="w-4 h-4" />
                     </button>
@@ -445,23 +446,38 @@ export default function PublicationTable({
                   <td className="px-4 py-4 text-center align-middle">
                     {doc.source ? (
                       <div className="flex items-center justify-center gap-1">
-                        <button type="button" onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
-                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer" title="Hapus Publikasi">
+                        <button 
+                          type="button" 
+                          onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-error-soft dark:bg-surface-dark-elevated dark:hover:bg-error/15 text-muted hover:text-error dark:text-on-dark-muted dark:hover:text-error-on-dark border border-hairline-light dark:border-hairline-dark transition-all cursor-pointer" 
+                          title="Hapus Publikasi"
+                          aria-label="Hapus Publikasi"
+                        >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     ) : isDocLocked(doc) ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-[10px] font-semibold cursor-not-allowed border border-slate-200/60 dark:border-slate-700/60" title="Dokumen sudah diverifikasi — tidak dapat diubah">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted text-[10px] font-semibold cursor-not-allowed border border-hairline-light dark:border-hairline-dark" title="Dokumen sudah diverifikasi — tidak dapat diubah">
                         <Lock className="w-3 h-3" /> Terkunci
                       </span>
                     ) : (
                       <div className="flex items-center justify-center gap-1">
-                        <button type="button" onClick={() => openEditModal(doc)}
-                          className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all cursor-pointer" title="Edit Publikasi">
+                        <button 
+                          type="button" 
+                          onClick={() => openEditModal(doc)}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all cursor-pointer" 
+                          title="Edit Publikasi"
+                          aria-label="Edit Publikasi"
+                        >
                           <Pencil className="w-4 h-4" />
                         </button>
-                        <button type="button" onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
-                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer" title="Hapus Publikasi">
+                        <button 
+                          type="button" 
+                          onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-error-soft dark:bg-surface-dark-elevated dark:hover:bg-error/15 text-muted hover:text-error dark:text-on-dark-muted dark:hover:text-error-on-dark border border-hairline-light dark:border-hairline-dark transition-all cursor-pointer" 
+                          title="Hapus Publikasi"
+                          aria-label="Hapus Publikasi"
+                        >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -471,7 +487,7 @@ export default function PublicationTable({
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-4 lg:px-8 py-16 text-center text-slate-400 font-medium text-xs">
+                <td colSpan={6} className="px-4 lg:px-6 py-16 text-center text-muted dark:text-on-dark-muted font-medium text-xs">
                   Belum ada data publikasi.
                 </td>
               </tr>
@@ -482,14 +498,14 @@ export default function PublicationTable({
 
       {/* === Pagination Controls === */}
       {!isTableLoading && filteredDocuments.length > 0 && (
-        <div className="px-6 py-4 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised/50 dark:bg-surface-dark/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              Menampilkan <span className="font-semibold font-mono text-slate-900 dark:text-white">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredDocuments.length)}</span> dari <span className="font-semibold font-mono text-slate-900 dark:text-white">{filteredDocuments.length}</span> Dokumen
+            <span className="text-xs text-muted dark:text-on-dark-muted">
+              Menampilkan <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredDocuments.length)}</span> dari <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{filteredDocuments.length}</span> Dokumen
             </span>
-            <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
+            <div className="h-4 w-px bg-hairline-light dark:bg-hairline-dark hidden sm:block" />
             <div className="hidden sm:flex items-center gap-2">
-              <span className="text-xs text-slate-400">Limit:</span>
+              <span className="text-xs text-muted dark:text-on-dark-muted">Limit:</span>
               <DropdownSelect
                 value={itemsPerPage}
                 onChange={(val) => {
@@ -513,7 +529,8 @@ export default function PublicationTable({
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+              className="p-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+              aria-label="Halaman Sebelumnya"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -524,14 +541,14 @@ export default function PublicationTable({
                 .map((p, index, array) => (
                   <React.Fragment key={p}>
                     {index > 0 && array[index - 1] !== p - 1 && (
-                      <span className="px-1 text-slate-400 dark:text-slate-600 text-xs">...</span>
+                      <span className="px-1 text-muted dark:text-on-dark-muted text-xs">...</span>
                     )}
                     <button
                       onClick={() => setCurrentPage(p)}
                       className={`min-w-[34px] h-8 flex items-center justify-center rounded-lg text-xs font-semibold font-mono transition-all cursor-pointer ${
                         currentPage === p 
-                          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs' 
-                          : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+                          ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-2xs' 
+                          : 'bg-surface-light dark:bg-surface-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'
                       }`}
                     >
                       {p}
@@ -543,7 +560,8 @@ export default function PublicationTable({
             <button
               disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+              className="p-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+              aria-label="Halaman Berikutnya"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -553,4 +571,3 @@ export default function PublicationTable({
     </section>
   );
 }
-
