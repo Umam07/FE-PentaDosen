@@ -76,4 +76,5 @@ export interface StatsInfo {
   approved: number;
   pending: number;
   points: number;
+  citations?: number;
 }
