@@ -172,7 +172,7 @@ export default function MyTicketsList({
         {/* Tombol Kirim Pesan Baru (Primary action) */}
         <button
           onClick={onOpenCreateModal}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink text-xs font-semibold transition-all shadow-xs active:scale-95 cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs active:scale-95 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Kirim Pesan Baru</span>
@@ -448,7 +448,7 @@ export default function MyTicketsList({
                             <button
                               type="submit"
                               disabled={submittingReply || !replyText.trim()}
-                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink text-xs font-semibold transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer shrink-0"
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer shrink-0"
                             >
                               <Send className="w-3.5 h-3.5" />
                               <span>{submittingReply ? 'Mengirim...' : 'Kirim'}</span>
@@ -483,7 +483,7 @@ export default function MyTicketsList({
           </p>
           <button
             onClick={onOpenCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink text-xs font-semibold transition-all shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Kirim Pesan Baru</span>

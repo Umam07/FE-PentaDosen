@@ -167,7 +167,7 @@ export default function CreateTicketModal({
                 <button
                   type="submit"
                   disabled={submittingTicket}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{submittingTicket ? 'Mengirim...' : 'Kirim Pesan'}</span>

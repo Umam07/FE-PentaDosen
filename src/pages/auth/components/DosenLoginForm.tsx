@@ -134,10 +134,10 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink rounded-lg font-bold text-sm tracking-wide transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none cursor-pointer shadow-sm"
+            className="w-full py-3 bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink rounded-lg font-bold text-sm tracking-wide transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none cursor-pointer shadow-sm"
           >
             {loading ? (
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
             ) : (
               <LogIn className="w-4 h-4" />
             )}

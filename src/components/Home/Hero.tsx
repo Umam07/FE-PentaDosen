@@ -7,7 +7,7 @@ export default function Hero() {
   return (
     <section id="hero" className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-canvas-light dark:bg-canvas-dark transition-colors duration-300">
       {/* Structural Line Grid Pattern (No glows, no gradients) */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.05] dark:opacity-[0.07]">
+      <div className="absolute inset-0 pointer-events-none opacity-[0.05] dark:opacity-[0.14]">
         <div className="h-full w-full bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
@@ -22,7 +22,7 @@ export default function Hero() {
             className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-ink-heading dark:text-on-dark"
           >
             Portofolio Riset Dosen<br />
-            <span className="text-accent dark:text-accent-on-dark">YARSI, Lebih Rapi.</span>
+            YARSI, <span className="text-accent dark:text-accent-on-dark">Lebih Rapi.</span>
           </motion.h1>
 
           {/* Subtitle - Max 20 words max readability */}
@@ -66,13 +66,13 @@ export default function Hero() {
           >
             <Link
               to="/insights"
-              className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-accent hover:bg-accent-hover active:scale-[0.98] text-white font-bold text-base px-8 py-4 rounded-lg transition-all duration-200 shadow-sm group relative overflow-hidden"
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink font-bold text-base px-8 py-4 rounded-lg active:scale-[0.98] transition-all duration-200 shadow-sm group relative overflow-hidden"
             >
               {/* Shiny Glossy Sheen Sweep Effect */}
               <motion.span 
                 animate={{ x: ['-150%', '250%'] }}
                 transition={{ repeat: Infinity, repeatDelay: 3.5, duration: 1.2, ease: "easeInOut" }}
-                className="absolute inset-0 w-1/2 h-full bg-white/25 skew-x-[-25deg] pointer-events-none"
+                className="absolute inset-0 w-1/2 h-full bg-white/15 dark:bg-black/10 skew-x-[-25deg] pointer-events-none"
               />
               <span className="relative z-10 flex items-center gap-2.5">
                 <span>Lihat Insight Platform</span>

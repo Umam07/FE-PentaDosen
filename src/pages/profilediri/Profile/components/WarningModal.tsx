@@ -107,7 +107,7 @@ export const WarningModal: React.FC<WarningModalProps> = ({ show, onLengkapi, on
           <button
             type="button"
             onClick={onLengkapi}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink px-4 text-sm font-semibold shadow-xs transition-all cursor-pointer"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink px-4 text-sm font-semibold shadow-xs transition-all cursor-pointer"
           >
             <span>Lengkapi ID Sekarang</span>
             <ArrowRight className="w-4 h-4" />

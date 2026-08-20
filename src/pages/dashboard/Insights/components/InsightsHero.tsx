@@ -85,7 +85,7 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
               <div className="pt-1">
                 <button
                   onClick={onExploreClick}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-hover active:scale-[0.98] text-on-ink font-bold text-sm transition-all duration-200 shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink font-bold text-sm active:scale-[0.98] transition-all duration-200 shadow-xs cursor-pointer"
                 >
                   <span>Jelajahi Peringkat Fakultas</span>
                   <ArrowUpRight className="w-4 h-4" />

@@ -269,17 +269,6 @@ components:
     textColor: "{colors.on-ink}"
     rounded: "{rounded.lg}"
 
-  button-hero-accent:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.on-ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.lg}"
-    padding: 12px 24px
-    height: 46px
-
-  button-hero-accent-hover:
-    backgroundColor: "{colors.accent-hover}"
-
   button-secondary-light:
     backgroundColor: "{colors.surface-light}"
     textColor: "{colors.ink-heading}"
@@ -538,7 +527,7 @@ Masalah utama versi sebelumnya adalah adanya dua arah palette yang bercampur: cl
 
 1. **Warm neutral adalah fondasi.** Canvas dan surface harus berada dalam keluarga warna yang sama. Perbedaan layer dibuat lewat perubahan brightness yang halus, bukan kontras putih-versus-abu yang tajam.
 2. **Ink adalah warna kerja default.** Tombol primary, item dashboard aktif, dan kontrol utama menggunakan `#191918`, bukan biru.
-3. **Biru adalah tanda tangan brand.** `#2563eb` digunakan secara langka untuk logo, link, satu CTA hero homepage, indikator aktif sidebar, focus ring, dan konteks analitik yang memang membutuhkan identitas sumber.
+3. **Biru adalah tanda tangan brand.** `#2563eb` digunakan secara langka dan eksklusif untuk logo PentaDosen, satu kata/frasa penekanan nilai di hero ("Lebih Rapi."), tautan teks, focus ring, indikator aktif sidebar kecil, dan konteks analitik yang memang membutuhkan identitas sumber. Tombol/CTA utama tetap menggunakan Ink agar antarmuka tetap tenang, berwibawa, dan konsisten di seluruh platform.
 4. **Status tetap semantik.** Hijau berarti berhasil/terverifikasi/tersinkron, oranye berarti menunggu/perlu konfirmasi, merah berarti error/ditolak.
 5. **Dark mode memakai warm espresso / deep coffee.** Tidak menggunakan black murni, slate kebiruan, atau abu-abu dingin. Kedalaman dibangun dari beberapa level cokelat kopi gelap yang hangat.
 6. **Restraint adalah fitur.** Jangan menambahkan warna hanya agar dashboard terlihat hidup. Gunakan warna ketika pengguna memang perlu menginterpretasikannya.
@@ -725,11 +714,7 @@ Radius tombol tetap 10px. Jangan menggunakan pill radius untuk tombol utama.
 
 ### Tombol Primary
 
-Height 44px, padding `12px 22px`, rounded 10px, background `{colors.ink}`. Semua aksi utama dashboard menggunakan pola ini tanpa variasi warna dekoratif.
-
-### Tombol Hero Accent
-
-Biru hanya untuk satu CTA paling penting di homepage/landing page publik. Tidak digunakan sebagai warna tombol default setelah login.
+Height 44px, padding `12px 22px`, rounded 10px, background `{colors.ink}` (di light mode) / `{colors.on-dark}` (di dark mode). Semua aksi utama, termasuk CTA utama Hero homepage publik ("Lihat Insight Platform") dan tombol utama dashboard, menggunakan pola ini tanpa variasi warna dekoratif.
 
 ### Sidebar Active
 

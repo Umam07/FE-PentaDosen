@@ -112,7 +112,8 @@ export default function Features() {
             transition={{ duration: 0.5 }}
             className="text-3xl sm:text-4xl md:text-5xl font-black text-ink-heading dark:text-on-dark tracking-tight leading-tight mb-4"
           >
-            Semua yang Dibutuhkan <span className="text-accent dark:text-accent-on-dark">Dosen YARSI</span>
+            Semua yang Dibutuhkan<br />
+            Dosen <span className="text-accent dark:text-accent-on-dark">YARSI</span>
           </motion.h2>
 
           <motion.p

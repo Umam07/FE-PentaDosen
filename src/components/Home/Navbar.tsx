@@ -117,7 +117,7 @@ export default function Navbar() {
               {user ? (
                 <Link 
                   to="/dashboard"
-                  className="flex items-center gap-2 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover active:scale-[0.98] px-6 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
+                  className="flex items-center gap-2 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white active:scale-[0.98] px-6 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
                 >
                   Insights
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -126,13 +126,13 @@ export default function Navbar() {
                 <>
                   <Link 
                     to="/login"
-                    className="text-sm font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark px-4 py-2 rounded-lg transition-all"
+                    className="text-sm font-semibold text-body dark:text-on-dark hover:text-ink-heading dark:hover:text-white px-4 py-2 rounded-lg transition-all"
                   >
                     Masuk
                   </Link>
                   <Link 
                     to="/insights"
-                    className="flex items-center gap-2 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover active:scale-[0.98] px-5 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
+                    className="flex items-center gap-2 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white active:scale-[0.98] px-5 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
                   >
                     Insights
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -254,7 +254,7 @@ export default function Navbar() {
                   <Link
                     to="/dashboard"
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover rounded-lg transition-all shadow-sm"
+                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white rounded-lg transition-all shadow-sm"
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
@@ -272,7 +272,7 @@ export default function Navbar() {
                     <Link
                       to="/insights"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink bg-ink hover:bg-ink-hover rounded-lg transition-all shadow-sm"
+                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white rounded-lg transition-all shadow-sm"
                     >
                       Insights
                       <ArrowRight className="w-4 h-4" />
