@@ -34,6 +34,7 @@ export interface KonfigurasiProps {
   handleCheckScopusId: () => Promise<void>;
   handleSaveScopusId: () => Promise<void>;
   handleDeleteScholarId: () => Promise<void>;
+  handleDeleteScopusId?: () => Promise<void>;
   handleSync: () => Promise<void>;
   handleSyncScopus: () => Promise<void>;
   handleSyncAll: () => Promise<void>;

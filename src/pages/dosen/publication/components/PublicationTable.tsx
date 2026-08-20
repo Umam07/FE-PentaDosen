@@ -63,7 +63,7 @@ export default function PublicationTable({
     const isJN = doc.category === 'Jurnal Nasional';
     if (!isJI && !isJN) return null;
 
-    if (doc.source === 'scholar' || Number(doc.citations || 0) > 0) {
+    if (doc.source === 'scholar' || (isJN && !doc.sinta_rank && Number(doc.citations || 0) > 0)) {
       const citations = Number(doc.citations) || 0;
       const docPoints = 0.5;
       const citationBonus = citations > 0 ? 0.5 : 0;
@@ -425,7 +425,7 @@ export default function PublicationTable({
                   {/* Poin */}
                   <td className="px-4 lg:px-8 py-4 lg:py-5 align-middle text-right sm:text-left">
                     <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-slate-900 dark:text-zinc-100 whitespace-nowrap">
-                      +{Math.round((doc.source === 'scholar' || Number(doc.citations || 0) > 0) ? calculateScholarPoints(doc) : (doc.awarded_points ?? 0))} Pts
+                      +{Math.round(doc.source === 'scholar' ? calculateScholarPoints(doc) : (doc.awarded_points ?? 0))} Pts
                     </span>
                   </td>
 
