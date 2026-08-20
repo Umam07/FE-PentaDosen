@@ -200,13 +200,12 @@ export default function LecturerDashboard({ user }: { user: any }) {
                 </div>
 
                 <span
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+                  className={`inline-flex items-center rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold transition-colors ${
                     scholarData
-                      ? 'border-emerald-200/60 bg-emerald-50 text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/40 dark:text-emerald-300'
-                      : 'border-slate-200/80 bg-white text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400'
+                      ? 'border-hairline-light bg-surface-light-raised text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark'
+                      : 'border-hairline-light-soft bg-transparent text-muted dark:border-hairline-dark-soft dark:text-on-dark-muted'
                   }`}
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${scholarData ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                   {scholarData ? 'Tersinkron' : (loading && !profileData ? 'Memuat...' : 'Belum Sinkron')}
                 </span>
               </div>
@@ -275,13 +274,12 @@ export default function LecturerDashboard({ user }: { user: any }) {
                 </div>
 
                 <span
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+                  className={`inline-flex items-center rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold transition-colors ${
                     scopusData
-                      ? 'border-emerald-200/60 bg-emerald-50 text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/40 dark:text-emerald-300'
-                      : 'border-slate-200/80 bg-white text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400'
+                      ? 'border-hairline-light bg-surface-light-raised text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark'
+                      : 'border-hairline-light-soft bg-transparent text-muted dark:border-hairline-dark-soft dark:text-on-dark-muted'
                   }`}
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${scopusData ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                   {scopusData ? 'Tersinkron' : (loading && !profileData ? 'Memuat...' : 'Belum Sinkron')}
                 </span>
               </div>

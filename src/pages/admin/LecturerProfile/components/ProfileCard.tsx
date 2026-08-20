@@ -168,13 +168,12 @@ export default function ProfileCard({
                   </div>
                 </div>
                 <span
-                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                   className={`inline-flex items-center rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold transition-colors ${
                     !loading && scholarData
-                       ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-300'
-                       : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-400'
+                       ? 'border-hairline-light bg-surface-light-raised text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark'
+                       : 'border-hairline-light-soft bg-transparent text-muted dark:border-hairline-dark-soft dark:text-on-dark-muted'
                    }`}
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${!loading && scholarData ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`} />
                   {loading ? 'Memuat...' : scholarData ? 'Tersinkron' : 'Belum Sinkron'}
                 </span>
               </div>
@@ -237,13 +236,12 @@ export default function ProfileCard({
                   </div>
                 </div>
                 <span
-                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                   className={`inline-flex items-center rounded-pill border px-2.5 py-0.5 text-[11px] font-semibold transition-colors ${
                     !loading && scopusData
-                       ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-300'
-                       : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-400'
+                       ? 'border-hairline-light bg-surface-light-raised text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark'
+                       : 'border-hairline-light-soft bg-transparent text-muted dark:border-hairline-dark-soft dark:text-on-dark-muted'
                    }`}
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${!loading && scopusData ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`} />
                   {loading ? 'Memuat...' : scopusData ? 'Tersinkron' : 'Belum Sinkron'}
                 </span>
               </div>
