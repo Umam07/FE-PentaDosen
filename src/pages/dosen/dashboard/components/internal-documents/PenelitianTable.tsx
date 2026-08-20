@@ -73,7 +73,7 @@ export default function PenelitianTable({
                           {doc.title}
                         </p>
                         {doc.status === 'Rejected' && doc.catatan && (
-                          <div className="mt-1.5 text-[11px] font-semibold text-danger dark:text-danger-on-dark bg-danger-soft dark:bg-danger/20 px-2 py-0.5 rounded-lg border border-danger-border dark:border-danger/30 w-fit">
+                          <div className="mt-1.5 text-[11px] font-semibold text-error dark:text-error-on-dark bg-error-soft dark:bg-error/15 px-2 py-0.5 rounded-lg border border-error-border dark:border-error/30 w-fit">
                             Catatan: {doc.catatan}
                           </div>
                         )}
@@ -106,7 +106,9 @@ export default function PenelitianTable({
                   <td className="px-6 py-4">
                     {doc.file_url && doc.file_url !== '-' ? (
                       <button
+                        type="button"
                         onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
+                        aria-label={`Lihat PDF untuk ${doc.title}`}
                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark-soft text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors whitespace-nowrap cursor-pointer"
                       >
                         <FileText className="w-3.5 h-3.5" /> Lihat
@@ -118,12 +120,12 @@ export default function PenelitianTable({
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                       doc.status === 'Approved'
-                        ? 'bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
+                        ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
                         : doc.status === 'Rejected'
-                        ? 'bg-danger-soft dark:bg-danger/20 text-danger dark:text-danger-on-dark border-danger-border dark:border-danger/30'
+                        ? 'bg-error-soft dark:bg-error/15 text-error dark:text-error-on-dark border-error-border dark:border-error/30'
                         : doc.status === 'Verified by Fakultas'
-                        ? 'bg-accent-soft dark:bg-accent/10 text-accent dark:text-accent-on-dark border-accent-border dark:border-accent/30'
-                        : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
+                        ? 'bg-accent-soft dark:bg-accent/15 text-accent-hover dark:text-accent-on-dark border-accent-border dark:border-accent/30'
+                        : 'bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
                     }`}>
                       {doc.status}
                     </span>
@@ -135,7 +137,9 @@ export default function PenelitianTable({
                   </td>
                   <td className="px-6 py-4 text-center">
                     <button
+                      type="button"
                       onClick={() => setSelectedDocForDetail(doc)}
+                      aria-label={`Lihat rincian detail ${doc.title}`}
                       className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
                       title="Lihat Rincian Detail"
                     >
@@ -177,7 +181,9 @@ export default function PenelitianTable({
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setSelectedDocForDetail(doc)}
+                  aria-label={`Lihat detail ${doc.title}`}
                   className="p-1.5 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted shrink-0 hover:bg-surface-light dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark cursor-pointer"
                   title="Lihat Detail"
                 >
@@ -198,7 +204,7 @@ export default function PenelitianTable({
                   </span>
                 )}
                 {Number(doc.dana_disetujui || 0) > 0 && (
-                  <span className="px-2 py-0.5 rounded-md bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark font-mono font-bold border border-success-border dark:border-success/30">
+                  <span className="px-2 py-0.5 rounded-md bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark font-mono font-bold border border-success-border dark:border-success/30">
                     {formatRupiah(doc.dana_disetujui)}
                   </span>
                 )}
@@ -206,7 +212,7 @@ export default function PenelitianTable({
 
               {/* Rejection Feedback Note */}
               {doc.status === 'Rejected' && doc.catatan && (
-                <div className="text-xs font-semibold text-danger dark:text-danger-on-dark bg-danger-soft dark:bg-danger/20 p-2.5 rounded-xl border border-danger-border dark:border-danger/30">
+                <div className="text-xs font-semibold text-error dark:text-error-on-dark bg-error-soft dark:bg-error/15 p-2.5 rounded-xl border border-error-border dark:border-error/30">
                   Catatan: {doc.catatan}
                 </div>
               )}
@@ -216,17 +222,19 @@ export default function PenelitianTable({
                 <div className="flex items-center gap-2">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-medium text-xs border ${
                     doc.status === 'Approved'
-                      ? 'bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
+                      ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
                       : doc.status === 'Rejected'
-                      ? 'bg-danger-soft dark:bg-danger/20 text-danger dark:text-danger-on-dark border-danger-border dark:border-danger/30'
-                      : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
+                      ? 'bg-error-soft dark:bg-error/15 text-error dark:text-error-on-dark border-error-border dark:border-error/30'
+                      : 'bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
                   }`}>
                     {doc.status}
                   </span>
 
                   {doc.file_url && doc.file_url !== '-' && (
                     <button
+                      type="button"
                       onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
+                      aria-label={`Lihat file ${doc.title}`}
                       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft text-xs font-semibold border border-hairline-light dark:border-hairline-dark hover:bg-surface-light dark:hover:bg-surface-dark cursor-pointer"
                     >
                       <FileText className="w-3 h-3" /> File

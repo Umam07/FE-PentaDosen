@@ -144,14 +144,14 @@ export default function ResearchUploadModal({
             onClick={() => setDocType?.('kpi')}
             className={`flex items-center gap-2.5 p-3 rounded-xl border-2 transition-all cursor-pointer ${
               docType === 'kpi'
-                ? 'border-slate-900 dark:border-white bg-slate-50 dark:bg-slate-800/80 ring-2 ring-slate-900/10 dark:ring-white/10'
-                : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300'
+                ? 'border-ink dark:border-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated ring-2 ring-ink/10 dark:ring-on-dark/10'
+                : 'border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:border-ink-border dark:hover:border-hairline-dark'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-amber-500" />
+            <Sparkles className="w-4 h-4 text-warning" />
             <div className="text-left">
-              <p className="text-xs font-bold text-slate-900 dark:text-white">KPI Dosen</p>
-              <p className="text-[10px] text-slate-500">Automated Scoring</p>
+              <p className="text-xs font-bold text-ink-heading dark:text-on-dark">KPI Dosen</p>
+              <p className="text-[10px] text-muted dark:text-on-dark-muted">Automated Scoring</p>
             </div>
           </button>
 
@@ -160,21 +160,21 @@ export default function ResearchUploadModal({
             onClick={() => setDocType?.('arsip')}
             className={`flex items-center gap-2.5 p-3 rounded-xl border-2 transition-all cursor-pointer ${
               docType === 'arsip'
-                ? 'border-slate-900 dark:border-white bg-slate-50 dark:bg-slate-800/80 ring-2 ring-slate-900/10 dark:ring-white/10'
-                : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300'
+                ? 'border-ink dark:border-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated ring-2 ring-ink/10 dark:ring-on-dark/10'
+                : 'border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:border-ink-border dark:hover:border-hairline-dark'
             }`}
           >
-            <Archive className="w-4 h-4 text-slate-400" />
+            <Archive className="w-4 h-4 text-muted dark:text-on-dark-muted" />
             <div className="text-left">
-              <p className="text-xs font-bold text-slate-900 dark:text-white">Arsip Umum</p>
-              <p className="text-[10px] text-slate-500">Storage Only (0 Poin)</p>
+              <p className="text-xs font-bold text-ink-heading dark:text-on-dark">Arsip Umum</p>
+              <p className="text-[10px] text-muted dark:text-on-dark-muted">Storage Only (0 Poin)</p>
             </div>
           </button>
         </div>
 
         {/* Program Selector */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
             Kategori Program Penelitian
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -189,17 +189,17 @@ export default function ResearchUploadModal({
                 onClick={() => setProgram(item.key)}
                 className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all cursor-pointer ${
                   program === item.key
-                    ? 'border-slate-900 dark:border-white bg-slate-50 dark:bg-slate-800/80 ring-2 ring-slate-900/10 dark:ring-white/10'
-                    : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300'
+                    ? 'border-ink dark:border-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated ring-2 ring-ink/10 dark:ring-on-dark/10'
+                    : 'border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark hover:border-ink-border dark:hover:border-hairline-dark'
                 }`}
               >
-                <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 mb-1.5">
+                <div className="p-2 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft mb-1.5 border border-hairline-light/60 dark:border-hairline-dark/60">
                   <item.icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-bold text-slate-900 dark:text-white text-center">
+                <span className="text-xs font-bold text-ink-heading dark:text-on-dark text-center">
                   {item.label}
                 </span>
-                <span className="text-[10px] font-mono text-slate-500 mt-0.5">
+                <span className="text-[10px] font-mono text-muted dark:text-on-dark-muted mt-0.5">
                   +{item.pts} Pts Base
                 </span>
               </button>
@@ -209,7 +209,7 @@ export default function ResearchUploadModal({
 
         {/* Judul Penelitian */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
             Judul Penelitian
           </label>
           <input
@@ -218,32 +218,32 @@ export default function ResearchUploadModal({
             value={judulPenelitian}
             onChange={(e) => setJudulPenelitian(e.target.value)}
             placeholder="Masukkan judul penelitian..."
-            className="w-full px-3.5 py-2.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-slate-900 dark:text-white"
+            className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark placeholder:text-muted-soft"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {/* Skema */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
               Skema Penelitian
             </label>
             <select
               value={skema}
               onChange={(e) => setSkema(e.target.value)}
               required
-              className="w-full px-3.5 py-2.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-slate-900 dark:text-white cursor-pointer"
+              className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
             >
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="">
                 Pilih Skema...
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="kompetisi">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="kompetisi">
                 Kompetisi
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="pembinaan">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="pembinaan">
                 Pembinaan
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="lainnya">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="lainnya">
                 Lainnya
               </option>
             </select>
@@ -251,31 +251,31 @@ export default function ResearchUploadModal({
 
           {/* Fokus */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
               Fokus Penelitian
             </label>
             <select
               value={fokus}
               onChange={(e) => setFokus(e.target.value)}
               required
-              className="w-full px-3.5 py-2.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-slate-900 dark:text-white cursor-pointer"
+              className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
             >
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="">
                 Pilih Fokus...
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="kesehatan">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="kesehatan">
                 Kesehatan
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="ekonomi">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="ekonomi">
                 Ekonomi
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="teknologi">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="teknologi">
                 Teknologi
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="sosial">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="sosial">
                 Sosial
               </option>
-              <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="lainnya">
+              <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="lainnya">
                 Lainnya
               </option>
             </select>
@@ -285,12 +285,12 @@ export default function ResearchUploadModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {/* Dana Disetujui */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
               Dana Disetujui
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <span className="text-xs font-bold text-slate-400">Rp</span>
+                <span className="text-xs font-bold text-muted dark:text-on-dark-muted">Rp</span>
               </div>
               <input
                 type="text"
@@ -302,15 +302,15 @@ export default function ResearchUploadModal({
                   setDanaDisetujui(formatted);
                 }}
                 placeholder="Contoh: 10.000.000"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-slate-900 dark:text-white font-mono"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark font-mono placeholder:text-muted-soft"
               />
             </div>
           </div>
 
           {/* Tahun */}
           <div className="space-y-1.5 relative">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center">
-              <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-slate-500" />
+            <label className="text-xs font-semibold text-body-strong dark:text-on-dark flex items-center">
+              <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
               Tanggal Pelaksanaan
             </label>
             <DatePicker date={tahun} onDateChange={setTahun} placeholder="Pilih tanggal pelaksanaan" />
@@ -319,45 +319,46 @@ export default function ResearchUploadModal({
 
         {/* Drag and Drop PDF */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
             Laporan Kemajuan / Akhir (PDF)
           </label>
           {file ? (
-            <div className="relative p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col gap-3">
+            <div className="relative p-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-2xl flex flex-col gap-3">
               <button 
                 type="button"
                 onClick={() => setFile(null)}
                 disabled={loading}
-                className="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                aria-label="Hapus file PDF yang dipilih"
+                className="absolute top-3.5 right-3.5 text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
               >
                 <XCircle className="w-5 h-5" />
               </button>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center shrink-0 shadow-2xs">
-                  <FileText className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                <div className="w-10 h-10 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl flex items-center justify-center shrink-0 shadow-2xs">
+                  <FileText className="w-5 h-5 text-body dark:text-on-dark-soft" />
                 </div>
                 
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate pr-6">
+                  <p className="text-xs font-bold text-ink-heading dark:text-on-dark truncate pr-6">
                     {file.name}
                   </p>
-                  <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5">
                     {(file.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 mt-1">
-                <div className="flex-1 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div className="flex-1 bg-hairline-light dark:bg-hairline-dark h-1.5 rounded-full overflow-hidden">
                   <motion.div 
-                    className="bg-slate-900 dark:bg-white h-full rounded-full"
+                    className="bg-ink dark:bg-on-dark h-full rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${uploadProgress !== null ? uploadProgress : 100}%` }}
                     transition={{ duration: 0.1 }}
                   />
                 </div>
-                <span className="text-xs font-mono font-semibold text-slate-600 dark:text-slate-400 min-w-[30px] text-right">
+                <span className="text-xs font-mono font-semibold text-body dark:text-on-dark-soft min-w-[30px] text-right">
                   {uploadProgress !== null ? `${uploadProgress}%` : '100%'}
                 </span>
               </div>
@@ -368,7 +369,7 @@ export default function ResearchUploadModal({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => document.getElementById('res-file-input-modal')?.click()}
-              className="relative group mt-1 flex justify-center px-6 py-6 border-2 border-dashed rounded-2xl transition-all cursor-pointer border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-850/40 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400"
+              className="relative group mt-1 flex justify-center px-6 py-6 border-2 border-dashed rounded-2xl transition-all cursor-pointer border-hairline-light dark:border-hairline-dark bg-surface-light-raised/40 dark:bg-surface-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:border-ink-border dark:hover:border-hairline-dark"
             >
               <input
                 id="res-file-input-modal"
@@ -378,14 +379,14 @@ export default function ResearchUploadModal({
                 onChange={handleFileChange}
               />
               <div className="space-y-2 text-center">
-                <div className="mx-auto h-10 w-10 rounded-xl flex items-center justify-center transition-all bg-white dark:bg-slate-800 shadow-2xs border border-slate-200/80 dark:border-slate-700/80">
-                  <Upload className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                <div className="mx-auto h-10 w-10 rounded-xl flex items-center justify-center transition-all bg-surface-light dark:bg-surface-dark shadow-2xs border border-hairline-light dark:border-hairline-dark">
+                  <Upload className="h-5 w-5 text-muted dark:text-on-dark-muted" />
                 </div>
                 <div className="flex flex-col gap-0.5 px-4">
-                  <p className="text-xs font-semibold text-slate-900 dark:text-white">
+                  <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">
                     Pilih File PDF Laporan Penelitian
                   </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[250px]">
+                  <p className="text-[11px] text-muted dark:text-on-dark-muted truncate max-w-[250px]">
                     Klik atau seret file laporan ke sini (maks. 10MB)
                   </p>
                 </div>
@@ -394,18 +395,18 @@ export default function ResearchUploadModal({
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-hairline-light dark:border-hairline-dark">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+            className="px-4 py-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-hairline-light dark:hover:bg-surface-dark text-body dark:text-on-dark-soft rounded-lg text-xs font-semibold transition-all cursor-pointer"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2.5 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {loading ? 'Mengunggah...' : 'Unggah Penelitian'}
           </button>
@@ -414,4 +415,3 @@ export default function ResearchUploadModal({
     </BaseFormModal>
   );
 }
-

@@ -34,7 +34,15 @@ export default function Research({ user }: { user: UserSession }) {
   const currentItems = res.filteredResearchList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <main id="main-content" className="w-full space-y-6 pb-12">
+      {/* Accessible Skip to Content */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Lewati ke Konten Utama
+      </a>
+
       {/* Header Halaman */}
       <ResearchHeader
         onOpenMetricsModal={() => res.setIsMetricsModalOpen(true)}
@@ -172,10 +180,10 @@ export default function Research({ user }: { user: UserSession }) {
           hideKpiClassification={true}
           customMetadata={
             <div>
-              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none mb-1">
+              <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider leading-none mb-1">
                 Dana Disetujui
               </p>
-              <div className="flex items-center gap-1.5 text-xs font-bold font-mono tabular-nums text-slate-800 dark:text-slate-200">
+              <div className="flex items-center gap-1.5 text-xs font-bold font-mono tabular-nums text-ink-heading dark:text-on-dark">
                 Rp {Number(res.activeDetailDoc.dana_disetujui || 0).toLocaleString('id-ID')}
               </div>
             </div>
@@ -196,6 +204,6 @@ export default function Research({ user }: { user: UserSession }) {
           onUploadPdf={res.handleUploadPdf}
         />
       )}
-    </div>
+    </main>
   );
 }

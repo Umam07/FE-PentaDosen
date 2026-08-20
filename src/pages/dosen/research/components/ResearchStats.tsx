@@ -28,21 +28,21 @@ export default function ResearchStats({ stats, isTableLoading }: ResearchStatsPr
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.05 }}
-          className="bg-white dark:bg-slate-900 shadow-xs rounded-2xl border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all"
+          className="bg-surface-light dark:bg-surface-dark shadow-2xs rounded-2xl border border-hairline-light dark:border-hairline-dark p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all"
         >
           <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 border ${
-            item.color === 'approved' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-900/40' :
-            item.color === 'pending' ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200/60 dark:border-amber-900/40' :
-            'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80'
+            item.color === 'approved' ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30' :
+            item.color === 'pending' ? 'bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30' :
+            'bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark'
           }`}>
             <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
           </div>
           <div className="min-w-0 flex-1 w-full">
             <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-0.5">
-              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate" title={item.label}>
+              <p className="text-xs font-semibold text-muted dark:text-on-dark-muted truncate" title={item.label}>
                 {item.label}
               </p>
-              <p className="text-lg sm:text-xl lg:text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold font-mono tabular-nums text-ink-heading dark:text-on-dark">
                 {item.value}
               </p>
             </phantom-ui>
@@ -52,4 +52,3 @@ export default function ResearchStats({ stats, isTableLoading }: ResearchStatsPr
     </section>
   );
 }
-
