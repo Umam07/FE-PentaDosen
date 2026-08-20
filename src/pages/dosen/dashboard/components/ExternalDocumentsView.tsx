@@ -540,8 +540,9 @@ export default function ExternalDocumentsView({
                         </div>
 
                         {/* Search Input Box + Year Filter for Scholar */}
-                        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 pt-1.5 border-t border-hairline-light/60 dark:border-hairline-dark/60">
-                          <div className="relative w-full sm:w-64 md:w-72 shrink-0">
+                        <div className="flex flex-wrap items-center justify-end gap-2 pt-1.5 border-t border-hairline-light/60 dark:border-hairline-dark/60">
+                          {/* Search Box */}
+                          <div className="relative w-full sm:w-48 md:w-56 shrink-0">
                             <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                             <input
                               type="text"
@@ -562,14 +563,17 @@ export default function ExternalDocumentsView({
                           </div>
 
                           {!isPublic && availableYearsScholar.length > 0 && (
-                            <div className="relative z-30 shrink-0 ml-auto sm:ml-0">
-                              <YearFilterBar
-                                availableYears={availableYearsScholar}
-                                selectedYear={filterYearExt}
-                                onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
-                              />
-                            </div>
+                            <>
+                              <div className="hidden sm:block h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
+                              <div className="relative z-30 shrink-0">
+                                <YearFilterBar
+                                  availableYears={availableYearsScholar}
+                                  selectedYear={filterYearExt}
+                                  onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                                  className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                                />
+                              </div>
+                            </>
                           )}
                         </div>
                       </div>
@@ -680,8 +684,8 @@ export default function ExternalDocumentsView({
                 </div>
 
                 {/* Search Bar + Year Filter for Cross-Indexed */}
-                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
-                  <div className="relative w-full sm:w-64 md:w-72 shrink-0">
+                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark flex flex-wrap items-center justify-end gap-2 relative z-20">
+                  <div className="relative w-full sm:w-48 md:w-56 shrink-0">
                     <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
@@ -702,14 +706,17 @@ export default function ExternalDocumentsView({
                   </div>
 
                   {!isPublic && availableYearsCross.length > 0 && (
-                    <div className="relative z-30 shrink-0 ml-auto sm:ml-0">
-                      <YearFilterBar
-                        availableYears={availableYearsCross}
-                        selectedYear={filterYearExt}
-                        onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                        className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
-                      />
-                    </div>
+                    <>
+                      <div className="hidden sm:block h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
+                      <div className="relative z-30 shrink-0">
+                        <YearFilterBar
+                          availableYears={availableYearsCross}
+                          selectedYear={filterYearExt}
+                          onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                          className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
+                        />
+                      </div>
+                    </>
                   )}
                 </div>
 
