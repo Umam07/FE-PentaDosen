@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   FileText, Upload, CheckCircle, XCircle, Clock, 
-  Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock, RefreshCw
+  Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock, RefreshCw, Calculator
 } from 'lucide-react';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
@@ -319,9 +319,10 @@ export default function PublicationTable({
                                   <button
                                     type="button"
                                     onClick={() => setExpandedPoints(prev => ({ ...prev, [doc.id]: !prev[doc.id] }))}
-                                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark cursor-pointer shadow-2xs"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft hover:bg-surface-light dark:hover:bg-surface-dark hover:text-ink-heading dark:hover:text-on-dark cursor-pointer shadow-2xs"
                                   >
-                                    {isExpanded ? '▲ Sembunyikan Rincian Poin' : '▼ Rincian Poin'}
+                                    <Calculator className="w-3 h-3 text-muted dark:text-on-dark-muted" />
+                                    <span>{isExpanded ? 'Tutup Rincian Poin' : 'Rincian Poin'}</span>
                                   </button>
 
                                   {isExpanded && (
