@@ -95,7 +95,7 @@ export default function PublicationActionBar({
             </span>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto justify-end shrink-0">
             <button
               type="button"
               disabled={isSettingAllFalse}

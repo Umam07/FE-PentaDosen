@@ -553,7 +553,8 @@ export default function PublicationTable({
         />
       </div>
       
-      <div className="w-full overflow-x-auto">
+      {/* ── 1. Desktop & Tablet Table View (md ke atas) ── */}
+      <div className="hidden md:block w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light dark:divide-hairline-dark text-xs">
           <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
             <tr>
@@ -642,6 +643,11 @@ export default function PublicationTable({
                               {doc.quartile && (
                                 <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark text-[10px] font-bold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
                                   {doc.quartile}
+                                </span>
+                              )}
+                              {doc.sinta_rank && (
+                                <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark text-[10px] font-bold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
+                                  {doc.sinta_rank}
                                 </span>
                               )}
                               {doc.author_role && (
@@ -749,8 +755,7 @@ export default function PublicationTable({
                           {isApproved && <CheckCircle className="w-3.5 h-3.5 mr-1 text-success dark:text-success-on-dark" />}
                           {isRejected && <XCircle className="w-3.5 h-3.5 mr-1 text-error dark:text-error-on-dark" />}
                           {(!isApproved && !isRejected) && <Clock className="w-3.5 h-3.5 mr-1 text-warning dark:text-warning-on-dark" />}
-                          <span className="hidden sm:inline">{isVerified ? 'Verified (Fakultas)' : isApproved ? 'Approved' : isRejected ? 'Rejected' : doc.status || 'Pending'}</span>
-                          <span className="sm:hidden">{isApproved ? 'OK' : isRejected ? 'NO' : isVerified ? 'V-FAK' : 'Wait'}</span>
+                          <span>{isVerified ? 'Verified (Fakultas)' : isApproved ? 'Approved' : isRejected ? 'Rejected' : doc.status || 'Pending'}</span>
                         </div>
                       );
                     })()}
@@ -826,15 +831,273 @@ export default function PublicationTable({
         </table>
       </div>
 
+      {/* ── 2. Mobile Responsive Card List View (< md) ── */}
+      <div className="block md:hidden divide-y divide-hairline-light dark:divide-hairline-dark">
+        {isTableLoading ? (
+          <phantom-ui loading={true} animation="shimmer" className="contents">
+            {[1, 2, 3].map((i) => (
+              <div key={`m-skeleton-${i}`} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="h-9 w-9 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl shrink-0 mt-0.5" />
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 w-3/4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                      <div className="h-3 w-1/2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                    </div>
+                  </div>
+                  <div className="h-6 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg shrink-0" />
+                </div>
+                <div className="flex gap-1.5 pt-1">
+                  <div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                  <div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                  <div className="h-5 w-14 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                </div>
+                <div className="pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+                  <div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-full" />
+                  <div className="flex gap-1.5">
+                    <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                    <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </phantom-ui>
+        ) : currentDocuments.length > 0 ? (
+          currentDocuments.map((doc: any) => {
+            const isApproved = (doc.status || '').toLowerCase() === 'approved';
+            const isRejected = (doc.status || '').toLowerCase() === 'rejected';
+            const isVerified = (doc.status || '').toLowerCase().includes('verified') || (doc.status || '').toLowerCase().includes('fakultas');
+            const isLocked = doc.status === 'Approved' || (doc.status || '').toLowerCase().includes('verified');
+            
+            const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+            const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
+            const isExternal = doc.source === 'scopus' || doc.source === 'scholar';
+            
+            const isJI = doc.category === 'Jurnal Internasional';
+            const isJN = doc.category === 'Jurnal Nasional';
+            const totalAuthors = Number(doc.total_authors) || 1;
+            const showCorrespondingControls = doc.author_role !== 'Single Author' && totalAuthors > 1 && doc.source !== 'scholar';
+            const bd = (isJI || isJN) ? getBreakdown(doc) : null;
+            const isExpanded = !!expandedPoints[doc.id];
+            
+            const pointsVal = Math.round(doc.source === 'scholar' ? calculateScholarPoints(doc) : (doc.awarded_points ?? 0));
+
+            return (
+              <div 
+                key={doc.id}
+                className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised/40 dark:hover:bg-surface-dark-elevated/40 transition-colors"
+              >
+                {/* Top Section: Title & Points */}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div 
+                    className="flex items-start gap-2.5 flex-1 min-w-0 cursor-pointer group"
+                    onClick={() => setSelectedDocForDetail(doc)}
+                  >
+                    <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl group-hover:bg-hairline-light dark:group-hover:bg-surface-dark transition-colors shrink-0 mt-0.5 border border-hairline-light dark:border-hairline-dark text-muted dark:text-on-dark-muted shadow-2xs">
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark leading-snug line-clamp-2 hover:underline" title={doc.title}>
+                        {doc.title}
+                      </h4>
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted dark:text-on-dark-muted flex-wrap mt-1 font-mono">
+                        <span>{doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}</span>
+                        <span>•</span>
+                        <span className="font-sans font-medium">{doc.category}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Point Badge */}
+                  <div className="shrink-0 flex flex-col items-end">
+                    <span className="px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-xs font-bold font-mono tabular-nums border border-hairline-light dark:border-hairline-dark whitespace-nowrap shadow-2xs">
+                      +{pointsVal} Pts
+                    </span>
+                  </div>
+                </div>
+
+                {/* Journal / Source Name if any */}
+                {(doc.source_name || doc.journal) && (
+                  <p className="text-[11px] italic text-body dark:text-on-dark-soft line-clamp-1">
+                    {doc.source_name || doc.journal}
+                  </p>
+                )}
+
+                {/* Badges / Chips */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {isExternal ? (
+                    <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center gap-1">
+                      API {doc.source === 'scopus' ? 'Scopus' : 'Scholar'}
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center gap-1">
+                      Manual
+                    </span>
+                  )}
+                  <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center gap-1">
+                    {doc.citations ?? 0} Sitasi
+                  </span>
+                  {isCrossIndexed && (
+                    <span className="px-2 py-0.5 border border-success-border dark:border-success/30 text-success-dark dark:text-success-on-dark text-[10px] font-semibold rounded-md bg-success-soft dark:bg-success/15 flex items-center gap-1">
+                      Cross-Indexed
+                    </span>
+                  )}
+                  {doc.quartile && (
+                    <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark text-[10px] font-bold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
+                      {doc.quartile}
+                    </span>
+                  )}
+                  {doc.sinta_rank && (
+                    <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark text-[10px] font-bold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
+                      {doc.sinta_rank}
+                    </span>
+                  )}
+                  {doc.author_role && (
+                    <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
+                      {doc.author_role === 'Single Author' ? 'Single' : doc.author_role === 'First Author' ? '1st Author' : 'Co-Author'}
+                    </span>
+                  )}
+                  {doc.is_hyperauthor && (
+                    <span className="px-2 py-0.5 border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft text-[10px] font-semibold rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated">
+                      Hyper
+                    </span>
+                  )}
+                </div>
+
+                {/* Point Breakdown Collapsible for Mobile */}
+                {bd && (
+                  <div className="pt-0.5 space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => setExpandedPoints(prev => ({ ...prev, [doc.id]: !prev[doc.id] }))}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft hover:bg-surface-light dark:hover:bg-surface-dark hover:text-ink-heading dark:hover:text-on-dark cursor-pointer shadow-2xs"
+                    >
+                      <Calculator className="w-3 h-3 text-muted dark:text-on-dark-muted" />
+                      <span>{isExpanded ? 'Tutup Rincian Poin' : 'Rincian Poin'}</span>
+                    </button>
+
+                    {isExpanded && (
+                      <PointBreakdownBox
+                        doc={doc}
+                        bd={bd}
+                        isCrossIndexed={isCrossIndexed}
+                        showCorrespondingControls={showCorrespondingControls}
+                        updatingCorrespondingId={updatingCorrespondingId}
+                        handleToggleCorresponding={handleToggleCorresponding}
+                        setUpdatingCorrespondingId={setUpdatingCorrespondingId}
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* Card Footer: Status & Actions */}
+                <div className="pt-2.5 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between gap-2 flex-wrap">
+                  {/* Left: Status & File Button */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Status Badge */}
+                    <div className={`inline-flex items-center px-2.5 py-1 rounded-full font-semibold text-[11px] border whitespace-nowrap ${
+                      isApproved ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30' :
+                      isRejected ? 'bg-error-soft dark:bg-error/15 text-error dark:text-error-on-dark border-error-border dark:border-error/30' :
+                      isVerified ? 'bg-accent-soft dark:bg-accent/15 text-accent-hover dark:text-accent-on-dark border-accent-border dark:border-accent/30' :
+                      'bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
+                    }`}>
+                      {isApproved && <CheckCircle className="w-3.5 h-3.5 mr-1 text-success dark:text-success-on-dark" />}
+                      {isRejected && <XCircle className="w-3.5 h-3.5 mr-1 text-error dark:text-error-on-dark" />}
+                      {(!isApproved && !isRejected) && <Clock className="w-3.5 h-3.5 mr-1 text-warning dark:text-warning-on-dark" />}
+                      <span>{isVerified ? 'Verified (Fakultas)' : isApproved ? 'Approved' : isRejected ? 'Rejected' : doc.status || 'Pending'}</span>
+                    </div>
+
+                    {/* File Action */}
+                    {doc.file_url && doc.file_url !== '-' ? (
+                      <button
+                        onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                        className="inline-flex items-center text-xs font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
+                      >
+                        <FileText className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" /> Lihat
+                      </button>
+                    ) : doc.source ? (
+                      <span 
+                        className="inline-flex items-center gap-1 text-[11px] font-medium text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark whitespace-nowrap"
+                        title="Publikasi tersinkronisasi via API, tidak memerlukan unggah berkas manual"
+                      >
+                        <RefreshCw className="w-3 h-3 text-muted dark:text-on-dark-muted" />
+                        <span>API</span>
+                      </span>
+                    ) : (
+                      <label className="inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark cursor-pointer bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors">
+                        {uploadingPdfId === doc.id ? (
+                          <span className="animate-pulse">Uploading...</span>
+                        ) : (
+                          <>
+                            <Upload className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" />
+                            Upload
+                            <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
+                          </>
+                        )}
+                      </label>
+                    )}
+                  </div>
+
+                  {/* Right: Actions (Detail, Edit, Delete / Lock) */}
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDocForDetail(doc)}
+                      className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+                      title="Lihat Detail"
+                      aria-label="Lihat Detail Publikasi"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                    </button>
+
+                    {!isLocked ? (
+                      <>
+                        <button
+                          onClick={() => openEditModal(doc)}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all cursor-pointer shadow-2xs"
+                          title="Edit Publikasi"
+                          aria-label="Edit Publikasi"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-error-soft dark:bg-surface-dark-elevated dark:hover:bg-error/15 text-muted hover:text-error dark:text-on-dark-muted dark:hover:text-error-on-dark border border-hairline-light dark:border-hairline-dark hover:border-error-border dark:hover:border-error/30 transition-all cursor-pointer shadow-2xs"
+                          title="Hapus Publikasi"
+                          aria-label="Hapus Publikasi"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    ) : (
+                      <span 
+                        className="p-1.5 rounded-lg bg-surface-light-raised/50 dark:bg-surface-dark-elevated/50 text-muted/60 dark:text-on-dark-muted/50 border border-hairline-light/60 dark:border-hairline-dark/60 inline-flex items-center justify-center cursor-not-allowed"
+                        title="Publikasi terkunci karena sudah disetujui / diverifikasi"
+                      >
+                        <Lock className="w-3.5 h-3.5" />
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="p-8 text-center text-muted dark:text-on-dark-muted font-medium text-xs">
+            Belum ada data publikasi.
+          </div>
+        )}
+      </div>
+
       {/* === Pagination Controls === */}
       {!isTableLoading && filteredDocuments.length > 0 && (
-        <div className="px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised/50 dark:bg-surface-dark/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="px-4 sm:px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised/50 dark:bg-surface-dark/50 flex flex-col sm:flex-row items-center justify-between gap-3.5 sm:gap-4">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-4 w-full sm:w-auto text-center sm:text-left">
             <span className="text-xs text-muted dark:text-on-dark-muted">
               Menampilkan <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredDocuments.length)}</span> dari <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{filteredDocuments.length}</span> Dokumen
             </span>
             <div className="h-4 w-px bg-hairline-light dark:bg-hairline-dark hidden sm:block" />
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="text-xs text-muted dark:text-on-dark-muted">Limit:</span>
               <DropdownSelect
                 value={itemsPerPage}
@@ -855,7 +1118,7 @@ export default function PublicationTable({
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-center gap-1.5 w-full sm:w-auto">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
