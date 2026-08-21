@@ -35,100 +35,100 @@ interface TypeConfigItem {
 const typeConfigMap: Record<string, TypeConfigItem> = {
   support_ticket_replied: {
     icon: MessageSquare,
-    iconColor: 'text-slate-700 dark:text-slate-300',
-    iconBg: 'bg-slate-100 dark:bg-slate-800',
-    badgeBg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80',
+    iconColor: 'text-body dark:text-on-dark-soft',
+    iconBg: 'bg-surface-light-raised dark:bg-surface-dark-elevated',
+    badgeBg: 'bg-surface-light-raised text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark',
     label: 'Support'
   },
   new_support_ticket: {
     icon: MessageSquare,
-    iconColor: 'text-slate-700 dark:text-slate-300',
-    iconBg: 'bg-slate-100 dark:bg-slate-800',
-    badgeBg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80',
+    iconColor: 'text-body dark:text-on-dark-soft',
+    iconBg: 'bg-surface-light-raised dark:bg-surface-dark-elevated',
+    badgeBg: 'bg-surface-light-raised text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark',
     label: 'Support'
   },
   doc_approved: {
     icon: CheckCircle2,
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
-    badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/40',
+    iconColor: 'text-success dark:text-success-on-dark',
+    iconBg: 'bg-success-soft dark:bg-success/20',
+    badgeBg: 'bg-success-soft text-success dark:bg-success/20 dark:text-success-on-dark border-success-border/60 dark:border-success/30',
     label: 'Disetujui LPPM'
   },
   penelitian_approved: {
     icon: CheckCircle2,
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
-    badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/40',
+    iconColor: 'text-success dark:text-success-on-dark',
+    iconBg: 'bg-success-soft dark:bg-success/20',
+    badgeBg: 'bg-success-soft text-success dark:bg-success/20 dark:text-success-on-dark border-success-border/60 dark:border-success/30',
     label: 'Disetujui LPPM'
   },
   doc_rejected: {
     icon: XCircle,
-    iconColor: 'text-rose-600 dark:text-rose-400',
-    iconBg: 'bg-rose-50 dark:bg-rose-950/40',
-    badgeBg: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200/60 dark:border-rose-800/40',
+    iconColor: 'text-error dark:text-error-on-dark',
+    iconBg: 'bg-error-soft dark:bg-error/20',
+    badgeBg: 'bg-error-soft text-error dark:bg-error/20 dark:text-error-on-dark border-error-border/60 dark:border-error/30',
     label: 'Ditolak'
   },
   penelitian_rejected: {
     icon: XCircle,
-    iconColor: 'text-rose-600 dark:text-rose-400',
-    iconBg: 'bg-rose-50 dark:bg-rose-950/40',
-    badgeBg: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200/60 dark:border-rose-800/40',
+    iconColor: 'text-error dark:text-error-on-dark',
+    iconBg: 'bg-error-soft dark:bg-error/20',
+    badgeBg: 'bg-error-soft text-error dark:bg-error/20 dark:text-error-on-dark border-error-border/60 dark:border-error/30',
     label: 'Ditolak'
   },
   doc_verified_fakultas: {
     icon: ShieldCheck,
-    iconColor: 'text-sky-600 dark:text-sky-400',
-    iconBg: 'bg-sky-50 dark:bg-sky-950/40',
-    badgeBg: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/60 dark:border-sky-800/40',
+    iconColor: 'text-accent dark:text-accent-on-dark',
+    iconBg: 'bg-accent-soft dark:bg-accent/20',
+    badgeBg: 'bg-accent-soft text-accent dark:bg-accent/20 dark:text-accent-on-dark border-accent-border/60 dark:border-accent/30',
     label: 'Verifikasi Fakultas'
   },
   doc_verified_prodi: {
     icon: ShieldCheck,
-    iconColor: 'text-sky-600 dark:text-sky-400',
-    iconBg: 'bg-sky-50 dark:bg-sky-950/40',
-    badgeBg: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/60 dark:border-sky-800/40',
+    iconColor: 'text-accent dark:text-accent-on-dark',
+    iconBg: 'bg-accent-soft dark:bg-accent/20',
+    badgeBg: 'bg-accent-soft text-accent dark:bg-accent/20 dark:text-accent-on-dark border-accent-border/60 dark:border-accent/30',
     label: 'Verifikasi Prodi'
   },
   penelitian_verified_prodi: {
     icon: ShieldCheck,
-    iconColor: 'text-sky-600 dark:text-sky-400',
-    iconBg: 'bg-sky-50 dark:bg-sky-950/40',
-    badgeBg: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/60 dark:border-sky-800/40',
+    iconColor: 'text-accent dark:text-accent-on-dark',
+    iconBg: 'bg-accent-soft dark:bg-accent/20',
+    badgeBg: 'bg-accent-soft text-accent dark:bg-accent/20 dark:text-accent-on-dark border-accent-border/60 dark:border-accent/30',
     label: 'Verifikasi Prodi'
   },
   doc_pending_lppm: {
     icon: Clock,
-    iconColor: 'text-amber-600 dark:text-amber-400',
-    iconBg: 'bg-amber-50 dark:bg-amber-950/40',
-    badgeBg: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/40',
+    iconColor: 'text-warning dark:text-warning-on-dark',
+    iconBg: 'bg-warning-soft dark:bg-warning/20',
+    badgeBg: 'bg-warning-soft text-warning dark:bg-warning/20 dark:text-warning-on-dark border-warning-border/60 dark:border-warning/30',
     label: 'Menunggu LPPM'
   },
   penelitian_pending_lppm: {
     icon: Clock,
-    iconColor: 'text-amber-600 dark:text-amber-400',
-    iconBg: 'bg-amber-50 dark:bg-amber-950/40',
-    badgeBg: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/40',
+    iconColor: 'text-warning dark:text-warning-on-dark',
+    iconBg: 'bg-warning-soft dark:bg-warning/20',
+    badgeBg: 'bg-warning-soft text-warning dark:bg-warning/20 dark:text-warning-on-dark border-warning-border/60 dark:border-warning/30',
     label: 'Menunggu LPPM'
   },
   doc_submitted: {
     icon: FileText,
-    iconColor: 'text-slate-700 dark:text-slate-300',
-    iconBg: 'bg-slate-100 dark:bg-slate-800',
-    badgeBg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80',
+    iconColor: 'text-body dark:text-on-dark-soft',
+    iconBg: 'bg-surface-light-raised dark:bg-surface-dark-elevated',
+    badgeBg: 'bg-surface-light-raised text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark',
     label: 'Pengajuan'
   },
   penelitian_submitted: {
     icon: Beaker,
-    iconColor: 'text-slate-700 dark:text-slate-300',
-    iconBg: 'bg-slate-100 dark:bg-slate-800',
-    badgeBg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80',
+    iconColor: 'text-body dark:text-on-dark-soft',
+    iconBg: 'bg-surface-light-raised dark:bg-surface-dark-elevated',
+    badgeBg: 'bg-surface-light-raised text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark',
     label: 'Penelitian'
   },
   announcement: {
     icon: Megaphone,
-    iconColor: 'text-slate-700 dark:text-slate-300',
-    iconBg: 'bg-slate-100 dark:bg-slate-800',
-    badgeBg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80',
+    iconColor: 'text-body dark:text-on-dark-soft',
+    iconBg: 'bg-surface-light-raised dark:bg-surface-dark-elevated',
+    badgeBg: 'bg-surface-light-raised text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark',
     label: 'Pengumuman'
   },
 };
@@ -144,9 +144,9 @@ const getTypeConfig = (type: string, title: string = '', message: string = ''): 
   if (combined.includes('announcement')) return typeConfigMap.announcement;
   return {
     icon: Bell,
-    iconColor: 'text-slate-700 dark:text-slate-300',
-    iconBg: 'bg-slate-100 dark:bg-slate-800',
-    badgeBg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80',
+    iconColor: 'text-body dark:text-on-dark-soft',
+    iconBg: 'bg-surface-light-raised dark:bg-surface-dark-elevated',
+    badgeBg: 'bg-surface-light-raised text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark',
     label: 'Informasi'
   };
 };
@@ -183,26 +183,26 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
       onClick={() => onClick(notif)}
       className={`group relative flex items-start gap-3 p-3 sm:p-3.5 rounded-xl mb-1.5 cursor-pointer transition-all duration-200 border ${
         notif.is_read
-          ? 'bg-transparent border-transparent hover:bg-slate-100/70 dark:hover:bg-slate-800/50'
-          : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200/70 dark:border-slate-700/60 shadow-2xs hover:bg-slate-100/90 dark:hover:bg-slate-800'
+          ? 'bg-transparent border-transparent hover:bg-surface-light-raised/70 dark:hover:bg-surface-dark-elevated/50'
+          : 'bg-surface-light-raised/60 dark:bg-surface-dark-elevated/60 border-hairline-light dark:border-hairline-dark shadow-2xs hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'
       }`}
     >
       {!notif.is_read && (
-        <span className="absolute left-1 top-3 bottom-3 w-1 rounded-full bg-blue-600 dark:bg-blue-500" />
+        <span className="absolute left-1 top-3 bottom-3 w-1 rounded-full bg-accent dark:bg-accent-on-dark" />
       )}
-      <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-opacity border border-slate-200/60 dark:border-slate-700/60 ${cfg.iconBg} ${
+      <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 transition-opacity border border-hairline-light/60 dark:border-hairline-dark/60 ${cfg.iconBg} ${
         notif.is_read ? 'opacity-60' : 'opacity-100'
       }`}>
         <Icon className={`w-4 h-4 ${cfg.iconColor}`} strokeWidth={2} />
       </div>
       <div className="flex-1 min-w-0 pr-5">
         <h4 className={`text-xs sm:text-sm leading-snug truncate ${
-          notif.is_read ? 'font-medium text-slate-700 dark:text-slate-300' : 'font-semibold text-slate-900 dark:text-white'
+          notif.is_read ? 'font-medium text-body dark:text-on-dark-soft' : 'font-semibold text-ink-heading dark:text-on-dark'
         }`}>
           {cleanTitle(notif.title)}
         </h4>
-        <p className={`text-xs leading-relaxed line-clamp-2 ${
-          notif.is_read ? 'text-slate-500 dark:text-slate-400' : 'text-slate-600 dark:text-slate-300'
+        <p className={`text-xs leading-relaxed line-clamp-2 mt-0.5 ${
+          notif.is_read ? 'text-muted dark:text-on-dark-muted' : 'text-body dark:text-on-dark-soft'
         }`}>
           {notif.message}
         </p>
@@ -210,9 +210,9 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
           <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border ${cfg.badgeBg}`}>
             {cfg.label}
           </span>
-          <span className="text-slate-300 dark:text-slate-600">•</span>
+          <span className="text-muted/40 dark:text-on-dark-muted/40">•</span>
           <span className={`text-[11px] font-mono ${
-            notif.is_read ? 'text-slate-400 dark:text-slate-500' : 'text-slate-500 dark:text-slate-400 font-medium'
+            notif.is_read ? 'text-muted-soft dark:text-on-dark-muted' : 'text-muted dark:text-on-dark font-medium'
           }`}>
             {timeAgo(notif.created_at)}
           </span>
@@ -220,7 +220,7 @@ function NotificationCard({ notif, onClick, onDelete }: NotificationCardProps) {
       </div>
       <button
         onClick={(e) => onDelete(notif.id, e)}
-        className="absolute top-2.5 right-2.5 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-600 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition-all duration-150 cursor-pointer"
+        className="absolute top-2.5 right-2.5 p-1 rounded-lg opacity-0 group-hover:opacity-100 text-muted hover:text-error hover:bg-error-soft dark:hover:bg-error/20 dark:hover:text-error-on-dark transition-all duration-150 cursor-pointer"
         title="Hapus notifikasi"
       >
         <Trash2 className="w-3.5 h-3.5" />
@@ -336,7 +336,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
         ref={bellRef}
         id="notification-bell-btn"
         onClick={() => setIsOpen(prev => !prev)}
-        className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-200 transition-all flex-shrink-0 active:scale-95 shadow-2xs cursor-pointer"
+        className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft transition-all shrink-0 active:scale-95 shadow-2xs cursor-pointer"
         aria-label="Notifikasi"
       >
         <motion.div
@@ -352,7 +352,7 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 flex items-center justify-center bg-blue-600 text-white text-[10px] font-bold font-mono tabular-nums rounded-full leading-none shadow-xs border border-white dark:border-slate-900"
+              className="absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 flex items-center justify-center bg-accent text-white text-[10px] font-bold font-mono tabular-nums rounded-full leading-none shadow-xs border border-surface-light dark:border-surface-dark"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </motion.span>
@@ -376,50 +376,65 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                 right: isMobile ? '12px' : dropPos.right,
                 zIndex: 9998,
               }}
-              className="w-auto sm:w-[410px] bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden flex flex-col"
+              className="w-auto sm:w-[410px] bg-surface-light/98 dark:bg-surface-dark/98 backdrop-blur-xl rounded-2xl shadow-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden flex flex-col"
             >
               <div className="p-4 sm:p-4.5 pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-zinc-100 tracking-tight">Notifikasi</h3>
+                    <h3 className="text-sm font-bold text-ink-heading dark:text-on-dark tracking-tight">Notifikasi</h3>
                     {unreadCount > 0 ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent-soft text-accent dark:bg-accent/20 dark:text-accent-on-dark border border-accent-border/50 dark:border-accent/30">
                         {unreadCount} Baru
                       </span>
                     ) : (
-                      <span className="text-xs text-slate-400 dark:text-zinc-500 font-normal">Semua dibaca</span>
+                      <span className="text-xs text-muted dark:text-on-dark-muted font-normal">Semua dibaca</span>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => { setLoading(true); fetchNotifications().finally(() => setLoading(false)); }}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                      className="p-1.5 rounded-lg text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-all cursor-pointer"
+                      title="Muat ulang"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                     {unreadCount > 0 && (
-                      <button onClick={markAllRead} className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-all cursor-pointer">
+                      <button 
+                        onClick={markAllRead} 
+                        className="p-1.5 rounded-lg text-muted hover:text-success dark:text-on-dark-muted dark:hover:text-success-on-dark hover:bg-success-soft dark:hover:bg-success/20 transition-all cursor-pointer"
+                        title="Tandai semua dibaca"
+                      >
                         <CheckCheck className="w-3.5 h-3.5" />
                       </button>
                     )}
                     {notifications.length > 0 && (
-                      <button onClick={clearAll} className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all cursor-pointer">
+                      <button 
+                        onClick={clearAll} 
+                        className="p-1.5 rounded-lg text-muted hover:text-error dark:text-on-dark-muted dark:hover:text-error-on-dark hover:bg-error-soft dark:hover:bg-error/20 transition-all cursor-pointer"
+                        title="Hapus semua notifikasi"
+                      >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
-                    <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer">
+                    <button 
+                      onClick={() => setIsOpen(false)} 
+                      className="p-1.5 rounded-lg text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-all cursor-pointer"
+                      title="Tutup"
+                    >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
                 {notifications.length > 0 && (
-                  <div className="grid grid-cols-2 gap-1 mt-3.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                  <div className="grid grid-cols-2 gap-1 mt-3.5 p-1 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft">
                     {(['all', 'unread'] as const).map(tab => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`relative py-1 sm:py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
-                          activeTab === tab ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                          activeTab === tab 
+                            ? 'bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark shadow-2xs font-bold' 
+                            : 'text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark'
                         }`}
                       >
                         {tab === 'all' ? 'Semua' : `Belum Dibaca${unreadCount > 0 ? ` (${unreadCount})` : ''}`}
@@ -428,17 +443,17 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
                   </div>
                 )}
               </div>
-              <div className="h-px bg-slate-100 dark:bg-slate-800 mx-4" />
+              <div className="h-px bg-hairline-light-soft dark:bg-hairline-dark-soft mx-4" />
               <div className="overflow-y-auto max-h-[min(400px,calc(100vh-200px))] px-2.5 py-2 custom-scrollbar">
                 {displayed.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3 text-slate-400 dark:text-slate-500">
+                    <div className="w-12 h-12 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark flex items-center justify-center mb-3 text-muted dark:text-on-dark-muted">
                       <BellOff className="w-5 h-5" />
                     </div>
-                    <p className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-zinc-300">
+                    <p className="text-xs sm:text-sm font-semibold text-ink-heading dark:text-on-dark">
                       {activeTab === 'unread' ? 'Tidak ada notifikasi belum dibaca' : 'Belum ada notifikasi'}
                     </p>
-                    <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-1 max-w-[220px]">
+                    <p className="text-[11px] text-muted dark:text-on-dark-muted mt-1 max-w-[220px]">
                       {activeTab === 'unread'
                         ? 'Semua notifikasi penting sudah Anda periksa'
                         : 'Informasi dan pembaruan sistem akan tampil di sini'}
@@ -454,12 +469,12 @@ export default function NotificationBell({ userId }: NotificationBellProps) {
               </div>
 
               {/* Minimalist Footer */}
-              <div className="h-px bg-slate-100 dark:bg-slate-800 mx-4" />
-              <div className="px-4 py-2.5 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
-                <span className="text-[10px] text-slate-400 dark:text-slate-500">
+              <div className="h-px bg-hairline-light-soft dark:bg-hairline-dark-soft mx-4" />
+              <div className="px-4 py-2.5 flex items-center justify-between bg-surface-light-raised/50 dark:bg-surface-dark-elevated/30 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
+                <span className="text-[10px] text-muted dark:text-on-dark-muted">
                   Update otomatis (30s)
                 </span>
-                <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                <span className="text-[10px] font-semibold text-muted dark:text-on-dark-muted">
                   PentaDosen
                 </span>
               </div>
