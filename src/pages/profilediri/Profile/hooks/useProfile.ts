@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Award, Globe, FileText } from 'lucide-react';
 import { ProfileUser, ProfileStat, ToastMessage } from '../types/profile.types';
 import { calculateScopusSintaPoints } from '../utils/profileUtils';
@@ -9,6 +9,7 @@ import { toast } from '@/components/ui/toast';
 
 export const useProfile = (user: ProfileUser | null | undefined, setUser: (user: any) => void) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [scholarId, setScholarId] = useState(user?.scholar_id || '');
   const [scopusId, setScopusId] = useState(user?.scopus_id || '');
   const [scholarData, setScholarData] = useState<any>(null);
@@ -360,6 +361,9 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       setScopusData(data.scopusData);
       setScopusPublications(data.scopusPublications || []);
       setUser(data.user);
+
+      // Arahkan langsung ke dashboard poin dosen
+      navigate('/lecturer-dashboard');
     } catch (err: any) {
       toast.error(err.message || 'Error saat sinkronisasi data.', 'Sinkronisasi');
     } finally {

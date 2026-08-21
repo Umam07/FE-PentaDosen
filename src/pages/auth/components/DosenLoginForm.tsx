@@ -25,10 +25,10 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
   const [showDemo, setShowDemo] = React.useState(false);
 
   const demoAccounts = [
-    { email: 'dosen1@univ.edu', password: 'password', shortName: 'Chandra (Dosen FTI)', role: 'Dosen' },
-    { email: 'nurul.huda@univ.edu', password: 'password', shortName: 'Nurul Huda (Dosen FEB)', role: 'Dosen' },
+    { email: 'chandra.prasetyo@univ.edu', password: 'password', shortName: 'Chandra Prasetyo Utomo', role: 'Dosen' },
+    { email: 'nurul.huda@univ.edu', password: 'password', shortName: 'Nurul Huda', role: 'Dosen' },
     { email: 'penelitian@univ.edu', password: 'password', shortName: 'Admin Penelitian', role: 'Admin' },
-    { email: 'fakultas@univ.edu', password: 'password', shortName: 'Admin FTI', role: 'Admin' },
+    { email: 'fakultas@univ.edu', password: 'password', shortName: 'Admin Fakultas (FTI)', role: 'Admin' },
   ];
 
   return (
