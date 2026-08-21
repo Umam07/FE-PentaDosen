@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   FileText, Upload, CheckCircle, XCircle, Clock, 
-  Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock, RefreshCw, Calculator
+  Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock, RefreshCw, Calculator, RotateCcw
 } from 'lucide-react';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import FilterDropdown, { FilterOption } from './FilterDropdown';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 import { calculateScholarPoints } from '../../dashboard/pointsCalculator';
 import PointBreakdownBox from './PointBreakdownBox';
+import type { 
+  ScopusFilterType, ArticleFilterType, QuartileFilterType, 
+  SourceFilterType, SintaFilterType 
+} from '../types/publication.types';
 
 interface PublicationTableProps {
   isTableLoading: boolean;
+  documents?: any[];
+  urlKategori?: string;
   currentDocuments: any[];
   filteredDocuments: any[];
   currentPage: number;
@@ -28,10 +35,25 @@ interface PublicationTableProps {
   onYearChange: (year: number | null) => void;
   handleToggleCorresponding?: (docId: string | number, isCorresponding: boolean) => Promise<void>;
   crossTitlesSet?: Set<string>;
+  // Filter Props Terpadu
+  scopusFilter?: ScopusFilterType;
+  setScopusFilter?: (val: ScopusFilterType) => void;
+  articleFilter?: ArticleFilterType;
+  setArticleFilter?: (val: ArticleFilterType) => void;
+  quartileFilter?: QuartileFilterType;
+  setQuartileFilter?: (val: QuartileFilterType) => void;
+  sintaFilter?: SintaFilterType;
+  setSintaFilter?: (val: SintaFilterType) => void;
+  sourceFilter?: SourceFilterType;
+  setSourceFilter?: (val: SourceFilterType) => void;
+  crossIndexedOnly?: boolean;
+  setCrossIndexedOnly?: (val: boolean | ((prev: boolean) => boolean)) => void;
 }
 
 export default function PublicationTable({
   isTableLoading,
+  documents = [],
+  urlKategori = '',
   currentDocuments,
   filteredDocuments,
   currentPage,
@@ -50,12 +72,233 @@ export default function PublicationTable({
   onYearChange,
   handleToggleCorresponding,
   crossTitlesSet,
+  scopusFilter = 'all',
+  setScopusFilter,
+  articleFilter = 'all',
+  setArticleFilter,
+  quartileFilter = 'all',
+  setQuartileFilter,
+  sintaFilter = 'all',
+  setSintaFilter,
+  sourceFilter = 'all',
+  setSourceFilter,
+  crossIndexedOnly = false,
+  setCrossIndexedOnly,
 }: PublicationTableProps) {
   const isDocLocked = (doc: any) =>
     doc.status === 'Verified by Fakultas' || doc.status === 'Approved';
 
   const [expandedPoints, setExpandedPoints] = useState<Record<string | number, boolean>>({});
   const [updatingCorrespondingId, setUpdatingCorrespondingId] = useState<string | number | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+
+  const isJI = (urlKategori || '').toLowerCase().includes('jurnal internasional');
+  const isJN = (urlKategori || '').toLowerCase().includes('jurnal nasional');
+
+  // Dokumen relevan untuk kategori ini
+  const targetDocs = useMemo(() => {
+    if (!documents || documents.length === 0) return [];
+    if (urlKategori) {
+      const targetCat = urlKategori.toLowerCase();
+      return documents.filter((d: any) => {
+        const cat = String(d.category || '').toLowerCase();
+        return cat === targetCat || cat.includes(targetCat) || targetCat.includes(cat);
+      });
+    }
+    return documents;
+  }, [documents, urlKategori]);
+
+  // Penghitungan Status Korespondensi (JI)
+  const correspondenceCounts = useMemo(() => {
+    const total = targetDocs.length;
+    let unconfirmed = 0;
+    let confirmed = 0;
+
+    targetDocs.forEach((d: any) => {
+      if (!d) return;
+      if (d.source === 'scopus') {
+        const subtypeStr = String(d.subtype || '').toLowerCase();
+        const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
+        const totalAuthors = Number(d.total_authors) || 1;
+
+        if (isArticle && totalAuthors > 1 && !d.is_corresponding_confirmed) {
+          unconfirmed++;
+        } else {
+          confirmed++;
+        }
+      } else {
+        confirmed++;
+      }
+    });
+
+    return { total, unconfirmed, confirmed };
+  }, [targetDocs]);
+
+  // Penghitungan Tipe Artikel (JI)
+  const typeCounts = useMemo(() => {
+    const total = targetDocs.length;
+    let article = 0;
+    let nonArticle = 0;
+
+    targetDocs.forEach((d: any) => {
+      if (!d) return;
+      if (d.source === 'scopus') {
+        const subtypeStr = String(d.subtype || '').toLowerCase();
+        const isArt = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
+        if (isArt) article++;
+        else nonArticle++;
+      } else {
+        article++;
+      }
+    });
+
+    return { total, article, nonArticle };
+  }, [targetDocs]);
+
+  // Penghitungan Quartile (JI)
+  const quartileCounts = useMemo(() => {
+    const total = targetDocs.length;
+    let q1 = 0, q2 = 0, q3 = 0, q4 = 0, none = 0;
+
+    targetDocs.forEach((d: any) => {
+      if (!d) return;
+      const q = String(d.quartile || '').toUpperCase();
+      if (q === 'Q1') q1++;
+      else if (q === 'Q2') q2++;
+      else if (q === 'Q3') q3++;
+      else if (q === 'Q4') q4++;
+      else none++;
+    });
+
+    return { total, Q1: q1, Q2: q2, Q3: q3, Q4: q4, None: none };
+  }, [targetDocs]);
+
+  // Penghitungan Status Konfirmasi SINTA (JN)
+  const sintaConfirmationCounts = useMemo(() => {
+    const total = targetDocs.length;
+    let unconfirmed = 0;
+    let confirmed = 0;
+
+    targetDocs.forEach((d: any) => {
+      if (!d) return;
+      if (!d.is_sinta_confirmed) unconfirmed++;
+      else confirmed++;
+    });
+
+    return { total, unconfirmed, confirmed };
+  }, [targetDocs]);
+
+  // Penghitungan SINTA Rank (JN)
+  const sintaCounts = useMemo(() => {
+    const total = targetDocs.length;
+    let s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0, s6 = 0, nonSinta = 0;
+
+    targetDocs.forEach((d: any) => {
+      if (!d) return;
+      const rank = String(d.sinta_rank || 'Non-SINTA').toUpperCase();
+      if (rank === 'S1') s1++;
+      else if (rank === 'S2') s2++;
+      else if (rank === 'S3') s3++;
+      else if (rank === 'S4') s4++;
+      else if (rank === 'S5') s5++;
+      else if (rank === 'S6') s6++;
+      else nonSinta++;
+    });
+
+    return { total, S1: s1, S2: s2, S3: s3, S4: s4, S5: s5, S6: s6, NonSinta: nonSinta };
+  }, [targetDocs]);
+
+  // Penghitungan Sumber Data (JI / JN / Umum)
+  const sourceCounts = useMemo(() => {
+    const total = targetDocs.length;
+    let external = 0;
+    let manual = 0;
+
+    targetDocs.forEach((d: any) => {
+      if (!d) return;
+      if (['scopus', 'scholar', 'sinta', 'garuda'].includes(String(d.source || ''))) {
+        external++;
+      } else {
+        manual++;
+      }
+    });
+
+    return { total, external, manual };
+  }, [targetDocs]);
+
+  // Opsi Dropdown
+  const jiStatusOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua Status', count: correspondenceCounts.total },
+    { id: 'unconfirmed', label: 'Perlu Konfirmasi', count: correspondenceCounts.unconfirmed },
+    { id: 'confirmed', label: 'Terkonfirmasi', count: correspondenceCounts.confirmed },
+  ], [correspondenceCounts]);
+
+  const articleOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua Tipe', count: typeCounts.total },
+    { id: 'article', label: 'Article / Journal', count: typeCounts.article },
+    { id: 'non-article', label: 'Non-Article', count: typeCounts.nonArticle },
+  ], [typeCounts]);
+
+  const quartileOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua Quartile', count: quartileCounts.total },
+    { id: 'Q1', label: 'Q1', count: quartileCounts.Q1 },
+    { id: 'Q2', label: 'Q2', count: quartileCounts.Q2 },
+    { id: 'Q3', label: 'Q3', count: quartileCounts.Q3 },
+    { id: 'Q4', label: 'Q4', count: quartileCounts.Q4 },
+    { id: 'None', label: 'Non-Q', count: quartileCounts.None },
+  ], [quartileCounts]);
+
+  const jnStatusOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua Status', count: sintaConfirmationCounts.total },
+    { id: 'unconfirmed', label: 'Perlu Konfirmasi SINTA', count: sintaConfirmationCounts.unconfirmed },
+    { id: 'confirmed', label: 'Terkonfirmasi SINTA', count: sintaConfirmationCounts.confirmed },
+  ], [sintaConfirmationCounts]);
+
+  const sintaOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua Akreditasi', count: sintaCounts.total },
+    { id: 'S1', label: 'SINTA 1 (S1)', count: sintaCounts.S1 },
+    { id: 'S2', label: 'SINTA 2 (S2)', count: sintaCounts.S2 },
+    { id: 'S3', label: 'SINTA 3 (S3)', count: sintaCounts.S3 },
+    { id: 'S4', label: 'SINTA 4 (S4)', count: sintaCounts.S4 },
+    { id: 'S5', label: 'SINTA 5 (S5)', count: sintaCounts.S5 },
+    { id: 'S6', label: 'SINTA 6 (S6)', count: sintaCounts.S6 },
+    { id: 'Non-SINTA', label: 'Non-SINTA', count: sintaCounts.NonSinta },
+  ], [sintaCounts]);
+
+  const sourceOptions: FilterOption[] = useMemo(() => [
+    { id: 'all', label: 'Semua Sumber', count: sourceCounts.total },
+    { id: 'external', label: 'External API', count: sourceCounts.external },
+    { id: 'manual', label: 'Input Manual', count: sourceCounts.manual },
+  ], [sourceCounts]);
+
+  // Total Filter Aktif
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (filterYear !== null) count++;
+    if (isJI) {
+      if (scopusFilter && scopusFilter !== 'all') count++;
+      if (articleFilter && articleFilter !== 'all') count++;
+      if (quartileFilter && quartileFilter !== 'all') count++;
+    }
+    if (isJN) {
+      if (scopusFilter && scopusFilter !== 'all') count++;
+      if (sintaFilter && sintaFilter !== 'all') count++;
+    }
+    if (sourceFilter && sourceFilter !== 'all') count++;
+    if (crossIndexedOnly) count++;
+    return count;
+  }, [filterYear, isJI, isJN, scopusFilter, articleFilter, quartileFilter, sintaFilter, sourceFilter, crossIndexedOnly]);
+
+  const handleResetAllFilters = () => {
+    onYearChange(null);
+    if (setScopusFilter) setScopusFilter('all');
+    if (setArticleFilter) setArticleFilter('all');
+    if (setQuartileFilter) setQuartileFilter('all');
+    if (setSintaFilter) setSintaFilter('all');
+    if (setSourceFilter) setSourceFilter('all');
+    if (setCrossIndexedOnly) setCrossIndexedOnly(false);
+    setCurrentPage(1);
+  };
 
   const getBreakdown = (doc: any) => {
     const isJI = doc.category === 'Jurnal Internasional';
@@ -187,15 +430,128 @@ export default function PublicationTable({
 
   return (
     <section className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
-      <div className="p-5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark">
-        <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">Riwayat Publikasi</h3>
+      {/* Header Tabel: Judul, Jumlah Dokumen, dan Counter Filter Aktif */}
+      <div className="p-4 sm:p-5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
+            Riwayat Publikasi
+          </h3>
+          <span className="px-2 py-0.5 text-[11px] font-semibold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark">
+            {filteredDocuments.length} Dokumen
+          </span>
+          {activeFiltersCount > 0 && (
+            <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-ink text-on-ink dark:bg-on-dark dark:text-ink">
+              {activeFiltersCount} Filter Aktif
+            </span>
+          )}
+        </div>
+
+        {/* Tombol Reset Filter di Ujung Kanan Header */}
+        {activeFiltersCount > 0 && (
+          <button
+            type="button"
+            onClick={handleResetAllFilters}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors underline-offset-4 hover:underline cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset Filter</span>
+          </button>
+        )}
       </div>
 
-      <YearFilterBar
-        availableYears={availableYears}
-        selectedYear={filterYear}
-        onYearChange={onYearChange}
-      />
+      {/* Unified Filter Toolbar Terpadu */}
+      <div className="px-3.5 sm:px-5 py-3 border-b border-hairline-light-soft dark:border-hairline-dark-soft bg-surface-light-raised/40 dark:bg-surface-dark-elevated/30 flex flex-wrap items-center gap-2">
+        {/* 1. Filter Tahun */}
+        <YearFilterBar
+          availableYears={availableYears}
+          selectedYear={filterYear}
+          onYearChange={(y) => {
+            onYearChange(y);
+            setCurrentPage(1);
+          }}
+          variant="inline"
+        />
+
+        {/* 2. Filter Khusus Jurnal Internasional */}
+        {isJI && (
+          <>
+            <FilterDropdown
+              categoryLabel="Status"
+              options={jiStatusOptions}
+              activeValue={scopusFilter}
+              isOpen={openDropdownId === 'ji-status'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'ji-status' : null)}
+              onSelectOption={(val) => {
+                setScopusFilter?.(val as ScopusFilterType);
+                setCurrentPage(1);
+              }}
+            />
+            <FilterDropdown
+              categoryLabel="Quartile"
+              options={quartileOptions}
+              activeValue={quartileFilter}
+              isOpen={openDropdownId === 'ji-quartile'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'ji-quartile' : null)}
+              onSelectOption={(val) => {
+                setQuartileFilter?.(val as QuartileFilterType);
+                setCurrentPage(1);
+              }}
+            />
+            <FilterDropdown
+              categoryLabel="Tipe"
+              options={articleOptions}
+              activeValue={articleFilter}
+              isOpen={openDropdownId === 'ji-article'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'ji-article' : null)}
+              onSelectOption={(val) => {
+                setArticleFilter?.(val as ArticleFilterType);
+                setCurrentPage(1);
+              }}
+            />
+          </>
+        )}
+
+        {/* 3. Filter Khusus Jurnal Nasional */}
+        {isJN && (
+          <>
+            <FilterDropdown
+              categoryLabel="Status SINTA"
+              options={jnStatusOptions}
+              activeValue={scopusFilter}
+              isOpen={openDropdownId === 'jn-status'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'jn-status' : null)}
+              onSelectOption={(val) => {
+                setScopusFilter?.(val as ScopusFilterType);
+                setCurrentPage(1);
+              }}
+            />
+            <FilterDropdown
+              categoryLabel="Akreditasi"
+              options={sintaOptions}
+              activeValue={sintaFilter}
+              isOpen={openDropdownId === 'jn-sinta'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'jn-sinta' : null)}
+              onSelectOption={(val) => {
+                setSintaFilter?.(val as SintaFilterType);
+                setCurrentPage(1);
+              }}
+            />
+          </>
+        )}
+
+        {/* 4. Filter Sumber Data */}
+        <FilterDropdown
+          categoryLabel="Sumber"
+          options={sourceOptions}
+          activeValue={sourceFilter}
+          isOpen={openDropdownId === 'source'}
+          onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
+          onSelectOption={(val) => {
+            setSourceFilter?.(val as SourceFilterType);
+            setCurrentPage(1);
+          }}
+        />
+      </div>
       
       <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light dark:divide-hairline-dark text-xs">

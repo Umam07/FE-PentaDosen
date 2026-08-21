@@ -9,8 +9,8 @@ export interface YearFilterBarProps {
   selectedYear: number | null;
   /** Callback saat user mengubah pilihan tahun */
   onYearChange: (year: number | null) => void;
-  /** Varian warna: 'zinc' (default untuk tabel) atau 'slate' (untuk tampilan dashboard external) */
-  variant?: 'zinc' | 'slate';
+  /** Varian warna: 'zinc' (default untuk tabel), 'slate' (untuk tampilan dashboard external), atau 'inline' (untuk filter toolbar) */
+  variant?: 'zinc' | 'slate' | 'inline';
   /** Class tambahan opsional */
   className?: string;
 }
@@ -25,6 +25,8 @@ export default function YearFilterBar({
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isFiltered = selectedYear !== null;
 
   // Tutup dropdown saat user mengklik di luar area komponen
   useEffect(() => {
@@ -56,6 +58,135 @@ export default function YearFilterBar({
     return null;
   }
 
+  if (variant === 'inline') {
+    return (
+      <div className={`relative z-40 inline-block ${className}`} ref={dropdownRef}>
+        <button
+          type="button"
+          onClick={() => {
+            setIsOpen((prev) => !prev);
+            setSearchQuery('');
+          }}
+          className={`flex items-center justify-between gap-2 px-3.5 py-2 rounded-lg text-xs transition-all border cursor-pointer ${
+            isFiltered
+              ? 'border-hairline-dark/40 dark:border-hairline-light/40 text-ink-heading dark:text-on-dark font-bold bg-surface-light-raised dark:bg-surface-dark-elevated shadow-2xs'
+              : 'border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft font-medium bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:border-ink-border dark:hover:border-hairline-light'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 truncate">
+            <span className="truncate">
+              Tahun: <span className={isFiltered ? 'font-bold text-ink-heading dark:text-on-dark' : 'font-semibold text-body-strong dark:text-on-dark'}>{selectedYear !== null ? selectedYear : 'Semua'}</span>
+            </span>
+          </div>
+          <ChevronDown
+            className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+              isFiltered ? 'text-ink-heading dark:text-on-dark' : 'text-muted dark:text-on-dark-muted'
+            } ${isOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
+
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.97 }}
+              transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute left-0 sm:right-0 sm:left-auto top-full mt-1.5 z-[999] min-w-[170px] bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-lg py-1.5"
+            >
+              {/* Filter Pencarian jika opsi > 10 */}
+              {sortedYears.length > 10 && (
+                <div className="px-2.5 py-1.5 pb-2 border-b border-hairline-light dark:border-hairline-dark">
+                  <div className="relative flex items-center">
+                    <Search className="w-3.5 h-3.5 absolute left-2.5 text-muted dark:text-on-dark-muted pointer-events-none" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Cari tahun..."
+                      className="w-full pl-8 pr-7 py-1.5 bg-canvas-light dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-xs rounded-lg border border-hairline-light dark:border-hairline-dark outline-none focus:border-accent focus:ring-1 focus:ring-accent/20 transition-all"
+                      autoFocus
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-2 text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* List Opsi Tahun */}
+              <div className="max-h-[220px] overflow-y-auto py-1 space-y-0.5">
+                {(!searchQuery || 'semua tahun'.includes(searchQuery.toLowerCase())) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onYearChange(null);
+                      setIsOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between cursor-pointer transition-colors duration-150 rounded-lg ${
+                      selectedYear === null
+                        ? 'bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold'
+                        : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {selectedYear === null ? (
+                        <Check className="w-3.5 h-3.5 text-ink-heading dark:text-on-dark shrink-0" />
+                      ) : (
+                        <span className="w-3.5 h-3.5 shrink-0" />
+                      )}
+                      <span>Semua Tahun</span>
+                    </div>
+                  </button>
+                )}
+
+                {filteredYears.length > 0 ? (
+                  filteredYears.map((year) => {
+                    const isSelected = selectedYear === year;
+                    return (
+                      <button
+                        key={year}
+                        type="button"
+                        onClick={() => {
+                          onYearChange(year);
+                          setIsOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between cursor-pointer transition-colors duration-150 rounded-lg ${
+                          isSelected
+                            ? 'bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold'
+                            : 'text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated hover:text-ink-heading dark:hover:text-on-dark'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {isSelected ? (
+                            <Check className="w-3.5 h-3.5 text-ink-heading dark:text-on-dark shrink-0" />
+                          ) : (
+                            <span className="w-3.5 h-3.5 shrink-0" />
+                          )}
+                          <span>Tahun {year}</span>
+                        </div>
+                      </button>
+                    );
+                  })
+                ) : searchQuery ? (
+                  <div className="px-3 py-3 text-center text-xs text-muted dark:text-on-dark-muted">
+                    Tahun tidak ditemukan
+                  </div>
+                ) : null}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
   const containerCls =
     variant === 'slate'
       ? 'flex items-center gap-3 py-2 px-1 mb-2 bg-slate-500/5 dark:bg-slate-900/10 rounded-xl p-2 border border-slate-150 dark:border-slate-800/50'
@@ -63,8 +194,6 @@ export default function YearFilterBar({
 
   const labelCls =
     'flex items-center gap-1.5 text-[11px] text-muted dark:text-on-dark-muted font-normal select-none shrink-0';
-
-  const isFiltered = selectedYear !== null;
 
   return (
     <div className={`${containerCls} ${className}`}>

@@ -171,11 +171,13 @@ export function usePublication(user: UserSession) {
   }, [urlKategori]);
 
   const unconfirmedCorrespondenceDocs = useMemo(() => {
-    return documents.filter((d) => {
-      const isJI = (d.category || '').toLowerCase() === 'jurnal internasional' || d.source === 'scopus';
+    return (documents || []).filter((d) => {
+      if (!d) return false;
+      const isJI = String(d.category || '').toLowerCase() === 'jurnal internasional' || d.source === 'scopus';
       if (!isJI) return false;
 
-      const isArticle = !d.subtype || d.subtype.toLowerCase() === 'ar' || d.subtype.toLowerCase() === 'article';
+      const subtypeStr = String(d.subtype || '').toLowerCase();
+      const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
       const totalAuthors = Number(d.total_authors) || 1;
       const showCorrespondingControls = d.author_role !== 'Single Author' && totalAuthors > 1 && d.source !== 'scholar';
 
@@ -184,20 +186,21 @@ export function usePublication(user: UserSession) {
   }, [documents]);
 
   const unconfirmedSintaDocs = useMemo(() => {
-    return documents.filter((d) => {
-      const isJN = (d.category || '').toLowerCase() === 'jurnal nasional' || d.source === 'scholar';
+    return (documents || []).filter((d) => {
+      if (!d) return false;
+      const isJN = String(d.category || '').toLowerCase() === 'jurnal nasional' || d.source === 'scholar';
       if (!isJN) return false;
       return !d.is_sinta_confirmed;
     });
   }, [documents]);
 
   const crossTitlesSet = useMemo(() => {
-    const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const scopusTitles = documents
-      .filter((d) => d.source === 'scopus' || (d.category || '').toLowerCase() === 'jurnal internasional')
+    const norm = (t: string) => String(t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const scopusTitles = (documents || [])
+      .filter((d) => d && (d.source === 'scopus' || String(d.category || '').toLowerCase() === 'jurnal internasional'))
       .map((d) => norm(d.title));
-    const scholarTitles = documents
-      .filter((d) => d.source === 'scholar' || (d.category || '').toLowerCase() === 'jurnal nasional')
+    const scholarTitles = (documents || [])
+      .filter((d) => d && (d.source === 'scholar' || String(d.category || '').toLowerCase() === 'jurnal nasional'))
       .map((d) => norm(d.title));
 
     const set = new Set<string>();
@@ -210,9 +213,9 @@ export function usePublication(user: UserSession) {
   }, [documents]);
 
   const crossIndexedCount = useMemo(() => {
-    const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const norm = (t: string) => String(t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     if (urlKategori) {
-      const categoryDocs = documents.filter((d) => (d.category || '').toLowerCase() === urlKategori.toLowerCase());
+      const categoryDocs = (documents || []).filter((d) => d && String(d.category || '').toLowerCase() === urlKategori.toLowerCase());
       return categoryDocs.filter((d) => d.is_cross_indexed || crossTitlesSet.has(norm(d.title))).length;
     }
     return crossTitlesSet.size;
@@ -223,23 +226,26 @@ export function usePublication(user: UserSession) {
     if (urlKategori) {
       const targetCat = urlKategori.toLowerCase();
       result = result.filter((d) => {
+        if (!d) return false;
         const cat = String(d.category || '').toLowerCase();
         return cat === targetCat || cat.includes(targetCat) || targetCat.includes(cat);
       });
     }
     if (filterYear) {
       result = result.filter((d) => {
+        if (!d) return false;
         const y = d.published_at ? new Date(d.published_at).getFullYear() : null;
         return y === filterYear;
       });
     }
 
-    const isJIUrl = urlKategori.toLowerCase().includes('jurnal internasional');
-    const isJNUrl = urlKategori.toLowerCase().includes('jurnal nasional');
+    const isJIUrl = String(urlKategori || '').toLowerCase().includes('jurnal internasional');
+    const isJNUrl = String(urlKategori || '').toLowerCase().includes('jurnal nasional');
 
     if (isJIUrl) {
       if (scopusFilter === 'unconfirmed') {
         result = result.filter((d) => {
+          if (!d) return false;
           if (d.source === 'scopus') {
             const subtypeStr = String(d.subtype || '').toLowerCase();
             const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
@@ -250,6 +256,7 @@ export function usePublication(user: UserSession) {
         });
       } else if (scopusFilter === 'confirmed') {
         result = result.filter((d) => {
+          if (!d) return false;
           if (d.source === 'scopus') {
             const subtypeStr = String(d.subtype || '').toLowerCase();
             const isArticle = !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
@@ -262,6 +269,7 @@ export function usePublication(user: UserSession) {
 
       if (articleFilter === 'article') {
         result = result.filter((d) => {
+          if (!d) return false;
           if (d.source === 'scopus') {
             const subtypeStr = String(d.subtype || '').toLowerCase();
             return !d.subtype || subtypeStr === 'ar' || subtypeStr === 'article';
@@ -270,6 +278,7 @@ export function usePublication(user: UserSession) {
         });
       } else if (articleFilter === 'non-article') {
         result = result.filter((d) => {
+          if (!d) return false;
           if (d.source === 'scopus') {
             const subtypeStr = String(d.subtype || '').toLowerCase();
             return d.subtype && subtypeStr !== 'ar' && subtypeStr !== 'article';
@@ -280,6 +289,7 @@ export function usePublication(user: UserSession) {
 
       if (quartileFilter !== 'all') {
         result = result.filter((d) => {
+          if (!d) return false;
           const qStr = String(d.quartile || '');
           const q = ['Q1', 'Q2', 'Q3', 'Q4'].includes(qStr) ? qStr : 'None';
           return q === quartileFilter;
@@ -290,28 +300,29 @@ export function usePublication(user: UserSession) {
     if (isJNUrl) {
       if (sintaFilter !== 'all') {
         result = result.filter((d) => {
+          if (!d) return false;
           const rank = String(d.sinta_rank || 'Non-SINTA').toUpperCase();
           return rank === sintaFilter.toUpperCase();
         });
       }
 
       if (scopusFilter === 'unconfirmed') {
-        result = result.filter((d) => !d.is_sinta_confirmed);
+        result = result.filter((d) => d && !d.is_sinta_confirmed);
       } else if (scopusFilter === 'confirmed') {
-        result = result.filter((d) => !!d.is_sinta_confirmed);
+        result = result.filter((d) => d && !!d.is_sinta_confirmed);
       }
     }
 
 
     if (crossIndexedOnly) {
-      const norm = (t: string) => (t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-      result = result.filter((d) => !d.is_cross_indexed && !crossTitlesSet.has(norm(d.title)));
+      const norm = (t: string) => String(t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      result = result.filter((d) => d && !d.is_cross_indexed && !crossTitlesSet.has(norm(d.title)));
     }
 
     if (sourceFilter === 'external') {
-      result = result.filter((d) => d.source === 'scopus' || d.source === 'scholar' || d.source === 'sinta' || d.source === 'garuda');
+      result = result.filter((d) => d && (d.source === 'scopus' || d.source === 'scholar' || d.source === 'sinta' || d.source === 'garuda'));
     } else if (sourceFilter === 'manual') {
-      result = result.filter((d) => d.source !== 'scopus' && d.source !== 'scholar' && d.source !== 'sinta' && d.source !== 'garuda');
+      result = result.filter((d) => d && d.source !== 'scopus' && d.source !== 'scholar' && d.source !== 'sinta' && d.source !== 'garuda');
     }
 
     return result;
@@ -450,6 +461,7 @@ export function usePublication(user: UserSession) {
     setIsBulkCorrespondenceModalOpen,
     unconfirmedCorrespondenceDocs,
     unconfirmedSintaDocs,
+    crossTitlesSet,
     crossIndexedCount,
     filteredDocuments,
     availableYears,

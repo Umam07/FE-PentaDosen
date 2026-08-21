@@ -12,8 +12,6 @@ import BulkCorrespondenceModal from './components/BulkCorrespondenceModal';
 import PublicationLinkingModal from './components/PublicationLinkingModal';
 import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
-import ScopusFiltersBar from './components/ScopusFiltersBar';
-import NationalFiltersBar from './components/NationalFiltersBar';
 import MetricsGuideModal from './components/MetricsGuideModal';
 
 import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
@@ -87,6 +85,9 @@ export default function Publication({ user }: { user: UserSession }) {
     }
   }, [pub.message, pub.messageType]);
 
+  const isJI = (pub.urlKategori || '').toLowerCase().includes('jurnal internasional');
+  const isJN = (pub.urlKategori || '').toLowerCase().includes('jurnal nasional');
+
   return (
     <div className="w-full space-y-4 pb-10">
 
@@ -104,70 +105,25 @@ export default function Publication({ user }: { user: UserSession }) {
         isCrossIndexedActive={pub.crossIndexedOnly}
       />
 
-      {/* Baris Action Bar & Filter */}
-      {!pub.urlKategori && (
-        <PublicationActionBar
-          onUploadClick={() => pub.setIsUploadModalOpen(true)}
-          onDownloadTemplate={pub.handleDownloadTemplate}
-          onImportExcel={() => {}}
-          isImporting={pub.isImporting}
-        />
-      )}
+      {/* Baris Action Bar (Upload, Template, Import Excel & Konfirmasi Terintegrasi) */}
+      <PublicationActionBar
+        onUploadClick={() => pub.setIsUploadModalOpen(true)}
+        onDownloadTemplate={pub.handleDownloadTemplate}
+        onImportExcel={() => {}}
+        isImporting={pub.isImporting}
+        unconfirmedDocs={isJN ? pub.unconfirmedSintaDocs : isJI ? pub.unconfirmedCorrespondenceDocs : []}
+        isNationalJournal={isJN}
+        onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
+        onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
+      />
 
-      {/* Scopus Filters Bar (Jurnal Internasional) dengan Konfirmasi Korespondensi Terintegrasi */}
-      {(pub.urlKategori || '').toLowerCase().includes('jurnal internasional') && (
-        <ScopusFiltersBar
-          documents={pub.documents || []}
-          scopusFilter={pub.scopusFilter}
-          setScopusFilter={pub.setScopusFilter}
-          articleFilter={pub.articleFilter}
-          setArticleFilter={pub.setArticleFilter}
-          quartileFilter={pub.quartileFilter}
-          setQuartileFilter={pub.setQuartileFilter}
-          sourceFilter={pub.sourceFilter}
-          setSourceFilter={pub.setSourceFilter}
-          crossIndexedOnly={pub.crossIndexedOnly}
-          setCrossIndexedOnly={pub.setCrossIndexedOnly}
-          onResetPage={() => pub.setCurrentPage(1)}
-          onUploadClick={() => pub.setIsUploadModalOpen(true)}
-          onDownloadTemplate={pub.handleDownloadTemplate}
-          onImportExcel={() => {}}
-          isImporting={pub.isImporting}
-          unconfirmedDocs={pub.unconfirmedCorrespondenceDocs || []}
-          onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
-          onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
-        />
-      )}
-
-      {/* National Filters Bar (Jurnal Nasional) dengan Konfirmasi SINTA Terintegrasi */}
-      {(pub.urlKategori || '').toLowerCase().includes('jurnal nasional') && (
-        <NationalFiltersBar
-          documents={pub.documents || []}
-          sintaFilter={pub.sintaFilter}
-          setSintaFilter={pub.setSintaFilter}
-          sourceFilter={pub.sourceFilter}
-          setSourceFilter={pub.setSourceFilter}
-          correspondenceFilter={pub.scopusFilter}
-          setCorrespondenceFilter={pub.setScopusFilter}
-          crossIndexedOnly={pub.crossIndexedOnly}
-          setCrossIndexedOnly={pub.setCrossIndexedOnly}
-          onResetPage={() => pub.setCurrentPage(1)}
-          onUploadClick={() => pub.setIsUploadModalOpen(true)}
-          onDownloadTemplate={pub.handleDownloadTemplate}
-          onImportExcel={() => {}}
-          isImporting={pub.isImporting}
-          unconfirmedDocs={pub.unconfirmedSintaDocs || []}
-          onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
-          onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
-        />
-      )}
-
-
-      {/* Tabel Publikasi */}
+      {/* Tabel Publikasi dengan Unified Filter Toolbar */}
       <PublicationTable
         isTableLoading={pub.isTableLoading}
-        currentDocuments={pub.filteredDocuments.slice((pub.currentPage - 1) * pub.itemsPerPage, pub.currentPage * pub.itemsPerPage)}
-        filteredDocuments={pub.filteredDocuments}
+        documents={pub.documents}
+        urlKategori={pub.urlKategori}
+        currentDocuments={(pub.filteredDocuments || []).slice((pub.currentPage - 1) * pub.itemsPerPage, pub.currentPage * pub.itemsPerPage)}
+        filteredDocuments={pub.filteredDocuments || []}
         currentPage={pub.currentPage}
         setCurrentPage={pub.setCurrentPage}
         itemsPerPage={pub.itemsPerPage}
@@ -187,6 +143,19 @@ export default function Publication({ user }: { user: UserSession }) {
         availableYears={pub.availableYears}
         filterYear={pub.filterYear}
         onYearChange={pub.setFilterYear}
+        crossTitlesSet={pub.crossTitlesSet}
+        scopusFilter={pub.scopusFilter}
+        setScopusFilter={pub.setScopusFilter}
+        articleFilter={pub.articleFilter}
+        setArticleFilter={pub.setArticleFilter}
+        quartileFilter={pub.quartileFilter}
+        setQuartileFilter={pub.setQuartileFilter}
+        sintaFilter={pub.sintaFilter}
+        setSintaFilter={pub.setSintaFilter}
+        sourceFilter={pub.sourceFilter}
+        setSourceFilter={pub.setSourceFilter}
+        crossIndexedOnly={pub.crossIndexedOnly}
+        setCrossIndexedOnly={pub.setCrossIndexedOnly}
       />
 
       {/* Modals */}
