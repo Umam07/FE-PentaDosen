@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ChevronDown, ChevronUp, AlertTriangle, Check, Globe } from 'lucide-react';
-import { calculateScopusBreakdown } from '../utils/calculations';
+import { calculateScopusBreakdown, formatScopusSubtype } from '../utils/calculations';
 import { externalDocumentsService } from '../services/externalDocumentsService';
 
 interface ScopusTableProps {
@@ -73,7 +73,7 @@ export default function ScopusTable({
               const bd = calculateScopusBreakdown(doc);
               const isAlsoScholar = isAlsoScholarCheck(doc.title);
               const isExpanded = expandedRow === (doc.id || idx);
-              const subtypeLabel = bd.isArticle ? 'Article' : (doc.subtype_description || doc.subtype || 'Non-Article');
+              const subtypeLabel = bd.isArticle ? 'Article' : formatScopusSubtype(doc.subtype, doc.subtype_description);
               const showCorrespondingControls = bd.isArticle && bd.totalAuthors > 1;
               const linkUrl = doc.link || `https://www.scopus.com/results/results.uri?s=TITLE(%22${encodeURIComponent(doc.title)}%22)`;
 

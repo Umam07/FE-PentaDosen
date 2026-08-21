@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ExternalLink } from 'lucide-react';
 import { ScopusDocRowProps } from '../external-documents.types';
-import { calculateScopusBreakdown } from '../utils/calculations';
+import { calculateScopusBreakdown, formatScopusSubtype } from '../utils/calculations';
 import { externalDocumentsService } from '../services/externalDocumentsService';
 import PointBreakdownBox from '../../../../publication/components/PointBreakdownBox';
 
@@ -17,7 +17,7 @@ export default function ScopusDocRow({
   const [isUpdating, setIsUpdating] = useState(false);
   const bd = calculateScopusBreakdown(doc);
 
-  const subtypeLabel = bd.isArticle ? 'Article' : (doc.subtype_description || doc.subtype || 'Non-Article');
+  const subtypeLabel = bd.isArticle ? 'Article' : formatScopusSubtype(doc.subtype, doc.subtype_description);
   const isHyper = bd.totalAuthors > 16;
   const showCorrespondingControls = bd.isArticle && bd.totalAuthors > 1;
 

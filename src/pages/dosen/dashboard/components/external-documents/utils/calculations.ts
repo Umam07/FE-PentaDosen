@@ -5,6 +5,34 @@ export const normalizeTitle = (title: string): string => {
   return title?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 };
 
+// Helper untuk memetakan kode subtype Scopus ke label human-readable standar internasional
+export const formatScopusSubtype = (subtype?: string, subtypeDescription?: string): string => {
+  if (subtypeDescription && subtypeDescription.trim() !== '') {
+    return subtypeDescription;
+  }
+  if (!subtype) return 'Article';
+
+  const code = subtype.toLowerCase().trim();
+  const mapping: Record<string, string> = {
+    ar: 'Article',
+    cp: 'Conference Paper',
+    re: 'Review',
+    bk: 'Book',
+    ch: 'Book Chapter',
+    ed: 'Editorial',
+    ip: 'Article in Press',
+    no: 'Note',
+    sh: 'Short Survey',
+    le: 'Letter',
+    er: 'Erratum',
+    dp: 'Data Paper',
+    ab: 'Abstract Report',
+    cr: 'Conference Review',
+  };
+
+  return mapping[code] || (code.length <= 3 ? code.toUpperCase() : subtype);
+};
+
 // Hitung poin Scopus detail sesuai aturan KPI (skema co-author 60/40, quartile, corresponding status)
 export const calculateScopusBreakdown = (pub: any): ScopusBreakdown => {
   const role = pub.author_role === 'Member Author' || pub.author_role === 'Co-Author' 
@@ -17,7 +45,8 @@ export const calculateScopusBreakdown = (pub: any): ScopusBreakdown => {
   const isHyper = !!pub.is_hyperauthor || totalAuthors > 16;
   const q = pub.quartile && ['Q1', 'Q2', 'Q3', 'Q4'].includes(pub.quartile) ? pub.quartile : 'None';
   const isArticle = !pub.subtype || pub.subtype.toLowerCase() === 'ar' || pub.subtype.toLowerCase() === 'article';
-  const docType = isArticle ? `Article ${q !== 'None' ? q : '(Tanpa Quartile)'}` : 'Non-Article';
+  const subtypeFormatted = formatScopusSubtype(pub.subtype, pub.subtype_description);
+  const docType = isArticle ? `Article ${q !== 'None' ? q : '(Tanpa Quartile)'}` : subtypeFormatted;
 
   let awardedPoints = 0;
   let detailStr = '';
