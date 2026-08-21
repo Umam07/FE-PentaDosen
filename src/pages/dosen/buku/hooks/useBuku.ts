@@ -50,7 +50,7 @@ export function useBuku(user: UserSession) {
   const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
 
   const currentYear = new Date().getFullYear();
-  const [filterYear, setFilterYear] = useState<number | null>(currentYear);
+  const [filterYear, setFilterYear] = useState<number | null>(null);
 
   const showMessage = useCallback((msg: string, type: 'success' | 'error' = 'success') => {
     setMessage(msg);

@@ -88,17 +88,19 @@ export default function HKITable({
       </div>
 
       {/* Filter Toolbar Terpadu */}
-      <div className="px-3.5 sm:px-5 py-3 border-b border-hairline-light-soft dark:border-hairline-dark-soft bg-surface-light-raised/40 dark:bg-surface-dark-elevated/30 flex flex-wrap items-center gap-2">
-        <YearFilterBar
-          availableYears={availableYears}
-          selectedYear={filterYear}
-          onYearChange={(y) => {
-            onYearChange(y);
-            setCurrentPage(1);
-          }}
-          variant="inline"
-        />
-      </div>
+      {(availableYears.length > 0 || filterYear !== null) && (
+        <div className="px-3.5 sm:px-5 py-3 border-b border-hairline-light-soft dark:border-hairline-dark-soft bg-surface-light-raised/40 dark:bg-surface-dark-elevated/30 flex flex-wrap items-center gap-2">
+          <YearFilterBar
+            availableYears={availableYears}
+            selectedYear={filterYear}
+            onYearChange={(y) => {
+              onYearChange(y);
+              setCurrentPage(1);
+            }}
+            variant="inline"
+          />
+        </div>
+      )}
 
       <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">

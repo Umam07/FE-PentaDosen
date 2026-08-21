@@ -55,7 +55,7 @@ export function useHki(user: UserSession) {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [filterYear, setFilterYear] = useState<number | null>(new Date().getFullYear());
+  const [filterYear, setFilterYear] = useState<number | null>(null);
 
   const showMessage = useCallback((msg: string, type: 'success' | 'error' = 'success') => {
     setMessage(msg);
@@ -107,20 +107,23 @@ export function useHki(user: UserSession) {
     initData();
   }, [loadWeights, loadApprovedResearch, loadDocuments]);
 
-  const filteredDocuments = useMemo(() => {
-    const hkiDocs = documents.filter((d) =>
+  const hkiDocs = useMemo(() => {
+    return (documents || []).filter((d) =>
       (d.category || '').toLowerCase().includes('hki')
     );
+  }, [documents]);
+
+  const filteredDocuments = useMemo(() => {
     if (!filterYear) return hkiDocs;
     return hkiDocs.filter((d) => {
       const y = d.published_at ? new Date(d.published_at).getFullYear() : null;
       return y === filterYear;
     });
-  }, [documents, filterYear]);
+  }, [hkiDocs, filterYear]);
 
   const availableYears = useMemo(() => {
     const yearsSet = new Set<number>();
-    (documents || []).forEach((d) => {
+    hkiDocs.forEach((d) => {
       if (d.published_at) {
         const y = new Date(d.published_at).getFullYear();
         if (!isNaN(y) && y > 1900 && y <= 2100) {
@@ -129,7 +132,7 @@ export function useHki(user: UserSession) {
       }
     });
     return Array.from(yearsSet).sort((a, b) => b - a);
-  }, [documents]);
+  }, [hkiDocs]);
 
   const stats: StatsInfo = useMemo(() => {
     const src = filteredDocuments;
