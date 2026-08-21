@@ -1,6 +1,7 @@
 import React from 'react';
-import { LogIn, User as UserIcon, Lock, Eye, EyeOff, Hexagon, AlertCircle } from 'lucide-react';
+import { LogIn, User as UserIcon, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { motion } from 'motion/react';
+import PentaDosenLogo from '../../../components/ui/PentaDosenLogo';
 import { useDosenLogin } from '../hooks/useDosenLogin';
 import { User } from '../types/auth.types';
 
@@ -34,13 +35,21 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
     <div className="absolute top-0 bottom-0 w-full lg:w-[56%] left-0 lg:left-[44%] flex flex-col justify-center items-center px-5 py-10 sm:px-10 lg:px-16 z-10">
       <div className="w-full max-w-[400px] mt-10 lg:mt-0">
         {/* Mobile-only brand */}
-        <div className="flex items-center gap-3 mb-8 lg:hidden">
-          <div className="p-2.5 bg-ink text-on-ink rounded-lg">
-            <Hexagon className="w-5 h-5 fill-white/20" />
+        <div className="flex items-center gap-2.5 mb-8 lg:hidden">
+          <img 
+            src="/YARSI-KOTAK-e1739161183276.png" 
+            alt="Universitas YARSI" 
+            width={32}
+            height={32}
+            className="h-8 w-auto object-contain shrink-0"
+          />
+          <div className="h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
+          <div className="flex items-center gap-2">
+            <PentaDosenLogo className="w-8 h-8 shrink-0" />
+            <span className="text-ink-heading dark:text-on-dark font-black text-xl tracking-tight uppercase">
+              Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
+            </span>
           </div>
-          <span className="text-ink-heading dark:text-on-dark font-extrabold text-lg tracking-tight uppercase">
-            Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
-          </span>
         </div>
 
         {/* Heading */}
