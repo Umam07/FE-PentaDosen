@@ -29,6 +29,17 @@ type HistoryItem = {
 
 function getStepConfig(action: string) {
   const a = action.toLowerCase();
+  if (a.includes('sinkronisasi') || a.includes('sync')) {
+    return {
+      icon: RefreshCw,
+      bgColor: 'bg-emerald-600 dark:bg-emerald-500',
+      iconColor: 'text-white',
+      cardBg: 'bg-zinc-50 dark:bg-zinc-800/40',
+      cardBorder: 'border-zinc-200/80 dark:border-zinc-800',
+      badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/40',
+      label: 'Sistem',
+    };
+  }
   if (a.includes('diunggah') || a.includes('upload')) {
     return {
       icon: Upload,
@@ -92,6 +103,44 @@ function getStepConfig(action: string) {
     cardBorder: 'border-zinc-200/80 dark:border-zinc-800',
     badgeBg: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
     label: 'Sistem',
+  };
+}
+
+function getHistoryNotesConfig(action: string) {
+  const a = (action || '').toLowerCase();
+  if (a.includes('ditolak') || a.includes('reject') || a.includes('revisi')) {
+    return {
+      icon: AlertCircle,
+      label: 'Catatan Review / Revisi',
+      containerClass: 'bg-rose-50/70 dark:bg-rose-950/20 border-rose-200/80 dark:border-rose-900/30',
+      headerClass: 'text-rose-700 dark:text-rose-400',
+      textClass: 'text-zinc-800 dark:text-zinc-200',
+    };
+  }
+  if (a.includes('sinkronisasi') || a.includes('sync')) {
+    return {
+      icon: CheckCircle2,
+      label: 'Informasi Sinkronisasi',
+      containerClass: 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-900/30',
+      headerClass: 'text-emerald-700 dark:text-emerald-400',
+      textClass: 'text-emerald-900 dark:text-emerald-200',
+    };
+  }
+  if (a.includes('disetujui') || a.includes('approved') || a.includes('verifikasi')) {
+    return {
+      icon: CheckCircle2,
+      label: 'Catatan Verifikasi',
+      containerClass: 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-900/30',
+      headerClass: 'text-emerald-700 dark:text-emerald-400',
+      textClass: 'text-zinc-800 dark:text-zinc-200',
+    };
+  }
+  return {
+    icon: FileCheck,
+    label: 'Catatan',
+    containerClass: 'bg-zinc-100/70 dark:bg-zinc-800/50 border-zinc-200/80 dark:border-zinc-700/60',
+    headerClass: 'text-zinc-700 dark:text-zinc-300',
+    textClass: 'text-zinc-800 dark:text-zinc-200',
   };
 }
 
@@ -258,16 +307,21 @@ export function DocumentHistoryModal({ isOpen, onClose, docId, title }: Document
                               </div>
                             </div>
 
-                            {item.notes && (
-                              <div className="mt-2.5 p-2.5 bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/70 dark:border-rose-900/30 rounded-lg">
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-0.5">
-                                  Catatan Penolakan / Feedback
-                                </p>
-                                <p className="text-xs font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed">
-                                  {item.notes}
-                                </p>
-                              </div>
-                            )}
+                            {item.notes && (() => {
+                              const notesCfg = getHistoryNotesConfig(item.action);
+                              const NoteIcon = notesCfg.icon;
+                              return (
+                                <div className={`mt-2.5 p-2.5 rounded-lg border ${notesCfg.containerClass}`}>
+                                  <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider mb-0.5 ${notesCfg.headerClass}`}>
+                                    <NoteIcon className="w-3.5 h-3.5 shrink-0" />
+                                    <span>{notesCfg.label}</span>
+                                  </div>
+                                  <p className={`text-xs font-medium leading-relaxed ${notesCfg.textClass}`}>
+                                    {item.notes}
+                                  </p>
+                                </div>
+                              );
+                            })()}
                           </div>
                         </div>
                       );
