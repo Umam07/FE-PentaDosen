@@ -267,7 +267,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
       {/* Baris Bawah: Row 4 Dropdown Filter Flat */}
       {showFilters && (
         <div className="flex flex-wrap items-center justify-between gap-2.5 pt-0.5">
-          {/* Container 4 Filter Dropdown */}
+          {/* Container 4 Filter Dropdown: Status -> Sumber Data -> Tipe Artikel -> Quartile */}
           <div className="flex flex-wrap items-center gap-2.5">
             {/* 1. Dropdown Status Korespondensi */}
             <FilterDropdown
@@ -282,7 +282,20 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
               }}
             />
 
-            {/* 2. Dropdown Tipe Artikel */}
+            {/* 2. Dropdown Sumber Data */}
+            <FilterDropdown
+              categoryLabel="Sumber Data"
+              options={sourceOptions}
+              activeValue={sourceFilter}
+              isOpen={openDropdownId === 'source'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
+              onSelectOption={(val) => {
+                setSourceFilter(val as SourceFilterType);
+                onResetPage();
+              }}
+            />
+
+            {/* 3. Dropdown Tipe Artikel */}
             <FilterDropdown
               categoryLabel="Tipe Artikel"
               options={articleOptions}
@@ -295,7 +308,7 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
               }}
             />
 
-            {/* 3. Dropdown Quartile Jurnal */}
+            {/* 4. Dropdown Quartile Jurnal */}
             <FilterDropdown
               categoryLabel="Quartile Jurnal"
               options={quartileOptions}
@@ -304,19 +317,6 @@ export const ScopusFiltersBar: React.FC<ScopusFiltersBarProps> = ({
               onOpenChange={(open) => setOpenDropdownId(open ? 'quartile' : null)}
               onSelectOption={(val) => {
                 setQuartileFilter(val as QuartileFilterType);
-                onResetPage();
-              }}
-            />
-
-            {/* 4. Dropdown Sumber Data */}
-            <FilterDropdown
-              categoryLabel="Sumber Data"
-              options={sourceOptions}
-              activeValue={sourceFilter}
-              isOpen={openDropdownId === 'source'}
-              onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
-              onSelectOption={(val) => {
-                setSourceFilter(val as SourceFilterType);
                 onResetPage();
               }}
             />

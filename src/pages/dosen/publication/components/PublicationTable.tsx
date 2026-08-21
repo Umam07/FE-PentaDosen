@@ -472,7 +472,7 @@ export default function PublicationTable({
           variant="inline"
         />
 
-        {/* 2. Filter Khusus Jurnal Internasional */}
+        {/* 2. Filter Khusus Jurnal Internasional: Tahun -> Status -> Sumber -> Tipe -> Quartile */}
         {isJI && (
           <>
             <FilterDropdown
@@ -487,13 +487,13 @@ export default function PublicationTable({
               }}
             />
             <FilterDropdown
-              categoryLabel="Quartile"
-              options={quartileOptions}
-              activeValue={quartileFilter}
-              isOpen={openDropdownId === 'ji-quartile'}
-              onOpenChange={(open) => setOpenDropdownId(open ? 'ji-quartile' : null)}
+              categoryLabel="Sumber"
+              options={sourceOptions}
+              activeValue={sourceFilter}
+              isOpen={openDropdownId === 'source'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
               onSelectOption={(val) => {
-                setQuartileFilter?.(val as QuartileFilterType);
+                setSourceFilter?.(val as SourceFilterType);
                 setCurrentPage(1);
               }}
             />
@@ -508,10 +508,21 @@ export default function PublicationTable({
                 setCurrentPage(1);
               }}
             />
+            <FilterDropdown
+              categoryLabel="Quartile"
+              options={quartileOptions}
+              activeValue={quartileFilter}
+              isOpen={openDropdownId === 'ji-quartile'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'ji-quartile' : null)}
+              onSelectOption={(val) => {
+                setQuartileFilter?.(val as QuartileFilterType);
+                setCurrentPage(1);
+              }}
+            />
           </>
         )}
 
-        {/* 3. Filter Khusus Jurnal Nasional */}
+        {/* 3. Filter Khusus Jurnal Nasional: Tahun -> Status SINTA -> Sumber -> Akreditasi */}
         {isJN && (
           <>
             <FilterDropdown
@@ -522,6 +533,17 @@ export default function PublicationTable({
               onOpenChange={(open) => setOpenDropdownId(open ? 'jn-status' : null)}
               onSelectOption={(val) => {
                 setScopusFilter?.(val as ScopusFilterType);
+                setCurrentPage(1);
+              }}
+            />
+            <FilterDropdown
+              categoryLabel="Sumber"
+              options={sourceOptions}
+              activeValue={sourceFilter}
+              isOpen={openDropdownId === 'source'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
+              onSelectOption={(val) => {
+                setSourceFilter?.(val as SourceFilterType);
                 setCurrentPage(1);
               }}
             />
@@ -539,18 +561,20 @@ export default function PublicationTable({
           </>
         )}
 
-        {/* 4. Filter Sumber Data */}
-        <FilterDropdown
-          categoryLabel="Sumber"
-          options={sourceOptions}
-          activeValue={sourceFilter}
-          isOpen={openDropdownId === 'source'}
-          onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
-          onSelectOption={(val) => {
-            setSourceFilter?.(val as SourceFilterType);
-            setCurrentPage(1);
-          }}
-        />
+        {/* 4. Filter Sumber Data untuk Kategori Lainnya */}
+        {!isJI && !isJN && (
+          <FilterDropdown
+            categoryLabel="Sumber"
+            options={sourceOptions}
+            activeValue={sourceFilter}
+            isOpen={openDropdownId === 'source'}
+            onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
+            onSelectOption={(val) => {
+              setSourceFilter?.(val as SourceFilterType);
+              setCurrentPage(1);
+            }}
+          />
+        )}
       </div>
       
       {/* ── 1. Desktop & Tablet Table View (md ke atas) ── */}

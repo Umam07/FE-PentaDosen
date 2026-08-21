@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
    ChevronLeft, ChevronRight, Lock, Pencil, Trash2, 
-   FileText, Info 
+   FileText, Info, RotateCcw
 } from 'lucide-react';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
@@ -78,18 +78,50 @@ export default function ResearchTable({
 
   return (
     <section className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
-      <div className="p-5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark">
-        <h2 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
-          Riwayat Penelitian
-        </h2>
+      {/* Header Tabel: Judul, Jumlah Dokumen, dan Counter Filter Aktif */}
+      <div className="p-4 sm:p-5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
+            Riwayat Penelitian
+          </h3>
+          <span className="px-2 py-0.5 text-[11px] font-semibold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark">
+            {researchList.length} Dokumen
+          </span>
+          {filterYear !== null && (
+            <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-ink text-on-ink dark:bg-on-dark dark:text-ink">
+              1 Filter Aktif
+            </span>
+          )}
+        </div>
+
+        {/* Tombol Reset Filter di Ujung Kanan Header */}
+        {filterYear !== null && (
+          <button
+            type="button"
+            onClick={() => {
+              onYearChange(null);
+              setCurrentPage(1);
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors underline-offset-4 hover:underline cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset Filter</span>
+          </button>
+        )}
       </div>
 
-      {/* Year Filter */}
-      <YearFilterBar
-        availableYears={availableYears}
-        selectedYear={filterYear}
-        onYearChange={onYearChange}
-      />
+      {/* Filter Toolbar Terpadu */}
+      <div className="px-3.5 sm:px-5 py-3 border-b border-hairline-light-soft dark:border-hairline-dark-soft bg-surface-light-raised/40 dark:bg-surface-dark-elevated/30 flex flex-wrap items-center gap-2">
+        <YearFilterBar
+          availableYears={availableYears}
+          selectedYear={filterYear}
+          onYearChange={(y) => {
+            onYearChange(y);
+            setCurrentPage(1);
+          }}
+          variant="inline"
+        />
+      </div>
 
       <div className="w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">

@@ -262,20 +262,7 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
               }}
             />
 
-            {/* 2. Dropdown Akreditasi SINTA */}
-            <FilterDropdown
-              categoryLabel="Akreditasi SINTA"
-              options={sintaOptions}
-              activeValue={sintaFilter}
-              isOpen={openDropdownId === 'sinta'}
-              onOpenChange={(open) => setOpenDropdownId(open ? 'sinta' : null)}
-              onSelectOption={(val) => {
-                setSintaFilter(val as SintaFilterType);
-                onResetPage();
-              }}
-            />
-
-            {/* 3. Dropdown Sumber Data */}
+            {/* 2. Dropdown Sumber Data */}
             <FilterDropdown
               categoryLabel="Sumber Data"
               options={sourceOptions}
@@ -284,6 +271,19 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
               onOpenChange={(open) => setOpenDropdownId(open ? 'source' : null)}
               onSelectOption={(val) => {
                 setSourceFilter(val as SourceFilterType);
+                onResetPage();
+              }}
+            />
+
+            {/* 3. Dropdown Akreditasi SINTA */}
+            <FilterDropdown
+              categoryLabel="Akreditasi SINTA"
+              options={sintaOptions}
+              activeValue={sintaFilter}
+              isOpen={openDropdownId === 'sinta'}
+              onOpenChange={(open) => setOpenDropdownId(open ? 'sinta' : null)}
+              onSelectOption={(val) => {
+                setSintaFilter(val as SintaFilterType);
                 onResetPage();
               }}
             />

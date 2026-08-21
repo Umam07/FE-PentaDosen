@@ -13,6 +13,8 @@ export interface YearFilterBarProps {
   variant?: 'zinc' | 'slate' | 'inline';
   /** Class tambahan opsional */
   className?: string;
+  /** Alignment panel dropdown ('left' | 'right'), default: 'left' */
+  align?: 'left' | 'right';
 }
 
 export default function YearFilterBar({
@@ -21,6 +23,7 @@ export default function YearFilterBar({
   onYearChange,
   variant = 'zinc',
   className = '',
+  align = 'left',
 }: YearFilterBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,7 +95,7 @@ export default function YearFilterBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute left-0 sm:right-0 sm:left-auto top-full mt-1.5 z-[999] min-w-[170px] bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-lg py-1.5"
+              className={`absolute ${align === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'} top-full mt-1.5 z-[999] min-w-[170px] bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-lg py-1.5`}
             >
               {/* Filter Pencarian jika opsi > 10 */}
               {sortedYears.length > 10 && (
@@ -235,7 +238,7 @@ export default function YearFilterBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute right-0 top-full mt-1.5 z-[999] min-w-[170px] bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-xl py-1.5"
+              className={`absolute ${align === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'} top-full mt-1.5 z-[999] min-w-[170px] bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl shadow-xl py-1.5`}
             >
               {/* Filter Pencarian/Search Input jika opsi tahun > 10 */}
               {sortedYears.length > 10 && (
