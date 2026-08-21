@@ -224,6 +224,7 @@ export default function Publication({ user }: { user: UserSession }) {
       <MetricsGuideModal
         isOpen={pub.isMetricsModalOpen}
         onClose={() => pub.setIsMetricsModalOpen(false)}
+        category={pub.urlKategori}
       />
 
       <PdfPreviewModal
