@@ -38,7 +38,7 @@ export default function PublicationStats({
   ];
 
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+    <section className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-3.5">
       {statItems.map((item, index) => (
         <motion.div
           key={item.label}
@@ -46,7 +46,7 @@ export default function PublicationStats({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.05 }}
           onClick={item.onClick}
-          className={`group bg-surface-light dark:bg-surface-dark shadow-2xs rounded-2xl border p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all relative overflow-hidden ${
+          className={`group bg-surface-light dark:bg-surface-dark shadow-2xs rounded-2xl border p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 transition-all relative overflow-hidden ${
             item.isClickable ? 'cursor-pointer hover:border-accent hover:shadow-md active:scale-95' : ''
           } ${
             item.isActive
@@ -54,13 +54,13 @@ export default function PublicationStats({
               : 'border-hairline-light dark:border-hairline-dark'
           }`}
         >
-          <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 border ${
+          <div className={`p-2 sm:p-2.5 rounded-xl shrink-0 border ${
             item.color === 'approved' ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30' :
             item.color === 'pending' ? 'bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30' :
             item.color === 'iris' ? 'bg-accent-soft dark:bg-accent/15 text-accent-hover dark:text-accent-on-dark border-accent-border dark:border-accent/30' :
             'bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark'
           }`}>
-            <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
+            <item.icon className="h-4 w-4 sm:h-4.5 sm:w-4.5 lg:h-5 lg:w-5" />
           </div>
           <div className="min-w-0 flex-1 w-full">
             <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-0.5">

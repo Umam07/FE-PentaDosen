@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Download, FileSpreadsheet, BookOpen } from 'lucide-react';
+import { Download, FileSpreadsheet, BookOpen, AlertTriangle, Sparkles, CheckCircle2 } from 'lucide-react';
 import FilterDropdown, { FilterOption } from './FilterDropdown';
 
 import type { SintaFilterType, SourceFilterType, ScopusFilterType } from '../types/publication.types';
@@ -23,6 +23,11 @@ interface NationalFiltersBarProps {
   onImportExcel: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isImporting: boolean;
   showFilters?: boolean;
+
+  // Props konfirmasi SINTA terintegrasi
+  unconfirmedDocs?: any[];
+  onBulkConfirmAllNotCorresponding?: () => Promise<void>;
+  onOpenBulkModal?: () => void;
 }
 
 export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
@@ -41,8 +46,22 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
   onImportExcel,
   isImporting,
   showFilters = true,
+  unconfirmedDocs = [],
+  onBulkConfirmAllNotCorresponding,
+  onOpenBulkModal,
 }) => {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [isSettingAllFalse, setIsSettingAllFalse] = useState(false);
+
+  const handleSetAllFalse = async () => {
+    if (!onBulkConfirmAllNotCorresponding) return;
+    setIsSettingAllFalse(true);
+    try {
+      await onBulkConfirmAllNotCorresponding();
+    } finally {
+      setIsSettingAllFalse(false);
+    }
+  };
 
   // Filter hanya dokumen Jurnal Nasional untuk penghitungan indikator filter
   const jnDocs = useMemo(() => {
@@ -170,9 +189,9 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
   };
 
   return (
-    <div className="bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-5 shadow-2xs">
+    <div className="bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-2xl sm:rounded-3xl p-4 sm:p-5 space-y-4 shadow-2xs">
       {/* Baris Atas: Judul Singkat & 3 Tombol Aksi Rata Kanan */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-4 border-b border-hairline-light-soft dark:border-hairline-dark-soft">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3.5 pb-3.5 border-b border-hairline-light-soft dark:border-hairline-dark-soft">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
             <BookOpen className="w-5 h-5" />
@@ -195,23 +214,23 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
         </div>
 
         {/* 3 Tombol Aksi Rata Kanan */}
-        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full lg:w-auto shrink-0">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0">
           <button
             type="button"
             onClick={onUploadClick}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
           >
             Unggah Publikasi Baru
           </button>
           <button
             type="button"
             onClick={onDownloadTemplate}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-semibold bg-surface-light dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark transition-colors text-body dark:text-on-dark-soft shadow-2xs whitespace-nowrap cursor-pointer"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2 text-xs font-semibold bg-surface-light dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark transition-colors text-body dark:text-on-dark-soft shadow-2xs whitespace-nowrap cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 mr-1.5 shrink-0 text-muted dark:text-on-dark-muted" />
             Template
           </button>
-          <label className={`flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2.5 text-xs font-semibold bg-surface-light dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark transition-colors text-body dark:text-on-dark-soft shadow-2xs cursor-pointer whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+          <label className={`flex-1 sm:flex-none inline-flex items-center justify-center px-3.5 py-2 text-xs font-semibold bg-surface-light dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark transition-colors text-body dark:text-on-dark-soft shadow-2xs cursor-pointer whitespace-nowrap ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
             <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 shrink-0 text-muted dark:text-on-dark-muted" />
             {isImporting ? 'Mengimpor...' : 'Import Excel'}
             <input
@@ -227,9 +246,9 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
 
       {/* Baris Bawah: Row Dropdown Filter Flat */}
       {showFilters && (
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-0.5">
           {/* Container Filter Dropdown */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             {/* 1. Dropdown Status SINTA */}
             <FilterDropdown
               categoryLabel="Status SINTA"
@@ -280,6 +299,51 @@ export const NationalFiltersBar: React.FC<NationalFiltersBarProps> = ({
               Reset Filter
             </button>
           )}
+        </div>
+      )}
+
+      {/* Strip Konfirmasi Akreditasi SINTA Terintegrasi */}
+      {unconfirmedDocs && unconfirmedDocs.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border border-warning-border/60 dark:border-warning/30 shrink-0">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+            <span className="text-xs text-body-strong dark:text-on-dark truncate">
+              <strong className="font-bold text-ink-heading dark:text-on-dark font-mono">{unconfirmedDocs.length}</strong> publikasi Jurnal Nasional perlu konfirmasi Akreditasi SINTA
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+            <button
+              type="button"
+              disabled={isSettingAllFalse}
+              onClick={handleSetAllFalse}
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-surface-light dark:bg-surface-dark-elevated hover:bg-surface-light-raised dark:hover:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-95 disabled:opacity-50 whitespace-nowrap cursor-pointer"
+              title="Satu klik untuk konfirmasi status SINTA pada seluruh dokumen ini menjadi Non-SINTA"
+            >
+              {isSettingAllFalse ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <span>Memproses...</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted shrink-0" />
+                  <span>Set Semua: Non-SINTA</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={onOpenBulkModal}
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-lg text-xs font-semibold shadow-2xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark shrink-0" />
+              <span>Konfirmasi SINTA Massal ({unconfirmedDocs.length})</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

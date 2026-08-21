@@ -15,7 +15,6 @@ import PublicationDeleteModal from './components/PublicationDeleteModal';
 import ScopusFiltersBar from './components/ScopusFiltersBar';
 import NationalFiltersBar from './components/NationalFiltersBar';
 import MetricsGuideModal from './components/MetricsGuideModal';
-import UnconfirmedCorrespondenceBanner from './components/UnconfirmedCorrespondenceBanner';
 
 import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
@@ -89,7 +88,7 @@ export default function Publication({ user }: { user: UserSession }) {
   }, [pub.message, pub.messageType]);
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <div className="w-full space-y-4 pb-10">
 
       {/* Header Halaman */}
       <PublicationHeader
@@ -115,7 +114,7 @@ export default function Publication({ user }: { user: UserSession }) {
         />
       )}
 
-      {/* Scopus Filters Bar (Jurnal Internasional) */}
+      {/* Scopus Filters Bar (Jurnal Internasional) dengan Konfirmasi Korespondensi Terintegrasi */}
       {(pub.urlKategori || '').toLowerCase().includes('jurnal internasional') && (
         <ScopusFiltersBar
           documents={pub.documents || []}
@@ -134,10 +133,13 @@ export default function Publication({ user }: { user: UserSession }) {
           onDownloadTemplate={pub.handleDownloadTemplate}
           onImportExcel={() => {}}
           isImporting={pub.isImporting}
+          unconfirmedDocs={pub.unconfirmedCorrespondenceDocs || []}
+          onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
+          onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
         />
       )}
 
-      {/* National Filters Bar (Jurnal Nasional) */}
+      {/* National Filters Bar (Jurnal Nasional) dengan Konfirmasi SINTA Terintegrasi */}
       {(pub.urlKategori || '').toLowerCase().includes('jurnal nasional') && (
         <NationalFiltersBar
           documents={pub.documents || []}
@@ -154,27 +156,11 @@ export default function Publication({ user }: { user: UserSession }) {
           onDownloadTemplate={pub.handleDownloadTemplate}
           onImportExcel={() => {}}
           isImporting={pub.isImporting}
+          unconfirmedDocs={pub.unconfirmedSintaDocs || []}
+          onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
+          onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
         />
       )}
-
-
-      {/* Unconfirmed Banner (Correspondence for Jurnal Internasional, SINTA for Jurnal Nasional) */}
-      {(() => {
-        const isJI = (pub.urlKategori || '').toLowerCase().includes('jurnal internasional');
-        const isJN = (pub.urlKategori || '').toLowerCase().includes('jurnal nasional');
-        const docs = isJN ? (pub.unconfirmedSintaDocs || []) : isJI ? (pub.unconfirmedCorrespondenceDocs || []) : [];
-        if (docs.length === 0) return null;
-
-        return (
-          <UnconfirmedCorrespondenceBanner
-            unconfirmedDocs={docs}
-            isNationalJournal={isJN}
-            onBulkConfirmAllNotCorresponding={handleBulkConfirmAllNotCorresponding}
-            onOpenBulkModal={() => pub.setIsBulkCorrespondenceModalOpen(true)}
-            onFilterUnconfirmed={() => pub.setScopusFilter('unconfirmed')}
-          />
-        );
-      })()}
 
 
       {/* Tabel Publikasi */}
