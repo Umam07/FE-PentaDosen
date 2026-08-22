@@ -1,9 +1,7 @@
 import React from 'react';
 import { RefreshCw, Search, Save, Lock } from 'lucide-react';
-import { MetricTile } from './MetricTile';
 import { AuthorPreview } from './AuthorPreview';
 import { IntegrationCardProps } from '../types/konfigurasi.types';
-
 const platformStyles = {
   scholar: {
     brandBadge: 'border-blue-200/60 bg-blue-50/80 text-chart-scholar dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-chart-scholar-dark',
@@ -38,12 +36,6 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
   const isSaved = Boolean(savedValue);
   const isSynchronized = Boolean(data);
   const saveDisabled = loading || !value || (value !== savedValue && !checkedAuthor);
-
-  const metrics = [
-    { label: 'Documents', value: data?.document_count },
-    { label: 'Citations', value: data?.total_citations },
-    { label: 'h-index', value: data?.h_index },
-  ];
 
   return (
     <section className="flex flex-col justify-between rounded-2xl border border-hairline-light bg-surface-light p-5 shadow-xs dark:border-hairline-dark dark:bg-surface-dark sm:p-6">
@@ -180,19 +172,6 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
 
         {/* Verified Author Preview (only when checking unsaved ID) */}
         {!isSaved && <AuthorPreview author={checkedAuthor} tone={type} />}
-
-        {/* Metrics Grid: Documents, Citations, h-index */}
-        <div>
-          <div className="grid grid-cols-3 gap-3">
-            {metrics.map((metric) => (
-              <MetricTile
-                key={metric.label}
-                label={metric.label}
-                value={metric.value}
-              />
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Footer Timestamp */}
