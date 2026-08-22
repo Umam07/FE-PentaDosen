@@ -44,13 +44,6 @@ export interface KonfigurasiProps {
   tabVariants: any;
 }
 
-export interface MetricTileProps {
-  label: string;
-  value: any;
-  icon?: React.ComponentType<any>;
-}
-
-
 export interface AuthorPreviewProps {
   author: any;
   tone: IntegrationTone;
