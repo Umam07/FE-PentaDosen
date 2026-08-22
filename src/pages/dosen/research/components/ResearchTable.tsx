@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
    ChevronLeft, ChevronRight, Lock, Pencil, Trash2, 
-   FileText, Info, RotateCcw
+   FileText, Info, RotateCcw, CheckCircle, XCircle, Clock, Upload
 } from 'lucide-react';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
@@ -125,7 +125,8 @@ export default function ResearchTable({
         </div>
       )}
 
-      <div className="w-full overflow-x-auto">
+      {/* ── 1. Desktop & Tablet Table View (md ke atas) ── */}
+      <div className="hidden md:block w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">
           <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
             <tr>
@@ -339,15 +340,225 @@ export default function ResearchTable({
         </table>
       </div>
 
+      {/* ── 2. Mobile Responsive Card List View (< md) ── */}
+      <div className="block md:hidden divide-y divide-hairline-light dark:divide-hairline-dark">
+        {isTableLoading ? (
+          <phantom-ui loading={true} animation="shimmer" className="contents">
+            {[1, 2, 3].map((i) => (
+              <div key={`m-skeleton-${i}`} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="h-9 w-9 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl shrink-0 mt-0.5" />
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 w-3/4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                      <div className="h-3 w-1/2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                    </div>
+                  </div>
+                  <div className="h-6 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg shrink-0" />
+                </div>
+                <div className="flex gap-1.5 pt-1">
+                  <div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                  <div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                  <div className="h-5 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                </div>
+                <div className="pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+                  <div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-full" />
+                  <div className="flex gap-1.5">
+                    <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                    <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </phantom-ui>
+        ) : currentItems.length > 0 ? (
+          currentItems.map((res: any) => {
+            const SchemaIcon = getResearchSchemaIcon(res.program, res.skema);
+            const isLocked = isDocLocked(res);
+
+            return (
+              <div 
+                key={res.id}
+                className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised/40 dark:hover:bg-surface-dark-elevated/40 transition-colors"
+              >
+                {/* Top Section: Icon, Title & Points */}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div 
+                    className="flex items-start gap-2.5 flex-1 min-w-0 cursor-pointer group"
+                    onClick={() => onViewDetail(res)}
+                  >
+                    <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl group-hover:bg-hairline-light dark:group-hover:bg-surface-dark transition-colors shrink-0 mt-0.5 border border-hairline-light/60 dark:border-hairline-dark/60 text-body dark:text-on-dark-soft shadow-2xs">
+                      <SchemaIcon className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4
+                        className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark leading-snug line-clamp-2 hover:underline"
+                        title={res.judul_penelitian}
+                      >
+                        {res.judul_penelitian}
+                      </h4>
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted dark:text-on-dark-muted flex-wrap mt-1">
+                        <span className="font-mono">{formatDateVal(res.tahun)}</span>
+                        <span>•</span>
+                        <span className="font-medium">{res.program}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Point Badge */}
+                  <div className="shrink-0 flex flex-col items-end">
+                    <span className="px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-xs font-bold font-mono tabular-nums border border-hairline-light dark:border-hairline-dark whitespace-nowrap shadow-2xs">
+                      +{Math.round(res.awarded_points || 0)} Pts
+                    </span>
+                  </div>
+                </div>
+
+                {/* Badges / Chips: Skema, Fokus, Dana */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {res.skema && (
+                    <span className="text-[10px] font-medium text-body dark:text-on-dark-soft bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md border border-hairline-light dark:border-hairline-dark">
+                      {res.skema}
+                    </span>
+                  )}
+                  {res.fokus && (
+                    <span className="text-[10px] font-medium text-body dark:text-on-dark-soft bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md border border-hairline-light dark:border-hairline-dark">
+                      {res.fokus}
+                    </span>
+                  )}
+                  <span className="text-[10px] font-mono font-semibold text-body-strong dark:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md border border-hairline-light dark:border-hairline-dark">
+                    {formatCurrency(res.dana_disetujui || 0)}
+                  </span>
+                </div>
+
+                {/* Rejection Note */}
+                {res.status === 'Rejected' && res.catatan && (
+                  <div className="text-[11px] text-error dark:text-error-on-dark bg-error-soft dark:bg-error/15 px-2.5 py-1.5 rounded-lg border border-error-border dark:border-error/30">
+                    Catatan: {res.catatan}
+                  </div>
+                )}
+
+                {/* Card Footer: Status, PDF action, Detail & Action Buttons */}
+                <div className="pt-2.5 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between gap-2 flex-wrap">
+                  {/* Left: Status & PDF */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Status Badge */}
+                    <div
+                      className={`inline-flex items-center px-2.5 py-1 rounded-full font-semibold text-[11px] border whitespace-nowrap ${
+                        res.status === 'Approved'
+                          ? 'bg-success-soft text-success-dark dark:bg-success/15 dark:text-success-on-dark border-success-border dark:border-success/30'
+                          : res.status === 'Rejected'
+                          ? 'bg-error-soft text-error dark:bg-error/15 dark:text-error-on-dark border-error-border dark:border-error/30'
+                          : res.status === 'Verified by Fakultas'
+                          ? 'bg-accent-soft text-accent-hover dark:bg-accent/15 dark:text-accent-on-dark border-accent-border dark:border-accent/30'
+                          : 'bg-warning-soft text-warning dark:bg-warning/15 dark:text-warning-on-dark border-warning-border dark:border-warning/30'
+                      }`}
+                    >
+                      {res.status === 'Approved' && <CheckCircle className="w-3.5 h-3.5 mr-1 text-success dark:text-success-on-dark" />}
+                      {res.status === 'Rejected' && <XCircle className="w-3.5 h-3.5 mr-1 text-error dark:text-error-on-dark" />}
+                      {res.status !== 'Approved' && res.status !== 'Rejected' && <Clock className="w-3.5 h-3.5 mr-1 text-warning dark:text-warning-on-dark" />}
+                      <span>{res.status === 'Verified by Fakultas' ? 'Verified (Fakultas)' : res.status || 'Pending'}</span>
+                    </div>
+
+                    {/* PDF Action */}
+                    {res.file_url && res.file_url !== '-' ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onPreviewPdf({
+                            fileUrl: res.file_url,
+                            title: res.judul_penelitian,
+                            category: res.program,
+                          })
+                        }
+                        aria-label={`Lihat PDF untuk ${res.judul_penelitian}`}
+                        className="inline-flex items-center text-xs font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer shadow-2xs"
+                      >
+                        <FileText className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" />
+                        Lihat
+                      </button>
+                    ) : (
+                      <label className="inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:hover:text-on-dark cursor-pointer bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors shadow-2xs">
+                        {uploadingPdfId === res.id ? (
+                          <span className="animate-pulse">Uploading...</span>
+                        ) : (
+                          <>
+                            <Upload className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" />
+                            Upload
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              className="sr-only"
+                              onChange={(e) => onUploadPdf(e, res.id)}
+                              disabled={uploadingPdfId === res.id}
+                            />
+                          </>
+                        )}
+                      </label>
+                    )}
+                  </div>
+
+                  {/* Right: Detail, Edit, Delete / Locked */}
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <button
+                      type="button"
+                      onClick={() => onViewDetail(res)}
+                      aria-label={`Lihat detail penelitian ${res.judul_penelitian}`}
+                      className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+                      title="Lihat Detail"
+                    >
+                      <Info className="w-4 h-4" />
+                    </button>
+
+                    {!isLocked ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => onEditClick(res)}
+                          aria-label={`Edit penelitian ${res.judul_penelitian}`}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all cursor-pointer shadow-2xs"
+                          title="Edit Penelitian"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onDeleteClick(res)}
+                          aria-label={`Hapus penelitian ${res.judul_penelitian}`}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-error-soft dark:bg-surface-dark-elevated dark:hover:bg-error/15 text-muted hover:text-error dark:text-on-dark-muted dark:hover:text-error-on-dark border border-hairline-light dark:border-hairline-dark hover:border-error-border dark:hover:border-error/30 transition-all cursor-pointer shadow-2xs"
+                          title="Hapus Penelitian"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    ) : (
+                      <span
+                        className="p-1.5 rounded-lg bg-surface-light-raised/50 dark:bg-surface-dark-elevated/50 text-muted/60 dark:text-on-dark-muted/50 border border-hairline-light/60 dark:border-hairline-dark/60 inline-flex items-center justify-center cursor-not-allowed"
+                        title="Dokumen sudah diverifikasi — tidak dapat diubah"
+                      >
+                        <Lock className="w-3.5 h-3.5" />
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="p-8 text-center text-muted dark:text-on-dark-muted font-medium text-xs">
+            Belum ada data penelitian.
+          </div>
+        )}
+      </div>
+
       {/* Pagination */}
       {!isTableLoading && researchList.length > 0 && (
-        <div className="px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised/50 dark:bg-surface-dark/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="px-4 sm:px-6 py-4 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised/50 dark:bg-surface-dark/50 flex flex-col sm:flex-row items-center justify-between gap-3.5 sm:gap-4">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-4 w-full sm:w-auto text-center sm:text-left">
             <span className="text-xs text-muted dark:text-on-dark-muted">
               Menampilkan <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{indexOfFirstItem + 1} - {Math.min(indexOfLastItem, researchList.length)}</span> dari <span className="font-semibold font-mono text-ink-heading dark:text-on-dark">{researchList.length}</span> Penelitian
             </span>
             <div className="h-4 w-px bg-hairline-light dark:bg-hairline-dark hidden sm:block" />
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="text-xs text-muted dark:text-on-dark-muted">Limit:</span>
               <DropdownSelect
                 value={itemsPerPage}
@@ -368,7 +579,7 @@ export default function ResearchTable({
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-center gap-1.5 w-full sm:w-auto">
             <button
               type="button"
               disabled={currentPage === 1}
@@ -418,3 +629,4 @@ export default function ResearchTable({
     </section>
   );
 }
+
