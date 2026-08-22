@@ -371,14 +371,13 @@ export default function ExternalDocumentsView({
                               {availableYearsScopus.length > 0 && (
                                 <>
                                   <div className="h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
-                                  <div className="relative z-30 shrink-0">
-                                    <YearFilterBar
-                                      availableYears={availableYearsScopus}
-                                      selectedYear={filterYearExt}
-                                      onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                      className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
-                                    />
-                                  </div>
+                                  <YearFilterBar
+                                    availableYears={availableYearsScopus}
+                                    selectedYear={filterYearExt}
+                                    onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                                    variant="inline"
+                                    align="right"
+                                  />
                                 </>
                               )}
                             </div>
@@ -565,14 +564,13 @@ export default function ExternalDocumentsView({
                           {!isPublic && availableYearsScholar.length > 0 && (
                             <>
                               <div className="hidden sm:block h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
-                              <div className="relative z-30 shrink-0">
-                                <YearFilterBar
-                                  availableYears={availableYearsScholar}
-                                  selectedYear={filterYearExt}
-                                  onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                                  className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
-                                />
-                              </div>
+                              <YearFilterBar
+                                availableYears={availableYearsScholar}
+                                selectedYear={filterYearExt}
+                                onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                                variant="inline"
+                                align="right"
+                              />
                             </>
                           )}
                         </div>
@@ -706,14 +704,13 @@ export default function ExternalDocumentsView({
                     {!isPublic && availableYearsCross.length > 0 && (
                       <>
                         <div className="hidden sm:block h-5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
-                        <div className="relative z-30 shrink-0">
-                          <YearFilterBar
-                            availableYears={availableYearsCross}
-                            selectedYear={filterYearExt}
-                            onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
-                            className="!bg-transparent !border-none !shadow-none !p-0 !m-0"
-                          />
-                        </div>
+                        <YearFilterBar
+                          availableYears={availableYearsCross}
+                          selectedYear={filterYearExt}
+                          onYearChange={(y) => { setFilterYearExt(y); setCurrentPage(1); }}
+                          variant="inline"
+                          align="right"
+                        />
                       </>
                     )}
                   </div>

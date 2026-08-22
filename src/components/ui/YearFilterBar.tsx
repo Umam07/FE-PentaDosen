@@ -9,8 +9,8 @@ export interface YearFilterBarProps {
   selectedYear: number | null;
   /** Callback saat user mengubah pilihan tahun */
   onYearChange: (year: number | null) => void;
-  /** Varian warna: 'zinc' (default untuk tabel), 'slate' (untuk tampilan dashboard external), atau 'inline' (untuk filter toolbar) */
-  variant?: 'zinc' | 'slate' | 'inline';
+  /** Varian warna: 'inline' (default untuk filter toolbar), 'zinc' (legacy), 'slate' (legacy) */
+  variant?: 'inline' | 'zinc' | 'slate';
   /** Class tambahan opsional */
   className?: string;
   /** Alignment panel dropdown ('left' | 'right'), default: 'left' */
@@ -21,7 +21,7 @@ export default function YearFilterBar({
   availableYears,
   selectedYear,
   onYearChange,
-  variant = 'zinc',
+  variant = 'inline',
   className = '',
   align = 'left',
 }: YearFilterBarProps) {
