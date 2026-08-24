@@ -1,3 +1,4 @@
+import React from 'react';
 import { Globe, FileText } from 'lucide-react';
 
 interface ViewSwitcherProps {
@@ -12,19 +13,19 @@ export default function ViewSwitcher({ activeView, onViewChange }: ViewSwitcherP
   ] as const;
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 mt-8">
-      <div className="w-full sm:w-auto grid grid-cols-2 sm:flex p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl sm:rounded-3xl border border-slate-200/60 dark:border-slate-700 shadow-inner gap-1 sm:gap-1.5">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-8">
+      <div className="grid grid-cols-2 sm:flex w-full sm:w-auto p-1 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark gap-1">
         {views.map((view) => (
           <button
             key={view.id}
             onClick={() => onViewChange(view.id)}
-            className={`flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all duration-300 ${
-              activeView === view.id 
-                ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-md sm:shadow-xl shadow-primary-500/10' 
-                : 'text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold tracking-tight transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent ${
+              activeView === view.id
+                ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-2xs'
+                : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
             }`}
           >
-            <view.icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${activeView === view.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+            <view.icon className="w-4 h-4 shrink-0" />
             <span className="truncate">{view.label}</span>
           </button>
         ))}

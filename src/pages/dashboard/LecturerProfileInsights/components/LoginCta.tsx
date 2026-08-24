@@ -1,5 +1,6 @@
+import React from 'react';
 import { motion } from 'motion/react';
-import { Lock, Zap } from 'lucide-react';
+import { Lock, ArrowRight } from 'lucide-react';
 
 interface LoginCtaProps {
   onLogin: () => void;
@@ -8,29 +9,33 @@ interface LoginCtaProps {
 export default function LoginCta({ onLogin }: LoginCtaProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="mt-10 p-1 bg-gradient-to-r from-slate-200 via-primary-500/20 to-slate-200 dark:from-slate-800 dark:via-primary-500/20 dark:to-slate-800 rounded-[2.5rem]"
+      transition={{ duration: 0.2 }}
+      className="mt-10 rounded-3xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark p-6 sm:p-8 shadow-xs"
     >
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-8 rounded-[2.4rem] flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-          <div className="w-14 h-14 rounded-2xl bg-primary-500/10 flex items-center justify-center border border-primary-500/20 shadow-inner">
-            <Lock className="w-6 h-6 text-primary-600" />
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-hairline-light bg-surface-light-raised text-ink-heading dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark">
+            <Lock className="h-5 w-5" />
           </div>
           <div>
-            <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] mb-1.5">Akses Profil Terbatas</h4>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Masuk ke Portal Penta untuk melihat detail lengkap & analisis mendalam</p>
+            <h3 className="text-base sm:text-lg font-bold tracking-tight text-ink-heading dark:text-on-dark">
+              Akses Profil Terbatas
+            </h3>
+            <p className="text-xs sm:text-sm text-muted dark:text-on-dark-muted mt-0.5">
+              Masuk ke Portal PentaDosen untuk melihat detail lengkap dan analisis mendalam.
+            </p>
           </div>
         </div>
+
         <button
           onClick={onLogin}
-          className="group flex items-center gap-3 px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary-600 dark:hover:bg-primary-500 dark:hover:text-white transition-all shadow-2xl hover:scale-105 active:scale-95"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-5 py-2.5 text-sm font-semibold text-on-ink transition-colors hover:bg-ink-hover dark:bg-on-dark dark:text-ink dark:hover:bg-on-dark-soft shadow-xs cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent shrink-0"
         >
           <span>Login ke Portal</span>
-          <div className="w-6 h-6 rounded-full bg-white/20 dark:bg-slate-900/10 flex items-center justify-center group-hover:bg-white/40">
-            <Zap className="w-3 h-3 rotate-12" />
-          </div>
+          <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </motion.div>

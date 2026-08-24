@@ -11,6 +11,9 @@ export interface LecturerUser {
   program_studi?: string;
   penta_id?: string;
   email?: string;
+  nidn?: string;
+  scholar_id?: string;
+  scopus_id?: string;
 }
 
 export interface LecturerProfile {
