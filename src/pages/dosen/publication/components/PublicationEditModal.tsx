@@ -145,7 +145,9 @@ export default function PublicationEditModal({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-body dark:text-on-dark-soft">Judul Publikasi</label>
+            <label className="text-xs font-semibold text-body dark:text-on-dark-soft">
+              Judul Publikasi <span className="text-error ml-0.5">*</span>
+            </label>
             <input 
               type="text" 
               required 
@@ -156,7 +158,9 @@ export default function PublicationEditModal({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="edit-pub-category" className="text-xs font-semibold text-body dark:text-on-dark-soft">Kategori Publikasi</label>
+            <label htmlFor="edit-pub-category" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+              Kategori Publikasi <span className="text-error ml-0.5">*</span>
+            </label>
             <select 
               id="edit-pub-category"
               value={editCategory} 
@@ -192,7 +196,7 @@ export default function PublicationEditModal({
               <div className="space-y-1.5">
                 <label htmlFor="edit-pub-sinta-rank" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
                   <Award className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
-                  Akreditasi SINTA
+                  Akreditasi SINTA <span className="text-error ml-0.5">*</span>
                 </label>
                 <select
                   id="edit-pub-sinta-rank"
@@ -231,7 +235,7 @@ export default function PublicationEditModal({
           <div className="space-y-1.5 relative">
             <label className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center">
               <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
-              Tanggal Terbit
+              Tanggal Terbit <span className="text-error ml-0.5">*</span>
             </label>
             <DatePicker date={editDate} onDateChange={setEditDate} placeholder="Pilih tanggal terbit" />
           </div>

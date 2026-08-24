@@ -140,7 +140,9 @@ export default function HKIEditModal({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft">Judul HKI</label>
+            <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft">
+              Judul HKI <span className="text-error ml-0.5">*</span>
+            </label>
             <input 
               type="text" 
               required 
@@ -153,7 +155,7 @@ export default function HKIEditModal({
           <div className="space-y-2">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft flex items-center">
               <Shield className="w-3.5 h-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
-              Jenis HKI
+              Jenis HKI <span className="text-error ml-0.5">*</span>
             </label>
             <div className="grid grid-cols-2 gap-2">
               {HKI_CATEGORIES.map(opt => (
@@ -210,7 +212,7 @@ export default function HKIEditModal({
           <div className="space-y-1.5 relative">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft flex items-center">
               <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
-              Tanggal Perolehan
+              Tanggal Perolehan <span className="text-error ml-0.5">*</span>
             </label>
             <DatePicker date={editDate} onDateChange={setEditDate} placeholder="Pilih tanggal perolehan" />
           </div>

@@ -86,7 +86,7 @@ export default function ResearchEditModal({
           {/* Program */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-              Kategori Program
+              Kategori Program <span className="text-error ml-0.5">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2.5">
               {[
@@ -115,7 +115,7 @@ export default function ResearchEditModal({
           {/* Judul */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-              Judul Penelitian
+              Judul Penelitian <span className="text-error ml-0.5">*</span>
             </label>
             <input
               type="text"
@@ -130,7 +130,7 @@ export default function ResearchEditModal({
             {/* Skema */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-                Skema
+                Skema <span className="text-error ml-0.5">*</span>
               </label>
               <select
                 value={editSkema}
@@ -147,7 +147,7 @@ export default function ResearchEditModal({
             {/* Fokus */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-                Fokus
+                Fokus <span className="text-error ml-0.5">*</span>
               </label>
               <select
                 value={editFokus}
@@ -169,7 +169,7 @@ export default function ResearchEditModal({
             {/* Dana */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-                Dana Disetujui
+                Dana Disetujui <span className="text-error ml-0.5">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -191,7 +191,7 @@ export default function ResearchEditModal({
             <div className="space-y-1.5 relative">
               <label className="text-xs font-semibold text-body-strong dark:text-on-dark flex items-center">
                 <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
-                Tanggal Pelaksanaan
+                Tanggal Pelaksanaan <span className="text-error ml-0.5">*</span>
               </label>
               <DatePicker date={editTahun} onDateChange={setEditTahun} placeholder="Pilih tanggal pelaksanaan" />
             </div>

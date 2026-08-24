@@ -219,7 +219,9 @@ export default function PublicationUploadModal({
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="pub-title" className="text-xs font-semibold text-body dark:text-on-dark-soft">Judul Publikasi</label>
+          <label htmlFor="pub-title" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+            Judul Publikasi <span className="text-error ml-0.5">*</span>
+          </label>
           <input 
             type="text"
             id="pub-title"
@@ -236,7 +238,7 @@ export default function PublicationUploadModal({
             <div className="space-y-1.5">
               <label htmlFor="pub-sinta-rank" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
                 <Award className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
-                Akreditasi SINTA
+                Akreditasi SINTA <span className="text-error ml-0.5">*</span>
               </label>
               <select
                 id="pub-sinta-rank"
@@ -275,13 +277,15 @@ export default function PublicationUploadModal({
         <div className="space-y-1.5 relative">
           <label className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center">
             <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
-            Tanggal Terbit
+            Tanggal Terbit <span className="text-error ml-0.5">*</span>
           </label>
           <DatePicker date={date} onDateChange={setDate} placeholder="Pilih tanggal terbit" />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-body dark:text-on-dark-soft">File Publikasi (PDF)</label>
+          <label className="text-xs font-semibold text-body dark:text-on-dark-soft">
+            File Publikasi (PDF) <span className="text-error ml-0.5">*</span>
+          </label>
           {file ? (
             <div className="relative p-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-2xl flex flex-col gap-3">
               <button 

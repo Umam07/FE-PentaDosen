@@ -175,7 +175,7 @@ export default function ResearchUploadModal({
         {/* Program Selector */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-            Kategori Program Penelitian
+            Kategori Program Penelitian <span className="text-error ml-0.5">*</span>
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {[
@@ -210,7 +210,7 @@ export default function ResearchUploadModal({
         {/* Judul Penelitian */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-            Judul Penelitian
+            Judul Penelitian <span className="text-error ml-0.5">*</span>
           </label>
           <input
             type="text"
@@ -226,7 +226,7 @@ export default function ResearchUploadModal({
           {/* Skema */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-              Skema Penelitian
+              Skema Penelitian <span className="text-error ml-0.5">*</span>
             </label>
             <select
               value={skema}
@@ -252,7 +252,7 @@ export default function ResearchUploadModal({
           {/* Fokus */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-              Fokus Penelitian
+              Fokus Penelitian <span className="text-error ml-0.5">*</span>
             </label>
             <select
               value={fokus}
@@ -286,7 +286,7 @@ export default function ResearchUploadModal({
           {/* Dana Disetujui */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-              Dana Disetujui
+              Dana Disetujui <span className="text-error ml-0.5">*</span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -311,7 +311,7 @@ export default function ResearchUploadModal({
           <div className="space-y-1.5 relative">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark flex items-center">
               <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
-              Tanggal Pelaksanaan
+              Tanggal Pelaksanaan <span className="text-error ml-0.5">*</span>
             </label>
             <DatePicker date={tahun} onDateChange={setTahun} placeholder="Pilih tanggal pelaksanaan" />
           </div>
@@ -320,7 +320,7 @@ export default function ResearchUploadModal({
         {/* Drag and Drop PDF */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
-            Laporan Kemajuan / Akhir (PDF)
+            Laporan Kemajuan / Akhir (PDF) <span className="text-error ml-0.5">*</span>
           </label>
           {file ? (
             <div className="relative p-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-2xl flex flex-col gap-3">
