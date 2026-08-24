@@ -50,6 +50,10 @@ export default function PublicationUploadModal({
     return (category || '').toLowerCase().includes('jurnal nasional');
   }, [category]);
 
+  const isInternationalJournal = useMemo(() => {
+    return (category || '').toLowerCase().includes('jurnal internasional');
+  }, [category]);
+
   const modalSubtitle = useMemo(() => {
     if (!category) return 'Daftarkan Jurnal Ilmiah, Prosiding, atau Book Chapter';
     const catLower = category.toLowerCase();
@@ -129,6 +133,8 @@ export default function PublicationUploadModal({
     formData.append('doc_type', docType);
     if (isNationalJournal) {
       if (sintaRank) formData.append('sinta_rank', sintaRank);
+      if (citations !== '') formData.append('citations', citations);
+    } else if (isInternationalJournal) {
       if (citations !== '') formData.append('citations', citations);
     }
 
@@ -271,6 +277,24 @@ export default function PublicationUploadModal({
                 className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
               />
             </div>
+          </div>
+        )}
+
+        {isInternationalJournal && (
+          <div className="space-y-1.5">
+            <label htmlFor="pub-citations-international" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
+              <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
+              Jumlah Sitasi (Opsional)
+            </label>
+            <input
+              type="number"
+              id="pub-citations-international"
+              min="0"
+              value={citations}
+              onChange={(e) => setCitations(e.target.value)}
+              placeholder="0"
+              className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
+            />
           </div>
         )}
 
