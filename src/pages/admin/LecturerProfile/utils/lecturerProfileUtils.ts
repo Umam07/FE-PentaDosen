@@ -81,20 +81,17 @@ export function calculateKPIStats(
     { 
       label: 'Total KPI Overall', 
       val: (extTotal + internalTotal).toLocaleString(), 
-      icon: Award, 
-      color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
+      icon: Award
     },
     { 
       label: 'Total KPI Tahun Ini',
       val: (apiThisYear + internalThisYear).toLocaleString(),
-      icon: Globe, 
-      color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
+      icon: Globe
     },
     { 
       label: 'Poin (Internal)',
       val: internalTotal.toLocaleString(),
-      icon: FileText, 
-      color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
+      icon: FileText
     }
   ];
 }

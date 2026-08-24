@@ -52,7 +52,7 @@ export interface StatCard {
   label: string;
   val: string;
   icon: LucideIcon;
-  color: string;
+  color?: string;
 }
 
 export interface ProfileCardProps {

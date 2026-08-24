@@ -10,9 +10,9 @@ import ExternalDocumentsView from '../../dosen/dashboard/components/ExternalDocu
 import InternalDocumentsView from '../../dosen/dashboard/components/InternalDocumentsView';
 
 const tabVariants = {
-  hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
-  exit: { opacity: 0, y: -15, transition: { duration: 0.2, ease: "easeIn" } }
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+  exit: { opacity: 0, y: -12, transition: { duration: 0.15, ease: 'easeIn' } }
 };
 
 export default function AdminLecturerProfile() {
@@ -50,16 +50,18 @@ export default function AdminLecturerProfile() {
   }
 
   return (
-    <div className="w-full space-y-6 pb-12 transition-all duration-300">
+    <div className="w-full space-y-6 pb-20 transition-all duration-300">
+      {/* Navigation Back Button */}
       <button 
         onClick={() => navigate('/admin/lecturers')}
-        className="group flex items-center text-sm text-gray-500 hover:text-primary-600 font-medium transition-colors"
+        aria-label="Kembali ke Daftar Dosen"
+        className="group inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-lg px-2 py-1 -ml-2 cursor-pointer"
       >
-        <ArrowLeft className="h-4 w-4 mr-1.5 group-hover:-translate-x-1 transition-transform" />
-        Kembali ke Daftar Dosen
+        <ArrowLeft className="h-4 w-4 mr-1.5 group-hover:-translate-x-0.5 transition-transform" />
+        <span>Kembali ke Daftar Dosen</span>
       </button>
 
-      {/* TOP COMPREHENSIVE HEADER CARD */}
+      {/* Profile Card Summary & Stats */}
       <ProfileCard
         profile={profile}
         loading={loading}
