@@ -1,9 +1,23 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { 
+  Github, 
+  Instagram, 
+  ArrowLeft, 
+  GraduationCap, 
+  Code2, 
+  Users, 
+  ExternalLink, 
+  Building2, 
+  ShieldCheck, 
+  Database,
+  Layers,
+  Sparkles
+} from 'lucide-react';
 import Navbar from '../components/Home/Navbar';
 import Footer from '../components/Home/Footer';
 import SEO from '../components/SEO';
-import { Github, Instagram, ArrowLeft, GraduationCap, Code2, Users, ExternalLink, Sparkles, Building2, ShieldCheck, Database } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
 
 interface TeamMember {
   name: string;
@@ -19,11 +33,11 @@ interface TeamMember {
 
 const supervisor: TeamMember = {
   name: "Nurmaya, S.Kom, M.Eng, Ph.D",
-  role: "Dosen Pembimbing",
+  role: "Dosen Pembimbing Utama",
   institution: "Program Studi Teknik Informatika, Universitas YARSI",
-  initials: "N",
+  initials: "NM",
   photoUrl: "/team/nurmaya.jpg",
-  bio: "Membimbing perancangan arsitektur, tata kelola data publikasi, serta validasi metodologi platform PentaDosen.",
+  bio: "Membimbing perancangan arsitektur sistem, tata kelola data publikasi akademik, metodologi evaluasi sitasi, serta integrasi standar Tri Dharma pada platform PentaDosen.",
 };
 
 const developers: TeamMember[] = [
@@ -56,6 +70,33 @@ const developers: TeamMember[] = [
   }
 ];
 
+const pillars = [
+  {
+    number: "01",
+    tag: "ARSITEKTUR DATA",
+    icon: ShieldCheck,
+    title: "Tata Kelola Terintegrasi",
+    description: "Memfasilitasi manajemen seluruh output publikasi internasional, nasional, penelitian, HKI, dan buku akademik dosen dalam satu repositori terpusat dan terstruktur.",
+    highlights: ["Publikasi & Riset", "HKI & Buku Dosen", "Format Standar Tri Dharma"]
+  },
+  {
+    number: "02",
+    tag: "SINKRONISASI SITASI",
+    icon: Database,
+    title: "Validasi & Sinkronisasi Akurat",
+    description: "Integrasi analitik sitasi dengan sumber terindeksasi resmi (Google Scholar & Scopus) guna menjamin validitas rekam jejak riset dan kalkulasi KPI yang objektif.",
+    highlights: ["Google Scholar API", "Scopus Indexing", "Kalkulasi KPI Otomatis"]
+  },
+  {
+    number: "03",
+    tag: "ENGINEERING STANDARDS",
+    icon: Layers,
+    title: "Standar Rekayasa Web Modern",
+    description: "Dibangun dengan arsitektur SPA performa tinggi, sistem desain Warm Neutral Academic yang menenangkan, serta kepatuhan aksesibilitas penuh standar WCAG 2.1 AA.",
+    highlights: ["Aksesibilitas WCAG 2.1 AA", "Warm Neutral 2.0", "Fast Client SPA"]
+  }
+];
+
 function MemberAvatar({
   name,
   initials,
@@ -82,15 +123,15 @@ function MemberAvatar({
 
   if (size === "large") {
     return (
-      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden shrink-0 flex items-center justify-center">
+      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden shrink-0 flex items-center justify-center shadow-2xs">
         {imageFailed || !currentSrc ? (
-          <span className="text-2xl font-bold text-muted dark:text-on-dark-muted font-mono tracking-tight">
+          <span className="text-2xl font-bold text-ink-heading dark:text-on-dark font-mono tracking-tight">
             {initials}
           </span>
         ) : (
           <img
             src={currentSrc}
-            alt={name}
+            alt={`Foto ${name}`}
             loading="eager"
             decoding="async"
             onError={handleError}
@@ -102,19 +143,19 @@ function MemberAvatar({
   }
 
   return (
-    <div className="relative w-full aspect-square rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden flex items-center justify-center mb-4 group/avatar">
+    <div className="relative w-full aspect-[4/3] rounded-2xl border border-hairline-light-soft dark:border-hairline-dark-soft bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden flex items-center justify-center mb-5 group/avatar shadow-2xs">
       {imageFailed || !currentSrc ? (
-        <span className="text-3xl font-bold text-muted-soft dark:text-on-dark-muted font-mono tracking-tight">
+        <span className="text-3xl font-bold text-muted dark:text-on-dark-muted font-mono tracking-tight">
           {initials}
         </span>
       ) : (
         <img
           src={currentSrc}
-          alt={name}
+          alt={`Foto ${name}`}
           loading="eager"
           decoding="async"
           onError={handleError}
-          className="w-full h-full object-cover object-center transition-transform duration-300 group-hover/avatar:scale-[1.03]"
+          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover/avatar:scale-[1.04]"
         />
       )}
     </div>
@@ -123,7 +164,7 @@ function MemberAvatar({
 
 export default function Developers() {
   return (
-    <div className="font-sans antialiased bg-canvas-light dark:bg-canvas-dark text-body dark:text-on-dark min-h-screen flex flex-col selection:bg-accent/20 selection:text-ink-heading dark:selection:text-on-dark">
+    <div className="font-sans antialiased bg-canvas-light dark:bg-canvas-dark text-body dark:text-on-dark min-h-screen flex flex-col selection:bg-accent/20 selection:text-ink-heading dark:selection:text-on-dark transition-colors duration-500">
       <SEO
         title="Tim Pengembang & Pembimbing DUK Team — PentaDosen (Penta Dosen) Universitas YARSI"
         description="Profil Dosen Pembimbing dan Tim Pengembang (DUK Team) di balik platform tata kelola publikasi ilmiah dan penelitian dosen PentaDosen (Penta Dosen) Universitas YARSI."
@@ -131,52 +172,75 @@ export default function Developers() {
         canonical="https://www.pentadosen.site/developers"
       />
 
+      {/* Accessible Skip to Content Link */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none"
+      >
+        Lewati ke Konten Utama
+      </a>
+
       {/* Header Navbar */}
       <Navbar />
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
+      {/* Main Content Landmark */}
+      <main id="main-content" className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-16">
         
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-5">
+        {/* Navigation Breadcrumb Bar */}
+        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
           <Link
             to="/"
-            className="group inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors duration-150"
+            aria-label="Kembali ke Beranda"
+            className="group inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent rounded-md py-1"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform duration-150" />
             <span>Kembali ke Beranda</span>
           </Link>
-          <div className="text-xs font-mono text-muted dark:text-on-dark-muted">
-            PentaDosen / DUK Team
+          <div className="text-[11px] font-mono font-semibold text-muted dark:text-on-dark-muted tracking-wider uppercase">
+            PENTADOSEN / DUK TEAM
           </div>
         </div>
 
-        {/* Page Hero Section */}
+        {/* Page Hero Header Section */}
         <div className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold">
-            <Users className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
-            <span>Profil Tim & Pengarah</span>
+          <motion.div 
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold shadow-2xs"
+          >
+            <Users className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
+            <span>Tim & Pengarah Platform</span>
+          </motion.div>
+
+          <div className="space-y-3">
+            <motion.h1 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className="text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-ink-heading dark:text-on-dark leading-tight"
+            >
+              DUK Team <span className="text-accent dark:text-accent-on-dark">— PentaDosen</span>
+            </motion.h1>
+            <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed font-normal">
+              Platform tata kelola dan analitik portofolio publikasi akademik PentaDosen dikembangkan secara mandiri oleh <span className="font-semibold text-ink-heading dark:text-on-dark">DUK Team</span> di bawah bimbingan Program Studi Teknik Informatika, Fakultas Teknologi Informasi Universitas YARSI.
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-ink-heading dark:text-on-dark">
-            DUK Team — PentaDosen
-          </h1>
-          <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed font-normal">
-            Platform tata kelola dan analitik publikasi ilmiah PentaDosen dikembangkan oleh DUK Team di bawah bimbingan Program Studi Teknik Informatika, Fakultas Teknologi Informasi Universitas YARSI.
-          </p>
         </div>
 
         {/* Section 1: Dosen Pembimbing */}
-        <section className="space-y-4">
+        <section className="space-y-4" aria-labelledby="heading-supervisor">
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-muted dark:text-on-dark-muted" />
-            <h2 className="text-xs font-mono tracking-widest text-muted dark:text-on-dark-muted uppercase font-semibold">
+            <GraduationCap className="w-4 h-4 text-accent dark:text-accent-on-dark" />
+            <h2 id="heading-supervisor" className="text-xs font-mono tracking-wider text-muted dark:text-on-dark-muted uppercase font-semibold">
               Dosen Pembimbing
             </h2>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark transition-colors shadow-sm hover:border-ink-border dark:hover:border-hairline-dark-soft">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-start sm:items-center gap-5 sm:gap-6">
+          <div className="p-6 sm:p-8 rounded-3xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark transition-all duration-300 shadow-xs hover:border-ink-border dark:hover:border-hairline-dark hover:shadow-md">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+              
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
                 <MemberAvatar
                   name={supervisor.name}
                   initials={supervisor.initials}
@@ -184,10 +248,10 @@ export default function Developers() {
                   fallbackUrl={supervisor.photoFallbackUrl}
                   size="large"
                 />
-                <div className="space-y-1.5">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-semibold bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark font-mono border border-hairline-light-soft dark:border-hairline-dark">
-                    <GraduationCap className="w-3 h-3 text-muted dark:text-on-dark-muted" />
-                    <span>Pembimbing Utama</span>
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark font-mono border border-hairline-light-soft dark:border-hairline-dark-soft">
+                    <GraduationCap className="w-3 h-3 text-accent dark:text-accent-on-dark" />
+                    <span>{supervisor.role}</span>
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold text-ink-heading dark:text-on-dark tracking-tight">
                     {supervisor.name}
@@ -203,8 +267,8 @@ export default function Developers() {
                 </div>
               </div>
 
-              <div className="hidden lg:flex flex-col items-end gap-1.5 text-right border-l border-hairline-light dark:border-hairline-dark pl-6 py-2">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-body-strong dark:text-on-dark">
+              <div className="hidden lg:flex flex-col items-end gap-1.5 text-right border-l border-hairline-light-soft dark:border-hairline-dark-soft pl-6 py-2 shrink-0">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-ink-heading dark:text-on-dark">
                   <Building2 className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
                   <span>Universitas YARSI</span>
                 </div>
@@ -212,29 +276,35 @@ export default function Developers() {
                   Fakultas Teknologi Informasi
                 </span>
               </div>
+
             </div>
           </div>
         </section>
 
         {/* Section 2: Tim Pengembang (DUK Team) */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Code2 className="w-4 h-4 text-muted dark:text-on-dark-muted" />
-              <h2 className="text-xs font-mono tracking-widest text-muted dark:text-on-dark-muted uppercase font-semibold">
-                Tim Pengembang (Developers)
-              </h2>
+        <section className="space-y-6" aria-labelledby="heading-developers">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-hairline-light dark:border-hairline-dark pb-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Code2 className="w-4 h-4 text-accent dark:text-accent-on-dark" />
+                <h2 id="heading-developers" className="text-xs font-mono tracking-wider text-muted dark:text-on-dark-muted uppercase font-semibold">
+                  Tim Pengembang
+                </h2>
+              </div>
+              <p className="text-sm font-semibold text-ink-heading dark:text-on-dark">
+                Mahasiswa Pengembang Sistem (DUK Team)
+              </p>
             </div>
-            <span className="text-[11px] font-mono text-muted dark:text-on-dark-muted">
-              3 Anggota • DUK Team
+            <span className="text-[11px] font-mono font-semibold text-muted dark:text-on-dark-muted">
+              3 MAHASISWA PENGEMBANG
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {developers.map((dev) => (
               <div
                 key={dev.name}
-                className="p-5 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm"
+                className="group p-6 sm:p-7 rounded-3xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark hover:-translate-y-1 hover:shadow-md transition-all duration-300 shadow-xs"
               >
                 <div>
                   <MemberAvatar
@@ -243,26 +313,29 @@ export default function Developers() {
                     photoUrl={dev.photoUrl}
                   />
 
-                  <div className="space-y-1.5 mb-5">
-                    <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark">
-                      {dev.role}
+                  <div className="space-y-2 mb-6">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold uppercase tracking-wider bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft">
+                      <Code2 className="w-3 h-3 text-accent dark:text-accent-on-dark" />
+                      <span>{dev.role}</span>
                     </div>
-                    <h3 className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight leading-snug">
+                    
+                    <h3 className="text-base sm:text-lg font-bold text-ink-heading dark:text-on-dark tracking-tight leading-snug group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
                       {dev.name}
                     </h3>
-                    <p className="text-xs text-muted dark:text-on-dark-muted">
+                    
+                    <p className="text-xs text-muted dark:text-on-dark-muted font-medium">
                       {dev.institution}
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-hairline-light-soft dark:border-hairline-dark flex items-center gap-2">
+                <div className="pt-4 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center gap-2">
                   {dev.githubUrl && (
                     <a
                       href={dev.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink hover:text-on-ink dark:hover:bg-surface-dark-soft dark:hover:text-on-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-all duration-200"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink hover:text-on-ink dark:hover:bg-on-dark dark:hover:text-ink-heading text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-accent shadow-2xs"
                       aria-label={`GitHub profil ${dev.name}`}
                     >
                       <Github className="w-3.5 h-3.5" />
@@ -275,7 +348,7 @@ export default function Developers() {
                       href={dev.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink hover:text-on-ink dark:hover:bg-surface-dark-soft dark:hover:text-on-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-all duration-200"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink hover:text-on-ink dark:hover:bg-on-dark dark:hover:text-ink-heading text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-accent shadow-2xs"
                       aria-label={`Instagram profil ${dev.name}`}
                     >
                       <Instagram className="w-3.5 h-3.5" />
@@ -290,74 +363,75 @@ export default function Developers() {
         </section>
 
         {/* Section 3: Pilar Fondasi Platform */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-muted dark:text-on-dark-muted" />
-            <h2 className="text-xs font-mono tracking-widest text-muted dark:text-on-dark-muted uppercase font-semibold">
-              Pilar Fondasi Sistem
-            </h2>
+        <section className="space-y-6" aria-labelledby="heading-pillars">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-hairline-light dark:border-hairline-dark pb-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-accent dark:text-accent-on-dark" />
+                <h2 id="heading-pillars" className="text-xs font-mono tracking-wider text-muted dark:text-on-dark-muted uppercase font-semibold">
+                  Pilar Fondasi Sistem
+                </h2>
+              </div>
+              <p className="text-sm font-semibold text-ink-heading dark:text-on-dark">
+                Prinsip Arsitektur & Tata Kelola Platform PentaDosen
+              </p>
+            </div>
+            <span className="text-[11px] font-mono font-semibold text-muted dark:text-on-dark-muted">
+              3 PILAR ARSITEKTUR
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* Card 1 */}
-            <div className="p-6 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-9 h-9 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark flex items-center justify-center text-body dark:text-on-dark-soft">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <span className="text-[11px] font-mono font-semibold text-muted-soft dark:text-on-dark-muted">
-                    01
-                  </span>
-                </div>
-                <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight mb-2">
-                  Tata Kelola Terintegrasi
-                </h3>
-                <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed font-normal">
-                  Dirancang untuk memudahkan dosen mengelola data publikasi ilmiah, sitasi, dan dokumen pendukung dalam satu repositori terpadu.
-                </p>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {pillars.map((pillar) => {
+              const IconComp = pillar.icon;
+              return (
+                <div 
+                  key={pillar.number}
+                  className="group relative p-7 rounded-3xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark hover:-translate-y-1 hover:shadow-md transition-all duration-300 shadow-xs"
+                >
+                  <div className="space-y-5">
+                    {/* Top Row: Icon Badge & Monospace Tag */}
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-center text-ink-heading dark:text-on-dark group-hover:scale-105 transition-transform duration-300 shadow-2xs">
+                        <IconComp className="w-5 h-5 text-accent dark:text-accent-on-dark" />
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] font-mono font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider block">
+                          {pillar.tag}
+                        </span>
+                        <span className="text-xs font-mono font-bold text-ink-heading dark:text-on-dark">
+                          #{pillar.number}
+                        </span>
+                      </div>
+                    </div>
 
-            {/* Card 2 */}
-            <div className="p-6 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-9 h-9 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark flex items-center justify-center text-body dark:text-on-dark-soft">
-                    <Database className="w-4 h-4" />
+                    {/* Title & Description */}
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-bold text-ink-heading dark:text-on-dark tracking-tight leading-snug group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
+                        {pillar.title}
+                      </h3>
+                      <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed font-normal">
+                        {pillar.description}
+                      </p>
+                    </div>
                   </div>
-                  <span className="text-[11px] font-mono font-semibold text-muted-soft dark:text-on-dark-muted">
-                    02
-                  </span>
-                </div>
-                <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight mb-2">
-                  Validasi Data Akurat
-                </h3>
-                <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed font-normal">
-                  Sinkronisasi berkala dengan indeksasi akademik nasional dan internasional untuk memastikan integritas rekam jejak riset.
-                </p>
-              </div>
-            </div>
 
-            {/* Card 3 */}
-            <div className="p-6 rounded-2xl bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex flex-col justify-between hover:border-ink-border dark:hover:border-hairline-dark-soft transition-all duration-200 shadow-sm">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-9 h-9 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark flex items-center justify-center text-body dark:text-on-dark-soft">
-                    <Sparkles className="w-4 h-4" />
+                  {/* Highlights Chips */}
+                  <div className="pt-5 mt-5 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
+                    <div className="flex flex-wrap gap-1.5">
+                      {pillar.highlights.map((tag) => (
+                        <span 
+                          key={tag}
+                          className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <span className="text-[11px] font-mono font-semibold text-muted-soft dark:text-on-dark-muted">
-                    03
-                  </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight mb-2">
-                  Standar Rekayasa Web
-                </h3>
-                <p className="text-xs text-body dark:text-on-dark-soft leading-relaxed font-normal">
-                  Dibangun dengan standar rekayasa frontend modern berkecepatan tinggi, responsif, dan aksesibilitas tinggi untuk seluruh sivitas.
-                </p>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </section>
 
