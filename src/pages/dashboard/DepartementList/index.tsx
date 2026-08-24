@@ -19,16 +19,25 @@ export default function DepartementList() {
   } = useDepartementList();
 
   return (
-    <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-all duration-500 font-sans">
+    <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-colors duration-500 font-sans">
       <SEO
         title="Fakultas & Program Studi — PentaDosen (Penta Dosen) Universitas YARSI"
         description="Daftar fakultas, program studi, dan kontribusi penelitian akademik di lingkungan Universitas YARSI melalui PentaDosen (Penta Dosen)."
         keywords="Fakultas YARSI, Program Studi YARSI, PentaDosen, Penta Dosen, Universitas YARSI"
         canonical="https://www.pentadosen.site/departments"
       />
+
+      {/* Accessible Skip to Content Link */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none"
+      >
+        Lewati ke Konten Utama
+      </a>
+
       <Navbar />
       
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24">
+      <main id="main-content" className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 space-y-8">
         {/* Header Section */}
         <DepartementHeader 
           search={search}
@@ -37,24 +46,27 @@ export default function DepartementList() {
           onBack={() => navigate('/insights')}
         />
 
+        {/* Accessible Section Heading to maintain WCAG 2.1 AA heading-order (h1 -> h2 -> h3) */}
+        <h2 className="sr-only">Daftar Fakultas dan Program Studi Universitas YARSI</h2>
+
         {loading ? (
           <DepartementSkeleton />
         ) : (
           <>
             {/* Departments Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {filteredDepartments.map((dept, i) => (
                 <DepartementCard 
                   key={dept.id}
                   dept={dept}
                   index={i}
-                  onClick={() => { navigate(`/lecturers?fakultas=${dept.name}`); }}
+                  onClick={() => { navigate(`/lecturers?fakultas=${encodeURIComponent(dept.name)}`); }}
                 />
               ))}
             </div>
 
             {filteredDepartments.length === 0 && (
-              <DepartementEmpty />
+              <DepartementEmpty onReset={() => setSearch('')} />
             )}
           </>
         )}

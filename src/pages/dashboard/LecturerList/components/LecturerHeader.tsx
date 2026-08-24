@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Search, ArrowLeft, X, Users, Building2 } from 'lucide-react';
+import { Search, ArrowLeft, X, Users, Building2, GraduationCap } from 'lucide-react';
 
 interface LecturerHeaderProps {
   searchTerm: string;
@@ -16,43 +16,61 @@ export default function LecturerHeader({
   onBack
 }: LecturerHeaderProps) {
   return (
-    <div className="relative p-6 sm:p-8 lg:p-10 rounded-3xl border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark shadow-xs transition-colors">
-      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+    <div className="space-y-8">
+      {/* Top Navigation & Breadcrumb Bar */}
+      <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
+        <motion.button 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.15 }}
+          onClick={onBack}
+          aria-label="Kembali ke halaman sebelumnya"
+          className="group inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent rounded-md py-1"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform duration-150" />
+          <span>Kembali</span>
+        </motion.button>
+
+        <div className="text-[11px] font-mono font-semibold text-muted dark:text-on-dark-muted tracking-wider uppercase">
+          PENTADOSEN / DIREKTORI
+        </div>
+      </div>
+
+      {/* Main Hero Header Section */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         
-        {/* Left: Navigation, Title & Description */}
-        <div className="space-y-5 max-w-2xl">
-          <motion.button 
-            initial={{ opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0 }}
+        {/* Left: Category Pill, Title & Description */}
+        <div className="space-y-4 max-w-3xl">
+          <motion.div 
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={onBack}
-            aria-label="Kembali ke halaman sebelumnya"
-            className="group inline-flex items-center gap-2 text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors px-3 py-1.5 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-xs font-semibold cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold shadow-2xs"
           >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Kembali</span>
-          </motion.button>
-          
+            <GraduationCap className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
+            <span>Portofolio Akademik</span>
+          </motion.div>
+
           <div className="space-y-2.5">
             <motion.h1 
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
               className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-ink-heading dark:text-on-dark tracking-tight leading-tight"
             >
               Direktori <span className="text-accent dark:text-accent-on-dark">Dosen</span>
             </motion.h1>
-            <p className="text-body dark:text-on-dark-soft text-sm sm:text-base leading-relaxed">
-              Direktori profil dan portofolio akademik seluruh dosen <span className="font-semibold text-ink-heading dark:text-on-dark">Universitas YARSI</span> yang terintegrasi di PentaDosen.
+            <p className="text-body dark:text-on-dark-soft text-sm sm:text-base leading-relaxed max-w-2xl">
+              Eksplorasi profil, publikasi ilmiah, dan portofolio riset seluruh dosen <span className="font-semibold text-ink-heading dark:text-on-dark">Universitas YARSI</span> yang terintegrasi di PentaDosen.
             </p>
           </div>
         </div>
 
-        {/* Right: Search Input & Quick Metrics */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl border border-hairline-light dark:border-hairline-dark">
+        {/* Right: Search Input & Metric Counters */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
           
           {/* Search Box */}
-          <div className="relative group flex-1 min-w-[260px] sm:min-w-[280px]">
+          <div className="relative group flex-1 lg:w-72">
             <label htmlFor="lecturer-search" className="sr-only">
               Cari nama dosen, fakultas, atau program studi
             </label>
@@ -63,52 +81,39 @@ export default function LecturerHeader({
               placeholder="Cari nama, fakultas, prodi..." 
               value={searchTerm}
               onChange={(e) => onSearchTermChange(e.target.value)}
-              className="w-full pl-10 pr-9 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-semibold outline-none focus:border-accent dark:focus:border-accent-on-dark focus:ring-2 focus:ring-accent/15 transition-all text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted"
+              className="w-full h-11 pl-10 pr-9 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-semibold outline-none focus:border-accent dark:focus:border-accent-on-dark focus:ring-2 focus:ring-accent/15 transition-all text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted shadow-2xs"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => onSearchTermChange('')}
                 aria-label="Hapus kata kunci pencarian"
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          <div className="hidden sm:block w-px h-9 bg-hairline-light dark:bg-hairline-dark shrink-0" />
-          <div className="sm:hidden w-full h-px bg-hairline-light dark:bg-hairline-dark my-0.5" />
-
-          {/* Quick Metrics */}
-          <div className="flex items-center justify-around sm:justify-start gap-5 px-3 py-1 shrink-0">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-center shrink-0">
-                <Users className="w-4 h-4 text-muted dark:text-on-dark-muted" />
-              </div>
-              <div>
-                <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">
-                  Dosen
-                </p>
-                <p className="text-sm font-bold font-mono text-ink-heading dark:text-on-dark leading-tight">
-                  {totalFiltered}
-                </p>
+          {/* Quick Counter Badges */}
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2.5 px-3.5 h-11 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+              <Users className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" />
+              <div className="leading-tight">
+                <span className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider block">Terdaftar</span>
+                <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark">
+                  {totalFiltered} Dosen
+                </span>
               </div>
             </div>
 
-            <div className="w-px h-7 bg-hairline-light-soft dark:border-hairline-dark-soft" />
-
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-surface-light dark:bg-surface-dark border border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-center shrink-0">
-                <Building2 className="w-4 h-4 text-muted dark:text-on-dark-muted" />
-              </div>
-              <div>
-                <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">
-                  Fakultas
-                </p>
-                <p className="text-sm font-bold font-mono text-ink-heading dark:text-on-dark leading-tight">
-                  6 Unit
-                </p>
+            <div className="flex items-center gap-2.5 px-3.5 h-11 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
+              <Building2 className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" />
+              <div className="leading-tight">
+                <span className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider block">Unit</span>
+                <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark">
+                  6 Fakultas
+                </span>
               </div>
             </div>
           </div>
