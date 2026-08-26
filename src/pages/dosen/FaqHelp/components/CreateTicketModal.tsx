@@ -31,6 +31,7 @@ export default function CreateTicketModal({
       };
     }
   }, [isOpen, onClose, submittingTicket]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -40,7 +41,7 @@ export default function CreateTicketModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => { if (!submittingTicket) onClose(); }}
-            className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-xs"
+            className="fixed inset-0 bg-[#171412]/60 dark:bg-[#171412]/80 backdrop-blur-xs"
           />
 
           <motion.div
@@ -64,7 +65,8 @@ export default function CreateTicketModal({
 
               <button
                 onClick={onClose}
-                className="p-1 rounded-lg text-muted hover:text-body dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors"
+                aria-label="Tutup modal kirim pesan"
+                className="p-1.5 rounded-lg text-muted hover:text-body dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -73,49 +75,51 @@ export default function CreateTicketModal({
             <form onSubmit={onSubmit} className="space-y-4 overflow-y-auto flex-1 pr-1">
               {/* Input Subjek */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-ink-heading dark:text-on-dark">
+                <label htmlFor="ticket-subject" className="text-xs font-semibold text-ink-heading dark:text-on-dark">
                   Subjek Pesan <span className="text-muted dark:text-on-dark-muted font-normal">(Opsional)</span>
                 </label>
                 <input
+                  id="ticket-subject"
                   type="text"
                   placeholder="Contoh: Kendala Upload PDF (opsional)"
                   value={ticketSubject}
                   onChange={(e) => onSubjectChange(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent dark:focus:border-accent focus:ring-2 focus:ring-accent/15"
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-hidden focus:border-accent dark:focus:border-accent focus:ring-2 focus:ring-accent/15"
                 />
               </div>
 
               {/* Textarea Pesan */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-ink-heading dark:text-on-dark">
+                <label htmlFor="ticket-message" className="text-xs font-semibold text-ink-heading dark:text-on-dark">
                   Isi Pesan / Pertanyaan <span className="text-error">*</span>
                 </label>
                 <textarea
+                  id="ticket-message"
                   rows={4}
                   placeholder="Tuliskan pertanyaan atau kendala Anda secara detail..."
                   value={ticketMessage}
                   onChange={(e) => onMessageChange(e.target.value)}
                   required
-                  className="w-full p-3.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent dark:focus:border-accent focus:ring-2 focus:ring-accent/15 leading-relaxed"
+                  className="w-full p-3.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-hidden focus:border-accent dark:focus:border-accent focus:ring-2 focus:ring-accent/15 leading-relaxed"
                 />
               </div>
 
               {/* Upload Gambar Tangkapan Layar (Maks 10MB) */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-ink-heading dark:text-on-dark flex items-center justify-between">
+                <div className="text-xs font-semibold text-ink-heading dark:text-on-dark flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <ImageIcon className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
                     Lampirkan Gambar Kendala <span className="text-muted dark:text-on-dark-muted font-normal">(Opsional)</span>
                   </span>
                   <span className="text-[10px] text-muted dark:text-on-dark-muted font-mono">Maks 10 MB</span>
-                </label>
+                </div>
 
                 {ticketImagePreview ? (
                   <div className="relative group rounded-xl border border-hairline-light dark:border-hairline-dark p-2 bg-surface-light-raised dark:bg-surface-dark-soft flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <img
                         src={ticketImagePreview}
-                        alt="Preview"
+                        alt="Pratinjau lampiran"
                         className="w-12 h-12 object-cover rounded-lg border border-hairline-light dark:border-hairline-dark shrink-0"
                       />
                       <div className="min-w-0 text-xs">
@@ -131,14 +135,15 @@ export default function CreateTicketModal({
                     <button
                       type="button"
                       onClick={onRemoveImage}
-                      className="p-2 rounded-lg bg-error-soft hover:bg-error/20 dark:bg-error/15 dark:hover:bg-error/25 text-error dark:text-error-on-dark border border-error-border dark:border-error/30 transition-colors cursor-pointer"
+                      aria-label="Hapus gambar lampiran"
+                      className="p-2 rounded-lg bg-error-soft hover:bg-error/20 dark:bg-error/15 dark:hover:bg-error/25 text-error dark:text-error-on-dark border border-error-border dark:border-error/30 transition-colors cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                       title="Hapus gambar"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-hairline-light dark:border-hairline-dark hover:border-accent dark:hover:border-accent rounded-xl p-4 cursor-pointer bg-surface-light-raised/40 dark:bg-surface-dark-soft/40 transition-colors group">
+                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-hairline-light dark:border-hairline-dark hover:border-accent dark:hover:border-accent rounded-xl p-4 cursor-pointer bg-surface-light-raised/40 dark:bg-surface-dark-soft/40 transition-colors group focus-within:ring-2 focus-within:ring-accent">
                     <div className="flex items-center gap-2 text-muted dark:text-on-dark-muted group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
                       <ImageIcon className="w-5 h-5" />
                       <span className="text-xs font-semibold">Klik untuk memilih gambar / screenshot</span>
@@ -147,6 +152,7 @@ export default function CreateTicketModal({
                     <input
                       type="file"
                       accept="image/*"
+                      aria-label="Pilih gambar atau screenshot kendala"
                       onChange={onImageChange}
                       className="hidden"
                     />
@@ -159,7 +165,7 @@ export default function CreateTicketModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light-raised hover:bg-hairline-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark text-xs font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light-raised hover:bg-hairline-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   Batal
                 </button>
@@ -167,7 +173,7 @@ export default function CreateTicketModal({
                 <button
                   type="submit"
                   disabled={submittingTicket}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer shadow-xs focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{submittingTicket ? 'Mengirim...' : 'Kirim Pesan'}</span>

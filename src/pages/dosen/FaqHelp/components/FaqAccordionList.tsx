@@ -19,7 +19,7 @@ export default function FaqAccordionList({
       <div className="flex items-center justify-between px-5 py-4 border-b border-hairline-light-soft dark:border-hairline-dark-soft">
         <div className="flex items-center gap-2.5">
           <FileQuestion className="w-4 h-4 text-accent dark:text-accent-on-dark" />
-          <h3 className="text-sm font-semibold text-ink-heading dark:text-on-dark">Manual Book &amp; Panduan Penggunaan</h3>
+          <h2 className="text-sm font-semibold text-ink-heading dark:text-on-dark">Manual Book &amp; Panduan Penggunaan</h2>
         </div>
         <span className="text-[11px] font-semibold text-body dark:text-on-dark-soft bg-ink-soft dark:bg-surface-dark-elevated px-2.5 py-1 rounded-md font-mono">
           {filteredFaqs.length} Panduan
@@ -57,7 +57,9 @@ export default function FaqAccordionList({
               >
                 <button
                   onClick={() => onToggleExpand(faq.id)}
-                  className="w-full px-5 py-4 text-left flex justify-between items-center gap-4 focus:outline-none group cursor-pointer"
+                  aria-expanded={isExpanded}
+                  aria-label={isExpanded ? `Tutup panduan: ${faq.question}` : `Buka panduan: ${faq.question}`}
+                  className="w-full px-5 py-4 text-left flex justify-between items-center gap-4 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-xl group cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink-soft text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft">
@@ -89,7 +91,8 @@ export default function FaqAccordionList({
                                 title: faq.question,
                                 category: faq.category
                               })}
-                              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                              aria-label={`Lihat Panduan PDF untuk ${faq.question}`}
+                              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                             >
                               <FileText className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
                               <span>Lihat Panduan PDF</span>
@@ -114,7 +117,8 @@ export default function FaqAccordionList({
             </p>
             <button
               onClick={onClearSearch}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-light-raised hover:bg-hairline-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-colors cursor-pointer"
+              aria-label="Bersihkan pencarian"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-light-raised hover:bg-hairline-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
             >
               <X className="w-3.5 h-3.5" />
               <span>Bersihkan Pencarian</span>

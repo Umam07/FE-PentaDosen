@@ -156,9 +156,9 @@ export default function MyTicketsList({
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark">
+              <h2 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark">
                 Riwayat Pesan &amp; Konsultasi Saya
-              </h3>
+              </h2>
               <span className="text-[11px] font-semibold text-body dark:text-on-dark-soft bg-ink-soft dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md font-mono">
                 {myTickets.length} Tiket
               </span>
@@ -172,7 +172,8 @@ export default function MyTicketsList({
         {/* Tombol Kirim Pesan Baru (Primary action) */}
         <button
           onClick={onOpenCreateModal}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs active:scale-95 cursor-pointer shrink-0"
+          aria-label="Kirim Pesan Baru ke Admin"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs active:scale-95 cursor-pointer shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
         >
           <Plus className="w-4 h-4" />
           <span>Kirim Pesan Baru</span>
@@ -181,7 +182,7 @@ export default function MyTicketsList({
 
       {/* Sub-Filter Tabs (Aktif, Selesai, Semua) */}
       {myTickets.length > 0 && (
-        <div className="bg-surface-light-raised dark:bg-surface-dark-soft p-1.5 rounded-2xl border border-hairline-light dark:border-hairline-dark-soft flex items-center gap-1.5 overflow-x-auto no-scrollbar shadow-xs">
+        <div role="tablist" aria-label="Filter Status Pesan" className="bg-surface-light-raised dark:bg-surface-dark-soft p-1.5 rounded-2xl border border-hairline-light dark:border-hairline-dark-soft flex items-center gap-1.5 overflow-x-auto no-scrollbar shadow-xs">
           {[
             { key: 'aktif', label: 'Aktif / Dalam Proses', count: activeCount, icon: Clock, iconColor: 'text-warning dark:text-warning-on-dark' },
             { key: 'selesai', label: 'Selesai', count: completedCount, icon: CheckCircle2, iconColor: 'text-success dark:text-success-on-dark' },
@@ -192,8 +193,11 @@ export default function MyTicketsList({
             return (
               <button
                 key={tab.key}
+                role="tab"
+                aria-selected={isActive}
+                aria-label={`Filter ${tab.label} (${tab.count})`}
                 onClick={() => setStatusFilter(tab.key as any)}
-                className={`relative group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 outline-none select-none cursor-pointer whitespace-nowrap ${
+                className={`relative group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 outline-hidden select-none cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-accent ${
                   isActive
                     ? 'text-ink-heading dark:text-on-dark'
                     : 'text-muted dark:text-on-dark-muted hover:text-body-strong dark:hover:text-on-dark hover:bg-surface-light-raised/80 dark:hover:bg-surface-dark-elevated/40'
@@ -267,7 +271,9 @@ export default function MyTicketsList({
               >
                 <button
                   onClick={() => onToggleTicketExpand(ticket.id)}
-                  className="w-full p-4 text-left flex justify-between items-center gap-4 cursor-pointer focus:outline-none"
+                  aria-expanded={isExpanded}
+                  aria-label={isExpanded ? `Tutup riwayat pesan: ${ticket.subject || 'Tanpa Subjek'}` : `Buka riwayat pesan: ${ticket.subject || 'Tanpa Subjek'}`}
+                  className="w-full p-4 text-left flex justify-between items-center gap-4 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-xl"
                 >
                   <div className="min-w-0 space-y-1">
                     <div className="flex items-center gap-2.5 flex-wrap">
@@ -278,9 +284,9 @@ export default function MyTicketsList({
                           <span>Lampiran Gambar</span>
                         </span>
                       )}
-                      <h4 className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark truncate">
+                      <h3 className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark truncate">
                         {ticket.subject || 'Tanpa Subjek'}
-                      </h4>
+                      </h3>
                     </div>
                     <p className="text-xs text-muted dark:text-on-dark-muted truncate pl-0.5">
                       {rawMessages[rawMessages.length - 1]?.message || ticket.message}
@@ -342,13 +348,15 @@ export default function MyTicketsList({
                                             alt="Lampiran"
                                             className="max-h-44 w-auto object-contain rounded-lg"
                                           />
-                                          <div
+                                          <button
+                                            type="button"
                                             onClick={() => onZoomImage(msg.image_url!)}
-                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer"
+                                            aria-label="Perbesar gambar lampiran"
+                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer w-full h-full"
                                           >
                                             <Maximize2 className="w-4 h-4" />
                                             <span>Perbesar</span>
-                                          </div>
+                                          </button>
                                         </div>
                                       </div>
                                     )}
@@ -385,13 +393,15 @@ export default function MyTicketsList({
                                             alt="Lampiran Admin"
                                             className="max-h-44 w-auto object-contain rounded-lg"
                                           />
-                                          <div
+                                          <button
+                                            type="button"
                                             onClick={() => onZoomImage(msg.image_url!)}
-                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer"
+                                            aria-label="Perbesar gambar lampiran admin"
+                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer w-full h-full"
                                           >
                                             <Maximize2 className="w-4 h-4" />
                                             <span>Perbesar</span>
-                                          </div>
+                                          </button>
                                         </div>
                                       </div>
                                     )}
@@ -420,7 +430,8 @@ export default function MyTicketsList({
                               <button
                                 type="button"
                                 onClick={removeReplyImage}
-                                className="absolute top-1 right-1 p-1 bg-error text-white rounded-full hover:bg-error/90 shadow-md cursor-pointer transition-colors"
+                                aria-label="Hapus gambar lampiran"
+                                className="absolute top-1 right-1 p-1 bg-error text-white rounded-full hover:bg-error/90 shadow-md cursor-pointer transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                                 title="Hapus gambar"
                               >
                                 <X className="w-3 h-3" />
@@ -430,25 +441,34 @@ export default function MyTicketsList({
 
                           <div className="flex items-center gap-2">
                             <label
-                              className="p-2.5 rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted dark:text-on-dark-muted cursor-pointer transition-colors shrink-0"
+                              aria-label="Lampirkan gambar kendala"
+                              className="p-2.5 rounded-xl border border-hairline-light dark:border-hairline-dark bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted dark:text-on-dark-muted cursor-pointer transition-colors shrink-0 focus-within:ring-2 focus-within:ring-accent"
                               title="Lampirkan tangkapan layar/gambar"
                             >
                               <Paperclip className="w-4 h-4" />
-                              <input type="file" accept="image/*" className="hidden" onChange={handleReplyImageChange} />
+                              <input
+                                type="file"
+                                accept="image/*"
+                                aria-label="Upload gambar tangkapan layar kendala"
+                                className="hidden"
+                                onChange={handleReplyImageChange}
+                              />
                             </label>
 
                             <input
                               type="text"
+                              aria-label="Ketik balasan atau pertanyaan susulan"
                               value={replyText}
                               onChange={(e) => setReplyText(e.target.value)}
                               placeholder="Ketik balasan atau pertanyaan susulan ke admin..."
-                              className="flex-1 px-4 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent dark:focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all"
+                              className="flex-1 px-4 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-hidden focus:border-accent dark:focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all"
                             />
 
                             <button
                               type="submit"
+                              aria-label="Kirim pesan balasan"
                               disabled={submittingReply || !replyText.trim()}
-                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer shrink-0"
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                             >
                               <Send className="w-3.5 h-3.5" />
                               <span>{submittingReply ? 'Mengirim...' : 'Kirim'}</span>
@@ -467,13 +487,13 @@ export default function MyTicketsList({
       ) : (
         <div className="py-14 text-center">
           <Inbox className="w-10 h-10 text-muted dark:text-on-dark-muted mx-auto mb-2 opacity-60" />
-          <h4 className="text-xs font-semibold text-ink-heading dark:text-on-dark mb-1">
+          <h3 className="text-xs font-semibold text-ink-heading dark:text-on-dark mb-1">
             {statusFilter === 'aktif'
               ? 'Tidak Ada Pesan Aktif / Dalam Proses'
               : statusFilter === 'selesai'
               ? 'Belum Ada Pesan Selesai'
               : 'Belum Ada Pesan yang Dikirim'}
-          </h4>
+          </h3>
           <p className="text-xs text-muted dark:text-on-dark-muted max-w-xs mx-auto mb-4 leading-relaxed">
             {statusFilter === 'aktif'
               ? 'Semua pertanyaan atau konsultasi Anda telah diselesaikan oleh admin.'
@@ -483,7 +503,8 @@ export default function MyTicketsList({
           </p>
           <button
             onClick={onOpenCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs cursor-pointer"
+            aria-label="Kirim Pesan Baru"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
           >
             <Plus className="w-4 h-4" />
             <span>Kirim Pesan Baru</span>

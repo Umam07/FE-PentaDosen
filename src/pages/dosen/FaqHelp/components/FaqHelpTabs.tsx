@@ -9,11 +9,14 @@ export default function FaqHelpTabs({
   onTabSwitch
 }: FaqHelpTabsProps) {
   return (
-    <div className="flex items-center gap-6 sm:gap-8 border-b border-hairline-light dark:border-hairline-dark pb-1">
+    <div role="tablist" aria-label="Kategori Bantuan" className="flex items-center gap-6 sm:gap-8 border-b border-hairline-light dark:border-hairline-dark pb-1">
       {/* Tab 1: Panduan */}
       <button
+        role="tab"
+        aria-selected={activeMainTab === 'panduan'}
+        aria-label="Tab Panduan & Manual Book"
         onClick={() => onTabSwitch('panduan')}
-        className={`group relative pb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer select-none ${
+        className={`group relative pb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer select-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-sm ${
           activeMainTab === 'panduan'
             ? 'text-ink-heading dark:text-on-dark'
             : 'text-muted hover:text-body dark:text-on-dark-muted dark:hover:text-on-dark'
@@ -31,8 +34,11 @@ export default function FaqHelpTabs({
 
       {/* Tab 2: Pesan Saya */}
       <button
+        role="tab"
+        aria-selected={activeMainTab === 'pesan'}
+        aria-label={`Tab Pesan Saya${unreadTicketCount > 0 ? `, ${unreadTicketCount} pesan baru` : ''}`}
         onClick={() => onTabSwitch('pesan')}
-        className={`group relative pb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer select-none ${
+        className={`group relative pb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer select-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-sm ${
           activeMainTab === 'pesan'
             ? 'text-ink-heading dark:text-on-dark'
             : 'text-muted hover:text-body dark:text-on-dark-muted dark:hover:text-on-dark'

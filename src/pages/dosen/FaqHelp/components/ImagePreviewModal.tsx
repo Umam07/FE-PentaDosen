@@ -23,6 +23,7 @@ export default function ImagePreviewModal({
       };
     }
   }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {fullViewImageUrl && (
@@ -32,7 +33,7 @@ export default function ImagePreviewModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/85 backdrop-blur-md"
+            className="fixed inset-0 bg-[#171412]/85 backdrop-blur-md"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -50,14 +51,16 @@ export default function ImagePreviewModal({
                   href={fullViewImageUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-dark-elevated hover:bg-surface-dark-soft text-on-dark text-xs font-semibold border border-hairline-dark transition-colors"
+                  aria-label="Buka gambar lampiran di tab baru"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-dark-elevated hover:bg-surface-dark-soft text-on-dark text-xs font-semibold border border-hairline-dark transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>Tab Baru</span>
                 </a>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg bg-surface-dark-elevated hover:bg-surface-dark-soft text-on-dark-muted hover:text-on-dark border border-hairline-dark transition-colors cursor-pointer"
+                  aria-label="Tutup pratinjau gambar"
+                  className="p-1.5 rounded-lg bg-surface-dark-elevated hover:bg-surface-dark-soft text-on-dark-muted hover:text-on-dark border border-hairline-dark transition-colors cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <X className="w-5 h-5" />
                 </button>

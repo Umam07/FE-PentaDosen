@@ -1,6 +1,7 @@
-import React, { useRef, useEffect, lazy, Suspense } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import type { UserSession } from './types/faqHelp.types';
 import { useFaqHelp } from './hooks/useFaqHelp';
+import { toast } from '@/components/ui/toast';
 import FaqHelpHeader from './components/FaqHelpHeader';
 import FaqHelpTabs from './components/FaqHelpTabs';
 import FaqSearchInput from './components/FaqSearchInput';
@@ -10,28 +11,29 @@ import CreateTicketModal from './components/CreateTicketModal';
 import ImagePreviewModal from './components/ImagePreviewModal';
 const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import AnnouncementsBanner from '../../../components/ui/AnnouncementsBanner';
-import Toaster, { ToasterRef } from '@/components/ui/toast';
 
 export default function FaqHelp({ user }: { user: UserSession }) {
   const faqState = useFaqHelp(user);
-  const toasterRef = useRef<ToasterRef>(null);
 
   useEffect(() => {
     if (faqState.toast.message) {
-      toasterRef.current?.show({
+      toast.show({
         title: faqState.toast.type === 'success' ? 'Sukses' : 'Gagal',
         message: faqState.toast.message,
         variant: faqState.toast.type === 'success' ? 'success' : 'error',
-        position: 'bottom-right',
       });
     }
   }, [faqState.toast]);
 
   return (
-    <div className="w-full min-h-screen space-y-6 pb-20">
-
-      {/* Toast Notification */}
-      <Toaster ref={toasterRef} defaultPosition="bottom-right" />
+    <main id="main-content" className="w-full space-y-6 pb-20">
+      {/* Accessible Skip to Content */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Lewati ke Konten Utama
+      </a>
 
       {/* Header Halaman */}
       <FaqHelpHeader />
@@ -120,6 +122,6 @@ export default function FaqHelp({ user }: { user: UserSession }) {
           />
         </Suspense>
       )}
-    </div>
+    </main>
   );
 }
