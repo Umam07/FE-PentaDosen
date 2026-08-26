@@ -131,30 +131,30 @@ export default function ResearchTable({
           <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
             <tr>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">
-                Informasi Penelitian
+                Judul Penelitian
               </th>
-              <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">
+              <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Program &amp; Skema
               </th>
-              <th className="hidden md:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">
+              <th className="hidden md:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Tanggal Pelaksanaan
               </th>
-              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">
-                Dana
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">
-                Dokumen
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Status
               </th>
-              <th className="px-6 py-3.5 text-right text-xs font-semibold text-muted dark:text-on-dark-muted">
-                Poin
+              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
+                Dana
               </th>
-              <th className="px-6 py-3.5 w-12 text-center text-xs font-semibold text-muted dark:text-on-dark-muted">
+              <th className="px-6 py-3.5 text-right sm:text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
+                Poin KPI
+              </th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
+                Dokumen
+              </th>
+              <th className="px-4 py-3.5 w-12 text-center text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Detail
               </th>
-              <th className="px-6 py-3.5 text-center text-xs font-semibold text-muted dark:text-on-dark-muted">
+              <th className="px-6 py-3.5 text-center text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Aksi
               </th>
             </tr>
@@ -186,18 +186,18 @@ export default function ResearchTable({
                       <div className="h-5 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
-                    </td>
-                    <td className="px-6 py-4">
                       <div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
                     </td>
                     <td className="hidden sm:table-cell px-6 py-4">
-                      <div className="h-6 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                      <div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg ml-auto" />
+                    <td className="px-6 py-4 text-right sm:text-left">
+                      <div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg ml-auto sm:ml-0" />
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-4">
+                      <div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                    </td>
+                    <td className="px-4 py-4 text-center">
                       <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" />
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -211,6 +211,7 @@ export default function ResearchTable({
                 const SchemaIcon = getResearchSchemaIcon(res.program, res.skema);
                 return (
                   <tr key={res.id} className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors group">
+                    {/* 1. Judul Penelitian */}
                     <td className="px-6 py-4 cursor-pointer" onClick={() => onViewDetail(res)}>
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg group-hover:bg-hairline-light dark:group-hover:bg-surface-dark transition-colors shrink-0 text-body dark:text-on-dark-soft border border-hairline-light/60 dark:border-hairline-dark/60">
@@ -235,6 +236,8 @@ export default function ResearchTable({
                         </div>
                       </div>
                     </td>
+
+                    {/* 2. Program & Skema */}
                     <td className="hidden lg:table-cell px-6 py-4">
                       <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">
                         {res.program}
@@ -248,14 +251,44 @@ export default function ResearchTable({
                         </span>
                       </div>
                     </td>
-                    <td className="hidden md:table-cell px-6 py-4 text-center">
-                      <span className="text-xs font-mono font-medium text-body dark:text-on-dark-soft bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark">
+
+                    {/* 3. Tanggal Pelaksanaan */}
+                    <td className="hidden md:table-cell px-6 py-4 text-left">
+                      <span className="text-xs font-mono font-medium text-body dark:text-on-dark-soft bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark whitespace-nowrap">
                         {formatDateVal(res.tahun)}
                       </span>
                     </td>
-                    <td className="hidden sm:table-cell px-6 py-4 text-xs font-mono tabular-nums font-semibold text-body-strong dark:text-on-dark">
+
+                    {/* 4. Status */}
+                    <td className="px-6 py-4 align-middle">
+                      <div
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-semibold text-[11px] border whitespace-nowrap ${
+                          res.status === 'Approved'
+                            ? 'bg-success-soft text-success-dark dark:bg-success/15 dark:text-success-on-dark border-success-border dark:border-success/30'
+                            : res.status === 'Rejected'
+                            ? 'bg-error-soft text-error dark:bg-error/15 dark:text-error-on-dark border-error-border dark:border-error/30'
+                            : res.status === 'Verified by Fakultas'
+                            ? 'bg-accent-soft text-accent-hover dark:bg-accent/15 dark:text-accent-on-dark border-accent-border dark:border-accent/30'
+                            : 'bg-warning-soft text-warning dark:bg-warning/15 dark:text-warning-on-dark border-warning-border dark:border-warning/30'
+                        }`}
+                      >
+                        {res.status === 'Verified by Fakultas' ? 'Verified (Fakultas)' : res.status}
+                      </div>
+                    </td>
+
+                    {/* 5. Dana */}
+                    <td className="hidden sm:table-cell px-6 py-4 text-xs font-mono tabular-nums font-semibold text-body-strong dark:text-on-dark whitespace-nowrap">
                       {formatCurrency(res.dana_disetujui)}
                     </td>
+
+                    {/* 6. Poin */}
+                    <td className="px-6 py-4 text-right sm:text-left">
+                      <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-ink-heading dark:text-on-dark whitespace-nowrap">
+                        +{Math.round(res.awarded_points)} Pts
+                      </span>
+                    </td>
+
+                    {/* 7. Dokumen */}
                     <td className="px-6 py-4">
                       {res.file_url && res.file_url !== '-' ? (
                         <button
@@ -268,13 +301,13 @@ export default function ResearchTable({
                             })
                           }
                           aria-label={`Lihat PDF untuk ${res.judul_penelitian}`}
-                          className="inline-flex items-center text-xs font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer shadow-2xs"
+                          className="inline-flex items-center text-xs font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer shadow-2xs whitespace-nowrap"
                         >
                           <FileText className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" />
                           Lihat
                         </button>
                       ) : (
-                        <label className="inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:hover:text-on-dark cursor-pointer bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark transition-colors shadow-2xs">
+                        <label className="inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:hover:text-on-dark cursor-pointer bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark transition-colors shadow-2xs whitespace-nowrap">
                           {uploadingPdfId === res.id ? (
                             <span className="animate-pulse">Uploading...</span>
                           ) : (
@@ -292,28 +325,8 @@ export default function ResearchTable({
                         </label>
                       )}
                     </td>
-                    <td className="px-6 py-4">
-                      <div
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-semibold text-[11px] border ${
-                          res.status === 'Approved'
-                            ? 'bg-success-soft text-success-dark dark:bg-success/15 dark:text-success-on-dark border-success-border dark:border-success/30'
-                            : res.status === 'Rejected'
-                            ? 'bg-error-soft text-error dark:bg-error/15 dark:text-error-on-dark border-error-border dark:border-error/30'
-                            : res.status === 'Verified by Fakultas'
-                            ? 'bg-accent-soft text-accent-hover dark:bg-accent/15 dark:text-accent-on-dark border-accent-border dark:border-accent/30'
-                            : 'bg-warning-soft text-warning dark:bg-warning/15 dark:text-warning-on-dark border-warning-border dark:border-warning/30'
-                        }`}
-                      >
-                        {res.status === 'Verified by Fakultas' ? 'Verified (Fakultas)' : res.status}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-ink-heading dark:text-on-dark">
-                        +{Math.round(res.awarded_points)} Pts
-                      </span>
-                    </td>
 
-                    {/* View Detail Button */}
+                    {/* 8. View Detail Button */}
                     <td className="px-4 py-4 text-center align-middle">
                       <button
                         type="button"
@@ -326,8 +339,8 @@ export default function ResearchTable({
                       </button>
                     </td>
 
-                    {/* Aksi: Edit & Delete */}
-                    <td className="px-4 py-4 text-center align-middle">
+                    {/* 9. Aksi: Edit & Delete */}
+                    <td className="px-6 py-4 text-center align-middle whitespace-nowrap">
                       {isDocLocked(res) ? (
                         <div
                           className="flex items-center justify-center gap-1"

@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Shield, Pencil, Trash2, FileText, CheckCircle, XCircle, 
-  Clock, Link, Lock, RotateCcw
+  Clock, Link, Lock, RotateCcw, Info
 } from 'lucide-react';
 import { HKI_CATEGORIES } from '../constants';
 import YearFilterBar from '../../../../components/ui/YearFilterBar';
@@ -110,8 +110,9 @@ export default function HKITable({
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Tanggal Perolehan</th>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Status</th>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Penelitian Asal</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Dokumen</th>
               <th className="px-6 py-3.5 text-right sm:text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Poin KPI</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Dokumen</th>
+              <th className="px-4 py-3.5 w-12 text-center text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Detail</th>
               <th className="px-6 py-3.5 text-center text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Aksi</th>
             </tr>
           </thead>
@@ -132,8 +133,9 @@ export default function HKITable({
                     <td className="px-6 py-4"><div className="h-5 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" /></td>
                     <td className="px-6 py-4"><div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
                     <td className="px-6 py-4"><div className="h-6 w-28 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
                     <td className="px-6 py-4 text-right sm:text-left"><div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg ml-auto sm:ml-0" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
+                    <td className="px-4 py-4 text-center"><div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" /></td>
                     <td className="px-6 py-4 text-center"><div className="h-7 w-14 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" /></td>
                   </tr>
                 ))}
@@ -212,7 +214,16 @@ export default function HKITable({
                       )}
                     </td>
 
-                    {/* 5. Dokumen */}
+                    {/* 5. Poin KPI */}
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex flex-col items-end sm:items-start">
+                        <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-ink-heading dark:text-on-dark whitespace-nowrap">
+                          +{Math.round(doc.awarded_points || 0)} Pts
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* 6. Dokumen */}
                     <td className="px-6 py-4 align-middle">
                       {doc.file_url && doc.file_url !== '-' ? (
                         <button
@@ -236,17 +247,21 @@ export default function HKITable({
                         </label>
                       )}
                     </td>
-                    
-                    {/* 6. Poin KPI */}
-                    <td className="px-6 py-4 align-middle">
-                      <div className="flex flex-col items-end sm:items-start">
-                        <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-ink-heading dark:text-on-dark whitespace-nowrap">
-                          +{Math.round(doc.awarded_points || 0)} Pts
-                        </span>
-                      </div>
+
+                    {/* 7. Detail */}
+                    <td className="px-4 py-4 text-center align-middle">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDocForDetail(doc)}
+                        aria-label={`Lihat detail HKI ${doc.title}`}
+                        className="p-1.5 rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-all flex items-center justify-center mx-auto cursor-pointer"
+                        title="Lihat Detail"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
                     </td>
 
-                    {/* 7. Aksi */}
+                    {/* 8. Aksi */}
                     <td className="px-6 py-4 text-center align-middle whitespace-nowrap">
                       {isDocLocked(doc) ? (
                         <div className="flex items-center justify-center gap-1" title="Dokumen sudah diverifikasi — tidak dapat diubah">
@@ -282,7 +297,7 @@ export default function HKITable({
               })
             ) : (
               <tr>
-                <td colSpan={7} className="px-8 py-16 text-center">
+                <td colSpan={8} className="px-8 py-16 text-center">
                   <div className="flex flex-col items-center">
                     <Shield className="w-12 h-12 text-muted-soft/40 dark:text-on-dark-muted/40 mb-3" />
                     <p className="text-xs font-semibold text-muted dark:text-on-dark-muted">
