@@ -237,6 +237,7 @@ export default function App() {
             <Route path="/admin/sync" element={user ? (user.role === 'admin penelitian' ? <AdminSync /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/input-document" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminInputDocument /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/admin/activity-logs" element={user ? ((user.role === 'admin penelitian' || user.role === 'admin fakultas') ? <AdminActivityLogs /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
+            <Route path="/admin/cms" element={user ? (user.role === 'admin penelitian' ? <CmsDashboard user={user} /> : <Navigate to="/dashboard" />) : <Navigate to="/admin" />} />
             <Route path="/help" element={user ? <FaqHelp user={user} /> : <Navigate to="/login" replace />} />
             <Route path="/profile" element={user ? <Profile user={user} setUser={setUser} /> : <Navigate to="/login" replace />} />
           </Route>
