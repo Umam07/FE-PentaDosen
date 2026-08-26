@@ -59,7 +59,7 @@ export default function HKITable({
       <div className="p-4 sm:p-5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 flex-wrap">
           <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
-            Riwayat Dokumen HKI
+            Riwayat HKI
           </h3>
           <span className="px-2 py-0.5 text-[11px] font-semibold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark">
             {filteredDocuments.length} Dokumen

@@ -59,7 +59,7 @@ export default function BukuTable({
       <div className="p-4 sm:p-5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 flex-wrap">
           <h3 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">
-            Riwayat Dokumen Buku
+            Riwayat Buku
           </h3>
           <span className="px-2 py-0.5 text-[11px] font-semibold font-mono rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark">
             {filteredDocuments.length} Dokumen
@@ -109,7 +109,7 @@ export default function BukuTable({
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Judul Buku</th>
               <th className="hidden md:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Tanggal Terbit</th>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Status</th>
-              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Penelitian Asal</th>
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Penelitian Asal</th>
               <th className="px-6 py-3.5 text-right sm:text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Poin KPI</th>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Dokumen</th>
               <th className="px-4 py-3.5 w-12 text-center text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">Detail</th>
@@ -132,7 +132,7 @@ export default function BukuTable({
                     </td>
                     <td className="hidden md:table-cell px-6 py-4"><div className="h-5 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" /></td>
                     <td className="px-6 py-4"><div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
-                    <td className="hidden sm:table-cell px-6 py-4"><div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
                     <td className="px-6 py-4 text-right sm:text-left"><div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg ml-auto sm:ml-0" /></td>
                     <td className="px-6 py-4"><div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
                     <td className="px-4 py-4 text-center"><div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" /></td>
@@ -189,7 +189,7 @@ export default function BukuTable({
                     </td>
 
                     {/* 4. Penelitian Asal */}
-                    <td className="hidden sm:table-cell px-6 py-4 align-middle text-left">
+                    <td className="px-6 py-4 align-middle text-left">
                       {doc.penelitian ? (
                         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft rounded-lg border border-hairline-light dark:border-hairline-dark max-w-[150px] truncate">
                           <Link className="w-3 h-3 shrink-0 text-muted dark:text-on-dark-muted" />

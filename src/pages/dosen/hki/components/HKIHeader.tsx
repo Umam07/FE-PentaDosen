@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, ShieldCheck } from 'lucide-react';
+import { BarChart2, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface HKIHeaderProps {
@@ -17,7 +17,7 @@ export default function HKIHeader({ onOpenMetricsModal }: HKIHeaderProps) {
       {/* Left: Icon, Title & Subtitle */}
       <div className="flex items-start sm:items-center gap-3 min-w-0">
         <div className="p-2.5 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark shrink-0">
-          <ShieldCheck className="w-5 h-5" />
+          <Award className="w-5 h-5" />
         </div>
 
         <div className="min-w-0">
