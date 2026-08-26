@@ -23,7 +23,7 @@ import { buildDownloadFilename, downloadWithFilename, lockBodyScroll, unlockBody
 // Configure PDF.js worker using unpkg CDN matching pdfjs version
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-interface PdfPreviewModalProps {
+export interface PdfPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileUrl: string | null;
@@ -62,7 +62,6 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
   // Update container width on resize or when modal opens/fullscreen toggles
   const updateContainerWidth = useCallback(() => {
     if (containerRef.current) {
-      // Subtract padding (approx 48px padding total)
       const width = containerRef.current.clientWidth - 48;
       if (width > 0) {
         setContainerWidth(width);
@@ -159,60 +158,60 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
   const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-[9000] flex items-center justify-center p-3 sm:p-4 md:p-6 font-sans">
+          {/* Backdrop (Warm Espresso / Deep Coffee Tint) */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-gray-950/80 backdrop-blur-md"
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 bg-canvas-dark/75 backdrop-blur-md"
             onClick={onClose}
           />
 
-          {/* Modal Container */}
+          {/* Modal Container — Warm Neutral Surface */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 16 }}
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 16 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className={`relative flex flex-col bg-white dark:bg-zinc-900 rounded-[2rem] shadow-2xl border border-gray-200 dark:border-zinc-700 overflow-hidden transition-all duration-300 ${
+            exit={{ opacity: 0, scale: 0.96, y: 12 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative flex flex-col bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark shadow-2xl overflow-hidden transition-all duration-300 ${
               isFullscreen
                 ? 'w-screen h-screen rounded-none'
-                : 'w-full max-w-5xl h-[90vh]'
+                : 'w-full max-w-5xl h-[88vh] rounded-2xl md:rounded-3xl'
             }`}
           >
             {/* 1. HEADER */}
-            <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/80 dark:bg-zinc-800/80 backdrop-blur-sm flex-shrink-0">
-              {/* File Icon */}
-              <div className="p-2.5 bg-primary-50 dark:bg-primary-900/30 rounded-xl border border-primary-100 dark:border-primary-900/30 flex-shrink-0">
-                <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <div className="flex items-center gap-3.5 px-5 sm:px-6 py-3.5 border-b border-hairline-light dark:border-hairline-dark bg-surface-light-raised/70 dark:bg-surface-dark-elevated/70 backdrop-blur-sm shrink-0">
+              {/* File Icon Badge */}
+              <div className="w-9 h-9 rounded-lg bg-accent-soft dark:bg-accent/15 border border-accent-border/40 dark:border-accent/30 text-accent dark:text-accent-on-dark flex items-center justify-center shrink-0">
+                <FileText className="w-4.5 h-4.5" />
               </div>
 
               {/* Title & Category */}
               <div className="flex-1 min-w-0">
                 {category && (
-                  <p className="text-[9px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-[0.2em] mb-0.5">
+                  <p className="font-mono text-[10px] sm:text-[11px] font-semibold text-accent dark:text-accent-on-dark uppercase tracking-wider mb-0.5">
                     {category}
                   </p>
                 )}
-                <h2 className="text-sm font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight truncate">
+                <h2 className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark truncate leading-tight">
                   {title || 'Preview Dokumen'}
                 </h2>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Download */}
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {/* Download Button */}
                 {isValidFileUrl && (
                   <button
                     onClick={handleDownload}
                     disabled={isDownloading}
-                    className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-900/30 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="p-2 sm:p-2.5 rounded-lg bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark transition-all shadow-xs disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     title="Unduh File"
                   >
                     {isDownloading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin text-accent" />
                     ) : (
                       <Download className="w-4 h-4" />
                     )}
@@ -225,7 +224,7 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
                     href={resolvedUrl!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-900/30 transition-all shadow-sm flex items-center justify-center"
+                    className="p-2 sm:p-2.5 rounded-lg bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark transition-all shadow-xs flex items-center justify-center cursor-pointer"
                     title="Buka di Tab Baru"
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -235,41 +234,41 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
                 {/* Fullscreen toggle */}
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-900/30 transition-all shadow-sm"
+                  className="p-2 sm:p-2.5 rounded-lg bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark transition-all shadow-xs cursor-pointer"
                   title={isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen'}
                 >
                   {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                 </button>
 
-                {/* Close */}
+                {/* Close Button */}
                 <button
                   onClick={onClose}
-                  className="p-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900/30 transition-all shadow-sm"
-                  title="Tutup"
+                  className="p-2 sm:p-2.5 rounded-lg bg-surface-light hover:bg-error-soft dark:bg-surface-dark-elevated dark:hover:bg-error/15 border border-hairline-light hover:border-error-border dark:border-hairline-dark dark:hover:border-error/30 text-body hover:text-error dark:text-on-dark-soft dark:hover:text-error-on-dark transition-all shadow-xs cursor-pointer"
+                  title="Tutup (ESC)"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* 2. CUSTOM MINIMAL TOOLBAR (Below Header) */}
+            {/* 2. TOOLBAR CONTROLS */}
             {isValidFileUrl && !loadError && (
-              <div className="flex items-center justify-between px-6 py-2.5 bg-white dark:bg-zinc-900 border-b border-gray-200/80 dark:border-zinc-800 flex-shrink-0 z-10 shadow-xs">
+              <div className="flex items-center justify-between px-5 sm:px-6 py-2 bg-surface-light dark:bg-surface-dark border-b border-hairline-light-soft dark:border-hairline-dark-soft shrink-0 z-10">
                 {/* Page Navigation Group */}
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
                     disabled={pageNumber <= 1 || isLoading}
-                    className="p-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                    className="p-1.5 rounded-lg border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
                     title="Halaman Sebelumnya (Panah Kiri)"
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-3.5 h-3.5" />
                   </button>
 
-                  <div className="px-3 py-1 bg-gray-50 dark:bg-zinc-800/80 rounded-lg border border-gray-200/60 dark:border-zinc-700/60 text-xs font-semibold text-gray-700 dark:text-zinc-200 tracking-tight min-w-[120px] text-center">
+                  <div className="px-3 py-1 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg border border-hairline-light-soft dark:border-hairline-dark-soft font-mono text-[11px] font-semibold text-ink-heading dark:text-on-dark tracking-tight min-w-[110px] text-center">
                     {numPages ? (
                       <>
-                        Halaman <span className="font-bold text-primary-600 dark:text-primary-400">{pageNumber}</span> dari <span className="font-bold">{numPages}</span>
+                        Halaman <span className="font-bold text-accent dark:text-accent-on-dark">{pageNumber}</span> / <span>{numPages}</span>
                       </>
                     ) : (
                       'Memuat...'
@@ -279,31 +278,31 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
                   <button
                     onClick={() => setPageNumber((prev) => Math.min(prev + 1, numPages || 1))}
                     disabled={!numPages || pageNumber >= numPages || isLoading}
-                    className="p-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                    className="p-1.5 rounded-lg border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
                     title="Halaman Selanjutnya (Panah Kanan)"
                   >
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 {/* Vertical Divider */}
-                <div className="h-4 w-px bg-gray-200 dark:bg-zinc-800 mx-2" />
+                <div className="h-3.5 w-px bg-hairline-light dark:bg-hairline-dark mx-1.5 sm:mx-2" />
 
                 {/* Zoom Control Group */}
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={zoomOut}
                     disabled={scale <= 0.5 || isLoading}
-                    className="p-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                    className="p-1.5 rounded-lg border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
                     title="Perkecil (-)"
                   >
-                    <ZoomOut className="w-4 h-4" />
+                    <ZoomOut className="w-3.5 h-3.5" />
                   </button>
 
                   <button
                     onClick={resetZoom}
                     disabled={isLoading}
-                    className="px-2.5 py-1 bg-gray-50 dark:bg-zinc-800/80 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg border border-gray-200/60 dark:border-zinc-700/60 text-xs font-bold text-gray-700 dark:text-zinc-200 min-w-[54px] text-center transition-all"
+                    className="px-2.5 py-1 bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark rounded-lg border border-hairline-light-soft dark:border-hairline-dark-soft font-mono text-[11px] font-bold text-ink-heading dark:text-on-dark min-w-[50px] text-center transition-all cursor-pointer"
                     title="Reset Zoom ke 100%"
                   >
                     {Math.round(scale * 100)}%
@@ -312,93 +311,93 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
                   <button
                     onClick={zoomIn}
                     disabled={scale >= 2.5 || isLoading}
-                    className="p-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                    className="p-1.5 rounded-lg border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer disabled:cursor-not-allowed"
                     title="Perbesar (+)"
                   >
-                    <ZoomIn className="w-4 h-4" />
+                    <ZoomIn className="w-3.5 h-3.5" />
                   </button>
 
                   {/* Fit to Width Button */}
                   <button
                     onClick={toggleFitToWidth}
                     disabled={isLoading}
-                    className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                    className={`px-2.5 py-1 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                       fitToWidth
-                        ? 'bg-primary-50 dark:bg-primary-950/40 border-primary-300 dark:border-primary-800 text-primary-600 dark:text-primary-400'
-                        : 'border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                        ? 'bg-accent-soft dark:bg-accent/15 border-accent-border/60 dark:border-accent/40 text-accent dark:text-accent-on-dark'
+                        : 'border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'
                     }`}
                     title="Sesuaikan Lebar Halaman"
                   >
-                    <Maximize className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Fit Lebar</span>
+                    <Maximize className="w-3 h-3" />
+                    <span className="hidden sm:inline text-[11px]">Fit Lebar</span>
                   </button>
                 </div>
               </div>
             )}
 
-            {/* 3. PDF VIEWER BODY (Canvas Area) */}
+            {/* 3. PDF VIEWER CANVAS AREA */}
             <div
               ref={containerRef}
-              className="flex-1 relative bg-slate-100/90 dark:bg-zinc-950 overflow-auto p-6 flex items-flex-start justify-center"
+              className="flex-1 relative bg-canvas-light dark:bg-canvas-dark overflow-auto p-4 sm:p-6 flex items-flex-start justify-center"
             >
               {!isValidFileUrl ? (
                 /* No file state */
-                <div className="m-auto flex flex-col items-center justify-center gap-5 p-8 text-center max-w-md">
-                  <div className="w-20 h-20 bg-amber-50 dark:bg-amber-950/20 rounded-3xl flex items-center justify-center ring-8 ring-amber-50/50 dark:ring-amber-950/10">
-                    <AlertCircle className="w-10 h-10 text-amber-500" />
+                <div className="m-auto flex flex-col items-center justify-center gap-4 p-8 text-center max-w-md">
+                  <div className="w-16 h-16 bg-warning-soft dark:bg-warning/15 border border-warning-border/50 dark:border-warning/30 rounded-2xl flex items-center justify-center text-warning dark:text-warning-on-dark">
+                    <AlertCircle className="w-8 h-8" />
                   </div>
-                  <div>
-                    <p className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight mb-2">
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-ink-heading dark:text-on-dark">
                       File Tidak Tersedia
                     </p>
-                    <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 leading-relaxed">
+                    <p className="text-xs text-muted dark:text-on-dark-muted leading-relaxed">
                       Dokumen ini berasal dari sinkronisasi otomatis dan tidak memiliki berkas PDF yang dapat ditampilkan.
                     </p>
                   </div>
                 </div>
               ) : loadError ? (
                 /* Load error state */
-                <div className="m-auto flex flex-col items-center justify-center gap-5 p-8 text-center max-w-md">
-                  <div className="w-20 h-20 bg-red-50 dark:bg-red-950/20 rounded-3xl flex items-center justify-center ring-8 ring-red-50/50 dark:ring-red-950/10">
-                    <FileText className="w-10 h-10 text-red-400" />
+                <div className="m-auto flex flex-col items-center justify-center gap-4 p-8 text-center max-w-md">
+                  <div className="w-16 h-16 bg-error-soft dark:bg-error/15 border border-error-border/50 dark:border-error/30 rounded-2xl flex items-center justify-center text-error dark:text-error-on-dark">
+                    <FileText className="w-8 h-8" />
                   </div>
-                  <div>
-                    <p className="text-base font-black text-gray-900 dark:text-zinc-100 uppercase tracking-tight mb-1.5">
+                  <div className="space-y-1 mb-2">
+                    <p className="text-sm font-bold text-ink-heading dark:text-on-dark">
                       Gagal Memuat Dokumen
                     </p>
-                    <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 leading-relaxed mb-6">
+                    <p className="text-xs text-muted dark:text-on-dark-muted leading-relaxed">
                       Berkas PDF tidak dapat dimuat secara langsung. Anda dapat mencoba lagi atau membukanya di tab baru.
                     </p>
-                    <div className="flex items-center justify-center gap-3">
-                      <button
-                        onClick={() => {
-                          setLoadError(false);
-                          setIsLoading(true);
-                        }}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-zinc-200 rounded-xl text-xs font-bold transition-all active:scale-95"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                        Coba Lagi
-                      </button>
-                      <a
-                        href={resolvedUrl!}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-md shadow-primary-200 dark:shadow-primary-950/30 transition-all active:scale-95"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        Buka di Tab Baru
-                      </a>
-                    </div>
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <button
+                      onClick={() => {
+                        setLoadError(false);
+                        setIsLoading(true);
+                      }}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Coba Lagi
+                    </button>
+                    <a
+                      href={resolvedUrl!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-on-dark-soft text-on-ink dark:text-ink rounded-lg text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Buka di Tab Baru
+                    </a>
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center my-auto min-h-full py-4">
-                  {/* Loading overlay / spinner */}
+                  {/* Loading Overlay */}
                   {isLoading && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-20 bg-slate-100/90 dark:bg-zinc-950/90 backdrop-blur-xs">
-                      <div className="w-10 h-10 border-3 border-primary-200 dark:border-primary-900/40 border-t-primary-600 rounded-full animate-spin" />
-                      <p className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-20 bg-canvas-light/85 dark:bg-canvas-dark/85 backdrop-blur-xs">
+                      <div className="w-9 h-9 border-2 border-hairline-light dark:border-hairline-dark border-t-accent dark:border-t-accent-on-dark rounded-full animate-spin" />
+                      <p className="font-mono text-[11px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">
                         Memuat Halaman PDF...
                       </p>
                     </div>
@@ -416,8 +415,8 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
                       key={`${pageNumber}-${scale}-${fitToWidth}`}
                       initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}
-                      className="bg-white rounded-lg shadow-xl shadow-slate-900/10 dark:shadow-black/70 ring-1 ring-slate-900/5 dark:ring-white/10 overflow-hidden"
+                      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                      className="bg-white rounded-xl shadow-xl shadow-black/5 dark:shadow-black/60 border border-hairline-light dark:border-hairline-dark overflow-hidden"
                     >
                       <Page
                         pageNumber={pageNumber}
@@ -434,9 +433,12 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
             </div>
 
             {/* 4. FOOTER */}
-            <div className="flex items-center justify-end px-6 py-3 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/50 flex-shrink-0">
-              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">
-                Tekan <kbd className="px-1.5 py-0.5 bg-gray-200 dark:bg-zinc-700 rounded text-[9px] font-black text-gray-700 dark:text-zinc-300">ESC</kbd> untuk menutup
+            <div className="flex items-center justify-between px-5 sm:px-6 py-2.5 border-t border-hairline-light dark:border-hairline-dark bg-surface-light-raised/60 dark:bg-surface-dark-elevated/60 shrink-0">
+              <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted">
+                PentaDosen Academic Document Viewer
+              </p>
+              <p className="text-[10px] font-mono text-muted dark:text-on-dark-muted">
+                Tekan <kbd className="px-1.5 py-0.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded text-[9px] font-bold text-ink-heading dark:text-on-dark">ESC</kbd> untuk menutup
               </p>
             </div>
           </motion.div>
@@ -449,3 +451,4 @@ export function PdfPreviewModal({ isOpen, onClose, fileUrl, title, category }: P
     ? createPortal(modalContent, document.body)
     : null;
 }
+
