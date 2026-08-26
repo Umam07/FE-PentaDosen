@@ -162,9 +162,47 @@ export default function ResearchTable({
           <tbody className="divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
             {isTableLoading ? (
               <phantom-ui loading={true} animation="shimmer" className="contents">
-                {[1, 2, 3].map((i) => (
-                  <tr key={i}>
-                    <td colSpan={9} className="px-6 py-4 bg-surface-light-raised/30 h-16"></td>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <tr key={`skeleton-${i}`} className="border-b border-hairline-light dark:border-hairline-dark last:border-0">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg shrink-0 mt-0.5" />
+                        <div className="space-y-2 flex-1 max-w-[280px]">
+                          <div className="h-4 w-3/4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                          <div className="h-3 w-1/2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden lg:table-cell px-6 py-4">
+                      <div className="space-y-1.5">
+                        <div className="h-4 w-28 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                        <div className="flex gap-1.5">
+                          <div className="h-4 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                          <div className="h-4 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden md:table-cell px-6 py-4">
+                      <div className="h-5 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                    </td>
+                    <td className="hidden sm:table-cell px-6 py-4">
+                      <div className="h-6 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg ml-auto" />
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" />
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="h-7 w-14 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" />
+                    </td>
                   </tr>
                 ))}
               </phantom-ui>
@@ -344,7 +382,7 @@ export default function ResearchTable({
       <div className="block md:hidden divide-y divide-hairline-light dark:divide-hairline-dark">
         {isTableLoading ? (
           <phantom-ui loading={true} animation="shimmer" className="contents">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div key={`m-skeleton-${i}`} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1">

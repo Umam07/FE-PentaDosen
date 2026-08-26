@@ -121,26 +121,26 @@ export default function BukuTable({
           <tbody className="divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
             {isTableLoading ? (
               <phantom-ui loading={true} animation="shimmer" className="contents">
-                {[1, 2, 3].map((i) => (
-                  <tr key={`skeleton-${i}`}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <tr key={`skeleton-${i}`} className="border-b border-hairline-light dark:border-hairline-dark last:border-0">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg shrink-0" />
-                        <div className="space-y-2 w-full max-w-[200px]">
+                        <div className="h-8 w-8 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg shrink-0 mt-0.5" />
+                        <div className="space-y-2 flex-1 max-w-[240px]">
                           <div className="h-4 w-full bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
-                          <div className="h-3 w-2/3 bg-surface-light-raised/60 dark:bg-surface-dark-elevated/60 rounded" />
+                          <div className="h-3 w-2/3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
                         </div>
                       </div>
                     </td>
-                    <td className="hidden lg:table-cell px-6 py-4"><div className="h-4 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" /></td>
-                    <td className="hidden md:table-cell px-6 py-4"><div className="h-4 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-full" /></td>
+                    <td className="hidden lg:table-cell px-6 py-4"><div className="h-5 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" /></td>
+                    <td className="hidden md:table-cell px-6 py-4"><div className="h-5 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
                     <td className="hidden sm:table-cell px-6 py-4"><div className="h-6 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-12 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
-                    <td className="hidden sm:table-cell px-6 py-4"><div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
-                    <td className="px-4 py-4"><div className="h-6 w-6 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-12 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" /></td>
+                    <td className="px-6 py-4 text-right sm:text-left"><div className="h-5 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg ml-auto sm:ml-0" /></td>
+                    <td className="hidden sm:table-cell px-6 py-4"><div className="h-6 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" /></td>
+                    <td className="px-4 py-4 text-center"><div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" /></td>
+                    <td className="px-6 py-4 text-center"><div className="h-7 w-14 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg mx-auto" /></td>
                   </tr>
                 ))}
               </phantom-ui>

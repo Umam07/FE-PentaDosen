@@ -4,7 +4,15 @@ import { fetchUserHkiDocuments, fetchCategoryWeights, fetchApprovedResearch, upl
 import { generateHkiExcelTemplate } from '../utils/hkiUtils';
 
 export function useHki(user: UserSession) {
-  const [documents, setDocuments] = useState<HkiDoc[]>([]);
+  const [documents, setDocuments] = useState<HkiDoc[]>(() => {
+    if (!user?.id) return [];
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_hki_${user.id}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedDocForDetail, setSelectedDocForDetail] = useState<HkiDoc | null>(null);
 
   const activeDetailDoc = useMemo(() => {
@@ -21,7 +29,15 @@ export function useHki(user: UserSession) {
     }
   });
 
-  const [isTableLoading, setIsTableLoading] = useState(true);
+  const [isTableLoading, setIsTableLoading] = useState(() => {
+    if (!user?.id) return true;
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_hki_${user.id}`);
+      return !cached;
+    } catch {
+      return true;
+    }
+  });
   const [isWeightsLoading, setIsWeightsLoading] = useState(() => {
     try {
       return !localStorage.getItem('penta_weights');
@@ -67,6 +83,9 @@ export function useHki(user: UserSession) {
     try {
       const docs = await fetchUserHkiDocuments(user.id);
       setDocuments(docs);
+      try {
+        sessionStorage.setItem(`pentadosen_hki_${user.id}`, JSON.stringify(docs));
+      } catch (e) {}
     } catch (err) {
       console.error('Error fetching HKI documents:', err);
     }
@@ -99,12 +118,15 @@ export function useHki(user: UserSession) {
 
   useEffect(() => {
     const initData = async () => {
-      setIsTableLoading(true);
+      const hasCache = !!sessionStorage.getItem(`pentadosen_hki_${user?.id}`);
+      if (!hasCache) {
+        setIsTableLoading(true);
+      }
       await Promise.all([loadWeights(), loadApprovedResearch(), loadDocuments()]);
       setIsTableLoading(false);
     };
     initData();
-  }, [loadWeights, loadApprovedResearch, loadDocuments]);
+  }, [loadWeights, loadApprovedResearch, loadDocuments, user?.id]);
 
   const hkiDocs = useMemo(() => {
     return (documents || []).filter((d) =>

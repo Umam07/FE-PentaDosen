@@ -21,23 +21,23 @@ export default function HKIStats({ stats, isTableLoading }: HKIStatsProps) {
   ];
 
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+    <section className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-3.5">
       {statItems.map((item, index) => (
         <motion.div
           key={item.label}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.05 }}
-          className="bg-surface-light dark:bg-surface-dark shadow-2xs rounded-2xl border border-hairline-light dark:border-hairline-dark p-3.5 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3.5 transition-all"
+          className="bg-surface-light dark:bg-surface-dark shadow-2xs rounded-2xl border border-hairline-light dark:border-hairline-dark p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 transition-all relative overflow-hidden"
         >
-          <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 border ${
+          <div className={`p-2 sm:p-2.5 rounded-xl shrink-0 border ${
             item.color === 'approved'
               ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
               : item.color === 'pending'
               ? 'bg-warning-soft dark:bg-warning/15 text-warning dark:text-warning-on-dark border-warning-border dark:border-warning/30'
               : 'bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border-hairline-light dark:border-hairline-dark'
           }`}>
-            <item.icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
+            <item.icon className="h-4 w-4 sm:h-4.5 sm:w-4.5 lg:h-5 lg:w-5" />
           </div>
           <div className="min-w-0 flex-1 w-full">
             <phantom-ui loading={isTableLoading} animation="shimmer" className="block space-y-0.5">

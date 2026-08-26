@@ -17,7 +17,15 @@ export function usePublication(user: UserSession) {
   }, [location.search]);
 
   const [selectedDocForDetail, setSelectedDocForDetail] = useState<any>(null);
-  const [documents, setDocuments] = useState<PublicationDoc[]>([]);
+  const [documents, setDocuments] = useState<PublicationDoc[]>(() => {
+    if (!user?.id) return [];
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_publications_${user.id}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const activeDetailDoc = useMemo(() => {
     if (!selectedDocForDetail) return null;
@@ -34,7 +42,15 @@ export function usePublication(user: UserSession) {
   });
 
   const [category, setCategory] = useState('');
-  const [isTableLoading, setIsTableLoading] = useState(true);
+  const [isTableLoading, setIsTableLoading] = useState(() => {
+    if (!user?.id) return true;
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_publications_${user.id}`);
+      return !cached;
+    } catch {
+      return true;
+    }
+  });
   const [isWeightsLoading, setIsWeightsLoading] = useState(() => {
     try {
       return !localStorage.getItem('penta_weights');
@@ -89,6 +105,9 @@ export function usePublication(user: UserSession) {
     try {
       const docs = await fetchUserDocuments(user.id);
       setDocuments(docs);
+      try {
+        sessionStorage.setItem(`pentadosen_publications_${user.id}`, JSON.stringify(docs));
+      } catch (e) {}
     } catch (err) {
       console.error(err);
     }
@@ -147,16 +166,18 @@ export function usePublication(user: UserSession) {
 
   useEffect(() => {
     const initData = async () => {
-      setIsTableLoading(true);
+      const hasCache = !!sessionStorage.getItem(`pentadosen_publications_${user?.id}`);
+      if (!hasCache) {
+        setIsTableLoading(true);
+      }
       await Promise.all([loadWeights(), loadApprovedResearch(), loadDocuments()]);
       setIsTableLoading(false);
     };
     initData();
-  }, [loadWeights, loadApprovedResearch, loadDocuments]);
+  }, [loadWeights, loadApprovedResearch, loadDocuments, user?.id]);
 
   useEffect(() => {
     if (urlKategori) {
-      setIsTableLoading(true);
       setCategory(urlKategori);
       setFilterYear(null);
       setQuartileFilter('all');
@@ -165,8 +186,6 @@ export function usePublication(user: UserSession) {
       setScopusFilter('all');
       setCrossIndexedOnly(false);
       setCurrentPage(1);
-      // Beri waktu satu tick agar filter & filteredDocuments selesai di-recalculate
-      setTimeout(() => setIsTableLoading(false), 0);
     }
   }, [urlKategori]);
 

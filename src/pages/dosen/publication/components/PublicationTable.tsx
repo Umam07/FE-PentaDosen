@@ -593,7 +593,7 @@ export default function PublicationTable({
           <tbody className="divide-y divide-hairline-light dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
             {isTableLoading ? (
               <phantom-ui loading={true} animation="shimmer" className="contents">
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3, 4, 5].map((i) => (
                   <tr key={`skeleton-${i}`} className="border-b border-hairline-light dark:border-hairline-dark last:border-0">
                     <td className="px-5 lg:px-6 py-4 lg:py-5">
                       <div className="flex items-start gap-3 lg:gap-4">
@@ -859,7 +859,7 @@ export default function PublicationTable({
       <div className="block md:hidden divide-y divide-hairline-light dark:divide-hairline-dark">
         {isTableLoading ? (
           <phantom-ui loading={true} animation="shimmer" className="contents">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div key={`m-skeleton-${i}`} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1">

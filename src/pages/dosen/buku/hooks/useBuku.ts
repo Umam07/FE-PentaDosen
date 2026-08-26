@@ -10,7 +10,15 @@ export function useBuku(user: UserSession) {
     return new URLSearchParams(location.search).get('kategori') || '';
   }, [location.search]);
 
-  const [documents, setDocuments] = useState<BukuDoc[]>([]);
+  const [documents, setDocuments] = useState<BukuDoc[]>(() => {
+    if (!user?.id) return [];
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_buku_${user.id}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedDocForDetail, setSelectedDocForDetail] = useState<BukuDoc | null>(null);
 
   const activeDetailDoc = useMemo(() => {
@@ -18,7 +26,15 @@ export function useBuku(user: UserSession) {
     return documents.find((d) => d.id === selectedDocForDetail.id) || selectedDocForDetail;
   }, [documents, selectedDocForDetail]);
 
-  const [isTableLoading, setIsTableLoading] = useState(true);
+  const [isTableLoading, setIsTableLoading] = useState(() => {
+    if (!user?.id) return true;
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_buku_${user.id}`);
+      return !cached;
+    } catch {
+      return true;
+    }
+  });
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,6 +78,9 @@ export function useBuku(user: UserSession) {
     try {
       const docs = await fetchUserBukuDocuments(user.id);
       setDocuments(docs);
+      try {
+        sessionStorage.setItem(`pentadosen_buku_${user.id}`, JSON.stringify(docs));
+      } catch (e) {}
     } catch (err) {
       console.error('Error fetching buku documents:', err);
     }
@@ -79,12 +98,15 @@ export function useBuku(user: UserSession) {
 
   useEffect(() => {
     const initData = async () => {
-      setIsTableLoading(true);
+      const hasCache = !!sessionStorage.getItem(`pentadosen_buku_${user?.id}`);
+      if (!hasCache) {
+        setIsTableLoading(true);
+      }
       await Promise.all([loadDocuments(), loadApprovedResearch()]);
       setIsTableLoading(false);
     };
     initData();
-  }, [loadDocuments, loadApprovedResearch]);
+  }, [loadDocuments, loadApprovedResearch, user?.id]);
 
   const filteredDocuments = useMemo(() => {
     let result = documents;

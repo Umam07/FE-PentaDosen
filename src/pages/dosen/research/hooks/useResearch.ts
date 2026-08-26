@@ -25,7 +25,15 @@ export function useResearch(user: UserSession) {
     return new URLSearchParams(location.search).get('kategori') || '';
   }, [location.search]);
 
-  const [researchList, setResearchList] = useState<ResearchItem[]>([]);
+  const [researchList, setResearchList] = useState<ResearchItem[]>(() => {
+    if (!user?.id) return [];
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_research_${user.id}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedDocForDetail, setSelectedDocForDetail] = useState<ResearchItem | null>(null);
 
   const activeDetailDoc = useMemo(() => {
@@ -56,7 +64,15 @@ export function useResearch(user: UserSession) {
   const [file, setFile] = useState<File | null>(null);
 
   // Loading & Progress states
-  const [isTableLoading, setIsTableLoading] = useState(true);
+  const [isTableLoading, setIsTableLoading] = useState(() => {
+    if (!user?.id) return true;
+    try {
+      const cached = sessionStorage.getItem(`pentadosen_research_${user.id}`);
+      return !cached;
+    } catch {
+      return true;
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
@@ -108,6 +124,9 @@ export function useResearch(user: UserSession) {
     try {
       const data = await fetchUserResearch(user.id, user.role);
       setResearchList(data);
+      try {
+        sessionStorage.setItem(`pentadosen_research_${user.id}`, JSON.stringify(data));
+      } catch (e) {}
     } catch (err) {
       console.error('Error fetching research list:', err);
     }
@@ -115,12 +134,15 @@ export function useResearch(user: UserSession) {
 
   useEffect(() => {
     const initData = async () => {
-      setIsTableLoading(true);
+      const hasCache = !!sessionStorage.getItem(`pentadosen_research_${user?.id}`);
+      if (!hasCache) {
+        setIsTableLoading(true);
+      }
       await loadResearchList();
       setIsTableLoading(false);
     };
     initData();
-  }, [loadResearchList]);
+  }, [loadResearchList, user?.id]);
 
   useEffect(() => {
     if (urlKategori) {
