@@ -15,26 +15,26 @@ const OnboardingDialog = lazy(() => import('./components/ui/onboarding-dialog').
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
-const Login = lazy(() => import('./pages/auth/Login'));
-const Insights = lazy(() => import('./pages/dashboard/Insights'));
-const Profile = lazy(() => import('./pages/profilediri/Profile'));
-const Publication = lazy(() => import('./pages/dosen/publication'));
-const AdminVerification = lazy(() => import('./pages/admin/Verification'));
-const AdminLecturers = lazy(() => import('./pages/admin/Lecturers'));
-const AdminLecturerProfile = lazy(() => import('./pages/admin/LecturerProfile'));
-const AdminInputDocument = lazy(() => import('./pages/admin/AdminInputDocument'));
-const AdminSync = lazy(() => import('./pages/admin/AdminSync'));
-const AdminAllDocuments = lazy(() => import('./pages/admin/AdminAllDocuments'));
-const AdminActivityLogs = lazy(() => import('./pages/admin/ActivityLogs'));
-const CmsDashboard = lazy(() => import('./pages/admin/CmsDashboard'));
-const Research = lazy(() => import('./pages/dosen/research'));
-const Buku = lazy(() => import('./pages/dosen/buku'));
-const HKI = lazy(() => import('./pages/dosen/hki'));
-const LecturerDashboard = lazy(() => import('./pages/dosen/dashboard/LecturerDashboard'));
-const FaqHelp = lazy(() => import('./pages/dosen/FaqHelp'));
-const LecturerList = lazy(() => import('./pages/dashboard/LecturerList'));
-const LecturerProfileInsights = lazy(() => import('./pages/dashboard/LecturerProfileInsights'));
-const DepartementList = lazy(() => import('./pages/dashboard/DepartementList'));
+const Login = lazy(() => import('./pages/auth/LoginPage'));
+const Insights = lazy(() => import('./pages/dashboard/Insights/InsightsPage'));
+const Profile = lazy(() => import('./pages/profilediri/Profile/ProfilePage'));
+const Publication = lazy(() => import('./pages/dosen/publication/PublicationPage'));
+const AdminVerification = lazy(() => import('./pages/admin/Verification/VerificationPage'));
+const AdminLecturers = lazy(() => import('./pages/admin/Lecturers/LecturersPage'));
+const AdminLecturerProfile = lazy(() => import('./pages/admin/LecturerProfile/LecturerProfilePage'));
+const AdminInputDocument = lazy(() => import('./pages/admin/AdminInputDocument/AdminInputDocumentPage'));
+const AdminSync = lazy(() => import('./pages/admin/AdminSync/AdminSyncPage'));
+const AdminAllDocuments = lazy(() => import('./pages/admin/AdminAllDocuments/AdminAllDocumentsPage'));
+const AdminActivityLogs = lazy(() => import('./pages/admin/ActivityLogs/ActivityLogsPage'));
+const CmsDashboard = lazy(() => import('./pages/admin/CmsDashboard/CmsDashboardPage'));
+const Research = lazy(() => import('./pages/dosen/research/ResearchPage'));
+const Buku = lazy(() => import('./pages/dosen/buku/BukuPage'));
+const HKI = lazy(() => import('./pages/dosen/hki/HKIPage'));
+const LecturerDashboard = lazy(() => import('./pages/dosen/dashboard/LecturerDashboardPage'));
+const FaqHelp = lazy(() => import('./pages/dosen/FaqHelp/FaqHelpPage'));
+const LecturerList = lazy(() => import('./pages/dashboard/LecturerList/LecturerListPage'));
+const LecturerProfileInsights = lazy(() => import('./pages/dashboard/LecturerProfileInsights/LecturerProfileInsightsPage'));
+const DepartementList = lazy(() => import('./pages/dashboard/DepartementList/DepartementListPage'));
 const Developers = lazy(() => import('./pages/Developers'));
 
 

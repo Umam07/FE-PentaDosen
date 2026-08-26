@@ -1,6 +1,3 @@
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
-
 /**
  * Menghasilkan file Excel template publikasi buku menggunakan ExcelJS
  */
@@ -18,6 +15,9 @@ export async function generateBukuExcelTemplate(): Promise<void> {
   } catch (e) {
     console.error('Failed to fetch custom template, falling back to generated template', e);
   }
+
+  const ExcelJS = (await import('exceljs')).default;
+  const { saveAs } = await import('file-saver');
 
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Template');

@@ -1,5 +1,3 @@
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import type { LecturerUser, CategoryWeight, SubCategoryOption, ScoringPreview } from '../types/adminInputDocument.types';
 
 /**
@@ -10,6 +8,9 @@ export async function downloadExcelTemplate(
   users: LecturerUser[],
   weights: CategoryWeight[]
 ): Promise<void> {
+  const ExcelJS = (await import('exceljs')).default;
+  const { saveAs } = await import('file-saver');
+
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Template');
   const refSheet = workbook.addWorksheet('Referensi');

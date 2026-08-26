@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import * as XLSX from 'xlsx';
 import type { HkiDoc, ApprovedResearch, WeightCategory, UserSession, PreviewDocState, StatsInfo } from '../types/hki.types';
 import { fetchUserHkiDocuments, fetchCategoryWeights, fetchApprovedResearch, uploadHkiPdf } from '../services/hkiService';
 import { generateHkiExcelTemplate } from '../utils/hkiUtils';

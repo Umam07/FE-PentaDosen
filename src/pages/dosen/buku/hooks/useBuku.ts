@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import * as XLSX from 'xlsx';
 import type { BukuDoc, ApprovedResearch, UserSession, PreviewDocState, StatsInfo } from '../types/buku.types';
 import { fetchUserBukuDocuments, fetchApprovedResearch, uploadBukuPdf } from '../services/bukuService';
 import { generateBukuExcelTemplate } from '../utils/bukuUtils';

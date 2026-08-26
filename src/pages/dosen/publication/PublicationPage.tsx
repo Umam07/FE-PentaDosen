@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import type { UserSession } from './types/publication.types';
 import { usePublication } from './hooks/usePublication';
 import { toast } from '@/components/ui/toast';
@@ -14,7 +14,7 @@ import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
 import MetricsGuideModal from './components/MetricsGuideModal';
 
-import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
 
 export default function Publication({ user }: { user: UserSession }) {
@@ -227,13 +227,17 @@ export default function Publication({ user }: { user: UserSession }) {
         category={pub.urlKategori}
       />
 
-      <PdfPreviewModal
-        isOpen={!!pub.previewDoc}
-        onClose={() => pub.setPreviewDoc(null)}
-        fileUrl={pub.previewDoc?.fileUrl ?? null}
-        title={pub.previewDoc?.title}
-        category={pub.previewDoc?.category}
-      />
+      {pub.previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!pub.previewDoc}
+            onClose={() => pub.setPreviewDoc(null)}
+            fileUrl={pub.previewDoc?.fileUrl ?? null}
+            title={pub.previewDoc?.title}
+            category={pub.previewDoc?.category}
+          />
+        </Suspense>
+      )}
 
       {pub.activeDetailDoc && (
         <DocumentDetailDrawer

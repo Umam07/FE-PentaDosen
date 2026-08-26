@@ -1,5 +1,3 @@
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import type { DocTab, AllDocumentItem, AllResearchItem, SessionUser } from '../types/adminAllDocuments.types';
 
 /**
@@ -83,6 +81,9 @@ export async function exportAllDocumentsToExcel(
   searchTerm: string
 ): Promise<void> {
   if (documents.length === 0 && research.length === 0) return;
+
+  const ExcelJS = (await import('exceljs')).default;
+  const { saveAs } = await import('file-saver');
 
   const workbook = new ExcelJS.Workbook();
   const tabs: DocTab[] = ['publikasi', 'hki', 'penelitian', 'buku'];

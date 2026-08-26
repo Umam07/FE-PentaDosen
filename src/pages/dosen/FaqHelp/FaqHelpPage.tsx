@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, lazy, Suspense } from 'react';
 import type { UserSession } from './types/faqHelp.types';
 import { useFaqHelp } from './hooks/useFaqHelp';
 import FaqHelpHeader from './components/FaqHelpHeader';
@@ -8,7 +8,7 @@ import FaqAccordionList from './components/FaqAccordionList';
 import MyTicketsList from './components/MyTicketsList';
 import CreateTicketModal from './components/CreateTicketModal';
 import ImagePreviewModal from './components/ImagePreviewModal';
-import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import AnnouncementsBanner from '../../../components/ui/AnnouncementsBanner';
 import Toaster, { ToasterRef } from '@/components/ui/toast';
 
@@ -109,13 +109,17 @@ export default function FaqHelp({ user }: { user: UserSession }) {
       />
 
       {/* PDF Preview Modal */}
-      <PdfPreviewModal
-        isOpen={!!faqState.previewDoc}
-        onClose={() => faqState.setPreviewDoc(null)}
-        fileUrl={faqState.previewDoc?.fileUrl ?? null}
-        title={faqState.previewDoc?.title}
-        category={faqState.previewDoc?.category}
-      />
+      {faqState.previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!faqState.previewDoc}
+            onClose={() => faqState.setPreviewDoc(null)}
+            fileUrl={faqState.previewDoc?.fileUrl ?? null}
+            title={faqState.previewDoc?.title}
+            category={faqState.previewDoc?.category}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

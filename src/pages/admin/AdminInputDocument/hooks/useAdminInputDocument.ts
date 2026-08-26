@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import * as XLSX from 'xlsx';
 import { formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import {
   Award, Zap, Shield, FileText, Home, Landmark, Globe, Book, BookMarked
@@ -161,6 +160,7 @@ export function useAdminInputDocument(adminUser: AdminUser) {
     reader.onload = async (evt) => {
       try {
         const bstr = evt.target?.result;
+        const XLSX = await import('xlsx');
         const wb = XLSX.read(bstr, { type: 'binary' });
         const wsname = wb.SheetNames[0];
         const ws = wb.Sheets[wsname];

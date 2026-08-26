@@ -1,5 +1,3 @@
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import { Lecturer, SessionUser } from '../types/lecturers.types';
 
 /**
@@ -12,6 +10,9 @@ export async function exportToExcel(
   searchTerm: string
 ): Promise<void> {
   if (lecturers.length === 0) return;
+
+  const ExcelJS = (await import('exceljs')).default;
+  const { saveAs } = await import('file-saver');
 
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Daftar Dosen');

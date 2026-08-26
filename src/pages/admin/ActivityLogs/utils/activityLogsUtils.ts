@@ -3,8 +3,6 @@ import {
   Activity, User as UserIcon, LogOut, RefreshCw, 
   Shield, FileText, BookOpen, Award, Beaker, Book
 } from 'lucide-react';
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import { ActivityLog, ActionConfig, SessionUser } from '../types/activityLogs.types';
 
 /**
@@ -194,6 +192,9 @@ export const exportToExcel = async (
   );
 
   if (filteredAllLogs.length === 0) return;
+
+  const ExcelJS = (await import('exceljs')).default;
+  const { saveAs } = await import('file-saver');
 
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Log Aktivitas');

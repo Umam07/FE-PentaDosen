@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Plus, Edit, Trash2, X, FileText, Eye, Search, FileQuestion, HelpCircle, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PdfPreviewModal } from '../../../../components/ui/pdf-preview-modal';
+const PdfPreviewModal = lazy(() => import('../../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import { useFaqTab } from '../hooks/useFaqTab';
 import FaqDeleteModal from './FaqDeleteModal';
 
@@ -398,13 +398,17 @@ export default function FaqTab({ triggerMessage }: FaqTabProps) {
       />
 
       {/* PDF Preview Modal */}
-      <PdfPreviewModal
-        isOpen={!!previewDoc}
-        onClose={() => setPreviewDoc(null)}
-        fileUrl={previewDoc?.fileUrl ?? null}
-        title={previewDoc?.title}
-        category={previewDoc?.category}
-      />
+      {previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!previewDoc}
+            onClose={() => setPreviewDoc(null)}
+            fileUrl={previewDoc?.fileUrl ?? null}
+            title={previewDoc?.title}
+            category={previewDoc?.category}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

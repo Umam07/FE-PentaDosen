@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import type { UserSession } from './types/buku.types';
 import { useBuku } from './hooks/useBuku';
 import { toast } from '@/components/ui/toast';
@@ -13,7 +13,7 @@ import BukuLinkingModal from './components/BukuLinkingModal';
 import BukuDeleteModal from './components/BukuDeleteModal';
 import BukuMetricsGuideModal from './components/BukuMetricsGuideModal';
 
-import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
 
 export default function Buku({ user }: { user: UserSession }) {
@@ -145,13 +145,17 @@ export default function Buku({ user }: { user: UserSession }) {
         onClose={() => buku.setIsMetricsModalOpen(false)}
       />
 
-      <PdfPreviewModal
-        isOpen={!!buku.previewDoc}
-        onClose={() => buku.setPreviewDoc(null)}
-        fileUrl={buku.previewDoc?.fileUrl ?? null}
-        title={buku.previewDoc?.title}
-        category={buku.previewDoc?.category}
-      />
+      {buku.previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!buku.previewDoc}
+            onClose={() => buku.setPreviewDoc(null)}
+            fileUrl={buku.previewDoc?.fileUrl ?? null}
+            title={buku.previewDoc?.title}
+            category={buku.previewDoc?.category}
+          />
+        </Suspense>
+      )}
 
       {buku.activeDetailDoc && (
         <DocumentDetailDrawer

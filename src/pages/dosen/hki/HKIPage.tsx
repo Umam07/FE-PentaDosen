@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import type { UserSession } from './types/hki.types';
 import { useHki } from './hooks/useHki';
 import { toast } from '@/components/ui/toast';
@@ -13,7 +13,7 @@ import HKILinkingModal from './components/HKILinkingModal';
 import HKIDeleteModal from './components/HKIDeleteModal';
 import HKIMetricsGuideModal from './components/HKIMetricsGuideModal';
 
-import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
 
 export default function HKI({ user }: { user: UserSession }) {
@@ -147,13 +147,17 @@ export default function HKI({ user }: { user: UserSession }) {
         onClose={() => hki.setIsMetricsModalOpen(false)}
       />
 
-      <PdfPreviewModal
-        isOpen={!!hki.previewDoc}
-        onClose={() => hki.setPreviewDoc(null)}
-        fileUrl={hki.previewDoc?.fileUrl ?? null}
-        title={hki.previewDoc?.title}
-        category={hki.previewDoc?.category}
-      />
+      {hki.previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!hki.previewDoc}
+            onClose={() => hki.setPreviewDoc(null)}
+            fileUrl={hki.previewDoc?.fileUrl ?? null}
+            title={hki.previewDoc?.title}
+            category={hki.previewDoc?.category}
+          />
+        </Suspense>
+      )}
 
       {hki.activeDetailDoc && (
         <DocumentDetailDrawer

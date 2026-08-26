@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import type { UserSession } from './types/research.types';
 import { useResearch } from './hooks/useResearch';
 import { toast } from '@/components/ui/toast';
@@ -12,7 +12,7 @@ import ResearchEditModal from './components/ResearchEditModal';
 import ResearchDeleteModal from './components/ResearchDeleteModal';
 import ResearchMetricsGuideModal from './components/ResearchMetricsGuideModal';
 
-import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
 
 export default function Research({ user }: { user: UserSession }) {
@@ -158,13 +158,17 @@ export default function Research({ user }: { user: UserSession }) {
         onClose={() => res.setIsMetricsModalOpen(false)}
       />
 
-      <PdfPreviewModal
-        isOpen={!!res.previewDoc}
-        onClose={() => res.setPreviewDoc(null)}
-        fileUrl={res.previewDoc?.fileUrl ?? null}
-        title={res.previewDoc?.title}
-        category={res.previewDoc?.category}
-      />
+      {res.previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!res.previewDoc}
+            onClose={() => res.setPreviewDoc(null)}
+            fileUrl={res.previewDoc?.fileUrl ?? null}
+            title={res.previewDoc?.title}
+            category={res.previewDoc?.category}
+          />
+        </Suspense>
+      )}
 
       {res.activeDetailDoc && (
         <DocumentDetailDrawer

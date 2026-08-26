@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import type { SessionUser } from './types/adminAllDocuments.types';
@@ -10,7 +10,7 @@ import AllDocumentsFilterBar from './components/AllDocumentsFilterBar';
 import AllDocumentsMobileList from './components/AllDocumentsMobileList';
 import AllDocumentsTable from './components/AllDocumentsTable';
 import AllDocumentsPagination from './components/AllDocumentsPagination';
-import { PdfPreviewModal } from '../../../components/ui/pdf-preview-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
 import { DocumentHistoryModal } from '../../../components/ui/document-history-modal';
 
 export default function AdminAllDocuments() {
@@ -110,13 +110,17 @@ export default function AdminAllDocuments() {
       </div>
 
       {/* PDF Preview Modal */}
-      <PdfPreviewModal
-        isOpen={!!docState.previewDoc}
-        onClose={() => docState.setPreviewDoc(null)}
-        fileUrl={docState.previewDoc?.fileUrl ?? null}
-        title={docState.previewDoc?.title}
-        category={docState.previewDoc?.category}
-      />
+      {docState.previewDoc && (
+        <Suspense fallback={null}>
+          <PdfPreviewModal
+            isOpen={!!docState.previewDoc}
+            onClose={() => docState.setPreviewDoc(null)}
+            fileUrl={docState.previewDoc?.fileUrl ?? null}
+            title={docState.previewDoc?.title}
+            category={docState.previewDoc?.category}
+          />
+        </Suspense>
+      )}
 
       {/* History Modal */}
       <DocumentHistoryModal
