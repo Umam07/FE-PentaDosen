@@ -75,7 +75,7 @@ export default function Profile({ user, setUser }: { user: any; setUser: any }) 
 
       <div className="space-y-6">
         {/* Profile Header */}
-        <ProfileHeader user={user} stats={stats} />
+        <ProfileHeader user={user} stats={stats} scholarData={scholarData} />
 
         {/* Tab Navigation */}
         <ProfileTabs

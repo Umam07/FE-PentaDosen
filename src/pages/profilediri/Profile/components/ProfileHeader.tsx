@@ -6,10 +6,17 @@ import { ProfileUser, ProfileStat } from '../types/profile.types';
 interface ProfileHeaderProps {
   user: ProfileUser | null | undefined;
   stats: ProfileStat[] | null;
+  scholarData?: any;
 }
 
-export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => {
+export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats, scholarData }) => {
+  const [imgError, setImgError] = React.useState(false);
+  const avatarUrl = user?.avatar || scholarData?.thumbnail;
   const affiliation = [user?.program_studi, user?.fakultas].filter(Boolean).join(' • ');
+
+  React.useEffect(() => {
+    setImgError(false);
+  }, [avatarUrl]);
 
   return (
     <motion.div
@@ -21,11 +28,12 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => 
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         {/* Avatar */}
         <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-hairline-light bg-surface-light-raised dark:border-hairline-dark dark:bg-surface-dark-elevated sm:h-22 sm:w-22">
-          {user?.avatar ? (
+          {avatarUrl && !imgError ? (
             <img
-              src={user.avatar}
+              src={avatarUrl}
               alt={user?.name || 'User'}
               referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
               className="h-full w-full object-cover"
             />
           ) : (

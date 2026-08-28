@@ -88,9 +88,15 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
         setScopusData(profileData.scopusData);
         setPublications(profileData.publications || []);
         setScopusPublications(profileData.scopusPublications || []);
-        setScholarId(profileData.user.scholar_id || '');
-        setScopusId(profileData.user.scopus_id || '');
-        setUser(profileData.user);
+        const avatar = profileData.user?.avatar || profileData.scholarData?.thumbnail || user?.avatar || null;
+        const enrichedUser = {
+          ...profileData.user,
+          avatar
+        };
+        setUser(enrichedUser);
+        try {
+          sessionStorage.setItem('pentadosen_user', JSON.stringify(enrichedUser));
+        } catch (e) {}
 
         setInternalDocuments(docsData.documents || []);
       } catch (err) {

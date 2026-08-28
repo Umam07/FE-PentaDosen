@@ -31,10 +31,15 @@ export default function Topbar({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [lecturers, setLecturers] = useState<any[]>([]);
+  const [imgError, setImgError] = useState(false);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setImgError(false);
+  }, [user?.avatar]);
 
   useEffect(() => {
     if (user?.role === 'admin penelitian' || user?.role === 'admin fakultas') {
@@ -168,11 +173,12 @@ export default function Topbar({
             className="flex items-center gap-2 hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated p-1.5 rounded-lg transition-colors duration-150 cursor-pointer"
           >
             <div className="w-9 h-9 rounded-lg bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden border border-ink-border dark:border-hairline-dark">
-              {user?.avatar ? (
+              {user?.avatar && !imgError ? (
                 <img 
                   src={user.avatar} 
                   alt={user.name} 
                   referrerPolicy="no-referrer"
+                  onError={() => setImgError(true)}
                   className="w-full h-full object-cover"
                 />
               ) : (
