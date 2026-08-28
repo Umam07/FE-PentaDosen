@@ -120,6 +120,12 @@ export default function PublicationEditModal({
 
       if (isNational) {
         formData.append('sinta_rank', editSintaRank);
+        formData.append('author_role', editAuthorRole);
+        formData.append('author_order', String(editAuthorOrder));
+        formData.append('total_authors', String(editTotalAuthors));
+        if (editJournal) formData.append('journal', editJournal);
+        if (editDoi) formData.append('doi', editDoi);
+        if (editAuthors) formData.append('authors', editAuthors);
         if (editCitations !== '') {
           formData.append('citations', editCitations);
         }
@@ -431,7 +437,20 @@ export default function PublicationEditModal({
           )}
 
           {isNational && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div className="p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised/40 dark:bg-surface-dark-elevated/20 space-y-4">
+              <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-2">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-warning" />
+                  <h4 className="text-xs font-bold text-ink-heading dark:text-on-dark">
+                    Parameter Publikasi Jurnal Nasional (SINTA)
+                  </h4>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-accent-soft dark:bg-accent/20 text-accent font-semibold border border-accent/20">
+                  Total {editTotalAuthors} Penulis
+                </span>
+              </div>
+
+              {/* Row 1: Akreditasi SINTA */}
               <div className="space-y-1.5">
                 <label htmlFor="edit-pub-sinta-rank" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
                   <Award className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
@@ -441,51 +460,128 @@ export default function PublicationEditModal({
                   id="edit-pub-sinta-rank"
                   value={editSintaRank}
                   onChange={(e) => setEditSintaRank(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer font-mono"
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark font-mono outline-none"
                 >
-                  <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi)</option>
-                  <option value="S1">SINTA 1 (S1)</option>
-                  <option value="S2">SINTA 2 (S2)</option>
-                  <option value="S3">SINTA 3 (S3)</option>
-                  <option value="S4">SINTA 4 (S4)</option>
-                  <option value="S5">SINTA 5 (S5)</option>
-                  <option value="S6">SINTA 6 (S6)</option>
+                  <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi — Base 10 Pts)</option>
+                  <option value="S1">SINTA 1 (S1 — Base 25 Pts)</option>
+                  <option value="S2">SINTA 2 (S2 — Base 25 Pts)</option>
+                  <option value="S3">SINTA 3 (S3 — Base 20 Pts)</option>
+                  <option value="S4">SINTA 4 (S4 — Base 20 Pts)</option>
+                  <option value="S5">SINTA 5 (S5 — Base 15 Pts)</option>
+                  <option value="S6">SINTA 6 (S6 — Base 15 Pts)</option>
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="edit-pub-citations" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
-                  <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-                  Jumlah Sitasi (Opsional)
-                </label>
-                <input
-                  type="number"
-                  id="edit-pub-citations"
-                  min="0"
-                  value={editCitations}
-                  onChange={(e) => setEditCitations(e.target.value)}
-                  placeholder="0"
-                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
-                />
-              </div>
-            </div>
-          )}
+              {/* Row 2: Peran, Urutan, Total Penulis */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div className="space-y-1.5">
+                  <label htmlFor="edit-pub-author-role-national" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                    Peran Penulis
+                  </label>
+                  <select
+                    id="edit-pub-author-role-national"
+                    value={editAuthorRole}
+                    onChange={(e) => setEditAuthorRole(e.target.value as any)}
+                    className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark outline-none"
+                  >
+                    <option value="Single Author">Single Author</option>
+                    <option value="First Author">First Author</option>
+                    <option value="Member Author">Member Author</option>
+                  </select>
+                </div>
 
-          {isInternational && (
-            <div className="space-y-1.5">
-              <label htmlFor="edit-pub-citations-international" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
-                <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-                Jumlah Sitasi (Opsional)
-              </label>
-              <input
-                type="number"
-                id="edit-pub-citations-international"
-                min="0"
-                value={editCitations}
-                onChange={(e) => setEditCitations(e.target.value)}
-                placeholder="0"
-                className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
-              />
+                <div className="space-y-1.5">
+                  <label htmlFor="edit-pub-author-order-national" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                    Urutan Penulis (Order)
+                  </label>
+                  <input
+                    type="number"
+                    id="edit-pub-author-order-national"
+                    min="1"
+                    value={editAuthorOrder}
+                    onChange={(e) => setEditAuthorOrder(parseInt(e.target.value, 10) || 1)}
+                    className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark font-mono outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="edit-pub-total-authors-national" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1">
+                    <Users className="w-3.5 h-3.5 text-muted" /> Total Penulis
+                  </label>
+                  <input
+                    type="number"
+                    id="edit-pub-total-authors-national"
+                    min="1"
+                    value={editTotalAuthors}
+                    onChange={(e) => setEditTotalAuthors(parseInt(e.target.value, 10) || 1)}
+                    className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark font-mono outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Row 3: Nama Jurnal & DOI */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="space-y-1.5">
+                  <label htmlFor="edit-pub-journal-national" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                    Nama Jurnal Ilmiah
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-pub-journal-national"
+                    value={editJournal}
+                    onChange={(e) => setEditJournal(e.target.value)}
+                    placeholder="Contoh: Jurnal Nasional Rekayasa..."
+                    className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="edit-pub-doi-national" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1">
+                    <LinkIcon className="w-3 h-3 text-muted" /> DOI Publikasi
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-pub-doi-national"
+                    value={editDoi}
+                    onChange={(e) => setEditDoi(e.target.value)}
+                    placeholder="10.xxxx/xxxxxxx"
+                    className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark font-mono outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Row 5: Daftar Penulis & Sitasi */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div className="sm:col-span-2 space-y-1.5">
+                  <label htmlFor="edit-pub-authors-national" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                    Daftar Penulis (Pisahkan dengan titik koma)
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-pub-authors-national"
+                    value={editAuthors}
+                    onChange={(e) => setEditAuthors(e.target.value)}
+                    placeholder="Nama Penulis 1; Nama Penulis 2; ..."
+                    className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="edit-pub-citations-national" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
+                    <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
+                    Jumlah Sitasi
+                  </label>
+                  <input
+                    type="number"
+                    id="edit-pub-citations-national"
+                    min="0"
+                    value={editCitations}
+                    onChange={(e) => setEditCitations(e.target.value)}
+                    placeholder="0"
+                    className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-xs text-ink-heading dark:text-on-dark font-mono outline-none"
+                  />
+                </div>
+              </div>
             </div>
           )}
 

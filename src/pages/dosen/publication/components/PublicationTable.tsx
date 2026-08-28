@@ -732,7 +732,7 @@ export default function PublicationTable({
                           if (!isJI && !isJN) return null;
 
                           const totalAuthors = Number(doc.total_authors) || 1;
-                          const showCorrespondingControls = doc.author_role !== 'Single Author' && totalAuthors > 1 && doc.source !== 'scholar';
+                          const showCorrespondingControls = isJI && doc.author_role !== 'Single Author' && totalAuthors > 1;
                           const bd = getBreakdown(doc);
                           const isExpanded = !!expandedPoints[doc.id];
 

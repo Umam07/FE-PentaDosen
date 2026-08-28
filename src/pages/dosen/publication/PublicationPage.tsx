@@ -299,7 +299,47 @@ export default function Publication({ user }: { user: UserSession }) {
                     Peran Penulis
                   </p>
                   <p className="text-xs font-bold text-ink-heading dark:text-on-dark">
-                    {pub.activeDetailDoc.author_role}
+                    {pub.activeDetailDoc.author_role} (Urutan {pub.activeDetailDoc.author_order || 1} dari {pub.activeDetailDoc.total_authors || 1})
+                  </p>
+                </div>
+              )}
+              {pub.activeDetailDoc.is_corresponding !== undefined && pub.activeDetailDoc.is_corresponding !== null && (
+                <div>
+                  <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider leading-none mb-1">
+                    Korespondensi
+                  </p>
+                  <p className="text-xs font-bold text-ink-heading dark:text-on-dark">
+                    {pub.activeDetailDoc.is_corresponding ? 'Ya (Corresponding)' : 'Bukan'}
+                  </p>
+                </div>
+              )}
+              {pub.activeDetailDoc.journal && (
+                <div className="col-span-2">
+                  <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider leading-none mb-1">
+                    Nama Jurnal Ilmiah
+                  </p>
+                  <p className="text-xs font-semibold text-ink-heading dark:text-on-dark italic">
+                    {pub.activeDetailDoc.journal}
+                  </p>
+                </div>
+              )}
+              {pub.activeDetailDoc.doi && (
+                <div className="col-span-2">
+                  <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider leading-none mb-1">
+                    DOI Publikasi
+                  </p>
+                  <p className="text-xs font-mono text-ink-heading dark:text-on-dark">
+                    {pub.activeDetailDoc.doi}
+                  </p>
+                </div>
+              )}
+              {pub.activeDetailDoc.authors && (
+                <div className="col-span-2">
+                  <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider leading-none mb-1">
+                    Daftar Penulis
+                  </p>
+                  <p className="text-xs text-ink-heading dark:text-on-dark">
+                    {pub.activeDetailDoc.authors}
                   </p>
                 </div>
               )}

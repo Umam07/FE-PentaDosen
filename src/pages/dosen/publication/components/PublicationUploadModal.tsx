@@ -117,8 +117,18 @@ export default function PublicationUploadModal({
         S6: 15,
         'Non-SINTA': 10
       };
-      const pts = sintaPointsMap[sintaRank] ?? 10;
-      return `Daftarkan ${catLower} Anda · Max +${pts} pts (${sintaRank})`;
+      const basePts = sintaPointsMap[sintaRank] ?? 10;
+      let pts = basePts;
+      if (calculatedTotalAuthors === 1 || authorRole === 'Single Author') {
+        pts = basePts;
+      } else if (authorRole === 'First Author' || authorOrder === 1) {
+        pts = 0.6 * basePts;
+      } else {
+        const memberCount = Math.max(1, calculatedTotalAuthors - 1);
+        pts = (0.4 * basePts) / memberCount;
+      }
+      const rounded = Math.round(pts);
+      return `Daftarkan ${catLower} Anda · Estimasi +${rounded} pts (${sintaRank}, ${authorRole})`;
     }
 
     const activeWeight = weights.find((w) => w.category === category);
@@ -128,7 +138,7 @@ export default function PublicationUploadModal({
       return `Daftarkan ${catLower} Anda · +${points} pts otomatis`;
     }
     return `Daftarkan ${catLower} Anda`;
-  }, [category, isNationalJournal, sintaRank, weights]);
+  }, [category, isNationalJournal, sintaRank, weights, calculatedTotalAuthors, authorRole, authorOrder, isCorresponding]);
 
   const duplicateFound = useMemo(() => {
     if (!title || title.length < 5) return null;
@@ -185,17 +195,19 @@ export default function PublicationUploadModal({
     formData.append('published_at', date ? formatToYYYYMMDD(date) : '');
     formData.append('doc_type', docType);
 
-    if (isNationalJournal) {
-      if (sintaRank) formData.append('sinta_rank', sintaRank);
-      if (citations !== '') formData.append('citations', citations);
-    } else if (isInternationalJournal) {
-      formData.append('quartile', quartile);
-      formData.append('subtype', subtype);
+    if (isNationalJournal || isInternationalJournal) {
+      if (isNationalJournal) {
+        if (sintaRank) formData.append('sinta_rank', sintaRank);
+      } else {
+        formData.append('quartile', quartile);
+        formData.append('subtype', subtype);
+        formData.append('is_hyperauthor', isHyperauthor ? '1' : '0');
+      }
+
       formData.append('author_role', authorRole);
       formData.append('author_order', String(effectiveOrder));
       formData.append('total_authors', String(calculatedTotalAuthors));
       formData.append('is_corresponding', isCorresponding ? '1' : '0');
-      formData.append('is_hyperauthor', isHyperauthor ? '1' : '0');
       if (journal) formData.append('journal', journal);
       if (doi) formData.append('doi', doi);
       if (citations !== '') formData.append('citations', citations);
@@ -526,45 +538,124 @@ export default function PublicationUploadModal({
         )}
 
         {/* ══════════════════════════════════════════════════════════════
-            KHUSUS JURNAL NASIONAL (SINTA & CITATIONS)
+            KHUSUS JURNAL NASIONAL (SINTA & METADATA)
            ══════════════════════════════════════════════════════════════ */}
         {isNationalJournal && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            <div className="space-y-1.5">
-              <label htmlFor="pub-sinta-rank" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
-                Akreditasi SINTA <span className="text-error ml-0.5">*</span>
-              </label>
-              <select
-                id="pub-sinta-rank"
-                value={sintaRank}
-                onChange={(e) => setSintaRank(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer font-mono"
-              >
-                <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi — 10 Pts)</option>
-                <option value="S1">SINTA 1 (S1 — 25 Pts)</option>
-                <option value="S2">SINTA 2 (S2 — 25 Pts)</option>
-                <option value="S3">SINTA 3 (S3 — 20 Pts)</option>
-                <option value="S4">SINTA 4 (S4 — 20 Pts)</option>
-                <option value="S5">SINTA 5 (S5 — 15 Pts)</option>
-                <option value="S6">SINTA 6 (S6 — 15 Pts)</option>
-              </select>
+          <div className="p-4 sm:p-5 rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised/40 dark:bg-surface-dark-elevated/20 space-y-4">
+            <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-2.5">
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4 text-warning dark:text-warning-on-dark" />
+                <h4 className="text-xs font-bold text-ink-heading dark:text-on-dark tracking-tight">
+                  Parameter Publikasi Jurnal Nasional (SINTA)
+                </h4>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-accent-soft dark:bg-accent/20 text-accent dark:text-accent-on-dark font-semibold border border-accent/20">
+                Total {calculatedTotalAuthors} Penulis
+              </span>
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="pub-citations" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
-                <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-                Jumlah Sitasi (Opsional)
-              </label>
-              <input
-                type="number"
-                id="pub-citations"
-                min="0"
-                value={citations}
-                onChange={(e) => setCitations(e.target.value)}
-                placeholder="0"
-                className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
-              />
+            {/* Row 1: Akreditasi SINTA & Peran Penulis */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="space-y-1.5">
+                <label htmlFor="pub-sinta-rank" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
+                  Akreditasi SINTA <span className="text-error ml-0.5">*</span>
+                </label>
+                <select
+                  id="pub-sinta-rank"
+                  value={sintaRank}
+                  onChange={(e) => setSintaRank(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer font-mono"
+                >
+                  <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi — Base 10 Pts)</option>
+                  <option value="S1">SINTA 1 (S1 — Base 25 Pts)</option>
+                  <option value="S2">SINTA 2 (S2 — Base 25 Pts)</option>
+                  <option value="S3">SINTA 3 (S3 — Base 20 Pts)</option>
+                  <option value="S4">SINTA 4 (S4 — Base 20 Pts)</option>
+                  <option value="S5">SINTA 5 (S5 — Base 15 Pts)</option>
+                  <option value="S6">SINTA 6 (S6 — Base 15 Pts)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="pub-author-role-national" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                  Peran Penulis Anda <span className="text-error ml-0.5">*</span>
+                </label>
+                <select
+                  id="pub-author-role-national"
+                  value={authorRole}
+                  onChange={(e) => {
+                    const role = e.target.value as 'Single Author' | 'First Author' | 'Member Author';
+                    setAuthorRole(role);
+                    if (role === 'Single Author' || role === 'First Author') {
+                      setAuthorOrder(1);
+                    } else if (role === 'Member Author') {
+                      if (authorOrder <= 1) setAuthorOrder(2);
+                    }
+                  }}
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
+                >
+                  <option value="Single Author">Single Author (Penulis Tunggal)</option>
+                  <option value="First Author">First Author (Penulis Pertama / Utama)</option>
+                  <option value="Member Author">Member Author (Penulis Anggota / Rekan)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Row 2: Susunan & Anggota Penulis dengan Drag & Drop Reordering */}
+            <CoAuthorsSelector
+              currentUser={user}
+              coAuthors={coAuthors}
+              onChange={handleCoAuthorsChange}
+              authorRole={authorRole}
+              authorOrder={authorOrder}
+              onOrderChange={handleOrderChange}
+            />
+
+            {/* Row 4: Metadata Jurnal & DOI & Citations */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+              <div className="space-y-1.5">
+                <label htmlFor="pub-journal-national" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                  Nama Jurnal Ilmiah (Opsional)
+                </label>
+                <input
+                  type="text"
+                  id="pub-journal-national"
+                  value={journal}
+                  onChange={(e) => setJournal(e.target.value)}
+                  placeholder="Contoh: Jurnal Nasional Rekayasa..."
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="pub-doi-national" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1">
+                  <LinkIcon className="w-3 h-3 text-muted" /> DOI Publikasi (Opsional)
+                </label>
+                <input
+                  type="text"
+                  id="pub-doi-national"
+                  value={doi}
+                  onChange={(e) => setDoi(e.target.value)}
+                  placeholder="10.xxxx/xxxxxxx"
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="pub-citations-national" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1">
+                  <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" /> Jumlah Sitasi (Opsional)
+                </label>
+                <input
+                  type="number"
+                  id="pub-citations-national"
+                  min="0"
+                  value={citations}
+                  onChange={(e) => setCitations(e.target.value)}
+                  placeholder="0"
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
+                />
+              </div>
             </div>
           </div>
         )}
