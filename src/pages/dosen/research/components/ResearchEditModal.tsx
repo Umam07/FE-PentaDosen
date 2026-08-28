@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Pencil, Home, Landmark, Globe, CalendarDays, Upload, FileText, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
+import { BaseFormModal } from '../../../../components/shared/BaseFormModal';
 import { DatePicker } from '../../../../components/ui/DatePicker';
 
 interface ResearchEditModalProps {

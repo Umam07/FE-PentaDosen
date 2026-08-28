@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pencil, Sparkles, Archive, CalendarDays, Upload, FileText, XCircle, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
+import { BaseFormModal } from '../../../../components/shared/BaseFormModal';
 import { BUKU_CATEGORIES } from '../constants';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import { uploadWithProgress } from '../../../../lib/utils';

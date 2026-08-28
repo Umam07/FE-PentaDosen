@@ -3,7 +3,7 @@ import {
   FileText, Upload, CheckCircle, XCircle, Clock, 
   Info, ChevronLeft, ChevronRight, Pencil, Trash2, Lock, RefreshCw, Calculator, RotateCcw
 } from 'lucide-react';
-import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import FilterDropdown, { FilterOption } from './FilterDropdown';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 import { calculateScholarPoints } from '../../dashboard/pointsCalculator';
@@ -34,6 +34,8 @@ interface PublicationTableProps {
   filterYear: number | null;
   onYearChange: (year: number | null) => void;
   handleToggleCorresponding?: (docId: string | number, isCorresponding: boolean) => Promise<void>;
+  updatingCorrespondingId?: string | number | null;
+  setUpdatingCorrespondingId?: (id: string | number | null) => void;
   crossTitlesSet?: Set<string>;
   // Filter Props Terpadu
   scopusFilter?: ScopusFilterType;

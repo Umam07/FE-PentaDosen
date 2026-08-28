@@ -3,7 +3,7 @@ import { Edit, X, ChevronLeft, ChevronRight, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useUsersTab, FAKULTAS_PRODI_MAP } from '../hooks/useUsersTab';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
-import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
+import { TableFilterHeader } from '../../../../components/shared/TableFilterHeader';
 import { getRoleBadgeStyle, getRoleAvatarStyle } from '../../../../lib/roleColors';
 
 interface UsersTabProps {

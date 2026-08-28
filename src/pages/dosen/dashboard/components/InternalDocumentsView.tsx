@@ -5,10 +5,10 @@ import {
 } from 'lucide-react';
 
 const PdfPreviewModal = lazy(() =>
-  import('../../../../components/ui/pdf-preview-modal').then((m) => ({ default: m.PdfPreviewModal }))
+  import('../../../../components/features/documents').then((m) => ({ default: m.PdfPreviewModal }))
 );
 const DocumentDetailDrawer = lazy(() =>
-  import('../../../../components/ui/document-detail-drawer').then((m) => ({ default: m.DocumentDetailDrawer }))
+  import('../../../../components/features/documents').then((m) => ({ default: m.DocumentDetailDrawer }))
 );
 
 import PenelitianTable from './internal-documents/PenelitianTable';

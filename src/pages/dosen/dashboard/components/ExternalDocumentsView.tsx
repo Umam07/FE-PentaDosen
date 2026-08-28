@@ -8,7 +8,7 @@ const ProfileTrendChart = lazy(() =>
   import('./ProfileCharts').then((m) => ({ default: m.ProfileTrendChart }))
 );
 import { calculateScholarPoints } from '../pointsCalculator';
-import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import YearFilterBar from '../../../../components/shared/YearFilterBar';
 
 // Import refactored types, hooks, calculations, components
 import { ExternalDocumentsViewProps } from './external-documents/external-documents.types';

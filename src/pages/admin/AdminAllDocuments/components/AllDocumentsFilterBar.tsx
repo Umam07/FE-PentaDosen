@@ -1,7 +1,7 @@
 import React from 'react';
 import { GraduationCap, Clock } from 'lucide-react';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
-import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
+import { TableFilterHeader } from '../../../../components/shared/TableFilterHeader';
 import type { AllDocumentsFilterBarProps } from '../types/adminAllDocuments.types';
 
 export default function AllDocumentsFilterBar({

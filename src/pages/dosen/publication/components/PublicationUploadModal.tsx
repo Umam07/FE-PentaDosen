@@ -5,7 +5,7 @@ import {
   Globe, BookOpen, UserCheck, Link as LinkIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
+import { BaseFormModal } from '../../../../components/shared/BaseFormModal';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import { uploadWithProgress } from '../../../../lib/utils';
 import type { UserSession, PublicationDoc, WeightCategory } from '../types/publication.types';

@@ -11,7 +11,7 @@ import Toaster from './components/ui/toast';
 
 // Lazy load layout and dialog components
 const Layout = lazy(() => import('./components/layout/Layout'));
-const OnboardingDialog = lazy(() => import('./components/ui/onboarding-dialog').then(m => ({ default: m.OnboardingDialog })));
+const OnboardingDialog = lazy(() => import('./components/features/onboarding').then(m => ({ default: m.OnboardingDialog })));
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
@@ -244,9 +244,9 @@ export default function App() {
         </Routes>
       </Suspense>
 
-      {user?.role === 'dosen' && (
+      {user && ['dosen', 'admin fakultas', 'admin penelitian'].includes(user.role) && (
         <Suspense fallback={null}>
-          <OnboardingDialog />
+          <OnboardingDialog user={user} />
         </Suspense>
       )}
       {/* Session Expired Modal */}

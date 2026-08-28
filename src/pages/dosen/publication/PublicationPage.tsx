@@ -14,8 +14,8 @@ import PublicationEditModal from './components/PublicationEditModal';
 import PublicationDeleteModal from './components/PublicationDeleteModal';
 import MetricsGuideModal from './components/MetricsGuideModal';
 
-const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
-import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
+const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
+import { DocumentDetailDrawer } from '../../../components/features/documents';
 
 export default function Publication({ user }: { user: UserSession }) {
   const pub = usePublication(user);

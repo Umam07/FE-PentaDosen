@@ -4,7 +4,7 @@ import {
   ChevronLeft, Mail, Loader2
 } from 'lucide-react';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
-import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
+import { TableFilterHeader } from '../../../../components/shared/TableFilterHeader';
 import type { SyncTrackerTableProps } from '../types/adminSync.types';
 
 export default function SyncTrackerTable({

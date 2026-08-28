@@ -13,8 +13,8 @@ import BukuLinkingModal from './components/BukuLinkingModal';
 import BukuDeleteModal from './components/BukuDeleteModal';
 import BukuMetricsGuideModal from './components/BukuMetricsGuideModal';
 
-const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
-import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
+const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
+import { DocumentDetailDrawer } from '../../../components/features/documents';
 
 export default function Buku({ user }: { user: UserSession }) {
   const buku = useBuku(user);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { LogIn, User as UserIcon, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { motion } from 'motion/react';
-import PentaDosenLogo from '../../../components/ui/PentaDosenLogo';
+import PentaDosenLogo from '../../../components/shared/PentaDosenLogo';
 import { useDosenLogin } from '../hooks/useDosenLogin';
 import { User } from '../types/auth.types';
 

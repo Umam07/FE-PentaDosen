@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
-import PentaDosenLogo from '../../../components/ui/PentaDosenLogo';
+import PentaDosenLogo from '../../../components/shared/PentaDosenLogo';
 
 interface AuthLayoutProps {
   children: React.ReactNode;

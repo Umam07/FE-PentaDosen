@@ -13,8 +13,8 @@ import HKILinkingModal from './components/HKILinkingModal';
 import HKIDeleteModal from './components/HKIDeleteModal';
 import HKIMetricsGuideModal from './components/HKIMetricsGuideModal';
 
-const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
-import { DocumentDetailDrawer } from '../../../components/ui/document-detail-drawer';
+const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
+import { DocumentDetailDrawer } from '../../../components/features/documents';
 
 export default function HKI({ user }: { user: UserSession }) {
   const hki = useHki(user);

@@ -4,7 +4,7 @@ import {
   Clock, Link, Lock, RotateCcw, Info
 } from 'lucide-react';
 import { HKI_CATEGORIES } from '../constants';
-import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import Pagination from '../../dashboard/components/Pagination';
 
 interface HKITableProps {

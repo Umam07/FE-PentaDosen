@@ -3,7 +3,7 @@ import {
    ChevronLeft, ChevronRight, Lock, Pencil, Trash2, 
    FileText, Info, RotateCcw, CheckCircle, XCircle, Clock, Upload
 } from 'lucide-react';
-import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
 import { getResearchSchemaIcon } from '../utils/researchIconMapper';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Beaker, ShieldAlert, GraduationCap, Clock } from 'lucide-react';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
-import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
+import { TableFilterHeader } from '../../../../components/shared/TableFilterHeader';
 import { VerificationFilterProps } from '../types/verification.types';
 
 export default function VerificationFilter({

@@ -4,7 +4,7 @@ import {
   Clock, Link, Info, Lock, RotateCcw
 } from 'lucide-react';
 import { BUKU_CATEGORIES } from '../constants';
-import YearFilterBar from '../../../../components/ui/YearFilterBar';
+import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import Pagination from '../../dashboard/components/Pagination';
 
 interface BukuTableProps {

@@ -10,8 +10,8 @@ import VerificationMobileList from './components/VerificationMobileList';
 import VerificationEmpty from './components/VerificationEmpty';
 import VerificationPagination from './components/VerificationPagination';
 import RejectConfirmationModal from './components/RejectConfirmationModal';
-const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
-import { DocumentHistoryModal } from '../../../components/ui/document-history-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
+import { DocumentHistoryModal } from '../../../components/features/documents';
 
 export default function AdminVerification() {
   const { user } = useOutletContext<{ user: SessionUser }>();

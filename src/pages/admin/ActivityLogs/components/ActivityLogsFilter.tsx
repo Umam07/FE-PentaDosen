@@ -1,7 +1,7 @@
 import React from 'react';
 import { Activity } from 'lucide-react';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
-import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
+import { TableFilterHeader } from '../../../../components/shared/TableFilterHeader';
 import { ActivityLogsFilterProps } from '../types/activityLogs.types';
 
 export default function ActivityLogsFilter({

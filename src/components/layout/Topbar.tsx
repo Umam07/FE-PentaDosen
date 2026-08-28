@@ -4,8 +4,8 @@ import { Menu, Search, LogOut, ChevronDown, User, Users, X, BookOpen, BadgeCheck
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
-import { ActionSearchBar, Action } from '../ui/action-search-bar';
-import NotificationBell from '../ui/NotificationBell';
+import { ActionSearchBar, Action } from '../shared/action-search-bar';
+import NotificationBell from '../shared/NotificationBell';
 
 interface TopbarProps {
   isMobile: boolean;

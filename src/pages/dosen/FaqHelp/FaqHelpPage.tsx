@@ -9,8 +9,8 @@ import FaqAccordionList from './components/FaqAccordionList';
 import MyTicketsList from './components/MyTicketsList';
 import CreateTicketModal from './components/CreateTicketModal';
 import ImagePreviewModal from './components/ImagePreviewModal';
-const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
-import AnnouncementsBanner from '../../../components/ui/AnnouncementsBanner';
+const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
+import AnnouncementsBanner from '../../../components/shared/AnnouncementsBanner';
 
 export default function FaqHelp({ user }: { user: UserSession }) {
   const faqState = useFaqHelp(user);

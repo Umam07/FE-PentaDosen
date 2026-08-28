@@ -4,7 +4,7 @@ import {
   CalendarDays, FileText, XCircle, BookOpen, Zap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
+import { BaseFormModal } from '../../../../components/shared/BaseFormModal';
 import { BUKU_CATEGORIES } from '../constants';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import { uploadWithProgress } from '../../../../lib/utils';

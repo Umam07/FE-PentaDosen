@@ -10,8 +10,8 @@ import AllDocumentsFilterBar from './components/AllDocumentsFilterBar';
 import AllDocumentsMobileList from './components/AllDocumentsMobileList';
 import AllDocumentsTable from './components/AllDocumentsTable';
 import AllDocumentsPagination from './components/AllDocumentsPagination';
-const PdfPreviewModal = lazy(() => import('../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
-import { DocumentHistoryModal } from '../../../components/ui/document-history-modal';
+const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
+import { DocumentHistoryModal } from '../../../components/features/documents';
 
 export default function AdminAllDocuments() {
   const { user } = useOutletContext<{ user: SessionUser }>();

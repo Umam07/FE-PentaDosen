@@ -1,7 +1,7 @@
 import React from 'react';
 import { Users, GraduationCap } from 'lucide-react';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
-import { TableFilterHeader } from '../../../../components/ui/TableFilterHeader';
+import { TableFilterHeader } from '../../../../components/shared/TableFilterHeader';
 import { LecturersFilterProps } from '../types/lecturers.types';
 
 export default function LecturersFilter({

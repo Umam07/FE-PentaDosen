@@ -1,7 +1,7 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { Plus, Edit, Trash2, X, FileText, Eye, Search, FileQuestion, HelpCircle, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-const PdfPreviewModal = lazy(() => import('../../../../components/ui/pdf-preview-modal').then(m => ({ default: m.PdfPreviewModal })));
+const PdfPreviewModal = lazy(() => import('../../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
 import { useFaqTab } from '../hooks/useFaqTab';
 import FaqDeleteModal from './FaqDeleteModal';
 

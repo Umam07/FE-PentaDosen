@@ -4,7 +4,7 @@ import {
   CalendarDays, Zap, FileText, XCircle 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
+import { BaseFormModal } from '../../../../components/shared/BaseFormModal';
 import { HKI_CATEGORIES } from '../constants';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import { uploadWithProgress } from '../../../../lib/utils';
