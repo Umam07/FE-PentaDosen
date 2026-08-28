@@ -45,6 +45,22 @@ export default function VerificationTable({
                     <Mail className="w-3 h-3 mr-1.5 text-muted-soft dark:text-on-dark-muted" />
                     {(activeTab === 'penelitian' ? item.user?.email : item.user?.email) || 'N/A'}
                   </div>
+                  {item.co_authors_list && item.co_authors_list.length > 0 && (
+                    <div className="mt-2 flex flex-wrap items-center gap-1">
+                      <span className="text-[9px] font-semibold text-muted dark:text-on-dark-muted">
+                        + Rekan:
+                      </span>
+                      {item.co_authors_list.map((co: any) => (
+                        <span 
+                          key={co.id} 
+                          title={`${co.user_name} (${co.author_role || 'Penulis'}, ${co.fakultas || ''})`}
+                          className="inline-flex items-center text-[9px] font-mono font-medium px-1.5 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft"
+                        >
+                          {co.user_name.split(' ')[0]} ({co.author_role === 'First Author' ? 'P1' : `P${co.author_order || '?'}`})
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </td>
 

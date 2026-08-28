@@ -28,6 +28,21 @@ export default function VerificationMobileList({
                   </span>
                 )}
               </div>
+              {item.co_authors_list && item.co_authors_list.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                  <span className="text-[9px] font-semibold text-muted dark:text-on-dark-muted">
+                    + Rekan:
+                  </span>
+                  {item.co_authors_list.map((co: any) => (
+                    <span 
+                      key={co.id} 
+                      className="inline-flex items-center text-[9px] font-mono font-medium px-1.5 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light-soft dark:border-hairline-dark-soft"
+                    >
+                      {co.user_name.split(' ')[0]} ({co.author_role === 'First Author' ? 'P1' : `P${co.author_order || '?'}`})
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
             <span className="text-[10px] font-mono font-semibold text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-lg border border-hairline-light-soft dark:border-hairline-dark-soft uppercase tracking-wider">
               {activeTab === 'penelitian' ? item.program : item.category}
