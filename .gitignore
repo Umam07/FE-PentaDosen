@@ -8,3 +8,4 @@ coverage/
 !.env.example
 .codegraph
 .design.md
+.agents
