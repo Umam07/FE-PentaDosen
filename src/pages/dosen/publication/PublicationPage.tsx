@@ -156,6 +156,9 @@ export default function Publication({ user }: { user: UserSession }) {
         setSourceFilter={pub.setSourceFilter}
         crossIndexedOnly={pub.crossIndexedOnly}
         setCrossIndexedOnly={pub.setCrossIndexedOnly}
+        handleToggleCorresponding={pub.handleToggleCorresponding}
+        updatingCorrespondingId={pub.updatingCorrespondingId}
+        setUpdatingCorrespondingId={pub.setUpdatingCorrespondingId}
       />
 
       {/* Modals */}

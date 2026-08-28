@@ -416,6 +416,52 @@ export function usePublication(user: UserSession) {
     }
   }, [showMessage, loadDocuments]);
 
+  const [updatingCorrespondingId, setUpdatingCorrespondingId] = useState<string | number | null>(null);
+
+  const handleToggleCorresponding = useCallback(async (docId: string | number, isCorresponding: boolean) => {
+    try {
+      setUpdatingCorrespondingId(docId);
+      const targetDoc = (documents || []).find((d) => String(d.id) === String(docId));
+
+      let endpoint = `/api/documents/${docId}/corresponding`;
+      if (targetDoc?.source === 'scopus') {
+        endpoint = `/api/scopus-publications/${docId}/corresponding`;
+      } else if (targetDoc?.source === 'scholar') {
+        endpoint = `/api/scholar-publications/${docId}/corresponding`;
+      }
+
+      const res = await fetch(endpoint, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_corresponding: isCorresponding })
+      });
+
+      if (res.ok) {
+        showMessage('Status penulis korespondensi berhasil diperbarui!', 'success');
+        setDocuments((prev) =>
+          prev.map((d) => {
+            if (String(d.id) === String(docId)) {
+              return {
+                ...d,
+                is_corresponding: isCorresponding,
+                is_corresponding_confirmed: true
+              };
+            }
+            return d;
+          })
+        );
+        await loadDocuments();
+      } else {
+        showMessage('Gagal memperbarui status korespondensi.', 'error');
+      }
+    } catch (e) {
+      console.error(e);
+      showMessage('Terjadi kesalahan saat memperbarui status korespondensi.', 'error');
+    } finally {
+      setUpdatingCorrespondingId(null);
+    }
+  }, [documents, loadDocuments, showMessage]);
+
   const handleDownloadTemplate = useCallback(async () => {
     await generatePublicationExcelTemplate(weights);
   }, [weights]);
@@ -443,6 +489,9 @@ export function usePublication(user: UserSession) {
     isMetricsModalOpen,
     setIsMetricsModalOpen,
     uploadingPdfId,
+    updatingCorrespondingId,
+    setUpdatingCorrespondingId,
+    handleToggleCorresponding,
     previewDoc,
     setPreviewDoc,
     approvedResearch,
