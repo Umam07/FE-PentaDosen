@@ -202,16 +202,29 @@ export default function PublicationUploadModal({
 
       // Susun urutan penulis sesuai posisi persis yang terlihat di layar
       const fullList: string[] = [];
+      const internalCoAuthorsData: Array<{ user_id: number | string; name: string; order: number; role: string }> = [];
       let coIdx = 0;
       for (let pos = 1; pos <= calculatedTotalAuthors; pos++) {
         if (pos === effectiveOrder) {
           fullList.push(user.name || 'Penulis');
         } else if (coIdx < coAuthors.length) {
-          fullList.push(coAuthors[coIdx].name);
+          const co = coAuthors[coIdx];
+          fullList.push(co.name);
+          if (co.isInternal && co.id && String(co.id).length > 0) {
+            internalCoAuthorsData.push({
+              user_id: co.id,
+              name: co.name,
+              order: pos,
+              role: pos === 1 ? 'First Author' : 'Member Author',
+            });
+          }
           coIdx++;
         }
       }
       formData.append('authors', fullList.join('; '));
+      if (internalCoAuthorsData.length > 0) {
+        formData.append('co_authors_data', JSON.stringify(internalCoAuthorsData));
+      }
     }
 
     try {
