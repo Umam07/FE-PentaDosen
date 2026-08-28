@@ -353,11 +353,47 @@ export default function PublicationTable({
       docType = `Jurnal Nasional (${sRank === 'NON-SINTA' ? 'Non-SINTA' : sRank})`;
     }
 
+    const isNonArticle = isJI && doc.subtype && (String(doc.subtype).toLowerCase().includes('non') || (String(doc.subtype).toLowerCase() !== 'ar' && String(doc.subtype).toLowerCase() !== 'article'));
+    const isHyper = isJI && (!!doc.is_hyperauthor || totalAuthors > 16);
+
     let awardedPoints = 0;
     let detailStr = '';
     let pctStr = '';
 
-    if (totalAuthors === 1 || (authorOrder === 1 && totalAuthors === 1)) {
+    if (isNonArticle) {
+      basePoints = 30;
+      docType = `Scopus Non-Article (${doc.subtype || 'Prosiding/Chapter'})`;
+      if (role === 'Single Author' || totalAuthors === 1) {
+        awardedPoints = 30;
+        detailStr = `${docType} (Single Author)`;
+        pctStr = 'Flat 30 pts (Single Author Non-Article)';
+      } else if (authorOrder === 1 || role === 'First Author') {
+        awardedPoints = 18;
+        detailStr = `${docType} (First Author)`;
+        pctStr = 'Flat 18 pts (First Author Non-Article)';
+      } else {
+        const n = Math.max(1, totalAuthors - 1);
+        awardedPoints = 12 / n;
+        detailStr = `${docType} (Member Author)`;
+        pctStr = `Pool 12 pts ÷ ${n} anggota = ${(12 / n).toFixed(2)} pts`;
+      }
+    } else if (isHyper) {
+      basePoints = 40;
+      docType = `Jurnal Internasional ${q !== 'None' ? q : ''} (Hyperauthor)`;
+      if (role === 'Single Author' || totalAuthors === 1) {
+        awardedPoints = 40;
+        detailStr = `${docType} (Single Author)`;
+        pctStr = 'Flat 40 pts (Single Author Hyper)';
+      } else if (authorOrder === 1 || role === 'First Author') {
+        awardedPoints = 24;
+        detailStr = `${docType} (First Author Hyper)`;
+        pctStr = '60% dari 40 pts = 24 pts';
+      } else {
+        awardedPoints = 1;
+        detailStr = `${docType} (Member Author Hyper)`;
+        pctStr = 'Flat 1 pt (Member Author Hyper)';
+      }
+    } else if (totalAuthors === 1 || (authorOrder === 1 && totalAuthors === 1)) {
       awardedPoints = basePoints;
       detailStr = `${docType} (Single Author)`;
       pctStr = `100% dari ${basePoints} pts`;

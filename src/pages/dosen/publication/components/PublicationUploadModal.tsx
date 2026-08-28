@@ -1,13 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Upload, Sparkles, Archive, AlertCircle, 
-  CalendarDays, Award, FileText, XCircle, BarChart3
+  CalendarDays, Award, FileText, XCircle, BarChart3,
+  Globe, BookOpen, UserCheck, Link as LinkIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BaseFormModal } from '../../../../components/ui/BaseFormModal';
 import { DatePicker, formatToYYYYMMDD } from '../../../../components/ui/DatePicker';
 import { uploadWithProgress } from '../../../../lib/utils';
 import type { UserSession, PublicationDoc, WeightCategory } from '../types/publication.types';
+import CoAuthorsSelector, { CoAuthorItem } from './CoAuthorsSelector';
 
 interface PublicationUploadModalProps {
   isOpen: boolean;
@@ -41,6 +43,17 @@ export default function PublicationUploadModal({
   const [sintaRank, setSintaRank] = useState<string>('Non-SINTA');
   const [citations, setCitations] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+
+  // Field Khusus Jurnal Internasional (Scopus Metrics)
+  const [quartile, setQuartile] = useState<string>('Q1');
+  const [subtype, setSubtype] = useState<'Article' | 'Non-Article'>('Article');
+  const [authorRole, setAuthorRole] = useState<'Single Author' | 'First Author' | 'Member Author'>('Single Author');
+  const [authorOrder, setAuthorOrder] = useState<number>(1);
+  const [isCorresponding, setIsCorresponding] = useState<boolean>(true);
+  const [isHyperauthor, setIsHyperauthor] = useState<boolean>(false);
+  const [journal, setJournal] = useState<string>('');
+  const [doi, setDoi] = useState<string>('');
+  const [coAuthors, setCoAuthors] = useState<CoAuthorItem[]>([]);
   
   const [loading, setLoading] = useState(false);
   const [, setIsDragging] = useState(false);
@@ -53,6 +66,42 @@ export default function PublicationUploadModal({
   const isInternationalJournal = useMemo(() => {
     return (category || '').toLowerCase().includes('jurnal internasional');
   }, [category]);
+
+  // Total jumlah penulis dihitung otomatis dari akun pengunggah (1) + jumlah rekan yang ditambahkan
+  const calculatedTotalAuthors = useMemo(() => {
+    return coAuthors.length + 1;
+  }, [coAuthors]);
+
+  // Handler saat rekan ditambah/dihapus secara langsung
+  const handleCoAuthorsChange = (newCoAuthors: CoAuthorItem[]) => {
+    setCoAuthors(newCoAuthors);
+    const newTotal = newCoAuthors.length + 1;
+    if (newCoAuthors.length > 0) {
+      if (authorRole === 'Single Author') {
+        setAuthorRole('First Author');
+        setAuthorOrder(1);
+      } else if (authorRole === 'Member Author' && authorOrder > newTotal) {
+        setAuthorOrder(newTotal);
+      }
+    } else {
+      setAuthorRole('Single Author');
+      setAuthorOrder(1);
+    }
+    if (newTotal > 16) {
+      setIsHyperauthor(true);
+    }
+  };
+
+  // Handler saat urutan penulis di-Drag-and-Drop atau digeser Up/Down
+  const handleOrderChange = (
+    newRole: 'Single Author' | 'First Author' | 'Member Author',
+    newOrder: number,
+    newCoAuthors: CoAuthorItem[]
+  ) => {
+    setAuthorRole(newRole);
+    setAuthorOrder(newOrder);
+    setCoAuthors(newCoAuthors);
+  };
 
   const modalSubtitle = useMemo(() => {
     if (!category) return 'Daftarkan Jurnal Ilmiah, Prosiding, atau Book Chapter';
@@ -115,7 +164,7 @@ export default function PublicationUploadModal({
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title || !category || !date) {
-      onShowMessage('Harap lengkapi semua field.', 'error');
+      onShowMessage('Harap lengkapi semua field yang berbintang.', 'error');
       return;
     }
 
@@ -124,6 +173,10 @@ export default function PublicationUploadModal({
       return;
     }
 
+    const effectiveOrder = authorRole === 'Single Author' || authorRole === 'First Author'
+      ? 1
+      : Math.min(Math.max(2, authorOrder), calculatedTotalAuthors);
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
@@ -131,11 +184,34 @@ export default function PublicationUploadModal({
     formData.append('user_id', String(user.id));
     formData.append('published_at', date ? formatToYYYYMMDD(date) : '');
     formData.append('doc_type', docType);
+
     if (isNationalJournal) {
       if (sintaRank) formData.append('sinta_rank', sintaRank);
       if (citations !== '') formData.append('citations', citations);
     } else if (isInternationalJournal) {
+      formData.append('quartile', quartile);
+      formData.append('subtype', subtype);
+      formData.append('author_role', authorRole);
+      formData.append('author_order', String(effectiveOrder));
+      formData.append('total_authors', String(calculatedTotalAuthors));
+      formData.append('is_corresponding', isCorresponding ? '1' : '0');
+      formData.append('is_hyperauthor', isHyperauthor ? '1' : '0');
+      if (journal) formData.append('journal', journal);
+      if (doi) formData.append('doi', doi);
       if (citations !== '') formData.append('citations', citations);
+
+      // Susun urutan penulis sesuai posisi persis yang terlihat di layar
+      const fullList: string[] = [];
+      let coIdx = 0;
+      for (let pos = 1; pos <= calculatedTotalAuthors; pos++) {
+        if (pos === effectiveOrder) {
+          fullList.push(user.name || 'Penulis');
+        } else if (coIdx < coAuthors.length) {
+          fullList.push(coAuthors[coIdx].name);
+          coIdx++;
+        }
+      }
+      formData.append('authors', fullList.join('; '));
     }
 
     try {
@@ -144,13 +220,22 @@ export default function PublicationUploadModal({
       const res = await uploadWithProgress('/api/documents', 'POST', formData, setUploadProgress);
       
       if (res.ok) {
-        await new Promise(r => setTimeout(r, 400));
-        onShowMessage(res.data?.message || 'Dokumen berhasil diunggah!', 'success');
+        await new Promise((r) => setTimeout(r, 400));
+        onShowMessage(res.data?.message || 'Publikasi berhasil diunggah!', 'success');
         setTitle('');
         setFile(null);
         setDate(new Date());
         setSintaRank('Non-SINTA');
         setCitations('');
+        setJournal('');
+        setDoi('');
+        setCoAuthors([]);
+        setQuartile('Q1');
+        setSubtype('Article');
+        setAuthorRole('Single Author');
+        setAuthorOrder(1);
+        setIsCorresponding(true);
+        setIsHyperauthor(false);
         onClose();
         
         setIsTableLoading(true);
@@ -158,7 +243,7 @@ export default function PublicationUploadModal({
         setCurrentPage(1);
         setIsTableLoading(false);
       } else {
-        onShowMessage('Gagal mengunggah dokumen.', 'error');
+        onShowMessage(res.data?.message || 'Gagal mengunggah dokumen.', 'error');
       }
     } catch {
       onShowMessage('Terjadi kesalahan saat mengunggah.', 'error');
@@ -190,6 +275,7 @@ export default function PublicationUploadModal({
           </div>
         )}
 
+        {/* Tipe Penilaian Dokumen */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
@@ -203,7 +289,7 @@ export default function PublicationUploadModal({
             <Sparkles className="w-4 h-4 text-warning dark:text-warning-on-dark" />
             <div className="text-left">
               <p className="text-xs font-bold text-ink-heading dark:text-on-dark">KPI Dosen</p>
-              <p className="text-[10px] text-muted dark:text-on-dark-muted">Automated Scoring</p>
+              <p className="text-[10px] text-muted dark:text-on-dark-muted">Automated Scoring Masuk KPI</p>
             </div>
           </button>
 
@@ -219,11 +305,12 @@ export default function PublicationUploadModal({
             <Archive className="w-4 h-4 text-muted dark:text-on-dark-muted" />
             <div className="text-left">
               <p className="text-xs font-bold text-ink-heading dark:text-on-dark">Arsip Umum</p>
-              <p className="text-[10px] text-muted dark:text-on-dark-muted">Storage Only (0 Poin)</p>
+              <p className="text-[10px] text-muted dark:text-on-dark-muted">Penyimpanan Saja (0 Poin)</p>
             </div>
           </button>
         </div>
 
+        {/* Judul Publikasi */}
         <div className="space-y-1.5">
           <label htmlFor="pub-title" className="text-xs font-semibold text-body dark:text-on-dark-soft">
             Judul Publikasi <span className="text-error ml-0.5">*</span>
@@ -239,6 +326,195 @@ export default function PublicationUploadModal({
           />
         </div>
 
+        {/* ══════════════════════════════════════════════════════════════
+            KHUSUS JURNAL INTERNASIONAL (SCOPUS METRICS)
+           ══════════════════════════════════════════════════════════════ */}
+        {isInternationalJournal && (
+          <div className="p-4 sm:p-5 rounded-2xl border border-hairline-light dark:border-hairline-dark bg-surface-light-raised/40 dark:bg-surface-dark-elevated/20 space-y-4">
+            <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-2.5">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-accent dark:text-accent-on-dark" />
+                <h4 className="text-xs font-bold text-ink-heading dark:text-on-dark tracking-tight">
+                  Parameter Publikasi Jurnal Internasional (Scopus)
+                </h4>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-accent-soft dark:bg-accent/20 text-accent dark:text-accent-on-dark font-semibold border border-accent/20">
+                Total {calculatedTotalAuthors} Penulis
+              </span>
+            </div>
+
+            {/* Row 1: Quartile & Subtype */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="space-y-1.5">
+                <label htmlFor="pub-quartile" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
+                  Quartile Scopus <span className="text-error ml-0.5">*</span>
+                </label>
+                <select
+                  id="pub-quartile"
+                  value={quartile}
+                  onChange={(e) => setQuartile(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer font-mono"
+                >
+                  <option value="Q1">Q1 — Quartile 1 (Base 40 Pts)</option>
+                  <option value="Q2">Q2 — Quartile 2 (Base 38 Pts)</option>
+                  <option value="Q3">Q3 — Quartile 3 (Base 35 Pts)</option>
+                  <option value="Q4">Q4 — Quartile 4 (Base 33 Pts)</option>
+                  <option value="None">Tanpa Quartile / Scopus Non-Q (Base 33 Pts)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="pub-subtype" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
+                  Tipe Dokumen (Subtype) <span className="text-error ml-0.5">*</span>
+                </label>
+                <select
+                  id="pub-subtype"
+                  value={subtype}
+                  onChange={(e) => setSubtype(e.target.value as 'Article' | 'Non-Article')}
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
+                >
+                  <option value="Article">Article (Artikel Jurnal Ilmiah)</option>
+                  <option value="Non-Article">Non-Article (Conference Proceeding / Review / Book Chapter)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Row 2: Peran Penulis & Penulis Korespondensi */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="space-y-1.5">
+                <label htmlFor="pub-author-role" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                  Peran Penulis Anda <span className="text-error ml-0.5">*</span>
+                </label>
+                <select
+                  id="pub-author-role"
+                  value={authorRole}
+                  onChange={(e) => {
+                    const role = e.target.value as 'Single Author' | 'First Author' | 'Member Author';
+                    setAuthorRole(role);
+                    if (role === 'Single Author' || role === 'First Author') {
+                      setAuthorOrder(1);
+                    } else if (role === 'Member Author') {
+                      if (authorOrder <= 1) setAuthorOrder(2);
+                    }
+                  }}
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
+                >
+                  <option value="Single Author">Single Author (Penulis Tunggal)</option>
+                  <option value="First Author">First Author (Penulis Pertama / Utama)</option>
+                  <option value="Member Author">Member Author (Penulis Anggota / Rekan)</option>
+                </select>
+              </div>
+
+              {/* Status Corresponding Author */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1">
+                  <UserCheck className="w-3.5 h-3.5 text-accent" />
+                  Penulis Korespondensi (Corresponding Author)?
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsCorresponding(true)}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      isCorresponding
+                        ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-2xs'
+                        : 'bg-surface-light dark:bg-surface-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark'
+                    }`}
+                  >
+                    ✓ Ya
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsCorresponding(false)}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      !isCorresponding
+                        ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-2xs'
+                        : 'bg-surface-light dark:bg-surface-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark'
+                    }`}
+                  >
+                    ✕ Bukan
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Susunan & Anggota Penulis dengan Drag & Drop Reordering */}
+            <CoAuthorsSelector
+              currentUser={user}
+              coAuthors={coAuthors}
+              onChange={handleCoAuthorsChange}
+              authorRole={authorRole}
+              authorOrder={authorOrder}
+              onOrderChange={handleOrderChange}
+            />
+
+            {/* Row 4: Metadata Jurnal & DOI & Citations */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+              <div className="space-y-1.5">
+                <label htmlFor="pub-journal" className="text-xs font-semibold text-body dark:text-on-dark-soft">
+                  Nama Jurnal Ilmiah (Opsional)
+                </label>
+                <input
+                  type="text"
+                  id="pub-journal"
+                  value={journal}
+                  onChange={(e) => setJournal(e.target.value)}
+                  placeholder="Contoh: IEEE Access / Nature..."
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="pub-doi" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1">
+                  <LinkIcon className="w-3 h-3 text-muted" /> DOI Publikasi (Opsional)
+                </label>
+                <input
+                  type="text"
+                  id="pub-doi"
+                  value={doi}
+                  onChange={(e) => setDoi(e.target.value)}
+                  placeholder="10.xxxx/xxxxxxx"
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="pub-citations-international" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1">
+                  <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" /> Jumlah Sitasi (Opsional)
+                </label>
+                <input
+                  type="number"
+                  id="pub-citations-international"
+                  min="0"
+                  value={citations}
+                  onChange={(e) => setCitations(e.target.value)}
+                  placeholder="0"
+                  className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:ring-2 focus:ring-accent/15 focus:border-accent outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Checkbox Hyperauthorship */}
+            <div className="flex items-center gap-2 pt-1">
+              <input
+                type="checkbox"
+                id="pub-hyperauthor"
+                checked={isHyperauthor}
+                onChange={(e) => setIsHyperauthor(e.target.checked)}
+                className="w-4 h-4 rounded text-accent focus:ring-accent cursor-pointer"
+              />
+              <label htmlFor="pub-hyperauthor" className="text-xs text-body dark:text-on-dark-soft cursor-pointer">
+                Publikasi Kolaborasi Masif / Hyperauthor (&gt;16 Penulis — Flat Rate 40/24/1 Pts)
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════
+            KHUSUS JURNAL NASIONAL (SINTA & CITATIONS)
+           ══════════════════════════════════════════════════════════════ */}
         {isNationalJournal && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             <div className="space-y-1.5">
@@ -252,13 +528,13 @@ export default function PublicationUploadModal({
                 onChange={(e) => setSintaRank(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer font-mono"
               >
-                <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="Non-SINTA">Non-SINTA (Tidak Terakreditasi)</option>
-                <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="S1">SINTA 1 (S1)</option>
-                <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="S2">SINTA 2 (S2)</option>
-                <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="S3">SINTA 3 (S3)</option>
-                <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="S4">SINTA 4 (S4)</option>
-                <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="S5">SINTA 5 (S5)</option>
-                <option className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark" value="S6">SINTA 6 (S6)</option>
+                <option value="Non-SINTA">Non-SINTA (Tidak Terakreditasi — 10 Pts)</option>
+                <option value="S1">SINTA 1 (S1 — 25 Pts)</option>
+                <option value="S2">SINTA 2 (S2 — 25 Pts)</option>
+                <option value="S3">SINTA 3 (S3 — 20 Pts)</option>
+                <option value="S4">SINTA 4 (S4 — 20 Pts)</option>
+                <option value="S5">SINTA 5 (S5 — 15 Pts)</option>
+                <option value="S6">SINTA 6 (S6 — 15 Pts)</option>
               </select>
             </div>
 
@@ -280,24 +556,7 @@ export default function PublicationUploadModal({
           </div>
         )}
 
-        {isInternationalJournal && (
-          <div className="space-y-1.5">
-            <label htmlFor="pub-citations-international" className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center gap-1.5">
-              <BarChart3 className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-              Jumlah Sitasi (Opsional)
-            </label>
-            <input
-              type="number"
-              id="pub-citations-international"
-              min="0"
-              value={citations}
-              onChange={(e) => setCitations(e.target.value)}
-              placeholder="0"
-              className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark font-mono"
-            />
-          </div>
-        )}
-
+        {/* Tanggal Terbit */}
         <div className="space-y-1.5 relative">
           <label className="text-xs font-semibold text-body dark:text-on-dark-soft flex items-center">
             <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
@@ -306,6 +565,7 @@ export default function PublicationUploadModal({
           <DatePicker date={date} onDateChange={setDate} placeholder="Pilih tanggal terbit" />
         </div>
 
+        {/* Upload File PDF */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-body dark:text-on-dark-soft">
             File Publikasi (PDF) <span className="text-error ml-0.5">*</span>
@@ -382,6 +642,7 @@ export default function PublicationUploadModal({
           )}
         </div>
 
+        {/* Tombol Action */}
         <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-hairline-light dark:border-hairline-dark">
           <button
             type="button"

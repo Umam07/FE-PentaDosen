@@ -15,8 +15,13 @@ export interface PublicationDoc {
   subtype?: string;
   total_authors?: number;
   author_role?: string;
+  author_order?: number;
   is_corresponding?: boolean;
   is_corresponding_confirmed?: boolean;
+  is_hyperauthor?: boolean;
+  journal?: string;
+  doi?: string;
+  authors?: string;
   is_sinta_confirmed?: boolean;
   is_cross_indexed?: boolean;
   quartile?: string;
