@@ -8,6 +8,7 @@ import { AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ScrollToTop from './components/layout/ScrollToTop';
 import Toaster from './components/ui/toast';
+import { PageLoader } from './components/ui/PageLoader';
 
 // Lazy load layout and dialog components
 const Layout = lazy(() => import('./components/layout/Layout'));
@@ -71,11 +72,7 @@ function AdminRedirect({ user }: { user: any }) {
 }
 
 function LoadingFallback() {
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
-      <div className="w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
-    </div>
-  );
+  return <PageLoader title="PentaDosen" message="Menyiapkan data akademik..." />;
 }
 
 export default function App() {
