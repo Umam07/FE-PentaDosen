@@ -10,6 +10,7 @@ import AllDocumentsFilterBar from './components/AllDocumentsFilterBar';
 import AllDocumentsMobileList from './components/AllDocumentsMobileList';
 import AllDocumentsTable from './components/AllDocumentsTable';
 import AllDocumentsPagination from './components/AllDocumentsPagination';
+import { EmptyState } from '../../../components/ui/EmptyState';
 const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
 import { DocumentHistoryModal } from '../../../components/features/documents';
 
@@ -67,12 +68,11 @@ export default function AdminAllDocuments() {
               <p className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-[0.2em]">Memuat Data...</p>
             </div>
           ) : docState.filteredDocuments.length === 0 ? (
-            <div className="p-20 text-center flex flex-col items-center">
-              <div className="w-20 h-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl flex items-center justify-center mb-6 border border-hairline-light-soft dark:border-hairline-dark-soft">
-                <FileText className="w-10 h-10 text-muted-soft dark:text-on-dark-muted" />
-              </div>
-              <p className="text-sm font-semibold text-muted dark:text-on-dark-muted uppercase tracking-widest italic">Data Tidak Ditemukan</p>
-            </div>
+            <EmptyState
+              icon={FileText}
+              title="Data Tidak Ditemukan"
+              description="Tidak ada dokumen yang sesuai dengan kata kunci pencarian atau filter fakultas yang dipilih."
+            />
           ) : (
             <div>
               {/* Mobile Card List */}

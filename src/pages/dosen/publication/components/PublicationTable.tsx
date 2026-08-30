@@ -6,6 +6,7 @@ import {
 import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import FilterDropdown, { FilterOption } from './FilterDropdown';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
+import { EmptyState } from '../../../../components/ui/EmptyState';
 import { calculateScholarPoints } from '../../dashboard/pointsCalculator';
 import PointBreakdownBox from './PointBreakdownBox';
 import type { 
@@ -884,8 +885,11 @@ export default function PublicationTable({
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-4 lg:px-6 py-16 text-center text-muted dark:text-on-dark-muted font-medium text-xs">
-                  Belum ada data publikasi.
+                <td colSpan={6} className="p-0">
+                  <EmptyState
+                    title="Belum ada data publikasi"
+                    description="Tidak ada dokumen publikasi yang sesuai dengan kriteria atau filter yang dipilih."
+                  />
                 </td>
               </tr>
             )}
@@ -1145,9 +1149,11 @@ export default function PublicationTable({
             );
           })
         ) : (
-          <div className="p-8 text-center text-muted dark:text-on-dark-muted font-medium text-xs">
-            Belum ada data publikasi.
-          </div>
+          <EmptyState
+            compact
+            title="Belum ada data publikasi"
+            description="Tidak ada dokumen publikasi yang sesuai dengan kriteria atau filter yang dipilih."
+          />
         )}
       </div>
 

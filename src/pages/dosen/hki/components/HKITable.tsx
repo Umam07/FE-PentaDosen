@@ -6,6 +6,7 @@ import {
 import { HKI_CATEGORIES } from '../constants';
 import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import Pagination from '../../dashboard/components/Pagination';
+import { EmptyState } from '../../../../components/ui/EmptyState';
 
 interface HKITableProps {
   isTableLoading: boolean;
@@ -297,13 +298,12 @@ export default function HKITable({
               })
             ) : (
               <tr>
-                <td colSpan={8} className="px-8 py-16 text-center">
-                  <div className="flex flex-col items-center">
-                    <Shield className="w-12 h-12 text-muted-soft/40 dark:text-on-dark-muted/40 mb-3" />
-                    <p className="text-xs font-semibold text-muted dark:text-on-dark-muted">
-                      Belum ada dokumen HKI yang diunggah.
-                    </p>
-                  </div>
+                <td colSpan={8} className="p-0">
+                  <EmptyState
+                    icon={Shield}
+                    title="Belum ada dokumen HKI"
+                    description="Dokumen Hak Kekayaan Intelektual (HKI/Paten) belum ditemukan untuk filter ini."
+                  />
                 </td>
               </tr>
             )}

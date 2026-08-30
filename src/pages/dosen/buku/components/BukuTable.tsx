@@ -6,6 +6,7 @@ import {
 import { BUKU_CATEGORIES } from '../constants';
 import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import Pagination from '../../dashboard/components/Pagination';
+import { EmptyState } from '../../../../components/ui/EmptyState';
 
 interface BukuTableProps {
   isTableLoading: boolean;
@@ -298,13 +299,12 @@ export default function BukuTable({
               })
             ) : (
               <tr>
-                <td colSpan={9} className="px-8 py-16 text-center">
-                  <div className="flex flex-col items-center">
-                    <Book className="w-12 h-12 text-muted-soft/40 dark:text-on-dark-muted/40 mb-3" />
-                    <p className="text-xs font-semibold text-muted dark:text-on-dark-muted">
-                      Belum ada buku terdaftar.
-                    </p>
-                  </div>
+                <td colSpan={9} className="p-0">
+                  <EmptyState
+                    icon={Book}
+                    title="Belum ada data buku"
+                    description="Dokumen buku ajar / referensi / monograf belum ditemukan untuk filter ini."
+                  />
                 </td>
               </tr>
             )}

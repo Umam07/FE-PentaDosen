@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import YearFilterBar from '../../../../components/shared/YearFilterBar';
 import { DropdownSelect } from '../../../../components/ui/DropdownSelect';
+import { EmptyState } from '../../../../components/ui/EmptyState';
 import { getResearchSchemaIcon } from '../utils/researchIconMapper';
 
 const formatDateVal = (dateStr: string | number) => {
@@ -379,11 +380,11 @@ export default function ResearchTable({
               })
             ) : (
               <tr>
-                <td
-                  colSpan={9}
-                  className="px-6 py-12 text-center text-muted dark:text-on-dark-muted font-medium text-xs"
-                >
-                  Belum ada data penelitian.
+                <td colSpan={9} className="p-0">
+                  <EmptyState
+                    title="Belum ada data penelitian"
+                    description="Tidak ada dokumen penelitian yang sesuai dengan kriteria atau filter yang dipilih."
+                  />
                 </td>
               </tr>
             )}
@@ -595,9 +596,11 @@ export default function ResearchTable({
             );
           })
         ) : (
-          <div className="p-8 text-center text-muted dark:text-on-dark-muted font-medium text-xs">
-            Belum ada data penelitian.
-          </div>
+          <EmptyState
+            compact
+            title="Belum ada data penelitian"
+            description="Tidak ada dokumen penelitian yang sesuai dengan kriteria atau filter yang dipilih."
+          />
         )}
       </div>
 

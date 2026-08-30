@@ -32,10 +32,26 @@ export default function Topbar({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [lecturers, setLecturers] = useState<any[]>([]);
   const [imgError, setImgError] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleSyncStart = () => setIsSyncing(true);
+    const handleSyncEnd = () => {
+      setTimeout(() => setIsSyncing(false), 2000);
+    };
+
+    window.addEventListener('penta-sync-start', handleSyncStart);
+    window.addEventListener('penta-sync-end', handleSyncEnd);
+
+    return () => {
+      window.removeEventListener('penta-sync-start', handleSyncStart);
+      window.removeEventListener('penta-sync-end', handleSyncEnd);
+    };
+  }, []);
 
   useEffect(() => {
     setImgError(false);
@@ -129,11 +145,33 @@ export default function Topbar({
                 <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
              </button>
            )}
-           <div className="hidden sm:block min-w-0 truncate">
+            <div className="hidden sm:flex items-center gap-2.5 min-w-0 truncate">
               <h2 className="text-base lg:text-lg font-black text-ink-heading dark:text-on-dark tracking-tight flex items-center gap-2 truncate">
                 {currentPageName || 'PentaDosen'}
               </h2>
-           </div>
+
+              {/* Dynamic Sync Status Indicator (Only appears when active sync is occurring) */}
+              <AnimatePresence>
+                {!hideLiveBadge && isSyncing && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, x: -6 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, x: -6 }}
+                    transition={{ duration: 0.2 }}
+                    role="status"
+                    aria-label="Sedang menyinkronkan data akademik"
+                    className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent-soft dark:bg-accent/15 border border-accent-border dark:border-accent/30 text-accent-hover dark:text-accent-on-dark text-[11px] font-mono font-medium select-none"
+                    title="Sedang menyinkronkan data akademik di latar belakang"
+                  >
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75 motion-reduce:hidden" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent" />
+                    </span>
+                    <span className="tracking-tight text-[10.5px] uppercase">Menyinkronkan...</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">

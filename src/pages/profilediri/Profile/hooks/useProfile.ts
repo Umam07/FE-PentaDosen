@@ -307,6 +307,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     }
     try {
       setLoading(true);
+      window.dispatchEvent(new CustomEvent('penta-sync-start'));
       toast.info('Sedang menyinkronkan data Google Scholar...', 'Google Scholar');
       await profileService.syncScholar(user.id);
       toast.success('Data Google Scholar berhasil disinkronisasi.', 'Google Scholar');
@@ -318,6 +319,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       toast.error(err.message || 'Error sinkronisasi data Google Scholar.', 'Google Scholar');
     } finally {
       setLoading(false);
+      window.dispatchEvent(new CustomEvent('penta-sync-end'));
     }
   };
 
@@ -329,6 +331,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     }
     try {
       setLoading(true);
+      window.dispatchEvent(new CustomEvent('penta-sync-start'));
       toast.info('Sedang menyinkronkan data Scopus...', 'Scopus');
       await profileService.syncScopus(user.id);
       toast.success('Data Scopus berhasil disinkronisasi.', 'Scopus');
@@ -340,6 +343,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       toast.error(err.message || 'Error sinkronisasi data Scopus.', 'Scopus');
     } finally {
       setLoading(false);
+      window.dispatchEvent(new CustomEvent('penta-sync-end'));
     }
   };
 
@@ -351,6 +355,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     }
     try {
       setLoading(true);
+      window.dispatchEvent(new CustomEvent('penta-sync-start'));
       toast.info('Sedang menyinkronkan seluruh data publikasi...', 'Sinkronisasi');
 
       const syncPromises = [];
@@ -374,6 +379,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       toast.error(err.message || 'Error saat sinkronisasi data.', 'Sinkronisasi');
     } finally {
       setLoading(false);
+      window.dispatchEvent(new CustomEvent('penta-sync-end'));
     }
   };
 
@@ -381,6 +387,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     if (!user?.id) return;
     try {
       setLoading(true);
+      window.dispatchEvent(new CustomEvent('penta-sync-start'));
       toast.info('Sedang mendeteksi ID dari data SINTA...', 'Profil SINTA');
       const result = await profileService.syncSinta(user.id, true);
       toast.success(result.message || 'Scopus ID & Google Scholar ID berhasil terhubung dari data SINTA.', 'Profil SINTA');
@@ -394,6 +401,7 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       toast.error(err.message || 'Gagal mendeteksi data dari SINTA.', 'Profil SINTA');
     } finally {
       setLoading(false);
+      window.dispatchEvent(new CustomEvent('penta-sync-end'));
     }
   };
 

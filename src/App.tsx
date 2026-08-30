@@ -93,15 +93,27 @@ export default function App() {
   const [isSessionExpired, setIsSessionExpired] = useState(false);
   const [isRateLimited, setIsRateLimited] = useState(false);
 
-  // Global Interceptor for 429 (Rate Limit), 401 (Unauthorized), and 419 (Session Expired)
+  // Global Interceptor for 429 (Rate Limit), 401 (Unauthorized), 419 (Session Expired), and Global Sync Events
   useEffect(() => {
     const originalFetch = window.fetch;
+    let activeSyncCount = 0;
+
     window.fetch = async (...args) => {
+      const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
+      const urlLower = url.toLowerCase();
+      const isSyncRequest = urlLower.includes('/sync') || urlLower.includes('detect-sinta') || urlLower.includes('sync-scopus') || urlLower.includes('sync-sinta');
+
+      if (isSyncRequest) {
+        activeSyncCount++;
+        if (activeSyncCount === 1) {
+          window.dispatchEvent(new CustomEvent('penta-sync-start'));
+        }
+      }
+
       try {
         const response = await originalFetch(...args);
         
         // Get request URL to bypass login endpoint
-        const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
         const isLoginRequest = url.includes('/api/login');
 
         // Check if rate limit modal should be suppressed (e.g. background mass sync)
@@ -129,6 +141,13 @@ export default function App() {
         return response;
       } catch (error) {
         return Promise.reject(error);
+      } finally {
+        if (isSyncRequest) {
+          activeSyncCount = Math.max(0, activeSyncCount - 1);
+          if (activeSyncCount === 0) {
+            window.dispatchEvent(new CustomEvent('penta-sync-end'));
+          }
+        }
       }
     };
     return () => {
