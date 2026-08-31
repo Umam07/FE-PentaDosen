@@ -102,8 +102,8 @@ export default function UsersTab({ triggerMessage }: UsersTabProps) {
         </div>
       </TableFilterHeader>
 
-      {/* Users Table */}
-      <div className="overflow-x-auto w-full">
+      {/* ── 1. Desktop & Tablet Table View (md ke atas) ── */}
+      <div className="hidden md:block overflow-x-auto w-full">
         <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">
           <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
             <tr>
@@ -183,6 +183,101 @@ export default function UsersTab({ triggerMessage }: UsersTabProps) {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* ── 2. Mobile Responsive Card List View (< md) ── */}
+      <div className="block md:hidden divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft">
+        {loading ? (
+          [1, 2, 3, 4].map(i => (
+            <div key={`m-skeleton-${i}`} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark animate-pulse">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 flex-1">
+                  <div className="h-10 w-10 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl shrink-0" />
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 w-3/4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                    <div className="h-3 w-1/2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                  </div>
+                </div>
+                <div className="h-6 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-full shrink-0" />
+              </div>
+            </div>
+          ))
+        ) : users.length > 0 ? (
+          users.map((u) => (
+            <div 
+              key={u.id}
+              className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised/40 dark:hover:bg-surface-dark-elevated/40 transition-colors"
+            >
+              {/* Top Header: Avatar, Name, Email, & Role Badge */}
+              <div className="flex items-start justify-between gap-2.5">
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  {u.avatar ? (
+                    <img 
+                      src={u.avatar} 
+                      alt={u.name} 
+                      className="w-10 h-10 rounded-xl object-cover ring-1 ring-hairline-light dark:ring-hairline-dark shadow-xs shrink-0 mt-0.5"
+                    />
+                  ) : (
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold font-mono text-xs uppercase shadow-xs shrink-0 mt-0.5 ${getRoleAvatarStyle(u.role)}`}>
+                      {u.name?.charAt(0)}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-bold text-ink-heading dark:text-on-dark text-xs sm:text-sm leading-snug line-clamp-1 truncate">
+                      {u.name}
+                    </h4>
+                    <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted mt-0.5 truncate">
+                      {u.email}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Role Badge */}
+                <div className="shrink-0">
+                  <span className={`inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all whitespace-nowrap ${getRoleBadgeStyle(u.role)}`}>
+                    {u.role}
+                  </span>
+                </div>
+              </div>
+
+              {/* NIDN & Fakultas / Prodi Row */}
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                {u.nidn ? (
+                  <span className="font-mono text-[11px] font-semibold text-ink-heading dark:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md border border-hairline-light-soft dark:border-hairline-dark-soft inline-block">
+                    NIDN: {u.nidn}
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-mono text-muted-soft dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md border border-hairline-light-soft dark:border-hairline-dark-soft inline-block italic">
+                    NIDN: -
+                  </span>
+                )}
+
+                {(u.fakultas || u.program_studi) && (
+                  <span className="text-[11px] text-muted dark:text-on-dark-muted font-medium truncate max-w-[240px]">
+                    {u.fakultas}{u.program_studi ? ` • ${u.program_studi}` : ''}
+                  </span>
+                )}
+              </div>
+
+              {/* Footer Card: Action Button */}
+              <div className="pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-end">
+                <button 
+                  onClick={() => handleOpenEdit(u)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-ink-heading dark:text-on-dark bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl transition-all cursor-pointer shadow-xs active:scale-95"
+                  aria-label="Atur Hak Akses"
+                  title="Atur Hak Akses"
+                >
+                  <Edit className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
+                  <span>Atur Hak Akses</span>
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="px-6 py-12 text-center text-muted dark:text-on-dark-muted font-medium text-xs">
+            Tidak ada data user yang sesuai.
+          </div>
+        )}
       </div>
 
       {/* Pagination Controls */}

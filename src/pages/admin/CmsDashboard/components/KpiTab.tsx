@@ -286,98 +286,171 @@ export default function KpiTab({ triggerMessage }: KpiTabProps) {
                       </div>
                     </button>
 
-                    {/* Content Accordion Table */}
+                    {/* Content Accordion Table & Mobile Cards */}
                     {isOpen && (
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">
-                          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
-                            <tr>
-                              <th className="px-4 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Kategori</th>
-                              <th className="px-3 py-3.5 text-center w-36 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">First Author / Single</th>
-                              <th className="px-3 py-3.5 text-center w-36 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Member Author</th>
-                              <th className="px-3 py-3.5 text-right w-16 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Aksi</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
-                            {group.items.map((row) => (
-                              <tr 
-                                key={row.baseName}
-                                className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors"
-                              >
-                                {/* Kolom Kategori */}
-                                <td className="px-4 py-3 font-medium text-ink-heading dark:text-on-dark">
-                                  <span>{row.baseName}</span>
-                                </td>
+                      <>
+                        {/* 1. Desktop & Tablet View (sm ke atas) */}
+                        <div className="hidden sm:block overflow-x-auto">
+                          <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">
+                            <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
+                              <tr>
+                                <th className="px-4 py-3.5 text-left text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Kategori</th>
+                                <th className="px-3 py-3.5 text-center w-36 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">First Author / Single</th>
+                                <th className="px-3 py-3.5 text-center w-36 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Member Author</th>
+                                <th className="px-3 py-3.5 text-right w-16 text-xs font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">Aksi</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
+                              {group.items.map((row) => (
+                                <tr 
+                                  key={row.baseName}
+                                  className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors"
+                                >
+                                  {/* Kolom Kategori */}
+                                  <td className="px-4 py-3 font-medium text-ink-heading dark:text-on-dark">
+                                    <span>{row.baseName}</span>
+                                  </td>
 
-                                {/* Kolom 1: First Author atau Single Author atau Standalone */}
-                                <td className="px-3 py-3 text-center">
-                                  {row.firstAuthor ? (
-                                    <div className="flex items-center justify-center gap-1.5">
-                                      <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">First:</span>
+                                  {/* Kolom 1: First Author atau Single Author atau Standalone */}
+                                  <td className="px-3 py-3 text-center">
+                                    {row.firstAuthor ? (
+                                      <div className="flex items-center justify-center gap-1.5">
+                                        <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">First:</span>
+                                        <input
+                                          type="number"
+                                          value={row.firstAuthor.weight_value}
+                                          onChange={(e) => handleWeightChangeByCategory(row.firstAuthor!.category, parseInt(e.target.value) || 0)}
+                                          className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
+                                        />
+                                      </div>
+                                    ) : row.singleAuthor ? (
+                                      <div className="flex items-center justify-center gap-1.5">
+                                        <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">Single:</span>
+                                        <input
+                                          type="number"
+                                          value={row.singleAuthor.weight_value}
+                                          onChange={(e) => handleWeightChangeByCategory(row.singleAuthor!.category, parseInt(e.target.value) || 0)}
+                                          className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
+                                        />
+                                      </div>
+                                    ) : row.standalone ? (
                                       <input
                                         type="number"
-                                        value={row.firstAuthor.weight_value}
-                                        onChange={(e) => handleWeightChangeByCategory(row.firstAuthor!.category, parseInt(e.target.value) || 0)}
+                                        value={row.standalone.weight_value}
+                                        onChange={(e) => handleWeightChangeByCategory(row.standalone!.category, parseInt(e.target.value) || 0)}
                                         className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
                                       />
-                                    </div>
-                                  ) : row.singleAuthor ? (
-                                    <div className="flex items-center justify-center gap-1.5">
-                                      <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">Single:</span>
-                                      <input
-                                        type="number"
-                                        value={row.singleAuthor.weight_value}
-                                        onChange={(e) => handleWeightChangeByCategory(row.singleAuthor!.category, parseInt(e.target.value) || 0)}
-                                        className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
-                                      />
-                                    </div>
-                                  ) : row.standalone ? (
+                                    ) : (
+                                      <span className="text-muted-soft dark:text-on-dark-muted">-</span>
+                                    )}
+                                  </td>
+
+                                  {/* Kolom 2: Member Author */}
+                                  <td className="px-3 py-3 text-center">
+                                    {row.memberAuthor ? (
+                                      <div className="flex items-center justify-center gap-1.5">
+                                        <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">Member:</span>
+                                        <input
+                                          type="number"
+                                          value={row.memberAuthor.weight_value}
+                                          onChange={(e) => handleWeightChangeByCategory(row.memberAuthor!.category, parseInt(e.target.value) || 0)}
+                                          className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <span className="text-muted-soft dark:text-on-dark-muted">-</span>
+                                    )}
+                                  </td>
+
+                                  {/* Kolom 3: Aksi Hapus */}
+                                  <td className="px-3 py-3 text-right">
+                                    <button
+                                      onClick={() => {
+                                        const targetCat = row.firstAuthor?.category || row.standalone?.category || row.memberAuthor?.category || row.singleAuthor?.category;
+                                        if (targetCat) setDeleteCategory(targetCat);
+                                      }}
+                                      className="p-1.5 text-error hover:bg-error-soft rounded-lg transition-colors cursor-pointer"
+                                      title="Hapus Kategori"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* 2. Mobile Responsive Card List View (< sm) */}
+                        <div className="block sm:hidden divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft">
+                          {group.items.map((row) => (
+                            <div key={row.baseName} className="p-3.5 space-y-2.5 bg-surface-light dark:bg-surface-dark">
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-bold text-xs text-ink-heading dark:text-on-dark leading-snug">
+                                  {row.baseName}
+                                </span>
+                                <button
+                                  onClick={() => {
+                                    const targetCat = row.firstAuthor?.category || row.standalone?.category || row.memberAuthor?.category || row.singleAuthor?.category;
+                                    if (targetCat) setDeleteCategory(targetCat);
+                                  }}
+                                  className="p-1.5 text-error hover:bg-error-soft rounded-lg transition-colors cursor-pointer shrink-0"
+                                  title="Hapus Kategori"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                {row.firstAuthor && (
+                                  <div className="p-2 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+                                    <span className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">First Author:</span>
+                                    <input
+                                      type="number"
+                                      value={row.firstAuthor.weight_value}
+                                      onChange={(e) => handleWeightChangeByCategory(row.firstAuthor!.category, parseInt(e.target.value) || 0)}
+                                      className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-md text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
+                                    />
+                                  </div>
+                                )}
+                                {row.memberAuthor && (
+                                  <div className="p-2 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+                                    <span className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">Member:</span>
+                                    <input
+                                      type="number"
+                                      value={row.memberAuthor.weight_value}
+                                      onChange={(e) => handleWeightChangeByCategory(row.memberAuthor!.category, parseInt(e.target.value) || 0)}
+                                      className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-md text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
+                                    />
+                                  </div>
+                                )}
+                                {row.singleAuthor && (
+                                  <div className="p-2 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+                                    <span className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">Single:</span>
+                                    <input
+                                      type="number"
+                                      value={row.singleAuthor.weight_value}
+                                      onChange={(e) => handleWeightChangeByCategory(row.singleAuthor!.category, parseInt(e.target.value) || 0)}
+                                      className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-md text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
+                                    />
+                                  </div>
+                                )}
+                                {row.standalone && (
+                                  <div className="p-2 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+                                    <span className="text-[11px] font-semibold text-muted dark:text-on-dark-muted">Bobot Poin:</span>
                                     <input
                                       type="number"
                                       value={row.standalone.weight_value}
                                       onChange={(e) => handleWeightChangeByCategory(row.standalone!.category, parseInt(e.target.value) || 0)}
-                                      className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
+                                      className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-md text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
                                     />
-                                  ) : (
-                                    <span className="text-muted-soft dark:text-on-dark-muted">-</span>
-                                  )}
-                                </td>
-
-                                {/* Kolom 2: Member Author */}
-                                <td className="px-3 py-3 text-center">
-                                  {row.memberAuthor ? (
-                                    <div className="flex items-center justify-center gap-1.5">
-                                      <span className="text-[10px] text-muted dark:text-on-dark-muted font-normal hidden sm:inline">Member:</span>
-                                      <input
-                                        type="number"
-                                        value={row.memberAuthor.weight_value}
-                                        onChange={(e) => handleWeightChangeByCategory(row.memberAuthor!.category, parseInt(e.target.value) || 0)}
-                                        className="w-16 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-lg text-center font-mono font-bold text-xs outline-none text-ink-heading dark:text-on-dark focus:ring-1 focus:ring-accent focus:border-accent"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <span className="text-muted-soft dark:text-on-dark-muted">-</span>
-                                  )}
-                                </td>
-
-                                {/* Kolom 3: Aksi Hapus */}
-                                <td className="px-3 py-3 text-right">
-                                  <button
-                                    onClick={() => {
-                                      const targetCat = row.firstAuthor?.category || row.standalone?.category || row.memberAuthor?.category || row.singleAuthor?.category;
-                                      if (targetCat) setDeleteCategory(targetCat);
-                                    }}
-                                    className="p-1.5 text-error hover:bg-error-soft rounded-lg transition-colors cursor-pointer"
-                                    title="Hapus Kategori"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
                     )}
                   </div>
                 );
