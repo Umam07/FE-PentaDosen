@@ -103,7 +103,8 @@ export default function BukuTable({
         </div>
       )}
 
-      <div className="w-full overflow-x-auto">
+      {/* ── 1. Desktop & Tablet Table View (md ke atas) ── */}
+      <div className="hidden md:block w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs">
           <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
             <tr>
@@ -310,6 +311,219 @@ export default function BukuTable({
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* ── 2. Mobile Responsive Card List View (< md) ── */}
+      <div className="block md:hidden divide-y divide-hairline-light dark:divide-hairline-dark">
+        {isTableLoading ? (
+          <phantom-ui loading={true} animation="shimmer" className="contents">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={`m-skeleton-${i}`} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="h-9 w-9 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl shrink-0 mt-0.5" />
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 w-3/4 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                      <div className="h-3 w-1/2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded" />
+                    </div>
+                  </div>
+                  <div className="h-6 w-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg shrink-0" />
+                </div>
+                <div className="flex gap-1.5 pt-1">
+                  <div className="h-5 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                  <div className="h-5 w-24 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-md" />
+                </div>
+                <div className="pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between">
+                  <div className="h-6 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-full" />
+                  <div className="flex gap-1.5">
+                    <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                    <div className="h-7 w-7 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </phantom-ui>
+        ) : currentDocuments.length > 0 ? (
+          currentDocuments.map((doc: any) => {
+            const catConfig = BUKU_CATEGORIES.find(c => c.value === doc.category);
+            const DocIcon = catConfig ? catConfig.icon : Book;
+            const docDate = doc.published_at ? new Date(doc.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+            const isApproved = doc.status === 'Approved';
+            const isRejected = doc.status === 'Rejected';
+            const isVerified = doc.status === 'Verified by Fakultas';
+            const isLocked = isDocLocked(doc);
+
+            return (
+              <div 
+                key={doc.id}
+                className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark hover:bg-surface-light-raised/40 dark:hover:bg-surface-dark-elevated/40 transition-colors"
+              >
+                {/* Top Section: Icon, Title & Points */}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div 
+                    className="flex items-start gap-2.5 flex-1 min-w-0 cursor-pointer group"
+                    onClick={() => setSelectedDocForDetail(doc)}
+                  >
+                    <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl group-hover:bg-hairline-light dark:group-hover:bg-surface-dark transition-colors shrink-0 mt-0.5 border border-hairline-light/60 dark:border-hairline-dark/60 text-body dark:text-on-dark-soft shadow-2xs">
+                      <DocIcon className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4
+                        className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark leading-snug line-clamp-2 hover:underline"
+                        title={doc.title}
+                      >
+                        {doc.title}
+                      </h4>
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted dark:text-on-dark-muted flex-wrap mt-1">
+                        <span className="font-mono">{docDate}</span>
+                        <span>•</span>
+                        <span className="font-medium">{doc.category}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Point Badge */}
+                  <div className="shrink-0 flex flex-col items-end">
+                    <span className="px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-xs font-bold font-mono tabular-nums border border-hairline-light dark:border-hairline-dark whitespace-nowrap shadow-2xs">
+                      +{Math.round(doc.awarded_points || 0)} Pts
+                    </span>
+                  </div>
+                </div>
+
+                {/* Badges / Chips: Penelitian Asal Link */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {doc.penelitian ? (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft rounded-lg border border-hairline-light dark:border-hairline-dark max-w-full text-xs">
+                      <Link className="w-3 h-3 shrink-0 text-muted dark:text-on-dark-muted" />
+                      <span className="text-[11px] font-semibold truncate max-w-[200px]" title={doc.penelitian.judul_penelitian}>
+                        {doc.penelitian.judul_penelitian}
+                      </span>
+                      <button 
+                        type="button"
+                        onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
+                        className="ml-1 text-[10px] font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark cursor-pointer underline underline-offset-2"
+                      >
+                        Ubah
+                      </button>
+                    </div>
+                  ) : (
+                    <button 
+                      type="button"
+                      onClick={() => { setDocToLink(doc); setIsLinkingModalOpen(true); }}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-light dark:bg-surface-dark-elevated hover:bg-surface-light-raised dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark text-[10px] font-semibold rounded-lg border border-hairline-light dark:border-hairline-dark transition-all cursor-pointer shadow-2xs whitespace-nowrap"
+                    >
+                      <Link className="w-3 h-3 text-muted dark:text-on-dark-muted" /> Pilih Penelitian Asal
+                    </button>
+                  )}
+                </div>
+
+                {/* Rejection Note */}
+                {doc.status === 'Rejected' && doc.catatan && (
+                  <div className="text-[11px] text-error dark:text-error-on-dark bg-error-soft dark:bg-error/15 px-2.5 py-1.5 rounded-lg border border-error-border dark:border-error/30">
+                    Catatan: {doc.catatan}
+                  </div>
+                )}
+
+                {/* Card Footer: Status, File Action, Detail & Action Buttons */}
+                <div className="pt-2.5 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center justify-between gap-2 flex-wrap">
+                  {/* Left: Status & PDF */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Status Badge */}
+                    <div
+                      className={`inline-flex items-center px-2.5 py-1 rounded-full font-semibold text-[11px] border whitespace-nowrap ${
+                        isApproved
+                          ? 'bg-success-soft text-success-dark dark:bg-success/15 dark:text-success-on-dark border-success-border dark:border-success/30'
+                          : isRejected
+                          ? 'bg-error-soft text-error dark:bg-error/15 dark:text-error-on-dark border-error-border dark:border-error/30'
+                          : isVerified
+                          ? 'bg-accent-soft text-accent-hover dark:bg-accent/15 dark:text-accent-on-dark border-accent-border dark:border-accent/30'
+                          : 'bg-warning-soft text-warning dark:bg-warning/15 dark:text-warning-on-dark border-warning-border dark:border-warning/30'
+                      }`}
+                    >
+                      {isApproved && <CheckCircle className="w-3.5 h-3.5 mr-1 text-success dark:text-success-on-dark" />}
+                      {isRejected && <XCircle className="w-3.5 h-3.5 mr-1 text-error dark:text-error-on-dark" />}
+                      {!isApproved && !isRejected && <Clock className="w-3.5 h-3.5 mr-1 text-warning dark:text-warning-on-dark" />}
+                      <span>{isVerified ? 'Verified (Fakultas)' : isApproved ? 'Approved' : isRejected ? 'Rejected' : doc.status || 'Pending'}</span>
+                    </div>
+
+                    {/* PDF Action */}
+                    {doc.file_url && doc.file_url !== '-' ? (
+                      <button
+                        type="button"
+                        onClick={() => setPreviewDoc({ fileUrl: doc.file_url, title: doc.title, category: doc.category })}
+                        aria-label={`Lihat dokumen ${doc.title}`}
+                        className="inline-flex items-center text-xs font-semibold text-body dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer shadow-2xs whitespace-nowrap"
+                      >
+                        <FileText className="w-3.5 h-3.5 mr-1 text-muted dark:text-on-dark-muted" /> Lihat
+                      </button>
+                    ) : (
+                      <label className="inline-flex items-center text-xs font-semibold text-muted hover:text-ink-heading dark:hover:text-on-dark cursor-pointer bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark-soft px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark transition-colors shadow-2xs whitespace-nowrap">
+                        {uploadingPdfId === doc.id ? (
+                          <span className="animate-pulse">Uploading...</span>
+                        ) : (
+                          <>
+                            Upload
+                            <input type="file" accept=".pdf" className="sr-only" onChange={(e) => handleUploadPdf(e, doc.id)} disabled={uploadingPdfId === doc.id} />
+                          </>
+                        )}
+                      </label>
+                    )}
+                  </div>
+
+                  {/* Right: Detail, Edit, Delete / Locked */}
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDocForDetail(doc)}
+                      aria-label={`Lihat detail buku ${doc.title}`}
+                      className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+                      title="Lihat Detail"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                    </button>
+
+                    {isLocked ? (
+                      <span
+                        className="p-1.5 rounded-lg bg-surface-light-raised/50 dark:bg-surface-dark-elevated/50 text-muted/60 dark:text-on-dark-muted/50 border border-hairline-light/60 dark:border-hairline-dark/60 inline-flex items-center justify-center cursor-not-allowed"
+                        title="Dokumen sudah diverifikasi — tidak dapat diubah"
+                      >
+                        <Lock className="w-3.5 h-3.5" />
+                      </span>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(doc)}
+                          aria-label={`Edit buku ${doc.title}`}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-all cursor-pointer shadow-2xs"
+                          title="Edit Buku"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setDeleteDoc(doc); setIsDeleteModalOpen(true); }}
+                          aria-label={`Hapus buku ${doc.title}`}
+                          className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-error-soft dark:bg-surface-dark-elevated dark:hover:bg-error/15 text-muted hover:text-error dark:text-on-dark-muted dark:hover:text-error-on-dark border border-hairline-light dark:border-hairline-dark hover:border-error-border dark:hover:border-error/30 transition-all cursor-pointer shadow-2xs"
+                          title="Hapus Buku"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <EmptyState
+            compact
+            icon={Book}
+            title="Belum ada data buku"
+            description="Dokumen buku ajar / referensi / monograf belum ditemukan untuk filter ini."
+          />
+        )}
       </div>
 
       {/* Pagination */}
