@@ -86,8 +86,8 @@ export default function LecturersTable({
                       <span>{lecturer.scholar_id}</span>
                     </div>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider italic">
-                      Not Configured
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-full border border-hairline-light-soft dark:border-hairline-dark-soft uppercase tracking-wider">
+                      Belum Terhubung
                     </span>
                   )}
                 </td>
@@ -100,8 +100,8 @@ export default function LecturersTable({
                       <span>{lecturer.scopus_id}</span>
                     </div>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider italic">
-                      Not Configured
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-full border border-hairline-light-soft dark:border-hairline-dark-soft uppercase tracking-wider">
+                      Belum Terhubung
                     </span>
                   )}
                 </td>
@@ -196,8 +196,8 @@ export default function LecturersTable({
                   <span className="truncate max-w-[140px]">Scholar: {lecturer.scholar_id}</span>
                 </div>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider italic">
-                  Scholar: -
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider">
+                  Scholar: Belum Terhubung
                 </span>
               )}
 
@@ -208,8 +208,8 @@ export default function LecturersTable({
                   <span className="truncate max-w-[140px]">Scopus: {lecturer.scopus_id}</span>
                 </div>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider italic">
-                  Scopus: -
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider">
+                  Scopus: Belum Terhubung
                 </span>
               )}
             </div>

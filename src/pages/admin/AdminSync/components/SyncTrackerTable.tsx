@@ -64,8 +64,8 @@ export default function SyncTrackerTable({
         )}
       </TableFilterHeader>
 
-      {/* Table Rendering */}
-      <div className="overflow-x-auto scrollbar-hide">
+      {/* ── 1. Desktop & Tablet Table View (md ke atas) ── */}
+      <div className="hidden md:block overflow-x-auto scrollbar-hide">
         <table className="min-w-full divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft text-xs whitespace-nowrap">
           <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
             <tr>
@@ -207,6 +207,127 @@ export default function SyncTrackerTable({
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* ── 2. Mobile Responsive Card List View (< md) ── */}
+      <div className="block md:hidden divide-y divide-hairline-light-soft dark:divide-hairline-dark-soft">
+        {currentLecturers.length === 0 ? (
+          <div className="px-6 py-12 text-center">
+            <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-3">
+              <div className="p-3 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl text-muted-soft dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark">
+                <Search className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-bold text-ink-heading dark:text-on-dark">Tidak ada dosen ditemukan</p>
+              <p className="text-xs text-muted dark:text-on-dark-muted">Coba ubah kata kunci pencarian atau sesuaikan filter fakultas yang dipilih.</p>
+              {(searchTerm || selectedFakultas) && (
+                <button
+                  onClick={() => {
+                    onSearchChange('');
+                    onFakultasChange('');
+                  }}
+                  className="mt-2 px-4 py-2 bg-surface-light hover:bg-surface-light-raised dark:bg-surface-dark dark:hover:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-xs font-semibold rounded-xl border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
+                >
+                  Reset Filter &amp; Pencarian
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          currentLecturers.map((l) => {
+            const isCurrentlySyncing = currentSyncingId === l.id;
+            const isSelected = selectedLecturerId === l.id;
+
+            return (
+              <div
+                key={l.id}
+                className={`p-4 space-y-3 bg-surface-light dark:bg-surface-dark transition-colors ${
+                  isSelected ? 'bg-accent-soft/30 dark:bg-accent-soft/10' : 'hover:bg-surface-light-raised/40 dark:hover:bg-surface-dark-elevated/40'
+                } ${isCurrentlySyncing ? 'bg-success-soft/20 dark:bg-success/10 border-l-4 border-l-success' : ''}`}
+              >
+                {/* Top Section: Avatar, Name, Email, Syncing Badge & Action */}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className="h-10 w-10 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated flex items-center justify-center text-muted font-bold font-mono text-xs border border-hairline-light dark:border-hairline-dark shadow-xs overflow-hidden shrink-0 mt-0.5">
+                      {l.thumbnail ? (
+                        <img src={l.thumbnail} alt={l.name} className="w-full h-full object-cover" />
+                      ) : (
+                        l.name.charAt(0)
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h4 className="text-xs sm:text-sm font-bold text-ink-heading dark:text-on-dark leading-snug line-clamp-1 truncate">
+                          {l.name}
+                        </h4>
+                        {isCurrentlySyncing && (
+                          <span className="flex items-center text-[9px] font-semibold text-success-dark dark:text-success-on-dark bg-success-soft dark:bg-success/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse border border-success-border shrink-0">
+                            <Loader2 className="w-2.5 h-2.5 animate-spin mr-1 text-success" />
+                            Syncing
+                          </span>
+                        )}
+                      </div>
+                      {l.email && (
+                        <p className="text-[11px] font-mono text-muted dark:text-on-dark-muted flex items-center gap-1 mt-0.5 truncate">
+                          <Mail className="w-3 h-3 text-muted-soft dark:text-on-dark-muted shrink-0" />
+                          <span className="truncate">{l.email}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="shrink-0">
+                    <button
+                      onClick={() => onSelectLecturer(l.id)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-ink-heading dark:text-on-dark bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl transition-all cursor-pointer shadow-xs group/btn"
+                    >
+                      Kelola <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Middle Row: Fakultas / Prodi Badge */}
+                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                  <span className="px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark font-semibold text-[11px] border border-hairline-light dark:border-hairline-dark truncate max-w-[220px]">
+                    {l.program_studi || 'N/A'}
+                  </span>
+                  {l.fakultas && (
+                    <span className="px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted text-[11px] border border-hairline-light dark:border-hairline-dark truncate max-w-[200px]">
+                      {l.fakultas}
+                    </span>
+                  )}
+                </div>
+
+                {/* Integration Status Badges */}
+                <div className="pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft flex items-center gap-2 flex-wrap text-xs">
+                  {/* Scholar Status */}
+                  {l.scholar_id ? (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-chart-scholar/10 border border-chart-scholar/20 text-chart-scholar dark:text-chart-scholar-dark text-[10px] font-mono font-semibold uppercase tracking-wider shadow-xs">
+                      <div className="w-1.5 h-1.5 bg-chart-scholar rounded-full animate-pulse shrink-0"></div>
+                      <span className="truncate max-w-[140px]">Scholar: {l.scholar_id}</span>
+                    </div>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider italic">
+                      Scholar: Belum Terhubung
+                    </span>
+                  )}
+
+                  {/* Scopus Status */}
+                  {l.scopus_id ? (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-chart-scopus/10 border border-chart-scopus/20 text-chart-scopus dark:text-chart-scopus-dark text-[10px] font-mono font-semibold uppercase tracking-wider shadow-xs">
+                      <div className="w-1.5 h-1.5 bg-chart-scopus rounded-full animate-pulse shrink-0"></div>
+                      <span className="truncate max-w-[140px]">Scopus: {l.scopus_id}</span>
+                    </div>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light-soft dark:border-hairline-dark-soft text-muted dark:text-on-dark-muted text-[10px] font-mono uppercase tracking-wider italic">
+                      Scopus: Belum Terhubung
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* Pagination */}
