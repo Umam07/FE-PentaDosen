@@ -75,8 +75,6 @@ export default function Insights() {
         <div id="fakultas-analytics" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <FakultasPieChart
             loading={loading}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
             sortBy={sortBy}
             setSortBy={setSortBy}
             showFilterDropdown={showFilterDropdown}
@@ -85,8 +83,6 @@ export default function Insights() {
             activeDataIndex={activeDataIndex}
             setActiveIndex={setActiveIndex}
             totalFakultasPoints={totalFakultasPoints}
-            chartViewMode={chartViewMode}
-            setChartViewMode={setChartViewMode}
             onFakultasClick={(fullName) => {
               navigate(`/departments?search=${encodeURIComponent(fullName)}`);
             }}

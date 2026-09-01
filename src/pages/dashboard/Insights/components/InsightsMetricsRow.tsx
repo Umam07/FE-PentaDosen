@@ -55,7 +55,7 @@ export default function InsightsMetricsRow({
             )}
             <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-muted dark:text-on-dark-muted group-hover:text-accent dark:group-hover:text-accent-on-dark transition-colors">
               <span>Dosen Aktif</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
         </button>
@@ -81,7 +81,7 @@ export default function InsightsMetricsRow({
             )}
             <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-muted dark:text-on-dark-muted group-hover:text-success dark:group-hover:text-success-on-dark transition-colors">
               <span>Fakultas Penyelenggara</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-3.5 h-3.5 text-success dark:text-success-on-dark group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
         </button>

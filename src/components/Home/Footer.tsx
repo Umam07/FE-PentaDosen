@@ -141,10 +141,6 @@ export default function Footer() {
                   ) : (
                     <div className="w-full h-full bg-surface-light-raised dark:bg-surface-dark-elevated" />
                   )}
-                  {/* Floating Badge (Clean static text badge, no dot) */}
-                  <div className="absolute top-3 left-3 bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur-md px-2.5 py-1 rounded-md border border-hairline-light dark:border-hairline-dark shadow-sm pointer-events-none">
-                    <span className="text-[10px] font-bold text-ink-heading dark:text-on-dark uppercase tracking-wider">Kampus YARSI</span>
-                  </div>
                 </div>
 
                 {/* Address Details & Action */}

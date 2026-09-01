@@ -59,9 +59,7 @@ export const useLecturerList = () => {
   // Melakukan penyaringan terhadap dosen berdasarkan keyword pencarian dan fakultas
   const filteredLecturers = useMemo(() => {
     return lecturers.filter(l => {
-      const matchesSearch = l.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            (l.fakultas && l.fakultas.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                            (l.program_studi && l.program_studi.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesSearch = l.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
       const matchesFakultas = selectedFakultas === 'Semua' || l.fakultas === selectedFakultas;
       return matchesSearch && matchesFakultas;
     });

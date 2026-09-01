@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, FileText, BarChart3, ShieldCheck, ArrowUpRight } from 'lucide-react';
+import { Sparkles, FileText, BarChart3, ShieldCheck, ArrowDown } from 'lucide-react';
 import { DashboardStats } from '../types';
 
 interface InsightsHeroProps {
@@ -85,10 +85,10 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
               <div className="pt-1">
                 <button
                   onClick={onExploreClick}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink font-bold text-sm active:scale-[0.98] transition-all duration-200 shadow-xs cursor-pointer"
+                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink font-bold text-sm active:scale-[0.98] transition-all duration-200 shadow-xs cursor-pointer"
                 >
                   <span>Jelajahi Peringkat Fakultas</span>
-                  <ArrowUpRight className="w-4 h-4" />
+                  <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
                 </button>
               </div>
             )}

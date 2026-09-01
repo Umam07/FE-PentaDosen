@@ -37,21 +37,34 @@ export default function LecturerHeader({
       </div>
 
       {/* Main Hero Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         
-        {/* Left: Category Pill, Title & Description */}
+        {/* Left: Category Pill, Stats, Title & Description */}
         <div className="space-y-4 max-w-3xl">
-          <motion.div 
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold shadow-2xs"
-          >
-            <GraduationCap className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-            <span>Portofolio Akademik</span>
-          </motion.div>
+          <div className="flex flex-wrap items-center gap-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold shadow-2xs"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
+              <span>Portofolio Akademik</span>
+            </motion.div>
 
-          <div className="space-y-2.5">
+            {/* Transferred Counter Badges */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark text-[11px] font-mono">
+              <Users className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
+              <span><strong className="font-bold text-ink-heading dark:text-on-dark">{totalFiltered}</strong> Dosen Terdaftar</span>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark text-[11px] font-mono">
+              <Building2 className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
+              <span><strong className="font-bold text-ink-heading dark:text-on-dark">6</strong> Fakultas</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <motion.h1 
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -66,19 +79,17 @@ export default function LecturerHeader({
           </div>
         </div>
 
-        {/* Right: Search Input & Metric Counters */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
-          
-          {/* Search Box */}
-          <div className="relative group flex-1 lg:w-72">
+        {/* Right: Search Input Only */}
+        <div className="w-full sm:w-80 lg:w-88 shrink-0">
+          <div className="relative group">
             <label htmlFor="lecturer-search" className="sr-only">
-              Cari nama dosen, fakultas, atau program studi
+              Cari nama dosen
             </label>
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted dark:text-on-dark-muted group-focus-within:text-accent dark:group-focus-within:text-accent-on-dark transition-colors pointer-events-none" />
             <input 
               id="lecturer-search"
               type="text" 
-              placeholder="Cari nama, fakultas, prodi..." 
+              placeholder="Cari nama dosen..." 
               value={searchTerm}
               onChange={(e) => onSearchTermChange(e.target.value)}
               className="w-full h-11 pl-10 pr-9 bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-semibold outline-none focus:border-accent dark:focus:border-accent-on-dark focus:ring-2 focus:ring-accent/15 transition-all text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted shadow-2xs"
@@ -94,30 +105,6 @@ export default function LecturerHeader({
               </button>
             )}
           </div>
-
-          {/* Quick Counter Badges */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="flex items-center gap-2.5 px-3.5 h-11 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
-              <Users className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" />
-              <div className="leading-tight">
-                <span className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider block">Terdaftar</span>
-                <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark">
-                  {totalFiltered} Dosen
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2.5 px-3.5 h-11 bg-surface-light dark:bg-surface-dark rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs">
-              <Building2 className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" />
-              <div className="leading-tight">
-                <span className="text-[9px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider block">Unit</span>
-                <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark">
-                  6 Fakultas
-                </span>
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </div>
