@@ -136,4 +136,5 @@ export interface FaqCategoryFilterProps {
 export interface FaqRightSidebarProps {
   onSelectCategory: (catId: string) => void;
   onPreviewManualBookPdf?: () => void;
+  announcements?: AnnouncementItem[];
 }

@@ -12,7 +12,6 @@ import MyTicketsList from './components/MyTicketsList';
 import CreateTicketModal from './components/CreateTicketModal';
 import ImagePreviewModal from './components/ImagePreviewModal';
 const PdfPreviewModal = lazy(() => import('../../../components/features/documents').then(m => ({ default: m.PdfPreviewModal })));
-import AnnouncementsBanner from '../../../components/shared/AnnouncementsBanner';
 
 export default function FaqHelp({ user }: { user: UserSession }) {
   const faqState = useFaqHelp(user);
@@ -54,9 +53,6 @@ export default function FaqHelp({ user }: { user: UserSession }) {
       {/* Konten Terpusat & Luas */}
       <div className="max-w-6xl mx-auto space-y-5">
 
-        {/* Global Announcements Banner */}
-        <AnnouncementsBanner announcements={faqState.announcements} />
-
         {/* Navigation Tabs (Panduan vs Pesan Saya) */}
         <FaqHelpTabs
           activeMainTab={faqState.activeMainTab}
@@ -95,7 +91,7 @@ export default function FaqHelp({ user }: { user: UserSession }) {
               />
             </div>
 
-            {/* Kolom Kanan: Akses Cepat Panduan (4 Cols) */}
+            {/* Kolom Kanan: Pengumuman & Akses Cepat Panduan (4 Cols) */}
             <div className="lg:col-span-4">
               <FaqRightSidebar
                 onSelectCategory={(catId) => {
@@ -103,6 +99,7 @@ export default function FaqHelp({ user }: { user: UserSession }) {
                   faqState.setSearchQuery('');
                 }}
                 onPreviewManualBookPdf={handleOpenManualBookPdf}
+                announcements={faqState.announcements}
               />
             </div>
           </div>
