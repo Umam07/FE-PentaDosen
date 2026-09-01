@@ -28,12 +28,6 @@ export default function FaqHelp({ user }: { user: UserSession }) {
     });
   } : undefined;
 
-  const handleSelectPopularFaq = (faqId: number) => {
-    faqState.setSelectedCategory('semua');
-    faqState.setSearchQuery('');
-    faqState.toggleExpandFaq(faqId);
-  };
-
   useEffect(() => {
     if (faqState.toast.message) {
       toast.show({
@@ -101,7 +95,7 @@ export default function FaqHelp({ user }: { user: UserSession }) {
               />
             </div>
 
-            {/* Kolom Kanan: Quick Documents, Helpdesk LPPM, Top FAQs (4 Cols) */}
+            {/* Kolom Kanan: Akses Cepat Panduan (4 Cols) */}
             <div className="lg:col-span-4">
               <FaqRightSidebar
                 onSelectCategory={(catId) => {
@@ -109,10 +103,6 @@ export default function FaqHelp({ user }: { user: UserSession }) {
                   faqState.setSearchQuery('');
                 }}
                 onPreviewManualBookPdf={handleOpenManualBookPdf}
-                onOpenCreateTicketModal={() => faqState.setIsTicketModalOpen(true)}
-                onSwitchToPesanTab={() => faqState.handleTabSwitch('pesan')}
-                onSelectFaq={handleSelectPopularFaq}
-                popularFaqs={faqState.faqs}
               />
             </div>
           </div>
