@@ -106,7 +106,7 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
     <AnimatePresence mode="wait">
       {open && (
         <div 
-          className="fixed inset-0 z-[999] flex items-center justify-center p-4 sm:p-6 font-sans"
+          className="fixed inset-0 z-[999] flex items-center justify-center p-3.5 sm:p-6 font-sans"
           role="dialog"
           aria-modal="true"
           aria-labelledby="onboarding-slide-title"
@@ -125,18 +125,18 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
             initial={{ opacity: 0, scale: 0.96, y: 14 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 14 }}
-            className="relative w-full max-w-4xl h-auto md:h-[520px] lg:h-[540px] bg-surface-light dark:bg-surface-dark rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-hairline-light dark:border-hairline-dark z-10"
+            className="relative w-full max-w-sm sm:max-w-lg md:max-w-4xl h-auto md:h-[520px] lg:h-[540px] bg-surface-light dark:bg-surface-dark rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-hairline-light dark:border-hairline-dark z-10"
           >
             {/* Close Button */}
             <button
               onClick={handleComplete}
-              className="absolute top-4 right-4 z-50 p-2 rounded-lg bg-surface-light-raised/80 hover:bg-surface-light text-muted hover:text-ink-heading border border-hairline-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark dark:text-on-dark-muted dark:hover:text-on-dark dark:border-hairline-dark transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-30 p-2 rounded-lg bg-surface-light-raised/80 hover:bg-surface-light text-muted hover:text-ink-heading border border-hairline-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark dark:text-on-dark-muted dark:hover:text-on-dark dark:border-hairline-dark transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               aria-label="Tutup Panduan Onboarding"
             >
               <X className="w-4 h-4" />
             </button>
 
-            {/* Left Side: Warm Neutral Vector Illustration & Minimal Branding */}
+            {/* Left Side: Warm Neutral Vector Illustration & Minimal Branding (Desktop) */}
             <div className="relative hidden md:flex md:w-[42%] h-full flex-col justify-between p-6 overflow-hidden bg-surface-light-raised dark:bg-surface-dark-soft border-r border-hairline-light dark:border-hairline-dark">
               {/* Top Branding Header */}
               <div className="flex items-center gap-2.5 z-20">
@@ -178,32 +178,32 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
             </div>
 
             {/* Right Side: Content & Action Interactions */}
-            <div className="flex-1 p-6 sm:p-8 md:p-10 lg:p-12 flex flex-col justify-between bg-surface-light dark:bg-surface-dark">
-              <div className="space-y-6 md:space-y-8">
-                {/* Progress Indicator Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+            <div className="flex-1 p-5 sm:p-7 md:p-10 lg:p-12 flex flex-col justify-between bg-surface-light dark:bg-surface-dark">
+              <div className="space-y-4 sm:space-y-6 md:space-y-8">
+                {/* Progress Indicator Header with safe margin on mobile for close button */}
+                <div className="flex items-center justify-between gap-3 pr-10 md:pr-0">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
                     {slides.map((_, index) => (
                       <button
                         key={index}
                         onClick={() => setActiveIndex(index)}
                         className={cn(
-                          "h-2 rounded-full transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                          "h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                           index === activeIndex
-                            ? "w-8 bg-ink dark:bg-on-dark"
-                            : "w-2 bg-hairline-light dark:bg-hairline-dark hover:bg-ink-border dark:hover:bg-hairline-dark-soft"
+                            ? "w-6 sm:w-8 bg-ink dark:bg-on-dark"
+                            : "w-1.5 sm:w-2 bg-hairline-light dark:bg-hairline-dark hover:bg-ink-border dark:hover:bg-hairline-dark-soft"
                         )}
                         aria-label={`Buka slide ${index + 1}`}
                       />
                     ))}
                   </div>
-                  <span className="text-xs font-mono font-medium text-muted dark:text-on-dark-muted">
+                  <span className="text-[11px] sm:text-xs font-mono font-medium text-muted dark:text-on-dark-muted whitespace-nowrap">
                     Langkah {activeIndex + 1} dari {slides.length}
                   </span>
                 </div>
 
                 {/* Main Content Animated Container */}
-                <div className="min-h-[190px] flex items-center">
+                <div className="min-h-[140px] sm:min-h-[160px] md:min-h-[190px] flex items-center">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={`${activeRole}_${activeIndex}`}
@@ -211,23 +211,30 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.22, ease: "easeInOut" }}
-                      className="space-y-3.5 w-full"
+                      className="space-y-3 sm:space-y-3.5 w-full"
                     >
-                      {/* Monospace Uppercase Badge */}
-                      <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark">
-                        <span className="w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent-on-dark" />
-                        <span className="text-[11px] font-mono font-semibold tracking-wider text-muted dark:text-on-dark-muted uppercase">
-                          {currentSlide.badge}
-                        </span>
+                      {/* Monospace Uppercase Badge + Mobile Icon Badge */}
+                      <div className="flex items-center gap-2">
+                        <div className="md:hidden flex items-center justify-center w-7 h-7 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-accent dark:text-accent-on-dark shrink-0">
+                          {React.cloneElement(currentSlide.icon as React.ReactElement, {
+                            className: "w-3.5 h-3.5 text-accent dark:text-accent-on-dark"
+                          })}
+                        </div>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark">
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent dark:bg-accent-on-dark" />
+                          <span className="text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider text-muted dark:text-on-dark-muted uppercase">
+                            {currentSlide.badge}
+                          </span>
+                        </div>
                       </div>
 
                       <h2 
                         id="onboarding-slide-title"
-                        className="text-2xl sm:text-3xl font-semibold tracking-tight text-ink-heading dark:text-on-dark leading-tight"
+                        className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-ink-heading dark:text-on-dark leading-snug sm:leading-tight"
                       >
                         {currentSlide.title}
                       </h2>
-                      <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed font-normal max-w-xl">
+                      <p className="text-xs sm:text-sm md:text-base text-body dark:text-on-dark-soft leading-relaxed font-normal max-w-xl">
                         {currentSlide.description}
                       </p>
                     </motion.div>
@@ -236,13 +243,13 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
               </div>
 
               {/* Bottom Navigation Buttons */}
-              <div className="flex items-center justify-between pt-6 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between pt-4 sm:pt-6 mt-4 border-t border-hairline-light-soft dark:border-hairline-dark-soft gap-2">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <button
                     onClick={handlePrevious}
                     disabled={isFirstSlide}
                     className={cn(
-                      "h-11 w-11 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark-elevated hover:bg-surface-light-raised dark:hover:bg-surface-dark transition-colors flex items-center justify-center group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                      "h-10 w-10 sm:h-11 sm:w-11 rounded-lg border border-hairline-light dark:border-hairline-dark bg-surface-light dark:bg-surface-dark-elevated hover:bg-surface-light-raised dark:hover:bg-surface-dark transition-colors flex items-center justify-center group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                       isFirstSlide ? "opacity-0 pointer-events-none" : "opacity-100"
                     )}
                     aria-label="Kembali ke langkah sebelumnya"
@@ -253,7 +260,7 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
                   {!isLastSlide && (
                     <button
                       onClick={handleComplete}
-                      className="text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer px-2 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className="text-xs sm:text-sm font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer px-2 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     >
                       Lewati
                     </button>
@@ -262,10 +269,10 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
 
                 <button
                   onClick={handleNext}
-                  className="h-11 px-6 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer shadow-sm bg-ink text-on-ink hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-canvas-dark dark:hover:bg-on-dark-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="h-10 sm:h-11 px-4 sm:px-6 rounded-lg font-semibold text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 cursor-pointer shadow-sm bg-ink text-on-ink hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-canvas-dark dark:hover:bg-on-dark-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent shrink-0"
                 >
                   <span>{isLastSlide ? "Mulai Sekarang" : "Lanjut"}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
