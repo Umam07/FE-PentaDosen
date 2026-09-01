@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, ChevronRight, BarChart3, BookOpen, Users, FileText, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { Trophy, ChevronRight, BarChart3, BookOpen, Users, FileText, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
@@ -66,10 +66,10 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
             </div>
             <button 
               onClick={() => navigate('/lecturers')}
-              className="text-xs font-semibold text-accent dark:text-accent-on-dark hover:text-accent-hover dark:hover:text-accent-on-dark flex items-center gap-0.5 transition-colors cursor-pointer"
+              className="text-xs font-bold text-accent dark:text-accent-on-dark hover:text-accent-hover dark:hover:text-accent-on-dark flex items-center gap-1 group cursor-pointer transition-colors"
             >
               <span>Lihat Semua</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
  
@@ -96,7 +96,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                     ) : isSecond ? (
                       <span className="w-full h-full rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark flex items-center justify-center">2</span>
                     ) : isThird ? (
-                      <span className="w-full h-full rounded-xl bg-warning-soft text-warning border border-warning-border flex items-center justify-center">3</span>
+                      <span className="w-full h-full rounded-xl bg-[#9a4e1d]/15 text-[#9a4e1d] dark:bg-[#d9823b]/20 dark:text-[#efa466] border border-[#9a4e1d]/30 dark:border-[#d9823b]/40 flex items-center justify-center">3</span>
                     ) : (
                       <span className="font-mono text-muted dark:text-on-dark-muted">{index + 1}</span>
                     )}
@@ -164,21 +164,18 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
             </div>
             <button 
               onClick={() => navigate('/insights')}
-              className="text-xs font-bold text-accent dark:text-accent-on-dark hover:text-accent-hover flex items-center gap-1 group cursor-pointer"
+              className="text-xs font-bold text-accent dark:text-accent-on-dark hover:text-accent-hover dark:hover:text-accent-on-dark flex items-center gap-1 group cursor-pointer transition-colors"
             >
               <span>Lihat Insight</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
 
           {/* Featured Highlight: Total Akumulasi Poin KPI & Source Distribution */}
           <div className="bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-4 sm:p-5 border border-hairline-light-soft dark:border-hairline-dark-soft mb-4">
-            <div className="flex items-center justify-between gap-2 mb-1.5">
+            <div className="mb-1.5">
               <span className="text-xs font-mono font-bold text-body-strong dark:text-on-dark-soft">
                 Total Akumulasi Poin KPI
-              </span>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-ink-soft dark:bg-canvas-dark text-body-strong dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark">
-                Universitas YARSI
               </span>
             </div>
             
@@ -187,7 +184,7 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                 {stats?.total_points ? Math.round(stats.total_points).toLocaleString() : '0'}
               </span>
               <span className="text-xs font-mono font-bold text-body dark:text-on-dark-soft">
-                Poin Agregat
+                Poin
               </span>
             </div>
 
@@ -197,31 +194,31 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                 <div 
                   style={{ width: `${scopusPercent}%` }} 
                   className="h-full bg-chart-scopus dark:bg-chart-scopus-dark transition-all duration-500" 
-                  title={`Scopus: ${scopusCount} dokumen`} 
+                  title={`Scopus: ${scopusCount} dokumen (${scopusPercent.toFixed(1)}%)`} 
                 />
                 <div 
                   style={{ width: `${scholarPercent}%` }} 
                   className="h-full bg-chart-scholar dark:bg-chart-scholar-dark transition-all duration-500" 
-                  title={`Google Scholar: ${scholarCount} dokumen`} 
+                  title={`Google Scholar: ${scholarCount} dokumen (${scholarPercent.toFixed(1)}%)`} 
                 />
                 <div 
                   style={{ width: `${internalPercent}%` }} 
                   className="h-full bg-accent/70 dark:bg-accent-on-dark/70 transition-all duration-500" 
-                  title={`Riset Internal: ${internalCount} dokumen`} 
+                  title={`Riset Internal: ${internalCount} dokumen (${internalPercent.toFixed(1)}%)`} 
                 />
               </div>
               <div className="flex items-center justify-between text-[10px] font-mono text-body dark:text-on-dark-soft pt-0.5">
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5" title={`Scopus: ${scopusCount.toLocaleString()} dokumen`}>
                   <span className="w-2 h-2 rounded-full bg-chart-scopus dark:bg-chart-scopus-dark" />
-                  Scopus <span className="text-ink-heading dark:text-on-dark font-bold">({scopusCount.toLocaleString()})</span>
+                  Scopus <span className="text-ink-heading dark:text-on-dark font-bold">{scopusPercent.toFixed(1)}%</span>
                 </span>
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5" title={`Google Scholar: ${scholarCount.toLocaleString()} dokumen`}>
                   <span className="w-2 h-2 rounded-full bg-chart-scholar dark:bg-chart-scholar-dark" />
-                  Scholar <span className="text-ink-heading dark:text-on-dark font-bold">({scholarCount.toLocaleString()})</span>
+                  Scholar <span className="text-ink-heading dark:text-on-dark font-bold">{scholarPercent.toFixed(1)}%</span>
                 </span>
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5" title={`Riset Internal: ${internalCount.toLocaleString()} dokumen`}>
                   <span className="w-2 h-2 rounded-full bg-accent/70 dark:bg-accent-on-dark/70" />
-                  Internal <span className="text-ink-heading dark:text-on-dark font-bold">({internalCount.toLocaleString()})</span>
+                  Internal <span className="text-ink-heading dark:text-on-dark font-bold">{internalPercent.toFixed(1)}%</span>
                 </span>
               </div>
             </div>
@@ -274,26 +271,45 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
           </div>
         </div>
 
-        {/* Footer Row: Average KPI & Insights CTA */}
+        {/* Footer Row: Average KPI with Interactive Calculation Tooltip */}
         <div className="mt-6 pt-5 border-t border-hairline-light dark:border-hairline-dark flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
-            <h3 className="text-xs font-bold text-ink-heading dark:text-on-dark">Rerata Nilai KPI Dosen</h3>
-            <p className="text-[11px] text-body dark:text-on-dark-soft">Total Poin KPI / Jumlah Dosen Terdaftar</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="bg-surface-light-raised dark:bg-surface-dark-elevated px-3.5 py-2 rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-center sm:text-right min-w-[90px]">
-              <p className="text-lg font-mono font-bold text-accent dark:text-accent-on-dark">
-                {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
-              </p>
-              <p className="text-[10px] font-mono font-bold text-body dark:text-on-dark-soft">Poin Rerata</p>
+            <div className="flex items-center justify-center sm:justify-start gap-1.5">
+              <h3 className="text-xs font-bold text-ink-heading dark:text-on-dark">Rerata Nilai KPI Dosen</h3>
+              <div className="relative group/tooltip inline-flex items-center">
+                <button
+                  type="button"
+                  aria-label="Informasi cara perhitungan Rerata Nilai KPI"
+                  className="text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-help rounded-full p-0.5 focus:outline-hidden focus:ring-1 focus:ring-accent"
+                >
+                  <Info className="w-3.5 h-3.5" />
+                </button>
+                
+                {/* Tooltip Content */}
+                <div 
+                  role="tooltip"
+                  className="absolute bottom-full left-1/2 sm:left-0 -translate-x-1/2 sm:translate-x-0 mb-2 w-64 p-3 rounded-xl bg-ink text-on-ink dark:bg-surface-dark-elevated dark:text-on-dark border border-ink-border/30 dark:border-hairline-dark shadow-xl text-left pointer-events-none opacity-0 group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100 transition-all duration-200 z-30"
+                >
+                  <p className="text-[11px] font-bold text-on-ink dark:text-on-dark mb-1">
+                    Metode Perhitungan
+                  </p>
+                  <p className="text-[11px] font-mono text-on-dark-soft dark:text-on-dark-muted bg-white/10 dark:bg-canvas-dark px-2 py-1 rounded-md mb-1.5 border border-white/10 dark:border-hairline-dark">
+                    Total Poin KPI ÷ Total Dosen
+                  </p>
+                  <p className="text-[10px] text-on-dark-soft dark:text-on-dark-muted leading-relaxed">
+                    Dihitung dari seluruh akumulasi poin Tri Dharma dosen terdaftar di Universitas YARSI.
+                  </p>
+                  {/* Arrow tooltip */}
+                  <div className="absolute top-full left-1/2 sm:left-3 -translate-x-1/2 sm:translate-x-0 border-4 border-transparent border-t-ink dark:border-t-surface-dark-elevated" />
+                </div>
+              </div>
             </div>
-            <button 
-              onClick={() => navigate('/insights')}
-              title="Buka Analisis Insights Lengkap"
-              className="p-2.5 rounded-xl bg-ink-soft hover:bg-surface-light-raised dark:bg-surface-dark-elevated dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-ink-heading dark:text-on-dark transition-all cursor-pointer group"
-            >
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </button>
+          </div>
+          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated px-3.5 py-2 rounded-xl border border-hairline-light-soft dark:border-hairline-dark-soft text-center sm:text-right min-w-[90px]">
+            <p className="text-lg font-mono font-bold text-accent dark:text-accent-on-dark">
+              {stats?.total_dosen ? Math.round(stats.total_points / stats.total_dosen).toLocaleString() : '0'}
+            </p>
+            <p className="text-[10px] font-mono font-bold text-body dark:text-on-dark-soft">Poin Rerata</p>
           </div>
         </div>
       </motion.div>

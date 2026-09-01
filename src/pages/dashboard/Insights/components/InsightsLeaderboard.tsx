@@ -76,7 +76,7 @@ export default function InsightsLeaderboard({
                     ) : isSecond ? (
                       <span className="w-full h-full rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark flex items-center justify-center">2</span>
                     ) : isThird ? (
-                      <span className="w-full h-full rounded-xl bg-warning-soft text-warning border border-warning-border flex items-center justify-center">3</span>
+                      <span className="w-full h-full rounded-xl bg-[#9a4e1d]/15 text-[#9a4e1d] dark:bg-[#d9823b]/20 dark:text-[#efa466] border border-[#9a4e1d]/30 dark:border-[#d9823b]/40 flex items-center justify-center">3</span>
                     ) : (
                       <span className="font-mono text-muted dark:text-on-dark-muted">{index + 1}</span>
                     )}

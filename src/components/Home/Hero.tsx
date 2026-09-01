@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { LayoutDashboard, Users, ArrowUpRight, ShieldCheck, Database, Award } from 'lucide-react';
+import { LayoutDashboard, Users, ArrowUpRight, ShieldCheck, BarChart3, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Leaderboard from './Leaderboard';
 
@@ -43,7 +43,7 @@ export default function Hero() {
             className="flex flex-wrap items-center justify-center gap-3 mb-10"
           >
             {[
-              { label: 'Sinkronisasi Scholar & Scopus', icon: Database },
+              { label: 'Analitik Sitasi & KPI Real-Time', icon: BarChart3 },
               { label: 'Penelitian, Publikasi & HKI', icon: Award },
               { label: 'Terverifikasi LPPM YARSI', icon: ShieldCheck }
             ].map((tag, idx) => (
