@@ -123,22 +123,33 @@ export default function Sidebar({
       <div className={`h-16 lg:h-20 flex items-center flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? 'justify-center px-2' : 'justify-between px-3.5 sm:px-4'}`}>
         {!isCollapsed || isMobile ? (
           <>
-            <Link to="/dashboard" className="flex items-center gap-2.5 group whitespace-nowrap min-w-0" aria-label="Dashboard PentaDosen">
-              <img 
-                src="/YARSI-KOTAK-e1739161183276.png" 
-                alt="Universitas YARSI" 
-                className="h-7 lg:h-8 w-auto object-contain flex-shrink-0"
-              />
-              <div className="h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark flex-shrink-0" />
-              <div className="flex items-center gap-2 min-w-0">
-                <PentaDosenLogo className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0" />
-                <motion.h1 
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="text-base lg:text-[17px] font-bold text-ink-heading dark:text-on-dark tracking-tight uppercase"
-                >
+            <Link to="/dashboard" className="flex items-center gap-2 sm:gap-2.5 group whitespace-nowrap min-w-0" aria-label="Dashboard PentaDosen" title="Universitas YARSI • PentaDosen">
+              {/* Institution: Universitas YARSI */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                <img 
+                  src="/YARSI-KOTAK-e1739161183276.png" 
+                  alt="Universitas YARSI" 
+                  className="w-7 lg:w-7.5 h-7 lg:h-7.5 object-contain flex-shrink-0"
+                />
+                <div className="flex flex-col justify-center">
+                  <span className="text-[7.5px] font-mono font-bold tracking-wider text-body dark:text-on-dark-soft uppercase leading-tight">
+                    UNIVERSITAS
+                  </span>
+                  <span className="text-xs font-black tracking-tight text-ink-heading dark:text-on-dark uppercase leading-tight">
+                    YARSI
+                  </span>
+                </div>
+              </div>
+
+              {/* Centered Vertical Divider */}
+              <div className="h-5 lg:h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark flex-shrink-0" />
+
+              {/* Product: PentaDosen */}
+              <div className="flex items-center gap-1.5 shrink min-w-0">
+                <PentaDosenLogo className="w-7 lg:w-7.5 h-7 lg:h-7.5 flex-shrink-0" />
+                <span className="text-sm lg:text-[15px] font-black text-ink-heading dark:text-on-dark tracking-tight uppercase truncate leading-none">
                   Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
-                </motion.h1>
+                </span>
               </div>
             </Link>
             

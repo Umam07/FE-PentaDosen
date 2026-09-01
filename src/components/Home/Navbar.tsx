@@ -1,6 +1,6 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, ArrowRight, Home, Trophy, Sparkles, Settings, LogIn, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ArrowRight, ArrowUpRight, Home, Trophy, Sparkles, Settings, LogIn, LayoutDashboard } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from '../layout/ThemeToggle';
 import PentaDosenLogo from '../ui/PentaDosenLogo';
@@ -78,19 +78,34 @@ export default function Navbar() {
       >
         <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-2 min-w-0">
-            {/* Logo Co-Branding YARSI + PentaDosen */}
-            <Link to="/" className="flex items-center gap-1.5 xs:gap-2 sm:gap-3 group shrink min-w-0">
-              <img 
-                src="/YARSI-KOTAK-e1739161183276.png" 
-                alt="Universitas YARSI" 
-                width={200}
-                height={203}
-                className="h-7 sm:h-9 w-auto object-contain shrink-0"
-              />
-              <div className="h-5 sm:h-7 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink min-w-0">
-                <PentaDosenLogo className="w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
-                <span className="text-sm xs:text-base sm:text-2xl font-black text-ink-heading dark:text-on-dark tracking-tighter uppercase truncate">
+            {/* Logo Co-Branding YARSI + PentaDosen (Symmetrical Icon + Text Lockup) */}
+            <Link to="/" className="flex items-center gap-3 sm:gap-3.5 group shrink min-w-0" title="Universitas YARSI • PentaDosen">
+              {/* Institution: Universitas YARSI */}
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                <img 
+                  src="/YARSI-KOTAK-e1739161183276.png" 
+                  alt="Universitas YARSI" 
+                  width={36}
+                  height={36}
+                  className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
+                />
+                <div className="flex flex-col justify-center">
+                  <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-body dark:text-on-dark-soft uppercase leading-tight">
+                    UNIVERSITAS
+                  </span>
+                  <span className="text-xs sm:text-sm font-black tracking-tight text-ink-heading dark:text-on-dark uppercase leading-tight">
+                    YARSI
+                  </span>
+                </div>
+              </div>
+
+              {/* Centered Vertical Divider */}
+              <div className="h-6 sm:h-7 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
+
+              {/* Product: PentaDosen */}
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink min-w-0">
+                <PentaDosenLogo className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-105" />
+                <span className="text-sm sm:text-base font-black text-ink-heading dark:text-on-dark tracking-tight uppercase truncate leading-none">
                   Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
                 </span>
               </div>
@@ -119,25 +134,17 @@ export default function Navbar() {
                   to="/dashboard"
                   className="flex items-center gap-2 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white active:scale-[0.98] px-6 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
                 >
-                  Insights
+                  Dashboard
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               ) : (
-                <>
-                  <Link 
-                    to="/login"
-                    className="text-sm font-semibold text-body dark:text-on-dark hover:text-ink-heading dark:hover:text-white px-4 py-2 rounded-lg transition-all"
-                  >
-                    Masuk
-                  </Link>
-                  <Link 
-                    to="/insights"
-                    className="flex items-center gap-2 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white active:scale-[0.98] px-5 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
-                  >
-                    Insights
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </>
+                <Link 
+                  to="/login"
+                  className="flex items-center gap-1.5 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white active:scale-[0.98] px-5 py-2.5 rounded-lg transition-all duration-200 group shadow-sm"
+                >
+                  <span>Masuk</span>
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </Link>
               )}
             </div>
 
@@ -180,16 +187,31 @@ export default function Navbar() {
             >
               {/* Header inside drawer */}
               <div className="flex items-center justify-between p-6 border-b border-hairline-light dark:border-hairline-dark">
-                <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setIsMenuOpen(false)}>
-                  <img 
-                    src="/YARSI-KOTAK-e1739161183276.png" 
-                    alt="Universitas YARSI" 
-                    className="h-7 w-auto object-contain"
-                  />
-                  <div className="h-5 w-[1px] bg-hairline-light dark:bg-hairline-dark" />
-                  <div className="flex items-center gap-2">
-                    <PentaDosenLogo className="w-7 h-7" />
-                    <span className="text-lg font-black text-ink-heading dark:text-on-dark uppercase tracking-tight">
+                <Link to="/" className="flex items-center gap-2.5 group min-w-0" onClick={() => setIsMenuOpen(false)} title="Universitas YARSI • PentaDosen">
+                  {/* Institution: Universitas YARSI */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <img 
+                      src="/YARSI-KOTAK-e1739161183276.png" 
+                      alt="Universitas YARSI" 
+                      className="w-7 h-7 object-contain shrink-0"
+                    />
+                    <div className="flex flex-col justify-center">
+                      <span className="text-[8px] font-mono font-bold tracking-wider text-body dark:text-on-dark-soft uppercase leading-tight">
+                        UNIVERSITAS
+                      </span>
+                      <span className="text-xs font-black tracking-tight text-ink-heading dark:text-on-dark uppercase leading-tight">
+                        YARSI
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Centered Vertical Divider */}
+                  <div className="h-5 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
+
+                  {/* Product: PentaDosen */}
+                  <div className="flex items-center gap-1.5 shrink min-w-0">
+                    <PentaDosenLogo className="w-7 h-7 shrink-0" />
+                    <span className="text-sm font-black text-ink-heading dark:text-on-dark uppercase tracking-tight truncate leading-none">
                       Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
                     </span>
                   </div>
@@ -260,24 +282,14 @@ export default function Navbar() {
                     Dashboard
                   </Link>
                 ) : (
-                  <div className="flex flex-col gap-3">
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-all"
-                    >
-                      <LogIn className="w-4 h-4" />
-                      Masuk
-                    </Link>
-                    <Link
-                      to="/insights"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white rounded-lg transition-all shadow-sm"
-                    >
-                      Insights
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </div>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full p-3.5 text-sm font-semibold text-on-ink dark:text-ink bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white rounded-lg transition-all shadow-sm group"
+                  >
+                    <span>Masuk</span>
+                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </Link>
                 )}
               </div>
             </motion.div>

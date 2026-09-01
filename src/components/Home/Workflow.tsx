@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { 
   UserCheck, 
   FileText, 
@@ -13,10 +13,10 @@ import {
   Layers,
   ChevronLeft,
   ChevronRight,
-  Play,
-  Pause,
   RefreshCw,
-  Award
+  Award,
+  Bot,
+  GraduationCap
 } from 'lucide-react';
 
 interface Step {
@@ -27,6 +27,7 @@ interface Step {
   description: string;
   icon: React.ElementType;
   role: string;
+  roleIcon: React.ElementType;
   highlights: string[];
   accentColor: string;
   accentBg: string;
@@ -36,8 +37,6 @@ interface Step {
 
 export default function Workflow() {
   const [activeStep, setActiveStep] = useState<number>(1);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const steps: Step[] = [
@@ -49,6 +48,7 @@ export default function Workflow() {
       description: 'Integrasi instan via akun SSO LDAP kampus dan otomatisasi pengambilan data publikasi dari Scopus & Google Scholar.',
       icon: UserCheck,
       role: 'Dosen & Staf',
+      roleIcon: UserCheck,
       highlights: [
         'Single Sign-On (SSO) LDAP Institusi',
         'Auto-Sync API Scopus & Google Scholar',
@@ -67,6 +67,7 @@ export default function Workflow() {
       description: 'Pencatatan terpusat untuk publikasi ilmiah, HKI, paten, riset, dan buku melalui unggah berkas PDF atau impor massal Excel (.xlsx).',
       icon: FileText,
       role: 'Dosen Pengampu',
+      roleIcon: GraduationCap,
       highlights: [
         'Unggah Bukti Berkas Dokumen Format PDF',
         'Bulk Import & Export Massal Berkas Excel (.xlsx)',
@@ -83,8 +84,9 @@ export default function Workflow() {
       subtitle: 'Core Automated Engine',
       category: 'PEMROSESAN SISTEM',
       description: 'Pembersihan data ganda berbasis DOI & Fuzzy Matching serta kalkulasi poin akumulasi KPI secara presisi.',
-      icon: Settings,
+      icon: Cpu,
       role: 'Sistem Backend',
+      roleIcon: Bot,
       highlights: [
         'Algoritma Fuzzy Matching Bebas Duplikasi',
         'Kalkulasi Poin KPI Sesuai Bobot Aturan',
@@ -103,6 +105,7 @@ export default function Workflow() {
       description: 'Alur persetujuan bertingkat dari Admin Fakultas hingga LPPM untuk menjamin otentisitas karya akademik.',
       icon: ShieldCheck,
       role: 'Admin & LPPM',
+      roleIcon: ShieldCheck,
       highlights: [
         'Verifikasi Berkas Berjenjang Multilevel',
         'Fitur Catatan Perbaikan & Catatan Reviewer',
@@ -121,6 +124,7 @@ export default function Workflow() {
       description: 'Penyajian grafik produktivitas, matriks pemeringkatan dosen, dan ekspor laporan rekapitulasi data format Excel (.xlsx).',
       icon: PieChart,
       role: 'Dosen & Pimpinan',
+      roleIcon: Award,
       highlights: [
         'Visualisasi Performa Real-time & Rangking',
         'Ekspor Rekap Laporan Format Excel (.xlsx)',
@@ -135,38 +139,16 @@ export default function Workflow() {
 
   const currentStep = steps.find(s => s.id === activeStep) || steps[0];
 
-  // Auto-play timer mechanism
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            setActiveStep((current) => (current % steps.length) + 1);
-            return 0;
-          }
-          return prev + 2;
-        });
-      }, 100);
-    } else {
-      setProgress(0);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, steps.length]);
-
   const handleSelectStep = (id: number) => {
     setActiveStep(id);
-    setProgress(0);
   };
 
   const handleNext = () => {
     setActiveStep((prev) => (prev % steps.length) + 1);
-    setProgress(0);
   };
 
   const handlePrev = () => {
     setActiveStep((prev) => (prev === 1 ? steps.length : prev - 1));
-    setProgress(0);
   };
 
   return (
@@ -251,16 +233,6 @@ export default function Workflow() {
         {/* MAIN SPOTLIGHT STAGE */}
         <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark shadow-xl overflow-hidden mb-12 relative">
           
-          {/* Top Progress Bar for Auto-play */}
-          {isPlaying && (
-            <div className="h-1 w-full bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden">
-              <div 
-                className="h-full bg-accent transition-all duration-100 ease-linear" 
-                style={{ width: `${progress}%` }} 
-              />
-            </div>
-          )}
-
           <div className="p-6 sm:p-8 md:p-10 lg:p-12">
             <AnimatePresence mode="wait">
               <motion.div
@@ -269,95 +241,50 @@ export default function Workflow() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+                className="flex flex-col gap-8 lg:gap-10"
               >
-                
-                {/* Left Column: Technical Narrative & Actions */}
-                <div className="lg:col-span-6 flex flex-col justify-center">
+                {/* Main 2-Column Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                   
-                  {/* Step Category & Counter */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-mono font-bold uppercase tracking-wider border ${currentStep.accentBg} ${currentStep.accentBorder} ${currentStep.accentText}`}>
-                      <Layers className="w-3.5 h-3.5" />
-                      {currentStep.category}
-                    </span>
-
-                    <span className="text-3xl sm:text-4xl font-mono font-black text-body-strong/80 dark:text-on-dark select-none">
-                      0{currentStep.id} <span className="text-sm font-sans font-medium text-body dark:text-on-dark-muted">/ 05</span>
-                    </span>
-                  </div>
-
-                  {/* Step Title & Subtitle */}
-                  <h3 className="text-2xl sm:text-3xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2 leading-tight">
-                    {currentStep.title}
-                  </h3>
-                  
-                  <p className="text-xs font-mono font-bold text-body-strong dark:text-on-dark-soft uppercase tracking-widest mb-4">
-                    {currentStep.subtitle}
-                  </p>
-
-                  <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed mb-6 font-normal">
-                    {currentStep.description}
-                  </p>
-
-                  {/* Highlights Bullet List */}
-                  <div className="space-y-3 mb-8 bg-surface-light-raised dark:bg-surface-dark-elevated p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark">
-                    {currentStep.highlights.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-3">
-                        <div className={`mt-0.5 w-5 h-5 rounded-full ${currentStep.accentBg} flex items-center justify-center shrink-0`}>
-                          <CheckCircle2 className={`w-3.5 h-3.5 ${currentStep.accentText}`} />
-                        </div>
-                        <span className="text-xs sm:text-sm font-semibold text-body-strong dark:text-on-dark">
-                          {item}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Role Badge & Controls Footer */}
-                  <div className="flex items-center justify-between gap-3 pt-4 border-t border-hairline-light dark:border-hairline-dark">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs font-medium text-body dark:text-on-dark-soft shrink-0">Aktor Utama:</span>
-                      <span className="h-9 sm:h-10 inline-flex items-center gap-1.5 px-3 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-xs font-bold text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark truncate">
-                        <User className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark shrink-0" />
-                        <span className="truncate">{currentStep.role}</span>
+                  {/* Left Column: Technical Narrative */}
+                  <div className="lg:col-span-6 flex flex-col justify-center">
+                    
+                    {/* Step Category Badge */}
+                    <div className="flex items-center mb-4">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-mono font-bold uppercase tracking-wider border ${currentStep.accentBg} ${currentStep.accentBorder} ${currentStep.accentText}`}>
+                        <Layers className="w-3.5 h-3.5" />
+                        {currentStep.category}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={() => setIsPlaying(!isPlaying)}
-                        className={`h-9 sm:h-10 px-3.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
-                          isPlaying
-                            ? 'bg-warning-soft dark:bg-warning/20 border-warning-border dark:border-warning/30 text-warning dark:text-warning-on-dark'
-                            : 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark text-body-strong dark:text-on-dark-soft hover:text-ink-heading dark:hover:text-on-dark'
-                        }`}
-                        title={isPlaying ? 'Pause Auto Play' : 'Play Auto Flow'}
-                      >
-                        {isPlaying ? <Pause className="w-4 h-4 shrink-0" /> : <Play className="w-4 h-4 shrink-0" />}
-                        <span className="hidden sm:inline">{isPlaying ? 'Pause' : 'Auto Play'}</span>
-                      </button>
+                    {/* Step Title & Subtitle */}
+                    <h3 className="text-2xl sm:text-3xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2 leading-tight">
+                      {currentStep.title}
+                    </h3>
+                    
+                    <p className="text-xs font-mono font-bold text-body-strong dark:text-on-dark-soft uppercase tracking-widest mb-4">
+                      {currentStep.subtitle}
+                    </p>
 
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          onClick={handlePrev}
-                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-ink-soft dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark text-body-strong dark:text-on-dark transition-colors cursor-pointer flex items-center justify-center shrink-0"
-                          aria-label="Tahap Sebelumnya"
-                        >
-                          <ChevronLeft className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={handleNext}
-                          className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-ink dark:bg-on-dark hover:bg-ink-hover dark:hover:bg-white text-on-ink dark:text-ink-heading transition-colors cursor-pointer shadow-xs flex items-center justify-center shrink-0"
-                          aria-label="Tahap Selanjutnya"
-                        >
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
-                      </div>
+                    <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed mb-6 font-normal">
+                      {currentStep.description}
+                    </p>
+
+                    {/* Highlights Bullet List */}
+                    <div className="space-y-3 bg-surface-light-raised dark:bg-surface-dark-elevated p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                      {currentStep.highlights.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <div className={`mt-0.5 w-5 h-5 rounded-full ${currentStep.accentBg} flex items-center justify-center shrink-0`}>
+                            <CheckCircle2 className={`w-3.5 h-3.5 ${currentStep.accentText}`} />
+                          </div>
+                          <span className="text-xs sm:text-sm font-semibold text-body-strong dark:text-on-dark">
+                            {item}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  </div>
 
-                </div>
+                  </div>
 
                 {/* Right Column: Custom Interactive Stage Graphics */}
                 <div className="lg:col-span-6">
@@ -595,6 +522,63 @@ export default function Workflow() {
                       </div>
                     )}
 
+                  </div>
+                </div>
+                </div>
+
+                {/* Full-Width Bottom Navigation & Meta Bar */}
+                <div className="pt-6 border-t border-hairline-light dark:border-hairline-dark flex flex-col sm:flex-row items-center justify-between gap-4">
+                  {/* Left: Aktor Utama */}
+                  <div className="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
+                    <span className="text-xs font-medium text-body dark:text-on-dark-soft">Aktor Utama:</span>
+                    <span className="h-10 inline-flex items-center gap-2 px-3.5 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-xs font-bold text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark shadow-2xs">
+                      <currentStep.roleIcon className="w-4 h-4 text-accent dark:text-accent-on-dark shrink-0" />
+                      <span>{currentStep.role}</span>
+                    </span>
+                  </div>
+
+                  {/* Right: Integrated Control Cluster (Progress Dots + Counter + Prev/Next Buttons) */}
+                  <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-between sm:justify-end">
+                    {/* Mini Step Segment Progress */}
+                    <div className="hidden sm:flex items-center gap-1.5" aria-hidden="true">
+                      {steps.map((s) => (
+                        <div 
+                          key={s.id} 
+                          className={`h-1.5 rounded-full transition-all duration-300 ${
+                            s.id === currentStep.id 
+                              ? 'w-6 bg-ink dark:bg-on-dark' 
+                              : s.id < currentStep.id
+                                ? 'w-2.5 bg-body/40 dark:bg-on-dark-soft/40'
+                                : 'w-2.5 bg-hairline-light dark:bg-hairline-dark'
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Step Counter */}
+                    <span className="font-mono text-sm font-bold text-ink-heading dark:text-on-dark select-none">
+                      0{currentStep.id} <span className="text-muted dark:text-on-dark-muted font-normal">/ 05</span>
+                    </span>
+
+                    {/* Prev / Next Navigation Buttons (Tap target min 40x40px, rounded-lg) */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={handlePrev}
+                        className="w-10 h-10 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-hairline-light dark:hover:bg-hairline-dark active:scale-95 border border-hairline-light dark:border-hairline-dark text-body-strong dark:text-on-dark transition-all cursor-pointer flex items-center justify-center shadow-xs"
+                        aria-label="Tahap Sebelumnya"
+                        title="Tahap Sebelumnya"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        className="w-10 h-10 rounded-lg bg-ink dark:bg-on-dark hover:bg-ink-hover dark:hover:bg-white text-on-ink dark:text-ink-heading active:scale-95 transition-all cursor-pointer shadow-xs flex items-center justify-center"
+                        aria-label="Tahap Selanjutnya"
+                        title="Tahap Selanjutnya"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
 

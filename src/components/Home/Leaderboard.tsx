@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, ChevronRight, BarChart3, BookOpen, Users, FileText, Info } from 'lucide-react';
+import { Trophy, BarChart3, BookOpen, Users, FileText, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
@@ -64,13 +64,6 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
               </div>
               <HeadingTag className="text-lg font-bold text-ink-heading dark:text-on-dark tracking-tight">Top 5 Peringkat Dosen</HeadingTag>
             </div>
-            <button 
-              onClick={() => navigate('/lecturers')}
-              className="text-xs font-bold text-accent dark:text-accent-on-dark hover:text-accent-hover dark:hover:text-accent-on-dark flex items-center gap-1 group cursor-pointer transition-colors"
-            >
-              <span>Lihat Semua</span>
-              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-            </button>
           </div>
  
           <div className="space-y-3">
@@ -161,13 +154,6 @@ export default function Leaderboard({ isHero = false }: { isHero?: boolean }) {
                 <BarChart3 className="w-5 h-5 text-accent dark:text-accent-on-dark" />
               </div>
               <HeadingTag className="text-base font-bold text-ink-heading dark:text-on-dark tracking-tight">Statistik Produktivitas</HeadingTag>
-            </div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-ink-soft dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-[11px] font-mono font-bold text-body dark:text-on-dark-soft shadow-xs">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:hidden" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-              </span>
-              <span>Data Real-Time</span>
             </div>
           </div>
 

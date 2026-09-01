@@ -43,18 +43,33 @@ export default function Footer() {
           
           {/* Logo & About */}
           <div className="lg:col-span-4 space-y-5">
-            <Link to="/" className="flex items-center gap-3 group w-fit">
-              <img 
-                src="/YARSI-KOTAK-e1739161183276.png" 
-                alt="Universitas YARSI" 
-                width={200}
-                height={203}
-                className="h-8 w-auto object-contain"
-              />
-              <div className="h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark" />
-              <div className="flex items-center gap-2">
-                <PentaDosenLogo className="w-9 h-9" />
-                <span className="text-2xl sm:text-3xl font-black text-ink-heading dark:text-on-dark tracking-tighter uppercase">
+            <Link to="/" className="flex items-center gap-3 sm:gap-3.5 group w-fit" title="Universitas YARSI • PentaDosen">
+              {/* Institution: Universitas YARSI */}
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                <img 
+                  src="/YARSI-KOTAK-e1739161183276.png" 
+                  alt="Universitas YARSI" 
+                  width={36}
+                  height={36}
+                  className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
+                />
+                <div className="flex flex-col justify-center">
+                  <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-body dark:text-on-dark-soft uppercase leading-tight">
+                    UNIVERSITAS
+                  </span>
+                  <span className="text-xs sm:text-sm font-black tracking-tight text-ink-heading dark:text-on-dark uppercase leading-tight">
+                    YARSI
+                  </span>
+                </div>
+              </div>
+
+              {/* Centered Vertical Divider */}
+              <div className="h-7 sm:h-8 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
+
+              {/* Product: PentaDosen */}
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink min-w-0">
+                <PentaDosenLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 transition-transform duration-200 group-hover:scale-105" />
+                <span className="text-base sm:text-lg font-black text-ink-heading dark:text-on-dark tracking-tight uppercase truncate leading-none">
                   Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
                 </span>
               </div>

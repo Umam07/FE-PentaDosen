@@ -36,17 +36,32 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
       <div className="w-full max-w-[400px] mt-10 lg:mt-0">
         {/* Mobile-only brand */}
         <div className="flex items-center gap-2.5 mb-8 lg:hidden">
-          <img 
-            src="/YARSI-KOTAK-e1739161183276.png" 
-            alt="Universitas YARSI" 
-            width={32}
-            height={32}
-            className="h-8 w-auto object-contain shrink-0"
-          />
-          <div className="h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
-          <div className="flex items-center gap-2">
-            <PentaDosenLogo className="w-8 h-8 shrink-0" />
-            <span className="text-ink-heading dark:text-on-dark font-black text-xl tracking-tight uppercase">
+          {/* Institution: Universitas YARSI */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <img 
+              src="/YARSI-KOTAK-e1739161183276.png" 
+              alt="Universitas YARSI" 
+              width={32}
+              height={32}
+              className="w-7 h-7 object-contain shrink-0"
+            />
+            <div className="flex flex-col justify-center">
+              <span className="text-[8px] font-mono font-bold tracking-wider text-body dark:text-on-dark-soft uppercase leading-tight">
+                UNIVERSITAS
+              </span>
+              <span className="text-xs font-black tracking-tight text-ink-heading dark:text-on-dark uppercase leading-tight">
+                YARSI
+              </span>
+            </div>
+          </div>
+
+          {/* Centered Vertical Divider */}
+          <div className="h-5 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
+
+          {/* Product: PentaDosen */}
+          <div className="flex items-center gap-1.5 shrink min-w-0">
+            <PentaDosenLogo className="w-7 h-7 shrink-0" />
+            <span className="text-sm font-black text-ink-heading dark:text-on-dark tracking-tight uppercase truncate leading-none">
               Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
             </span>
           </div>

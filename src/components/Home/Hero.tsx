@@ -75,7 +75,7 @@ export default function Hero() {
                 className="absolute inset-0 w-1/2 h-full bg-white/15 dark:bg-black/10 skew-x-[-25deg] pointer-events-none"
               />
               <span className="relative z-10 flex items-center gap-2.5">
-                <span>Lihat Insight Platform</span>
+                <span>Jelajahi Insights</span>
                 <LayoutDashboard className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               </span>
             </Link>
