@@ -89,9 +89,12 @@ export interface FaqAccordionListProps {
 export interface MyTicketsListProps {
   loadingTickets: boolean;
   myTickets: SupportTicketItem[];
-  expandedTicketId: number | null;
+  expandedTicketId?: number | null;
+  selectedTicketId?: number | null;
   user?: UserSession;
-  onToggleTicketExpand: (id: number) => void;
+  onToggleTicketExpand?: (id: number) => void;
+  onSelectTicket?: (id: number | null) => void;
+  onUpdateTicketStatus?: (id: number, status: string) => Promise<void>;
   onOpenCreateModal: () => void;
   onZoomImage: (url: string) => void;
   onRefreshTickets?: () => void;
@@ -116,4 +119,25 @@ export interface CreateTicketModalProps {
 export interface ImagePreviewModalProps {
   fullViewImageUrl: string | null;
   onClose: () => void;
+}
+
+export interface FaqCategoryOption {
+  id: string;
+  name: string;
+  count?: number;
+}
+
+export interface FaqCategoryFilterProps {
+  categories: FaqCategoryOption[];
+  selectedCategory: string;
+  onSelectCategory: (id: string) => void;
+}
+
+export interface FaqRightSidebarProps {
+  onSelectCategory: (catId: string) => void;
+  onPreviewManualBookPdf?: () => void;
+  onOpenCreateTicketModal: () => void;
+  onSwitchToPesanTab: () => void;
+  onSelectFaq: (faqId: number) => void;
+  popularFaqs?: FaqItem[];
 }

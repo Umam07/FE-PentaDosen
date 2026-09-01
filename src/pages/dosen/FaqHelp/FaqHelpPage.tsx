@@ -4,6 +4,8 @@ import { useFaqHelp } from './hooks/useFaqHelp';
 import { toast } from '@/components/ui/toast';
 import FaqHelpHeader from './components/FaqHelpHeader';
 import FaqHelpTabs from './components/FaqHelpTabs';
+import FaqRightSidebar from './components/FaqRightSidebar';
+import FaqCategoryFilter from './components/FaqCategoryFilter';
 import FaqSearchInput from './components/FaqSearchInput';
 import FaqAccordionList from './components/FaqAccordionList';
 import MyTicketsList from './components/MyTicketsList';
@@ -14,6 +16,23 @@ import AnnouncementsBanner from '../../../components/shared/AnnouncementsBanner'
 
 export default function FaqHelp({ user }: { user: UserSession }) {
   const faqState = useFaqHelp(user);
+
+  // Manual book PDF finding
+  const manualBookFaq = faqState.faqs.find(f => f.file_url);
+
+  const handleOpenManualBookPdf = manualBookFaq ? () => {
+    faqState.setPreviewDoc({
+      fileUrl: manualBookFaq.file_url!,
+      title: manualBookFaq.question,
+      category: manualBookFaq.category || 'Manual Book'
+    });
+  } : undefined;
+
+  const handleSelectPopularFaq = (faqId: number) => {
+    faqState.setSelectedCategory('semua');
+    faqState.setSearchQuery('');
+    faqState.toggleExpandFaq(faqId);
+  };
 
   useEffect(() => {
     if (faqState.toast.message) {
@@ -26,7 +45,7 @@ export default function FaqHelp({ user }: { user: UserSession }) {
   }, [faqState.toast]);
 
   return (
-    <main id="main-content" className="w-full space-y-6 pb-20">
+    <main id="main-content" className="w-full space-y-5 pb-20">
       {/* Accessible Skip to Content */}
       <a
         href="#main-content"
@@ -38,8 +57,8 @@ export default function FaqHelp({ user }: { user: UserSession }) {
       {/* Header Halaman */}
       <FaqHelpHeader />
 
-      {/* Konten Terpusat (max-width: 850px) */}
-      <div className="max-w-[850px] mx-auto space-y-6">
+      {/* Konten Terpusat & Luas */}
+      <div className="max-w-6xl mx-auto space-y-5">
 
         {/* Global Announcements Banner */}
         <AnnouncementsBanner announcements={faqState.announcements} />
@@ -51,35 +70,63 @@ export default function FaqHelp({ user }: { user: UserSession }) {
           onTabSwitch={faqState.handleTabSwitch}
         />
 
-        {/* TAB 1: PANDUAN & MANUAL BOOK */}
+        {/* TAB 1: PANDUAN & MANUAL BOOK (2-COLUMN DENSE LAYOUT) */}
         {faqState.activeMainTab === 'panduan' && (
-          <div className="space-y-6">
-            <FaqSearchInput
-              searchQuery={faqState.searchQuery}
-              onSearchChange={faqState.setSearchQuery}
-              onClear={() => faqState.setSearchQuery('')}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            {/* Kolom Kiri: Search, Category Filter, Accordion FAQ (8 Cols) */}
+            <div className="lg:col-span-8 space-y-3.5">
+              <FaqSearchInput
+                searchQuery={faqState.searchQuery}
+                onSearchChange={faqState.setSearchQuery}
+                onClear={() => faqState.setSearchQuery('')}
+              />
 
-            <FaqAccordionList
-              loading={faqState.loading}
-              filteredFaqs={faqState.filteredFaqs}
-              expandedFaqId={faqState.expandedFaqId}
-              searchQuery={faqState.searchQuery}
-              onToggleExpand={faqState.toggleExpandFaq}
-              onPreviewDoc={faqState.setPreviewDoc}
-              onClearSearch={() => faqState.setSearchQuery('')}
-            />
+              <FaqCategoryFilter
+                categories={faqState.categories}
+                selectedCategory={faqState.selectedCategory}
+                onSelectCategory={faqState.setSelectedCategory}
+              />
+
+              <FaqAccordionList
+                loading={faqState.loading}
+                filteredFaqs={faqState.filteredFaqs}
+                expandedFaqId={faqState.expandedFaqId}
+                searchQuery={faqState.searchQuery}
+                onToggleExpand={faqState.toggleExpandFaq}
+                onPreviewDoc={faqState.setPreviewDoc}
+                onClearSearch={() => {
+                  faqState.setSearchQuery('');
+                  faqState.setSelectedCategory('semua');
+                }}
+              />
+            </div>
+
+            {/* Kolom Kanan: Quick Documents, Helpdesk LPPM, Top FAQs (4 Cols) */}
+            <div className="lg:col-span-4">
+              <FaqRightSidebar
+                onSelectCategory={(catId) => {
+                  faqState.setSelectedCategory(catId);
+                  faqState.setSearchQuery('');
+                }}
+                onPreviewManualBookPdf={handleOpenManualBookPdf}
+                onOpenCreateTicketModal={() => faqState.setIsTicketModalOpen(true)}
+                onSwitchToPesanTab={() => faqState.handleTabSwitch('pesan')}
+                onSelectFaq={handleSelectPopularFaq}
+                popularFaqs={faqState.faqs}
+              />
+            </div>
           </div>
         )}
 
-        {/* TAB 2: PESAN SAYA */}
+        {/* TAB 2: PESAN SAYA (DISCORD SUPPORT TICKET DESK) */}
         {faqState.activeMainTab === 'pesan' && (
           <MyTicketsList
             loadingTickets={faqState.loadingTickets}
             myTickets={faqState.myTickets}
-            expandedTicketId={faqState.expandedTicketId}
+            selectedTicketId={faqState.selectedTicketId}
             user={user}
-            onToggleTicketExpand={faqState.toggleTicketExpand}
+            onSelectTicket={faqState.setSelectedTicketId}
+            onUpdateTicketStatus={faqState.handleUpdateTicketStatus}
             onOpenCreateModal={() => faqState.setIsTicketModalOpen(true)}
             onZoomImage={faqState.setFullViewImageUrl}
             onRefreshTickets={faqState.loadMyTickets}

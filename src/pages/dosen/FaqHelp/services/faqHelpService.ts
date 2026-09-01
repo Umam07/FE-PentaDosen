@@ -134,11 +134,17 @@ export async function fetchUserSupportTickets(userId: number): Promise<SupportTi
   localTickets.forEach(t => ticketMap.set(t.id, t));
   serverTickets.forEach(t => {
     ticketMap.set(t.id, t);
-    saveLocalTicket(t);
   });
 
   const merged = deduplicateTickets(Array.from(ticketMap.values()));
   merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  // Simpan ke localStorage secara langsung tanpa memicu notifyTicketUpdate (mencegah loop tak terhingga)
+  try {
+    localStorage.setItem(STORAGE_ALL_KEY, JSON.stringify(merged));
+  } catch {
+    // Silent catch
+  }
 
   return merged;
 }
@@ -276,3 +282,50 @@ export async function sendTicketReply(ticketId: number, formData: FormData): Pro
     }
   };
 }
+
+/**
+ * Mengubah status tiket (misal dosen menandai selesai atau membuka kembali)
+ */
+export async function updateUserTicketStatus(ticketId: number, status: string, userId?: number): Promise<{ ok: boolean; data?: any }> {
+  const localTickets = getLocalTickets();
+  const targetIndex = localTickets.findIndex(t => t.id === ticketId);
+  let updatedTicket: SupportTicketItem | null = null;
+
+  if (targetIndex !== -1) {
+    const ticket = localTickets[targetIndex];
+    ticket.status = status;
+    saveLocalTicket(ticket);
+    updatedTicket = ticket;
+  }
+
+  try {
+    const res = await fetch(`/api/support-tickets/${ticketId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status,
+        user_id: userId || 1
+      })
+    });
+
+    const contentType = res.headers.get('content-type');
+    if (res.ok && contentType && contentType.includes('application/json')) {
+      const data = await res.json();
+      if (data.ticket) {
+        saveLocalTicket(data.ticket);
+      }
+      return { ok: true, data };
+    }
+  } catch (e) {
+    console.warn('Backend connection failed when updating ticket status, updated locally:', e);
+  }
+
+  return {
+    ok: true,
+    data: {
+      message: `Status tiket berhasil diubah menjadi ${status}.`,
+      ticket: updatedTicket
+    }
+  };
+}
+

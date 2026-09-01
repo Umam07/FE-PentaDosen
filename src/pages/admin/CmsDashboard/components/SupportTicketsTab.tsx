@@ -1,11 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   MessageSquare, Search, Send, Clock, CheckCircle2, 
   HelpCircle, RefreshCw, X, ChevronRight, ArrowLeft, User,
-  Image as ImageIcon, ExternalLink, Eye
+  Image as ImageIcon, ExternalLink, Eye, Maximize2, ShieldCheck, CornerDownLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SupportTicket, SupportTicketCounts } from '../types/cmsDashboard.types';
+import { 
+  groupMessagesByDate, 
+  formatMessageTime, 
+  formatSidebarTicketDate 
+} from '@/pages/dosen/FaqHelp/utils/ticketDateUtils';
 
 interface SupportTicketsTabProps {
   triggerMessage: (text: string, type?: 'success' | 'error') => void;
@@ -32,9 +37,6 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
 
   // State Modal Preview Gambar Full
   const [fullViewImageUrl, setFullViewImageUrl] = useState<string | null>(null);
-
-  // Ref untuk auto-scroll ke bawah saat ada pesan baru di chat room
-  const chatMessagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchTickets = async (isSilent = false) => {
     if (!isSilent) setLoading(true);
@@ -101,36 +103,98 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
     fetchTickets();
   }, []);
 
-  // Polling interval 3s & event listener untuk real-time update
+  // Smart Polling (15s) & visibility listener untuk hemat resource dan anti-flood
   useEffect(() => {
-    const handleUpdate = () => {
+    const handleLocalUpdate = () => {
       fetchTickets(true);
     };
 
-    window.addEventListener('penta_tickets_updated', handleUpdate);
-    window.addEventListener('storage', handleUpdate);
+    window.addEventListener('penta_tickets_updated', handleLocalUpdate);
 
-    const intervalId = setInterval(() => {
-      fetchTickets(true);
-    }, 3000);
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let consecutiveErrors = 0;
+
+    const performSmartPoll = async () => {
+      // Jangan fetch jika browser tab admin sedang di background / minimize
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
+
+      try {
+        await fetchTickets(true);
+        consecutiveErrors = 0;
+      } catch {
+        consecutiveErrors += 1;
+        if (consecutiveErrors >= 3 && intervalId) {
+          clearInterval(intervalId);
+          intervalId = setInterval(performSmartPoll, 45000);
+        }
+      }
+    };
+
+    // Polling setiap 15 detik (cukup responsif & tidak membebani server lokal)
+    intervalId = setInterval(performSmartPoll, 15000);
+
+    // Saat admin kembali ke tab browser, fetch seketika 1 kali
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        performSmartPoll();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('penta_tickets_updated', handleUpdate);
-      window.removeEventListener('storage', handleUpdate);
-      clearInterval(intervalId);
+      window.removeEventListener('penta_tickets_updated', handleLocalUpdate);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
     };
   }, []);
 
-  // Auto-scroll ke pesan terbaru saat selectedTicket berubah atau pesan baru masuk
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const lastTicketIdRef = useRef<number | null>(null);
+  const prevMsgCountRef = useRef<number>(0);
+
+  const currentMsgCount = (selectedTicket?.messages?.length || 0) + (selectedTicket?.admin_reply ? 1 : 0);
+
+  // Smart Auto-scroll Admin: hanya scroll jika ganti tiket atau pesan bertambah saat posisi scroll dekat bawah
   useEffect(() => {
-    if (selectedTicket) {
-      chatMessagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = chatScrollRef.current;
+    if (!el || !selectedTicket) return;
+
+    const isTicketChanged = lastTicketIdRef.current !== selectedTicket.id;
+    const isNewMessageAdded = currentMsgCount > prevMsgCountRef.current;
+
+    if (isTicketChanged) {
+      lastTicketIdRef.current = selectedTicket.id;
+      prevMsgCountRef.current = currentMsgCount;
+      requestAnimationFrame(() => {
+        if (chatScrollRef.current) {
+          chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+        }
+      });
+      return;
     }
-  }, [selectedTicket?.messages, selectedTicket?.id]);
+
+    if (isNewMessageAdded) {
+      const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150;
+      prevMsgCountRef.current = currentMsgCount;
+
+      if (isNearBottom) {
+        requestAnimationFrame(() => {
+          if (chatScrollRef.current) {
+            chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+          }
+        });
+      }
+    }
+  }, [selectedTicket?.id, currentMsgCount]);
 
   const handleSelectTicket = (ticket: SupportTicket) => {
     setSelectedTicket(ticket);
-    setReplyText(ticket.admin_reply || '');
+    setReplyText(''); // Selalu bersihkan textarea saat memilih tiket
     setMarkAsCompleted(ticket.status === 'selesai');
   };
 
@@ -179,7 +243,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
     }
 
     try {
-      const res = await fetch(`/api/admin/support-tickets/${selectedTicket.id}/reply`, {
+      await fetch(`/api/admin/support-tickets/${selectedTicket.id}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -188,13 +252,8 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
           status: targetStatus
         })
       });
-
-      if (res.ok) {
-        triggerMessage('Balasan pesan berhasil dikirim ke dosen!', 'success');
-      }
     } catch (e) {
       console.warn('Backend unavailable, reply saved to local state:', e);
-      triggerMessage('Balasan pesan berhasil dikirim ke dosen!', 'success');
     } finally {
       setReplyText('');
       setSubmittingReply(false);
@@ -524,99 +583,126 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                 </div>
 
                 {/* Embedded Chat Body / Thread Messages */}
-                <div className="p-4 sm:p-5 flex-1 overflow-y-auto max-h-[380px] bg-surface-light-raised/30 dark:bg-surface-dark-elevated/20 space-y-4">
-                  {((selectedTicket.messages && selectedTicket.messages.length > 0)
-                    ? selectedTicket.messages
-                    : [
-                        {
-                          id: `init-${selectedTicket.id}`,
-                          sender: 'user',
-                          sender_name: selectedTicket.user?.name || `Dosen ID #${selectedTicket.user_id}`,
-                          sender_role: 'dosen',
-                          message: selectedTicket.message,
-                          image_url: selectedTicket.image_url || undefined,
-                          created_at: selectedTicket.created_at
-                        },
-                        ...(selectedTicket.admin_reply ? [{
-                          id: `reply-${selectedTicket.id}`,
-                          sender: 'admin' as const,
-                          sender_name: selectedTicket.replied_by_admin?.name || 'Tim Admin',
-                          sender_role: selectedTicket.replied_by_admin?.role || 'admin penelitian',
-                          message: selectedTicket.admin_reply,
-                          created_at: selectedTicket.replied_at || selectedTicket.created_at
-                        }] : [])
-                      ]
-                  ).map((msg, index) => {
-                    const isUser = msg.sender === 'user';
+                <div ref={chatScrollRef} className="p-4 sm:p-5 flex-1 overflow-y-auto max-h-[420px] bg-surface-light-raised/30 dark:bg-surface-dark-elevated/20 space-y-4">
+                  {(() => {
+                    const rawMessages = (selectedTicket.messages && selectedTicket.messages.length > 0)
+                      ? selectedTicket.messages
+                      : [
+                          {
+                            id: `init-${selectedTicket.id}`,
+                            sender: 'user' as const,
+                            sender_id: selectedTicket.user_id,
+                            sender_name: selectedTicket.user?.name || `Dosen ID #${selectedTicket.user_id}`,
+                            sender_role: 'dosen',
+                            message: selectedTicket.message,
+                            image_url: selectedTicket.image_url || undefined,
+                            created_at: selectedTicket.created_at
+                          },
+                          ...(selectedTicket.admin_reply ? [{
+                            id: `reply-${selectedTicket.id}`,
+                            sender: 'admin' as const,
+                            sender_id: user?.id || 1,
+                            sender_name: selectedTicket.replied_by_admin?.name || user?.name || 'Tim Admin',
+                            sender_role: selectedTicket.replied_by_admin?.role || 'admin penelitian',
+                            message: selectedTicket.admin_reply,
+                            created_at: selectedTicket.replied_at || selectedTicket.created_at
+                          }] : [])
+                        ];
 
-                    return isUser ? (
-                      /* Bubble Chat Dosen (Kiri untuk Admin View) */
-                      <div key={msg.id || index} className="flex justify-start gap-2.5 max-w-[90%] sm:max-w-[82%] mr-auto">
-                        <div className="w-8 h-8 rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold flex items-center justify-center text-xs shrink-0 border border-hairline-light-soft dark:border-hairline-dark-soft shadow-xs mt-4">
-                          {msg.sender_name ? msg.sender_name.charAt(0).toUpperCase() : 'D'}
-                        </div>
-                        <div className="space-y-1 text-left min-w-0">
-                          <div className="flex items-center gap-1.5 text-[10px] text-muted dark:text-on-dark-muted font-semibold px-1">
-                            <span className="font-semibold text-success-dark dark:text-success-on-dark bg-success-soft px-1.5 py-0.2 rounded border border-success-border uppercase tracking-wider text-[9px]">
-                              Dosen
-                            </span>
-                            <span>{msg.sender_name || 'Dosen Pengirim'}</span>
-                            <span>•</span>
-                            <span className="font-mono">{formatDate(msg.created_at)}</span>
-                          </div>
-                          <div className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark p-3.5 rounded-2xl rounded-tl-xs border border-hairline-light dark:border-hairline-dark shadow-xs text-xs leading-relaxed font-medium">
-                            <p className="whitespace-pre-line">{msg.message}</p>
-                            {msg.image_url && (
-                              <div className="mt-3 pt-2.5 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
-                                <div className="relative group inline-block rounded-xl overflow-hidden bg-black/80 p-1 border border-hairline-light dark:border-hairline-dark max-w-xs">
-                                  <img src={msg.image_url} alt="Lampiran Dosen" className="max-h-44 w-auto object-contain rounded-lg" />
-                                  <div
-                                    onClick={() => setFullViewImageUrl(msg.image_url!)}
-                                    className="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-xs font-semibold cursor-pointer"
-                                  >
-                                    <Eye className="w-4 h-4" />
-                                    <span>Perbesar</span>
+                    const grouped = groupMessagesByDate(rawMessages as any);
+
+                    return (
+                      <div className="space-y-4">
+                        {grouped.map((group) => (
+                          <div key={group.dateKey} className="space-y-3">
+                            {/* Date Divider (Tengah) */}
+                            <div className="flex items-center justify-center my-2">
+                              <span className="text-[10.5px] font-semibold px-3 py-1 rounded-full bg-surface-light dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light-soft dark:border-hairline-dark-soft shadow-2xs">
+                                {group.dateLabel}
+                              </span>
+                            </div>
+
+                            {/* Messages */}
+                            {group.messages.map((msg, mIdx) => {
+                              const isUser = msg.sender === 'user';
+                              const timeStr = formatMessageTime(msg.created_at);
+
+                              return isUser ? (
+                                /* ================= Bubble Chat Dosen (Kiri untuk Admin View) ================= */
+                                <div key={msg.id || mIdx} className="flex justify-start gap-2.5 max-w-[90%] sm:max-w-[80%] mr-auto group/msg">
+                                  <div className="w-7 h-7 rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold flex items-center justify-center text-[11px] shrink-0 border border-hairline-light dark:border-hairline-dark shadow-2xs mt-4">
+                                    {msg.sender_name ? msg.sender_name.charAt(0).toUpperCase() : 'D'}
+                                  </div>
+                                  <div className="space-y-1 text-left min-w-0">
+                                    <div className="flex items-center gap-1.5 text-[11px] text-muted dark:text-on-dark-muted font-semibold px-1">
+                                      <span className="font-semibold text-accent dark:text-accent-on-dark bg-accent-soft dark:bg-accent/15 px-1.5 py-0.2 rounded border border-accent-border dark:border-accent/30 uppercase tracking-wider text-[9px] font-mono">
+                                        Dosen
+                                      </span>
+                                      <span className="font-semibold text-ink-heading dark:text-on-dark">
+                                        {msg.sender_name || selectedTicket.user?.name || 'Dosen Pengirim'}
+                                      </span>
+                                    </div>
+                                    <div className="bg-surface-light dark:bg-surface-dark text-ink-heading dark:text-on-dark px-4 py-2.5 rounded-2xl rounded-tl-xs border border-hairline-light dark:border-hairline-dark shadow-xs text-xs leading-relaxed font-medium">
+                                      <p className="whitespace-pre-line">{msg.message}</p>
+                                      {msg.image_url && (
+                                        <div className="mt-2.5 pt-2 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
+                                          <div className="relative group inline-block rounded-xl overflow-hidden bg-black/80 p-1 border border-hairline-light dark:border-hairline-dark max-w-xs">
+                                            <img src={msg.image_url} alt="Lampiran Dosen" className="max-h-44 w-auto object-contain rounded-lg" />
+                                            <button
+                                              type="button"
+                                              onClick={() => setFullViewImageUrl(msg.image_url!)}
+                                              aria-label="Perbesar gambar lampiran dosen"
+                                              className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer w-full h-full"
+                                            >
+                                              <Maximize2 className="w-4 h-4" />
+                                              <span>Perbesar</span>
+                                            </button>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                    {timeStr && (
+                                      <div className="text-[10px] font-mono text-muted dark:text-on-dark-muted ml-1">
+                                        {timeStr}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      /* Bubble Chat Admin (Kanan untuk Admin View) */
-                      <div key={msg.id || index} className="flex justify-end gap-2.5 max-w-[90%] sm:max-w-[82%] ml-auto">
-                        <div className="space-y-1 text-right min-w-0">
-                          <div className="flex items-center justify-end gap-1.5 text-[10px] text-muted dark:text-on-dark-muted font-semibold px-1">
-                            <span>{msg.sender_name || 'Admin'}</span>
-                            <span>•</span>
-                            <span className="font-mono">{formatDate(msg.created_at)}</span>
-                          </div>
-                          <div className="bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark p-3.5 rounded-2xl rounded-tr-xs shadow-xs text-xs leading-relaxed text-left font-medium border border-transparent">
-                            <p className="whitespace-pre-line">{msg.message}</p>
-                            {msg.image_url && (
-                              <div className="mt-3 pt-2.5 border-t border-white/20">
-                                <div className="relative group inline-block rounded-xl overflow-hidden bg-black/80 p-1 border border-white/30 max-w-xs">
-                                  <img src={msg.image_url} alt="Lampiran Admin" className="max-h-44 w-auto object-contain rounded-lg" />
-                                  <div
-                                    onClick={() => setFullViewImageUrl(msg.image_url!)}
-                                    className="absolute inset-0 bg-ink/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-xs font-semibold cursor-pointer"
-                                  >
-                                    <Eye className="w-4 h-4" />
-                                    <span>Perbesar</span>
+                              ) : (
+                                /* ================= Bubble Chat Admin Sendiri (Kanan untuk Admin View) ================= */
+                                <div key={msg.id || mIdx} className="flex flex-col items-end max-w-[90%] sm:max-w-[80%] ml-auto group/msg">
+                                  <div className="bg-ink dark:bg-surface-dark-elevated text-on-ink dark:text-on-dark px-4 py-2.5 rounded-2xl rounded-tr-xs shadow-xs text-xs leading-relaxed text-left font-medium border border-ink-hover dark:border-hairline-dark">
+                                    <p className="whitespace-pre-line">{msg.message}</p>
+                                    {msg.image_url && (
+                                      <div className="mt-2.5 pt-2 border-t border-white/20 dark:border-hairline-dark">
+                                        <div className="relative group inline-block rounded-xl overflow-hidden bg-black/80 p-1 border border-white/30 dark:border-hairline-dark max-w-xs">
+                                          <img src={msg.image_url} alt="Lampiran Admin" className="max-h-44 w-auto object-contain rounded-lg" />
+                                          <button
+                                            type="button"
+                                            onClick={() => setFullViewImageUrl(msg.image_url!)}
+                                            aria-label="Perbesar gambar lampiran admin"
+                                            className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[11px] font-semibold cursor-pointer w-full h-full"
+                                          >
+                                            <Maximize2 className="w-4 h-4" />
+                                            <span>Perbesar</span>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
+                                  {timeStr && (
+                                    <div className="text-[10px] font-mono text-muted dark:text-on-dark-muted mr-1 mt-1">
+                                      {timeStr}
+                                    </div>
+                                  )}
                                 </div>
-                              </div>
-                            )}
+                              );
+                            })}
                           </div>
-                        </div>
-                        <div className="w-8 h-8 rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold flex items-center justify-center text-xs shrink-0 border border-hairline-light-soft dark:border-hairline-dark-soft shadow-xs mt-4">
-                          A
-                        </div>
+                        ))}
                       </div>
                     );
-                  })}
-                  <div ref={chatMessagesEndRef} />
+                  })()}
                 </div>
 
                 {/* Form Kirim Balasan Langsung di Halaman */}
@@ -626,11 +712,19 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                       Tulis Balasan / Instruksi dari Admin:
                     </label>
                     <textarea
-                      rows={3}
-                      placeholder="Ketik balasan untuk dosen pengirim..."
+                      rows={2}
+                      placeholder="Ketik balasan untuk dosen pengirim... (Enter untuk kirim, Shift+Enter untuk baris baru)"
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
-                      className="w-full p-3 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent leading-relaxed resize-none"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          if (replyText.trim() && !submittingReply) {
+                            handleSendReply(e as any);
+                          }
+                        }
+                      }}
+                      className="w-full p-3 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark rounded-xl text-xs font-medium text-ink-heading dark:text-on-dark placeholder-muted dark:placeholder-on-dark-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent leading-relaxed resize-none transition-all"
                     />
                   </div>
 
@@ -651,7 +745,7 @@ export default function SupportTicketsTab({ triggerMessage, user }: SupportTicke
                       <button
                         type="submit"
                         disabled={submittingReply || !replyText.trim()}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-ink hover:bg-ink/90 dark:bg-surface-dark-elevated dark:hover:bg-surface-dark-elevated/80 text-on-ink dark:text-on-dark text-xs font-semibold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-ink hover:bg-ink-hover active:bg-ink-active text-on-ink dark:bg-on-dark dark:hover:bg-white dark:text-ink text-xs font-semibold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                       >
                         <Send className="w-3.5 h-3.5" />
                         <span>{submittingReply ? 'Mengirim...' : 'Kirim Balasan'}</span>
