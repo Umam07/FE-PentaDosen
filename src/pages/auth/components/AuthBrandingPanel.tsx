@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { BookOpen, Users } from 'lucide-react';
+import PentaDosenLogo from '../../../components/shared/PentaDosenLogo';
 
 interface AuthBrandingPanelProps {
   totalDocs: number | string;
@@ -20,18 +21,27 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
           transition={{ duration: 0.3 }}
           className="space-y-8"
         >
-          <div className="space-y-4">
-            <p className="text-[11px] font-bold text-accent dark:text-accent-on-dark uppercase tracking-[0.2em]">
-              Platform Penelitian Dosen YARSI
-            </p>
+          <div className="space-y-6">
+            <div className="flex items-center gap-2.5">
+              <img 
+                src="/YARSI-KOTAK-e1739161183276.png" 
+                alt="Universitas YARSI" 
+                width={32}
+                height={32}
+                className="h-8 w-auto object-contain shrink-0"
+              />
+              <div className="h-6 w-[1px] bg-hairline-light dark:bg-hairline-dark shrink-0" />
+              <div className="flex items-center gap-2">
+                <PentaDosenLogo className="w-8 h-8 shrink-0" />
+                <span className="text-ink-heading dark:text-on-dark font-black text-xl tracking-tight uppercase">
+                  Penta<span className="text-accent dark:text-accent-on-dark">Dosen</span>
+                </span>
+              </div>
+            </div>
             <h1 className="text-4xl font-extrabold text-ink-heading dark:text-on-dark leading-[1.2] tracking-tight">
-              Satu Ekosistem<br />Portofolio Tri Dharma<br />Dosen YARSI.
+              Satu Klik untuk Semua<br />Rekam Jejak Akademik<br />Anda.
             </h1>
           </div>
-          
-          <p className="text-body dark:text-on-dark-soft text-sm leading-relaxed font-medium max-w-sm">
-            PentaDosen membantu dosen YARSI mengelola publikasi, sitasi, dan dokumen Tri Dharma dalam satu ekosistem yang aman dan modern.
-          </p>
 
           {/* Daftar Fitur */}
           <ul className="space-y-4">

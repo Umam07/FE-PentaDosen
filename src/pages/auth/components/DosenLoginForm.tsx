@@ -55,10 +55,10 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
         {/* Heading */}
         <div className="mb-8">
           <h2 className="text-2xl font-black text-ink-heading dark:text-on-dark tracking-tight mb-2">
-            Masuk ke Akun Anda
+            Selamat Datang
           </h2>
-          <p className="text-muted dark:text-on-dark-muted text-sm font-medium">
-            Gunakan kredensial Anda untuk melanjutkan ke dashboard.
+          <p className="text-muted dark:text-on-dark-muted text-sm font-medium leading-relaxed">
+            Masuk dengan akun Universitas YARSI Anda untuk mengelola portofolio dan dokumen Tri Dharma.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
 
           {/* Username field */}
           <div className="space-y-2">
-            <label htmlFor="username" className="block text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
+            <label htmlFor="username" className="block text-xs font-semibold text-body-strong dark:text-on-dark-soft">
               Username
             </label>
             <div className="relative group flex items-center border border-hairline-light dark:border-hairline-dark rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 focus-within:bg-surface-light dark:focus-within:bg-surface-dark transition-all duration-200">
@@ -81,14 +81,14 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 bg-transparent text-sm text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none border-none font-medium"
-                placeholder="username"
+                placeholder="Masukkan username Anda"
               />
             </div>
           </div>
 
           {/* Password field */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-[11px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-wider">
+            <label htmlFor="password" className="block text-xs font-semibold text-body-strong dark:text-on-dark-soft">
               Password
             </label>
             <div className="relative group flex items-center border border-hairline-light dark:border-hairline-dark rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 focus-within:bg-surface-light dark:focus-within:bg-surface-dark transition-all duration-200">
@@ -102,7 +102,7 @@ export function DosenLoginForm({ setUser }: DosenLoginFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-11 pr-11 py-3 bg-transparent text-sm text-ink-heading dark:text-on-dark placeholder:text-muted dark:placeholder:text-on-dark-muted outline-none border-none font-medium"
-                placeholder="••••••••"
+                placeholder="Masukkan password Anda"
               />
               <button
                 type="button"
