@@ -19,35 +19,34 @@ export default function PenelitianTable({
   const currentItems = filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
-      
+    <>
       {/* ── 1. Desktop / Tablet Table View (md and above) ── */}
       <div className="hidden md:block w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light dark:divide-hairline-dark text-xs">
-          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
+          <thead className="bg-surface-light-raised/70 dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
             <tr>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
-                Informasi Penelitian
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">
+                Judul Penelitian
               </th>
-              <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
+              <th className="hidden lg:table-cell px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Program &amp; Skema
               </th>
-              <th className="px-6 py-3.5 text-center text-xs font-semibold text-body dark:text-on-dark-soft">
+              <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Tanggal Pelaksanaan
               </th>
-              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
-                Dana
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
-                Dokumen
-              </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Status
               </th>
-              <th className="px-6 py-3.5 text-right text-xs font-semibold text-body dark:text-on-dark-soft">
-                Poin
+              <th className="hidden sm:table-cell px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
+                Dana
               </th>
-              <th className="px-6 py-3.5 w-12 text-center text-xs font-semibold text-body dark:text-on-dark-soft">
+              <th className="px-6 py-4 text-right sm:text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
+                Poin KPI
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
+                Dokumen
+              </th>
+              <th className="px-4 py-4 w-12 text-center text-xs font-semibold text-muted dark:text-on-dark-muted whitespace-nowrap">
                 Detail
               </th>
             </tr>
@@ -63,6 +62,7 @@ export default function PenelitianTable({
                   transition={{ delay: idx * 0.02 }}
                   className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors group"
                 >
+                  {/* 1. Judul */}
                   <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedDocForDetail(doc)}>
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark flex-shrink-0">
@@ -80,45 +80,27 @@ export default function PenelitianTable({
                       </div>
                     </div>
                   </td>
+
+                  {/* 2. Program & Skema */}
                   <td className="hidden lg:table-cell px-6 py-4">
                     <p className="text-xs font-semibold text-ink-heading dark:text-on-dark">
                       {doc.program || '-'}
                     </p>
-                    <div className="flex flex-wrap gap-1.5 mt-1">
-                      <span className="text-[10px] font-medium text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md border border-hairline-light dark:border-hairline-dark">
-                        {doc.skema || '-'}
-                      </span>
-                      {doc.fokus && (
-                        <span className="text-[10px] font-medium text-muted dark:text-on-dark-muted bg-surface-light-raised dark:bg-surface-dark-elevated px-2 py-0.5 rounded-md border border-hairline-light dark:border-hairline-dark">
-                          {doc.fokus}
-                        </span>
-                      )}
-                    </div>
+                    <p className="text-[11px] text-muted dark:text-on-dark-muted mt-0.5">
+                      {doc.skema || '-'}{doc.fokus ? ` • ${doc.fokus}` : ''}
+                    </p>
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className="text-xs font-mono text-body dark:text-on-dark-soft bg-surface-light-raised dark:bg-surface-dark-elevated px-2.5 py-1 rounded-lg border border-hairline-light dark:border-hairline-dark">
+
+                  {/* 3. Tanggal Pelaksanaan */}
+                  <td className="hidden md:table-cell px-6 py-4 text-left">
+                    <span className="text-xs font-mono text-muted dark:text-on-dark-muted">
                       {formatTanggal(doc.tahun_pelaksanaan)}
                     </span>
                   </td>
-                  <td className="hidden sm:table-cell px-6 py-4 text-xs font-mono font-bold text-ink-heading dark:text-on-dark tabular-nums">
-                    {formatRupiah(doc.dana_disetujui || 0)}
-                  </td>
+
+                  {/* 4. Status */}
                   <td className="px-6 py-4">
-                    {doc.file_url && doc.file_url !== '-' ? (
-                      <button
-                        type="button"
-                        onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
-                        aria-label={`Lihat PDF untuk ${doc.title}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark-soft text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors whitespace-nowrap cursor-pointer"
-                      >
-                        <FileText className="w-3.5 h-3.5" /> Lihat
-                      </button>
-                    ) : (
-                      <span className="text-xs text-muted-soft dark:text-on-dark-muted">Tidak Ada</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border whitespace-nowrap ${
                       doc.status === 'Approved'
                         ? 'bg-success-soft dark:bg-success/15 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
                         : doc.status === 'Rejected'
@@ -130,17 +112,42 @@ export default function PenelitianTable({
                       {doc.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
+
+                  {/* 5. Dana */}
+                  <td className="hidden sm:table-cell px-6 py-4 text-left text-xs font-mono font-bold text-ink-heading dark:text-on-dark tabular-nums">
+                    {formatRupiah(doc.dana_disetujui || 0)}
+                  </td>
+
+                  {/* 6. Poin KPI */}
+                  <td className="px-6 py-4 text-right sm:text-left">
                     <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">
                       +{Math.round(Number(doc.awarded_points) || 0)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span>
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-center">
+
+                  {/* 7. Dokumen */}
+                  <td className="px-6 py-4">
+                    {doc.file_url && doc.file_url !== '-' ? (
+                      <button
+                        type="button"
+                        onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
+                        aria-label={`Lihat PDF untuk ${doc.title}`}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-ink-heading dark:text-on-dark text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors whitespace-nowrap cursor-pointer"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" /> Lihat
+                      </button>
+                    ) : (
+                      <span className="text-xs text-muted dark:text-on-dark-muted">—</span>
+                    )}
+                  </td>
+
+                  {/* 8. Detail */}
+                  <td className="px-4 py-4 text-center">
                     <button
                       type="button"
                       onClick={() => setSelectedDocForDetail(doc)}
                       aria-label={`Lihat rincian detail ${doc.title}`}
-                      className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer"
                       title="Lihat Rincian Detail"
                     >
                       <Info className="w-4 h-4" />
@@ -261,7 +268,7 @@ export default function PenelitianTable({
           setItemsPerPage={setItemsPerPage}
         />
       )}
-    </div>
+    </>
   );
 }
 

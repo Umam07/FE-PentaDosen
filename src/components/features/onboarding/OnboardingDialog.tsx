@@ -216,7 +216,7 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
                       {/* Monospace Uppercase Badge + Mobile Icon Badge */}
                       <div className="flex items-center gap-2">
                         <div className="md:hidden flex items-center justify-center w-7 h-7 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-accent dark:text-accent-on-dark shrink-0">
-                          {React.cloneElement(currentSlide.icon as React.ReactElement, {
+                          {React.cloneElement(currentSlide.icon as React.ReactElement<any>, {
                             className: "w-3.5 h-3.5 text-accent dark:text-accent-on-dark"
                           })}
                         </div>

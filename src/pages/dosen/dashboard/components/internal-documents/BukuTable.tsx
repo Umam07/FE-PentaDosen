@@ -18,22 +18,21 @@ export default function BukuTable({
   const currentItems = filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
-      
+    <>
       {/* ── 1. Desktop / Tablet Table View (md and above) ── */}
       <div className="hidden md:block w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light dark:divide-hairline-dark text-xs">
-          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
+          <thead className="bg-surface-light-raised/70 dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
             <tr>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Informasi Buku</th>
-              <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Kategori Buku</th>
-              <th className="hidden md:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Tanggal Terbit</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Dokumen</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Status</th>
-              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Klasifikasi</th>
-              <th className="px-6 py-3.5 text-right text-xs font-semibold text-body dark:text-on-dark-soft">Poin</th>
-              <th className="hidden sm:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">Penelitian Asal</th>
-              <th className="px-6 py-3.5 w-12 text-center text-xs font-semibold text-body dark:text-on-dark-soft">Detail</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Informasi Buku</th>
+              <th className="hidden lg:table-cell px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Kategori Buku</th>
+              <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Tanggal Terbit</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Status</th>
+              <th className="hidden sm:table-cell px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Klasifikasi</th>
+              <th className="px-6 py-4 text-right sm:text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Poin KPI</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Dokumen</th>
+              <th className="hidden sm:table-cell px-6 py-4 text-left text-xs font-semibold text-muted dark:text-on-dark-muted">Penelitian Asal</th>
+              <th className="px-4 py-4 w-12 text-center text-xs font-semibold text-muted dark:text-on-dark-muted">Detail</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-hairline-light dark:divide-hairline-dark-soft bg-surface-light dark:bg-surface-dark">
@@ -76,16 +75,16 @@ export default function BukuTable({
                     {doc.file_url && doc.file_url !== '-' ? (
                       <button
                         onClick={() => setPreviewDoc({ fileUrl: doc.file_url!, title: doc.title, category: doc.category })}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-body dark:text-on-dark-soft text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors whitespace-nowrap cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-ink-heading dark:text-on-dark text-xs font-semibold border border-hairline-light dark:border-hairline-dark transition-colors whitespace-nowrap cursor-pointer"
                       >
-                        <FileText className="w-3.5 h-3.5" /> Lihat
+                        <FileText className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" /> Lihat
                       </button>
                     ) : (
-                      <span className="text-xs text-muted-soft dark:text-on-dark-muted">Tidak Ada</span>
+                      <span className="text-xs text-muted dark:text-on-dark-muted">—</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border whitespace-nowrap ${
                       doc.status === 'Approved'
                         ? 'bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30'
                         : doc.status === 'Rejected'
@@ -113,13 +112,13 @@ export default function BukuTable({
                         {doc.penelitian.judul_penelitian}
                       </span>
                     ) : (
-                      <span className="text-xs text-muted-soft dark:text-on-dark-muted">-</span>
+                      <span className="text-xs text-muted dark:text-on-dark-muted">-</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <button
                       onClick={() => setSelectedDocForDetail(doc)}
-                      className="p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer"
                       title="Lihat Detail"
                     >
                       <Info className="w-4 h-4" />
@@ -235,7 +234,7 @@ export default function BukuTable({
           setItemsPerPage={setItemsPerPage}
         />
       )}
-    </div>
+    </>
   );
 }
 

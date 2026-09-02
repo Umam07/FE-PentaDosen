@@ -81,9 +81,9 @@ export default function ExternalDocumentsView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline-light dark:border-hairline-dark pb-2">
             <div className="flex items-center gap-5 sm:gap-8 pb-3 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
               {[
-                { id: 'scopus', label: 'Scopus Indexed' },
-                { id: 'scholar', label: 'Google Scholar' },
-                { id: 'cross_indexed', label: 'Cross-Indexed (Irisan)' },
+                { id: 'scopus', label: 'Scopus-Only' },
+                { id: 'scholar', label: 'Scholar-Only' },
+                { id: 'cross_indexed', label: 'Cross-Indexed' },
                 { id: 'metriks', label: 'Metriks Penilaian' }
               ].map((sub) => (
                 <button
@@ -557,33 +557,6 @@ export default function ExternalDocumentsView({
                   transition={{ duration: 0.15 }}
                   className="space-y-6"
                 >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex flex-col">
-                    <h4 className="text-sm sm:text-base font-bold text-ink-heading dark:text-on-dark">
-                      Daftar Publikasi Terindeks Ganda
-                    </h4>
-                    <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
-                      Poin diambil dari Scopus (lebih besar)
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between sm:justify-end gap-3 bg-surface-light-raised dark:bg-surface-dark-elevated sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-hairline-light dark:border-hairline-dark sm:border-none">
-                    <div className="text-left sm:text-right">
-                      <p className="text-xs font-medium text-muted dark:text-on-dark-muted leading-none">
-                        Total Poin
-                      </p>
-                      <p className="text-base sm:text-lg font-bold font-mono text-success dark:text-success-on-dark mt-1 tabular-nums">
-                        {Math.round(crossIndexedDocs.reduce((acc: number, doc: any) => {
-                          const sd = scopusPublications.find((s) => normalizeTitle(s.title) === normalizeTitle(doc.title));
-                          return acc + calculateScopusBreakdown(sd || doc).totalPoints;
-                        }, 0))} <span className="text-xs font-normal text-muted dark:text-on-dark-muted">Pts</span>
-                      </p>
-                    </div>
-                    <div className="px-3 py-1.5 bg-success text-on-ink rounded-xl text-xs font-mono font-bold shadow-2xs">
-                      {filteredCrossIndexedDocs?.length || 0} Total
-                    </div>
-                  </div>
-                </div>
-
                 {/* Clean Flat Toolbar for Cross-Indexed: Search di kiri, Year Filter di kanan */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
                   {/* Search Bar */}

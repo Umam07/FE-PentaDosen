@@ -30,15 +30,29 @@ export function useExternalDocuments({
     setSearchTerm('');
   }, [publicationSubTab]);
 
-  const scopusList = scopusPublications || [];
-  const scholarList = publications || [];
+  const allScopus = scopusPublications || [];
+  const allScholar = publications || [];
+
+  const crossIndexedTitles = useMemo(() => {
+    const scopusTitleSet = new Set(allScopus.map(s => normalizeTitle(s.title)));
+    return new Set(
+      allScholar
+        .filter(sch => scopusTitleSet.has(normalizeTitle(sch.title)))
+        .map(sch => normalizeTitle(sch.title))
+    );
+  }, [allScopus, allScholar]);
+
+  const scopusList = useMemo(() => {
+    return allScopus.filter(doc => !crossIndexedTitles.has(normalizeTitle(doc.title)));
+  }, [allScopus, crossIndexedTitles]);
+
+  const scholarList = useMemo(() => {
+    return allScholar.filter(doc => !crossIndexedTitles.has(normalizeTitle(doc.title)));
+  }, [allScholar, crossIndexedTitles]);
 
   const crossIndexedDocs = useMemo(() => {
-    return scholarList.filter(scholarDoc => {
-      const scholarTitle = normalizeTitle(scholarDoc.title);
-      return scopusList.some(scopusDoc => normalizeTitle(scopusDoc.title) === scholarTitle);
-    });
-  }, [scholarList, scopusList]);
+    return allScholar.filter(scholarDoc => crossIndexedTitles.has(normalizeTitle(scholarDoc.title)));
+  }, [allScholar, crossIndexedTitles]);
 
   const extractDocYear = (doc: any): number | null => {
     if (doc.year) {

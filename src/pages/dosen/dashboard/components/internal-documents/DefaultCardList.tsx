@@ -16,7 +16,7 @@ export default function DefaultCardList({
   isPublic = false,
 }: DocTableBaseProps) {
   return (
-    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
+    <>
       <div className="p-5 grid grid-cols-1 gap-3.5">
         {filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((doc, idx) => {
           const dateStr = doc.published_at || doc.tahun_pelaksanaan;
@@ -92,7 +92,7 @@ export default function DefaultCardList({
           setItemsPerPage={setItemsPerPage}
         />
       )}
-    </div>
+    </>
   );
 }
 

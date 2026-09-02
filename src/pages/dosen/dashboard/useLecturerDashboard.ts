@@ -39,7 +39,7 @@ export default function useLecturerDashboard(user: any) {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [categoryFilter, setCategoryFilter] = useState<string>('penelitian');
+  const [categoryFilter, setCategoryFilter] = useState<string>('jurnal internasional');
   const [activeView, setActiveView] = useState<'internal' | 'external'>('external');
   const [publicationSubTab, setPublicationSubTab] = useState<'scopus' | 'scholar' | 'cross_indexed' | 'metriks'>('scopus');
 

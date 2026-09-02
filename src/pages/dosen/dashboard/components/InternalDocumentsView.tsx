@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FileText, Beaker, ShieldCheck, Book, Globe, BookMarked, Search, BarChart2, Lock
+  FileText, Beaker, Award, Book, Search, BarChart2, Lock
 } from 'lucide-react';
 
 const PdfPreviewModal = lazy(() =>
@@ -28,12 +28,13 @@ import type {
   MainTab,
 } from './internal-documents/internal-documents.types';
 
-const docCategories: DocCategory[] = [
-  { id: 'penelitian',           label: 'Penelitian',       icon: Beaker     },
-  { id: 'hki',                  label: 'HKI',              icon: ShieldCheck },
-  { id: 'buku',                 label: 'Buku',             icon: Book       },
-  { id: 'jurnal internasional', label: 'J. Internasional', icon: Globe      },
-  { id: 'jurnal nasional',      label: 'J. Nasional',      icon: BookMarked },
+const internalSubTabs = [
+  { id: 'jurnal internasional', label: 'J. Internasional',   icon: FileText },
+  { id: 'jurnal nasional',      label: 'J. Nasional',        icon: FileText },
+  { id: 'penelitian',           label: 'Penelitian',         icon: Beaker   },
+  { id: 'hki',                  label: 'HKI',                icon: Award    },
+  { id: 'buku',                 label: 'Buku',               icon: Book     },
+  { id: 'metriks',              label: 'Metriks Penilaian',   icon: BarChart2 },
 ];
 
 export default function InternalDocumentsView({
@@ -80,185 +81,118 @@ export default function InternalDocumentsView({
   };
 
   return (
-    <div className="space-y-8">
-      {/* Card wrapper */}
-      <div className="bg-surface-light dark:bg-surface-dark rounded-3xl border border-hairline-light dark:border-hairline-dark p-5 sm:p-8 shadow-xs">
+    <div className="space-y-6">
+      {/* Unified Table Section Container */}
+      <section className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
 
-        {/* ── Top Tab Bar: Dokumen | Metriks Penilaian ── */}
-        <div className="flex items-center gap-5 sm:gap-8 pb-3 border-b border-hairline-light dark:border-hairline-dark mb-8 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
-          {([
-            { id: 'dokumen', label: 'Dokumen Internal' },
-            { id: 'metriks', label: 'Metriks Penilaian' },
-          ] as const).map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`group/tab relative pb-3 text-xs sm:text-sm font-bold tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-                activeTab === tab.id
-                  ? 'text-ink-heading dark:text-on-dark'
-                  : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
-              }`}
-            >
-              {tab.label}
-              {activeTab === tab.id && (
-                <motion.div
-                  layoutId="internal-main-tab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-ink dark:bg-on-dark rounded-full"
-                />
-              )}
-              {activeTab !== tab.id && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-hairline-light dark:bg-hairline-dark rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
-              )}
-            </button>
-          ))}
+        {/* ── Top Unified Sub-Tab Bar: Penelitian | HKI | Buku | J. Internasional | J. Nasional | Metriks Penilaian ── */}
+        <div className="border-b border-hairline-light dark:border-hairline-dark px-6 pt-5 pb-0 bg-surface-light dark:bg-surface-dark">
+          <div className="flex items-center gap-6 sm:gap-8 pb-3.5 overflow-x-auto no-scrollbar -mx-6 px-6 sm:mx-0 sm:px-0">
+            {internalSubTabs.map((tab) => {
+              const isActive =
+                activeTab === 'metriks'
+                  ? tab.id === 'metriks'
+                  : activeTab === 'dokumen' && categoryFilter === tab.id;
+
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    if (tab.id === 'metriks') {
+                      setActiveTab('metriks');
+                    } else {
+                      setActiveTab('dokumen');
+                      setCategoryFilter(tab.id);
+                      setCurrentPage(1);
+                    }
+                  }}
+                  className={`group/tab relative pb-3.5 flex items-center gap-2 text-xs sm:text-sm font-bold tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                    isActive
+                      ? 'text-ink-heading dark:text-on-dark'
+                      : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                  {/* Active indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="internal-subtab-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-ink dark:bg-on-dark rounded-full"
+                    />
+                  )}
+                  {/* Hover underline */}
+                  {!isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-hairline-light dark:bg-hairline-dark rounded-full scale-x-0 group-hover/tab:scale-x-100 transition-transform duration-200 origin-left" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Content Tabs with Smooth Transitions */}
         <AnimatePresence mode="wait">
           {activeTab === 'dokumen' ? (
             <motion.div
-              key="dokumen"
-              initial={{ opacity: 0, y: 10 }}
+              key={categoryFilter}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              className="space-y-8"
             >
-              {/* Statistics Cards Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mb-8">
-                {docCategories.map((cat) => {
-                  const catDocs = allInternalDocs.filter(
-                    (d) => d.category?.toLowerCase().includes(cat.id.toLowerCase())
-                  );
-                  const approvedCatDocs = catDocs.filter((d) => d.status === 'Approved');
-                  const points = approvedCatDocs.reduce(
-                    (acc, d) => acc + (Number(d.awarded_points) || 0),
-                    0
-                  );
-                  const count = approvedCatDocs.length;
-                  const isSelected = categoryFilter === cat.id;
-
-                  return (
-                    <div
-                      key={cat.id}
-                      onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
-                      className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                        isSelected
-                          ? 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark shadow-2xs ring-1 ring-hairline-light dark:ring-hairline-dark'
-                          : 'bg-surface-light dark:bg-surface-dark border-hairline-light dark:border-hairline-dark hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated'
-                      }`}
-                    >
-                      <phantom-ui loading={loading} animation="shimmer" className="block space-y-1">
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <div className={`p-2 rounded-xl border transition-colors flex items-center justify-center ${
-                            isSelected
-                              ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink border-transparent'
-                              : 'bg-surface-light-raised dark:bg-surface-dark-elevated border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft'
-                          }`}>
-                            <cat.icon className="w-4 h-4" />
-                          </div>
-                          <span className="text-[10px] font-semibold text-muted dark:text-on-dark-muted uppercase tracking-wider">
-                            Poin
-                          </span>
-                        </div>
-                        <p className="text-[11px] font-semibold text-muted dark:text-on-dark-muted truncate">
-                          {cat.label}
-                        </p>
-                        <h4 className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark tracking-tight tabular-nums mt-0.5">
-                          +{points} <span className="text-xs font-semibold text-muted dark:text-on-dark-muted">Pts</span>
-                        </h4>
-                        <p className="text-[10px] font-mono text-muted dark:text-on-dark-muted mt-1">
-                          {count} Dokumen Disetujui
-                        </p>
-                      </phantom-ui>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Category filter sub-tabs */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <div className="flex items-center gap-5 overflow-x-auto no-scrollbar">
-                  {docCategories.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => { setCategoryFilter(cat.id); setCurrentPage(1); }}
-                      className={`group/cat relative pb-2 flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-                        categoryFilter === cat.id
-                          ? 'text-ink-heading dark:text-on-dark font-bold'
-                          : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
-                      }`}
-                    >
-                      <cat.icon className="w-3.5 h-3.5" />
-                      {cat.label}
-                      {categoryFilter === cat.id && (
-                        <motion.div
-                          layoutId="internal-cat-indicator"
-                          className="absolute bottom-0 left-0 right-0 h-[2px] bg-ink dark:bg-on-dark rounded-full"
-                        />
-                      )}
-                      {categoryFilter !== cat.id && (
-                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-hairline-light dark:bg-hairline-dark rounded-full scale-x-0 group-hover/cat:scale-x-100 transition-transform duration-200 origin-left" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Badge informasi jumlah dokumen yang netral & non-interaktif */}
-                <div className="flex-shrink-0 px-3 py-1.5 bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-body dark:text-on-dark-soft rounded-xl text-xs font-semibold font-mono flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-muted dark:bg-on-dark-muted" />
-                  {filteredDocs.length} Dokumen
-                </div>
-              </div>
-
               {/* Document list */}
               {loading ? (
-                <phantom-ui loading={true} animation="shimmer" className="block space-y-3">
+                <phantom-ui loading={true} animation="shimmer" className="block space-y-3 p-6">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="h-16 rounded-2xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark p-4" />
+                    <div key={i} className="h-14 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark p-4" />
                   ))}
                 </phantom-ui>
               ) : filteredDocs.length > 0 ? (
-                <div className="space-y-4">
+                <div>
                   {renderActiveTable()}
                   {isPublic && filteredDocs.length > 5 && (
-                    <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border border-dashed border-hairline-light dark:border-hairline-dark rounded-3xl mt-4">
+                    <div className="flex flex-col items-center justify-center py-6 px-4 bg-surface-light-raised dark:bg-surface-dark-elevated border-t border-dashed border-hairline-light dark:border-hairline-dark">
                       <p className="text-xs font-semibold text-muted dark:text-on-dark-muted mb-3 text-center">
                         + {filteredDocs.length - 5} Dokumen Internal Lainnya Tersedia
                       </p>
                       <button
                         onClick={() => window.location.href = '/login'}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-ink hover:bg-ink-hover dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                        className="px-4 py-2 bg-ink hover:bg-black dark:bg-on-dark dark:hover:bg-white text-on-ink dark:text-ink rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer"
                       >
-                        <Lock className="w-3.5 h-3.5" />
-                        <span>Login untuk Lihat Semua</span>
+                        Masuk untuk Akses Lengkap
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="py-24 text-center">
-                  <Search className="w-12 h-12 mx-auto mb-4 text-muted dark:text-on-dark-muted opacity-40" />
-                  <p className="text-xs font-semibold text-muted dark:text-on-dark-muted">
-                    Tidak ada data ditemukan
-                  </p>
+                <div className="flex flex-col items-center justify-center py-20 text-muted dark:text-on-dark-muted space-y-4">
+                  <div className="w-16 h-16 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl flex items-center justify-center border border-hairline-light dark:border-hairline-dark">
+                    <Search className="w-6 h-6 opacity-50" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-ink-heading dark:text-on-dark">Belum Ada Dokumen</p>
+                    <p className="text-xs mt-1 text-muted dark:text-on-dark-muted">
+                      Tidak ada dokumen internal untuk kategori ini.
+                    </p>
+                  </div>
                 </div>
               )}
             </motion.div>
           ) : (
             <motion.div
               key="metriks"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              className="space-y-8"
+              className="p-6"
             >
               <MetricsGuide />
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </section>
 
       {selectedDocForDetail && (
         <Suspense fallback={null}>

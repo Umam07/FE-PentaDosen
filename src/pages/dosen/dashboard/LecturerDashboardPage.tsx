@@ -56,9 +56,9 @@ export default function LecturerDashboard({ user }: { user: any }) {
   };
 
   const statsLocal = [
-    { label: 'Total KPI Overall', val: loading && !profileData ? null : grandTotal.toLocaleString() },
-    { label: 'Total KPI 3 Tahun', val: loading && !profileData ? null : grandTotal3Years.toLocaleString() },
-    { label: 'Total KPI Tahun Ini', val: loading && !profileData ? null : grandTotalThisYear.toLocaleString() },
+    { label: 'KPI Overall', fullLabel: 'Total KPI Overall', val: loading && !profileData ? null : grandTotal.toLocaleString() },
+    { label: 'KPI 3 Tahun', fullLabel: 'Total KPI 3 Tahun', val: loading && !profileData ? null : grandTotal3Years.toLocaleString() },
+    { label: 'KPI Tahun Ini', fullLabel: 'Total KPI Tahun Ini', val: loading && !profileData ? null : grandTotalThisYear.toLocaleString() },
   ];
 
   return (
@@ -177,12 +177,13 @@ export default function LecturerDashboard({ user }: { user: any }) {
         {/* ─── Inline KPI Stats (flat, no cards) ─── */}
         <div className="grid grid-cols-3 divide-x divide-hairline-light dark:divide-hairline-dark">
           {statsLocal.map((stat, i) => (
-            <div key={i} className="px-3 first:pl-0 last:pr-0 text-center sm:text-left">
+            <div key={i} className="px-2 sm:px-3 first:pl-0 last:pr-0 text-center sm:text-left">
               <span className="block text-2xl sm:text-3xl font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums leading-none">
                 {stat.val ?? (loading && !profileData ? '…' : '0')}
               </span>
-              <span className="block text-[11px] font-semibold text-muted dark:text-on-dark-muted mt-1 truncate">
-                {stat.label}
+              <span className="block text-[11px] sm:text-xs font-semibold text-muted dark:text-on-dark-muted mt-1.5 leading-tight sm:leading-normal">
+                <span className="hidden sm:inline">{stat.fullLabel}</span>
+                <span className="inline sm:hidden">{stat.label}</span>
               </span>
             </div>
           ))}
@@ -236,19 +237,20 @@ export default function LecturerDashboard({ user }: { user: any }) {
       <div className="flex items-center justify-between gap-4 pt-1">
         <div className="flex w-full sm:w-auto p-1 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl border border-hairline-light dark:border-hairline-dark gap-1">
           {[
-            { id: 'external', label: 'Dokumen Eksternal (API)' },
-            { id: 'internal', label: 'Dokumen Internal' },
+            { id: 'external', label: 'Dokumen Eksternal (API)', shortLabel: 'Dokumen Eksternal' },
+            { id: 'internal', label: 'Dokumen Internal', shortLabel: 'Dokumen Internal' },
           ].map((view) => (
             <button
               key={view.id}
               onClick={() => { setActiveView(view.id as any); setCurrentPage(1); }}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer text-center ${
                 activeView === view.id 
                   ? 'bg-ink text-on-ink dark:bg-on-dark dark:text-ink shadow-2xs' 
                   : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
               }`}
             >
-              <span>{view.label}</span>
+              <span className="hidden sm:inline">{view.label}</span>
+              <span className="inline sm:hidden">{view.shortLabel}</span>
             </button>
           ))}
         </div>
