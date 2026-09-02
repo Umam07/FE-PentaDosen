@@ -86,15 +86,11 @@ export function useExternalDocuments({
   const filteredScopusList = useMemo(() => {
     let result = scopusList;
 
-    // Search filter
+    // Search filter: hanya judul artikel / publikasi
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase().trim();
       result = result.filter((doc: any) =>
-        (doc.title && doc.title.toLowerCase().includes(q)) ||
-        (doc.journal_name && doc.journal_name.toLowerCase().includes(q)) ||
-        (doc.creator && doc.creator.toLowerCase().includes(q)) ||
-        (doc.authors && doc.authors.toLowerCase().includes(q)) ||
-        (doc.doi && doc.doi.toLowerCase().includes(q))
+        Boolean(doc.title && doc.title.toLowerCase().includes(q))
       );
     }
 
@@ -137,9 +133,7 @@ export function useExternalDocuments({
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase().trim();
       result = result.filter((doc: any) =>
-        (doc.title && doc.title.toLowerCase().includes(q)) ||
-        (doc.journal && doc.journal.toLowerCase().includes(q)) ||
-        (doc.authors && doc.authors.toLowerCase().includes(q))
+        Boolean(doc.title && doc.title.toLowerCase().includes(q))
       );
     }
     if (filterYearExt) {
@@ -153,9 +147,7 @@ export function useExternalDocuments({
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase().trim();
       result = result.filter((doc: any) =>
-        (doc.title && doc.title.toLowerCase().includes(q)) ||
-        (doc.journal && doc.journal.toLowerCase().includes(q)) ||
-        (doc.authors && doc.authors.toLowerCase().includes(q))
+        Boolean(doc.title && doc.title.toLowerCase().includes(q))
       );
     }
     if (filterYearExt) {
