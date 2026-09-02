@@ -239,8 +239,8 @@ export default function ExternalDocumentsView({
                                 <div className="inline-flex items-center bg-surface-light-raised dark:bg-surface-dark-elevated p-1 rounded-xl border border-hairline-light dark:border-hairline-dark shadow-2xs shrink-0">
                                   {[
                                     { id: 'all', label: 'Semua' },
-                                    { id: 'unconfirmed', label: 'Perlu Update', count: unconfirmedScopusCount },
-                                    { id: 'confirmed', label: 'Selesai' }
+                                    { id: 'unconfirmed', label: 'Perlu Konfirmasi', count: unconfirmedScopusCount },
+                                    { id: 'confirmed', label: 'Approved' }
                                   ].map((opt) => (
                                     <button
                                       key={opt.id}

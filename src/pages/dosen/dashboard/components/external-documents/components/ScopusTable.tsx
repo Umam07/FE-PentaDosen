@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ChevronDown, ChevronUp, AlertTriangle, Check, Globe } from 'lucide-react';
 import { calculateScopusBreakdown, formatScopusSubtype } from '../utils/calculations';
-import { externalDocumentsService } from '../services/externalDocumentsService';
 
 interface ScopusTableProps {
   documents: any[];
@@ -20,24 +19,9 @@ export default function ScopusTable({
   children,
 }: ScopusTableProps) {
   const [expandedRow, setExpandedRow] = useState<string | number | null>(null);
-  const [updatingId, setUpdatingId] = useState<string | number | null>(null);
 
   const toggleRow = (id: string | number) => {
     setExpandedRow(prev => (prev === id ? null : id));
-  };
-
-  const handleToggleCorresponding = async (docId: number, value: boolean) => {
-    setUpdatingId(docId);
-    try {
-      const success = await externalDocumentsService.updateCorrespondingStatus(docId, value);
-      if (success && onRefresh) {
-        onRefresh();
-      }
-    } catch (err) {
-      console.error('Error updating corresponding status:', err);
-    } finally {
-      setUpdatingId(null);
-    }
   };
 
   return (
@@ -173,39 +157,15 @@ export default function ScopusTable({
 
                     {/* Status */}
                     <td className="px-6 py-4 text-left align-top">
-                      {!isPublic && showCorrespondingControls ? (
-                        !bd.isCorrespondingConfirmed ? (
-                          <div className="flex flex-col items-start gap-1.5">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border border-warning-border dark:border-warning/30 rounded-lg text-xs font-semibold whitespace-nowrap">
-                              <AlertTriangle className="w-3.5 h-3.5 text-warning shrink-0" />
-                              Perlu Konfirmasi
-                            </span>
-                            <div className="flex items-center gap-1">
-                              <button
-                                onClick={() => handleToggleCorresponding(doc.id, true)}
-                                disabled={updatingId === doc.id}
-                                className="px-2 py-1 bg-success hover:bg-success-dark text-on-ink rounded-lg text-xs font-semibold transition-all disabled:opacity-50 cursor-pointer"
-                              >
-                                {updatingId === doc.id ? '...' : 'Koresponden'}
-                              </button>
-                              <button
-                                onClick={() => handleToggleCorresponding(doc.id, false)}
-                                disabled={updatingId === doc.id}
-                                className="px-2 py-1 bg-surface-light-raised dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-semibold transition-all disabled:opacity-50 cursor-pointer"
-                              >
-                                {updatingId === doc.id ? '...' : 'Bukan'}
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border border-success-border dark:border-success/30">
-                            <Check className="w-3 h-3" />
-                            {bd.isCorresponding ? 'Corresponding' : 'Non-Corresponding'}
-                          </span>
-                        )
+                      {!isPublic && showCorrespondingControls && !bd.isCorrespondingConfirmed ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border border-warning-border dark:border-warning/30 rounded-lg text-xs font-semibold whitespace-nowrap">
+                          <AlertTriangle className="w-3.5 h-3.5 text-warning shrink-0" />
+                          Perlu Konfirmasi
+                        </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark">
-                          Tersinkron
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border border-success-border dark:border-success/30 whitespace-nowrap">
+                          <Check className="w-3.5 h-3.5" />
+                          Approved
                         </span>
                       )}
                     </td>
@@ -352,32 +312,16 @@ export default function ScopusTable({
                     ✓ Scholar
                   </span>
                 )}
-              </div>
-
-              {/* Status and Action Buttons */}
-              {!isPublic && showCorrespondingControls && !bd.isCorrespondingConfirmed && (
-                <div className="p-3 rounded-2xl bg-warning-soft dark:bg-warning/20 border border-warning-border dark:border-warning/30 flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-warning dark:text-warning-on-dark flex items-center gap-1">
-                    <AlertTriangle className="w-3.5 h-3.5" /> Konfirmasi Penulis:
+                {!isPublic && showCorrespondingControls && !bd.isCorrespondingConfirmed ? (
+                  <span className="px-2 py-0.5 rounded-md bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark font-semibold border border-warning-border dark:border-warning/30 inline-flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" /> Perlu Konfirmasi
                   </span>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => handleToggleCorresponding(doc.id, true)}
-                      disabled={updatingId === doc.id}
-                      className="px-2.5 py-1 bg-success hover:bg-success-dark text-on-ink rounded-lg text-xs font-semibold disabled:opacity-50 cursor-pointer"
-                    >
-                      Koresponden
-                    </button>
-                    <button
-                      onClick={() => handleToggleCorresponding(doc.id, false)}
-                      disabled={updatingId === doc.id}
-                      className="px-2.5 py-1 bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg text-xs font-semibold disabled:opacity-50 cursor-pointer"
-                    >
-                      Bukan
-                    </button>
-                  </div>
-                </div>
-              )}
+                ) : (
+                  <span className="px-2 py-0.5 rounded-md bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark font-semibold border border-success-border dark:border-success/30 inline-flex items-center gap-1">
+                    <Check className="w-3 h-3" /> Approved
+                  </span>
+                )}
+              </div>
 
               {/* Bottom Row: Score & Detail Toggle */}
               <div className="flex items-center justify-between pt-1">
