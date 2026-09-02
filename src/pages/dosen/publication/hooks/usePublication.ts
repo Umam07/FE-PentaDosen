@@ -371,10 +371,7 @@ export function usePublication(user: UserSession) {
       total: src.length,
       approved: src.filter((d) => d.status === 'Approved').length,
       pending: src.filter((d) => d.status === 'Pending' || d.status === 'Verified by Fakultas').length,
-      points: Math.round(src.reduce((acc, d) => {
-        const pts = d.source === 'scholar' ? calculateScholarPoints(d) : (Number(d.awarded_points) || 0);
-        return acc + pts;
-      }, 0)),
+      points: Math.round(src.reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)),
       citations: src.reduce((acc, d) => acc + (Number(d.citations) || 0), 0)
     };
   }, [filteredDocuments]);

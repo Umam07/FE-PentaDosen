@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ChevronDown, ChevronUp, Layers } from 'lucide-react';
+import { ExternalLink, ChevronDown, ChevronUp, Layers, Check } from 'lucide-react';
 import { calculateScopusBreakdown } from '../utils/calculations';
 
 interface CrossIndexedTableProps {
@@ -25,27 +25,32 @@ export default function CrossIndexedTable({
   const normalizeTitle = (str: string) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
   return (
-    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl border border-hairline-light dark:border-hairline-dark overflow-hidden shadow-2xs">
-      
+    <>
       {/* ── 1. Desktop / Tablet Table View (md and above) ── */}
       <div className="hidden md:block w-full overflow-x-auto">
         <table className="min-w-full divide-y divide-hairline-light dark:divide-hairline-dark text-xs">
-          <thead className="bg-surface-light-raised dark:bg-surface-dark-elevated border-b border-hairline-light dark:border-hairline-dark">
+          <thead className="bg-surface-light-raised/70 dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
             <tr>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
-                Informasi Publikasi
+              <th className="px-6 py-4 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
+                Judul Publikasi
               </th>
-              <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
-                Skema Deduplikasi
+              <th className="px-6 py-4 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
+                <div className="flex flex-col items-start">
+                  <span>Kategori</span>
+                  <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Skema Deduplikasi</span>
+                </div>
               </th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
                 <div className="flex flex-col items-start">
                   <span>Tahun</span>
                   <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Sitasi</span>
                 </div>
               </th>
-              <th className="px-6 py-3.5 text-right text-xs font-semibold text-body dark:text-on-dark-soft">
-                Poin KPI (Scopus)
+              <th className="px-6 py-4 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
+                Status
+              </th>
+              <th className="px-6 py-4 text-right text-xs font-semibold text-body dark:text-on-dark-soft">
+                Poin KPI
               </th>
             </tr>
           </thead>
@@ -62,85 +67,81 @@ export default function CrossIndexedTable({
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.02 }}
-                    className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors group"
+                    className="hover:bg-surface-light-raised/60 dark:hover:bg-surface-dark-elevated/30 transition-colors group"
                   >
-                    {/* Informasi Publikasi (Clickable Cell) */}
-                    <td
-                      className="px-6 py-4 cursor-pointer group/cell text-left align-top"
-                      onClick={() => window.open(linkUrl, '_blank', 'noopener,noreferrer')}
-                      title="Buka tautan publikasi"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark flex-shrink-0 group-hover/cell:text-ink-heading dark:group-hover/cell:text-on-dark group-hover/cell:border-ink-heading/30 dark:group-hover/cell:border-on-dark/30 transition-colors">
-                          <Layers className="w-4 h-4" />
+                    {/* 1. Judul Publikasi */}
+                    <td className="px-6 py-4 align-top">
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark flex-shrink-0 mt-0.5">
+                          <Layers className="w-4 h-4 text-ink dark:text-on-dark" />
                         </div>
                         <div className="min-w-0 max-w-xs sm:max-w-sm lg:max-w-md">
-                          <div className="flex items-start gap-1.5">
-                            <span
-                              className="font-bold text-ink-heading dark:text-on-dark group-hover/cell:underline transition-colors line-clamp-2 block"
-                            >
-                              {doc.title}
-                            </span>
-                            <ExternalLink className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted group-hover/cell:text-ink-heading dark:group-hover/cell:text-on-dark shrink-0 opacity-0 group-hover/cell:opacity-100 transition-opacity mt-0.5" />
-                          </div>
-
-                          <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-muted dark:text-on-dark-muted">
-                            {doc.source_name || doc.journal ? (
-                              <span className="italic truncate max-w-[240px]">
-                                {doc.source_name || doc.journal}
-                              </span>
-                            ) : null}
-                            {bd.totalAuthors > 0 && (
-                              <>
-                                <span>•</span>
-                                <span>{bd.totalAuthors} Penulis ({bd.role})</span>
-                              </>
-                            )}
-                          </div>
+                          <a
+                            href={linkUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-bold text-ink-heading dark:text-on-dark hover:text-accent dark:hover:text-accent-on-dark transition-colors line-clamp-2 inline-flex items-center gap-1.5 group/link"
+                            title={doc.title}
+                          >
+                            <span>{doc.title}</span>
+                            <ExternalLink className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted group-hover/link:text-accent dark:group-hover/link:text-accent-on-dark shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </a>
+                          <p className="text-[11px] text-muted dark:text-on-dark-muted mt-0.5 italic truncate max-w-[280px]">
+                            {doc.source_name || doc.journal || 'Scopus & Scholar'}
+                          </p>
                         </div>
                       </div>
                     </td>
 
-                    {/* Skema Deduplikasi */}
-                    <td className="hidden lg:table-cell px-6 py-4 text-left align-top">
+                    {/* 2. Kategori & Deduplikasi */}
+                    <td className="px-6 py-4 align-top">
                       <div className="flex flex-col items-start gap-1.5">
-                        <div className="flex items-center gap-1.5">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark font-semibold text-[10px] border border-success-border dark:border-success/30">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="px-2 py-0.5 bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark text-[10px] font-semibold rounded-md border border-success-border dark:border-success/30">
                             Scopus &amp; Scholar
                           </span>
                           {bd.q && bd.q !== 'None' && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold font-mono text-[10px] border border-hairline-light dark:border-hairline-dark">
+                            <span className="px-2 py-0.5 bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark text-[10px] font-mono font-bold rounded-md border border-hairline-light dark:border-hairline-dark">
                               {bd.q}
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-muted dark:text-on-dark-muted">
-                          Poin Scopus digunakan otomatis
-                        </p>
+                        <span className="text-xs text-body dark:text-on-dark-soft font-medium">
+                          {bd.role} {bd.totalAuthors > 0 && `(${bd.totalAuthors} Penulis)`}
+                        </span>
                       </div>
                     </td>
 
-                    {/* Tahun & Sitasi (Atas & Bawah) */}
-                    <td className="px-6 py-4 text-left align-top">
-                      <div className="flex flex-col items-start gap-1.5">
+                    {/* 3. Tahun & Sitasi */}
+                    <td className="px-6 py-4 align-top">
+                      <div className="flex flex-col items-start gap-1">
                         <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark">
                           {doc.year || '—'}
                         </span>
-                        <p className="text-xs text-muted dark:text-on-dark-muted font-mono tabular-nums">
+                        <span className="text-xs text-muted dark:text-on-dark-muted font-mono tabular-nums">
                           {bd.citations} Sitasi
-                        </p>
+                        </span>
                       </div>
                     </td>
 
-                    {/* Poin KPI */}
-                    <td className="px-6 py-4 text-right align-top">
-                      <div className="flex flex-col items-end gap-1.5 text-right">
-                        <span className="block text-xs font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">
+                    {/* 4. Status */}
+                    <td className="px-6 py-4 align-top">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border border-success-border dark:border-success/30 whitespace-nowrap">
+                        <Check className="w-3.5 h-3.5 text-success-dark dark:text-success-on-dark shrink-0" />
+                        Approved (Scopus Priority)
+                      </span>
+                    </td>
+
+                    {/* 5. Poin KPI & Detail */}
+                    <td className="px-6 py-4 align-top text-right">
+                      <div className="flex flex-col items-end gap-1.5">
+                        <span className="font-mono font-bold text-ink-heading dark:text-on-dark text-xs tabular-nums">
                           +{Math.round(bd.totalPoints)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span>
                         </span>
                         <button
                           onClick={() => toggleRow(doc.id || idx)}
-                          className="flex items-center justify-end gap-1 ml-auto text-xs font-semibold text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark transition-colors cursor-pointer"
+                          className="flex items-center justify-end gap-1 ml-auto text-[11px] font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
+                          title={isExpanded ? 'Tutup Rincian' : 'Lihat Rincian Poin Scopus'}
                         >
                           <span>{isExpanded ? 'Tutup' : 'Rincian'}</span>
                           {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -153,7 +154,7 @@ export default function CrossIndexedTable({
                   <AnimatePresence>
                     {isExpanded && (
                       <tr>
-                        <td colSpan={4} className="px-6 py-4 bg-surface-light-raised/60 dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
+                        <td colSpan={5} className="px-6 py-4 bg-surface-light-raised/60 dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
@@ -208,21 +209,19 @@ export default function CrossIndexedTable({
           return (
             <div key={doc.id || idx} className="p-4 space-y-3 bg-surface-light dark:bg-surface-dark">
               
-              {/* Header: Title & External Link */}
+              {/* Header: Title, Icon & Detail Trigger */}
               <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                <div 
+                  className="flex items-start gap-2.5 flex-1 min-w-0 cursor-pointer"
+                  onClick={() => toggleRow(doc.id || idx)}
+                >
                   <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-lg text-muted dark:text-on-dark-muted shrink-0 mt-0.5 border border-hairline-light dark:border-hairline-dark">
-                    <Layers className="w-4 h-4" />
+                    <Layers className="w-4 h-4 text-ink dark:text-on-dark" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <a
-                      href={linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-bold text-ink-heading dark:text-on-dark line-clamp-2 leading-snug hover:underline"
-                    >
+                    <p className="text-xs font-bold text-ink-heading dark:text-on-dark line-clamp-2 leading-snug">
                       {doc.title}
-                    </a>
+                    </p>
                     {(doc.source_name || doc.journal) && (
                       <p className="text-[11px] text-muted dark:text-on-dark-muted italic mt-0.5 truncate">
                         {doc.source_name || doc.journal}
@@ -231,15 +230,13 @@ export default function CrossIndexedTable({
                   </div>
                 </div>
 
-                <a
-                  href={linkUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => toggleRow(doc.id || idx)}
                   className="p-1.5 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted shrink-0 hover:bg-surface-light dark:hover:bg-surface-dark border border-hairline-light dark:border-hairline-dark cursor-pointer"
-                  title="Buka Tautan"
+                  title="Lihat Rincian"
                 >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                  {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                </button>
               </div>
 
               {/* Chips / Badges Row */}
@@ -262,22 +259,26 @@ export default function CrossIndexedTable({
                 </span>
               </div>
 
-              {/* Bottom Row: Score & Detail Toggle */}
+              {/* Bottom Row: Status, File Link & Score */}
               <div className="flex items-center justify-between pt-1">
-                <div className="text-xs">
-                  <span className="text-muted dark:text-on-dark-muted">Poin Scopus: </span>
-                  <strong className="text-ink-heading dark:text-on-dark font-bold font-mono tabular-nums">
-                    +{Math.round(bd.totalPoints)} Pts
-                  </strong>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-medium text-xs border bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark border-success-border dark:border-success/30">
+                    <Check className="w-3 h-3" /> Approved
+                  </span>
+
+                  <a
+                    href={linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-body dark:text-on-dark-soft text-xs font-semibold border border-hairline-light dark:border-hairline-dark hover:bg-surface-light dark:hover:bg-surface-dark cursor-pointer"
+                  >
+                    <Layers className="w-3 h-3 text-ink dark:text-on-dark" /> Publikasi
+                  </a>
                 </div>
 
-                <button
-                  onClick={() => toggleRow(doc.id || idx)}
-                  className="flex items-center gap-1 text-xs font-semibold text-muted dark:text-on-dark-muted hover:text-ink-heading dark:hover:text-on-dark py-1 px-2 rounded-lg hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated cursor-pointer"
-                >
-                  <span>{isExpanded ? 'Tutup Rincian' : 'Lihat Rincian'}</span>
-                  {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                </button>
+                <div className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">
+                  +{Math.round(bd.totalPoints)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span>
+                </div>
               </div>
 
               {/* Mobile Expandable Breakdown Box */}
@@ -313,7 +314,7 @@ export default function CrossIndexedTable({
       </div>
 
       {children}
-    </div>
+    </>
   );
 }
 

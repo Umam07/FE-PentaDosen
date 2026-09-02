@@ -74,7 +74,11 @@ export const useLecturerProfile = () => {
     // Hitung poin dokumen internal yang berstatus Approved dan memiliki file_url atau merupakan penelitian
     const internalOverall = Math.round(
       documents
-        .filter(d => d.status === 'Approved' && ((d.file_url && d.file_url !== '') || (d as any).is_penelitian))
+        .filter(d => {
+          if (d.status !== 'Approved') return false;
+          if ((d as any).source === 'scopus' || (d as any).source === 'scholar' || d.category === 'Google Scholar') return false;
+          return ((d.file_url && d.file_url !== '' && d.file_url !== '-') || (d as any).is_penelitian);
+        })
         .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)
     );
 
@@ -111,7 +115,9 @@ export const useLecturerProfile = () => {
     const internal3Years = Math.round(
       documents
         .filter(d => {
-          if (d.status !== 'Approved' || (!d.file_url && !(d as any).is_penelitian)) return false;
+          if (d.status !== 'Approved') return false;
+          if ((d as any).source === 'scopus' || (d as any).source === 'scholar' || d.category === 'Google Scholar') return false;
+          if (!((d.file_url && d.file_url !== '' && d.file_url !== '-') || (d as any).is_penelitian)) return false;
           const docYear = d.published_at ? new Date(d.published_at).getFullYear() : (d as any).tahun_pelaksanaan;
           const yr = Number(docYear);
           return yr >= currentYear - 2 && yr <= currentYear;
@@ -146,7 +152,9 @@ export const useLecturerProfile = () => {
     const internalThisYear = Math.round(
       documents
         .filter(d => {
-          if (d.status !== 'Approved' || (!d.file_url && !(d as any).is_penelitian)) return false;
+          if (d.status !== 'Approved') return false;
+          if ((d as any).source === 'scopus' || (d as any).source === 'scholar' || d.category === 'Google Scholar') return false;
+          if (!((d.file_url && d.file_url !== '' && d.file_url !== '-') || (d as any).is_penelitian)) return false;
           const docYear = d.published_at ? new Date(d.published_at).getFullYear() : (d as any).tahun_pelaksanaan;
           return Number(docYear) === currentYear;
         })
@@ -187,7 +195,11 @@ export const useLecturerProfile = () => {
 
   // Hanya ambil dokumen internal yang disetujui
   const internalDocumentsOnly = useMemo<InternalDocument[]>(() => {
-    return documents.filter(d => d.status === 'Approved' && ((d.file_url && d.file_url !== '') || (d as any).is_penelitian));
+    return documents.filter(d => {
+      if (d.status !== 'Approved') return false;
+      if ((d as any).source === 'scopus' || (d as any).source === 'scholar' || d.category === 'Google Scholar') return false;
+      return (d.file_url && d.file_url !== '' && d.file_url !== '-') || (d as any).is_penelitian;
+    });
   }, [documents]);
 
   // Filter dokumen berdasarkan kategori

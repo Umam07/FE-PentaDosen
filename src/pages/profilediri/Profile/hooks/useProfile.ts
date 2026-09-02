@@ -133,7 +133,11 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
 
     const internalTotal = Math.round(
       (internalDocuments || [])
-        .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '')
+        .filter((d: any) => {
+          if (d.status !== 'Approved') return false;
+          if (d.source === 'scopus' || d.source === 'scholar' || d.category === 'Google Scholar') return false;
+          return (d.file_url && d.file_url !== '' && d.file_url !== '-') || d.is_penelitian;
+        })
         .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
     );
 
@@ -170,7 +174,9 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     const internal3Years = Math.round(
       (internalDocuments || [])
         .filter((d: any) => {
-          if (d.status !== 'Approved' || !d.file_url || d.file_url === '') return false;
+          if (d.status !== 'Approved') return false;
+          if (d.source === 'scopus' || d.source === 'scholar' || d.category === 'Google Scholar') return false;
+          if (!((d.file_url && d.file_url !== '' && d.file_url !== '-') || d.is_penelitian)) return false;
           const yr = d.published_at ? new Date(d.published_at).getFullYear() : (d.tahun_pelaksanaan || d.tahun);
           return Number(yr) >= currentYear - 2 && Number(yr) <= currentYear;
         })
@@ -203,7 +209,13 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
 
     const internalThisYear = Math.round(
       (internalDocuments || [])
-        .filter((d: any) => d.status === 'Approved' && d.file_url && d.file_url !== '' && new Date(d.published_at).getFullYear() === currentYear)
+        .filter((d: any) => {
+          if (d.status !== 'Approved') return false;
+          if (d.source === 'scopus' || d.source === 'scholar' || d.category === 'Google Scholar') return false;
+          if (!((d.file_url && d.file_url !== '' && d.file_url !== '-') || d.is_penelitian)) return false;
+          const yr = d.published_at ? new Date(d.published_at).getFullYear() : (d.tahun_pelaksanaan || d.tahun);
+          return Number(yr) === currentYear;
+        })
         .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
     );
 

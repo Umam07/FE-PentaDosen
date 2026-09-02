@@ -34,9 +34,12 @@ export function useLecturerProfile(id: string | undefined) {
     loadProfileAndDocs();
   }, [loadProfileAndDocs]);
 
-  // Memfilter dokumen internal yang memiliki file URL saja
+  // Memfilter dokumen internal yang valid
   const internalDocumentsOnly = useMemo(() => {
-    return internalDocuments.filter(doc => doc.file_url && doc.file_url !== '');
+    return internalDocuments.filter(doc => {
+      if (doc.source === 'scopus' || doc.source === 'scholar' || doc.category === 'Google Scholar') return false;
+      return (doc.file_url && doc.file_url !== '' && doc.file_url !== '-') || doc.is_penelitian;
+    });
   }, [internalDocuments]);
 
   // Mengambil dokumen terfilter berdasarkan kategori filter terpilih

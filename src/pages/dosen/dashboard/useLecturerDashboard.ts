@@ -101,7 +101,10 @@ export default function useLecturerDashboard(user: any) {
   }, [user?.id]);
 
   const internalDocumentsOnly = useMemo(() => {
-    return internalDocuments.filter(doc => doc.file_url && doc.file_url !== '');
+    return internalDocuments.filter(doc => {
+      if (doc.source === 'scopus' || doc.source === 'scholar' || doc.category === 'Google Scholar') return false;
+      return (doc.file_url && doc.file_url !== '' && doc.file_url !== '-') || doc.is_penelitian;
+    });
   }, [internalDocuments]);
 
   const approvedDocs = useMemo(() => {
