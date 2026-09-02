@@ -24,48 +24,22 @@ export default function ProfileInsightsSkeleton() {
             </div>
 
             {/* Divider */}
-            <div className="my-6 h-px w-full bg-hairline-light dark:bg-hairline-dark" />
+            <div className="my-5 h-px w-full bg-hairline-light dark:bg-hairline-dark" />
 
-            {/* KPI Stats Row */}
-            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+            {/* KPI Stats Row (Flat Divided) */}
+            <div className="grid grid-cols-3 divide-x divide-hairline-light dark:divide-hairline-dark">
               {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="flex min-h-[80px] items-center gap-3.5 rounded-2xl border border-hairline-light bg-surface-light-raised p-4 dark:border-hairline-dark dark:bg-surface-dark-elevated"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-surface-light dark:bg-surface-dark shrink-0 animate-pulse" />
-                  <div className="space-y-2 flex-1">
-                    <div className="h-3 w-20 bg-surface-light dark:bg-surface-dark rounded animate-pulse" />
-                    <div className="h-5 w-14 bg-surface-light dark:bg-surface-dark rounded animate-pulse" />
-                  </div>
+                <div key={i} className="px-2 sm:px-3 first:pl-0 last:pr-0 space-y-2">
+                  <div className="h-7 w-20 bg-surface-light-raised dark:bg-surface-dark-elevated rounded animate-pulse" />
+                  <div className="h-3 w-28 bg-surface-light-raised dark:bg-surface-dark-elevated rounded animate-pulse" />
                 </div>
               ))}
             </div>
 
-            {/* Divider */}
-            <div className="my-6 h-px w-full bg-hairline-light dark:bg-hairline-dark" />
-
-            {/* Scholar & Scopus Cards */}
-            <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
-              {[1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl border border-hairline-light bg-surface-light-raised p-4 dark:border-hairline-dark dark:bg-surface-dark-elevated space-y-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 rounded-xl bg-surface-light dark:bg-surface-dark animate-pulse" />
-                      <div className="h-4 w-28 bg-surface-light dark:bg-surface-dark rounded animate-pulse" />
-                    </div>
-                    <div className="h-5 w-20 bg-surface-light dark:bg-surface-dark rounded-pill animate-pulse" />
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[1, 2, 3].map((j) => (
-                      <div key={j} className="h-12 bg-surface-light dark:bg-surface-dark rounded-xl animate-pulse" />
-                    ))}
-                  </div>
-                </div>
-              ))}
+            {/* Contribution Progress Bar */}
+            <div className="mt-5 space-y-2">
+              <div className="h-4 w-48 bg-surface-light-raised dark:bg-surface-dark-elevated rounded animate-pulse" />
+              <div className="h-2 w-full rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated animate-pulse" />
             </div>
           </div>
 

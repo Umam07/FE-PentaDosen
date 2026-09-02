@@ -42,15 +42,23 @@ export const useLecturerProfile = () => {
     fetchProfileAndDocs();
   }, [id, fetchProfileAndDocs]);
 
-  // Kalkulasi total poin KPI (overall & tahun ini)
-  const stats = useMemo<StatItem[] | null>(() => {
-    if (!profile || !profile.user) return null;
+  // Kalkulasi total poin KPI (overall, 3 tahun, tahun ini, dan kontribusi)
+  const pointMetrics = useMemo(() => {
+    if (!profile || !profile.user) {
+      return {
+        grandTotal: 0,
+        grandTotal3Years: 0,
+        grandTotalThisYear: 0,
+        internalPoints: 0,
+        apiPointsTotal: 0,
+        stats: null,
+      };
+    }
 
     const { publications = [], scopusPublications = [] } = profile;
     const currentYear = 2026; // Tahun KPI aktif saat ini
     
     // --- 1. OVERALL CALCULATION ---
-    // Identifikasi judul publikasi yang saling beririsan (cross-indexed)
     const crossTitles = new Set(
       publications
         .filter(sd => scopusPublications.some(s => normalizeTitle(s.title) === normalizeTitle(sd.title)))
@@ -71,7 +79,6 @@ export const useLecturerProfile = () => {
 
     const apiOverall = Math.round(extCross + extScopus + extScholar);
 
-    // Hitung poin dokumen internal yang berstatus Approved dan memiliki file_url atau merupakan penelitian
     const internalOverall = Math.round(
       documents
         .filter(d => {
@@ -161,26 +168,39 @@ export const useLecturerProfile = () => {
         .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)
     );
 
-    return [
+    const grandTotal = apiOverall + internalOverall;
+    const grandTotal3Years = api3Years + internal3Years;
+    const grandTotalThisYear = apiThisYear + internalThisYear;
+
+    const stats: StatItem[] = [
       { 
         label: 'Total KPI Overall', 
-        val: (apiOverall + internalOverall).toLocaleString(), 
+        val: grandTotal.toLocaleString(), 
         icon: Award, 
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
       },
       { 
         label: 'Total KPI 3 Tahun',
-        val: (api3Years + internal3Years).toLocaleString(),
+        val: grandTotal3Years.toLocaleString(),
         icon: TrendingUp, 
         color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
       },
       { 
         label: 'Total KPI Tahun Ini',
-        val: (apiThisYear + internalThisYear).toLocaleString(),
+        val: grandTotalThisYear.toLocaleString(),
         icon: Globe, 
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
       }
     ];
+
+    return {
+      grandTotal,
+      grandTotal3Years,
+      grandTotalThisYear,
+      internalPoints: internalOverall,
+      apiPointsTotal: apiOverall,
+      stats,
+    };
   }, [profile, documents]);
 
   // Kalkulasi data grafik Google Scholar
@@ -224,7 +244,12 @@ export const useLecturerProfile = () => {
     setCurrentPage,
     itemsPerPage,
     setItemsPerPage,
-    stats,
+    stats: pointMetrics.stats,
+    grandTotal: pointMetrics.grandTotal,
+    grandTotal3Years: pointMetrics.grandTotal3Years,
+    grandTotalThisYear: pointMetrics.grandTotalThisYear,
+    internalPoints: pointMetrics.internalPoints,
+    apiPointsTotal: pointMetrics.apiPointsTotal,
     scholarChartData,
     scopusChartData,
     internalDocumentsOnly,

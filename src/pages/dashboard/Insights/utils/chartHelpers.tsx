@@ -1,7 +1,24 @@
 import React from 'react';
 import { Sector } from 'recharts';
 
-export const renderActiveShape = (props: any) => {
+export const renderPieShape = (props: any, activeIndex: number) => {
+  const isCurrentActive = props.index === activeIndex;
+
+  if (!isCurrentActive) {
+    return (
+      <Sector
+        cx={props.cx}
+        cy={props.cy}
+        innerRadius={props.innerRadius}
+        outerRadius={props.outerRadius}
+        startAngle={props.startAngle}
+        endAngle={props.endAngle}
+        fill={props.fill}
+        cornerRadius={6}
+      />
+    );
+  }
+
   const RADIAN = Math.PI / 180;
   const {
     cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
@@ -17,14 +34,22 @@ export const renderActiveShape = (props: any) => {
   const ey = my;
   const textAnchor = cos >= 0 ? 'start' : 'end';
 
+  const percentageStr = percent !== undefined && !isNaN(percent)
+    ? `${(percent * 100).toFixed(1)}%`
+    : '0.0%';
+  const valueStr = value !== undefined && !isNaN(value)
+    ? `${(value || 0).toLocaleString()} Poin`
+    : '0 Poin';
+  const nameStr = payload?.name || '';
+
   return (
     <g>
       {/* Center Display Info */}
       <text x={cx} y={cy - 12} textAnchor="middle" fill="#8a8478" className="text-[11px] font-bold tracking-wider uppercase">
-        {payload.name}
+        {nameStr}
       </text>
       <text x={cx} y={cy + 18} textAnchor="middle" fill="#191918" className="text-3xl dark:fill-[#ede8e1] font-mono font-black tracking-tight">
-        {`${(percent * 100).toFixed(1)}%`}
+        {percentageStr}
       </text>
 
       {/* Main Active Sector */}
@@ -36,6 +61,7 @@ export const renderActiveShape = (props: any) => {
         startAngle={startAngle}
         endAngle={endAngle}
         fill={fill}
+        cornerRadius={6}
       />
 
       {/* Outer Accent Ring */}
@@ -48,6 +74,7 @@ export const renderActiveShape = (props: any) => {
         outerRadius={outerRadius + 14}
         fill={fill}
         opacity={0.35}
+        cornerRadius={3}
       />
 
       {/* Pointer Line & Value Callout */}
@@ -60,8 +87,13 @@ export const renderActiveShape = (props: any) => {
         fill="#2c2b29" 
         className="text-xs font-mono font-bold dark:fill-[#ede8e1]"
       >
-        {`${value.toLocaleString()} Poin`}
+        {valueStr}
       </text>
     </g>
   );
 };
+
+export const renderActiveShape = (props: any) => {
+  return renderPieShape(props, props.index);
+};
+

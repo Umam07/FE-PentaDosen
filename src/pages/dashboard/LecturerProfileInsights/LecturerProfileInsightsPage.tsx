@@ -35,6 +35,11 @@ export default function LecturerProfileInsights() {
     itemsPerPage,
     setItemsPerPage,
     stats,
+    grandTotal,
+    grandTotal3Years,
+    grandTotalThisYear,
+    internalPoints,
+    apiPointsTotal,
     scholarChartData,
     scopusChartData,
     internalDocumentsOnly,
@@ -82,7 +87,15 @@ export default function LecturerProfileInsights() {
         </div>
 
         {/* Profile Hero Header & KPI Stats */}
-        <ProfileHeroHeader profile={profile} stats={stats} loading={loading} />
+        <ProfileHeroHeader 
+          profile={profile} 
+          grandTotal={grandTotal}
+          grandTotal3Years={grandTotal3Years}
+          grandTotalThisYear={grandTotalThisYear}
+          internalPoints={internalPoints}
+          apiPointsTotal={apiPointsTotal}
+          loading={loading} 
+        />
 
         {/* View Switcher Tabs */}
         <ViewSwitcher 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { BookOpen, GraduationCap, Award, CheckCircle2 } from 'lucide-react';
+import { BookOpen, GraduationCap, Award } from 'lucide-react';
 import { DashboardStats } from '../types';
 
 interface ResearchDistributionCardProps {
@@ -12,12 +12,11 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
   const scopus = stats?.total_scopus || 142;
   const scholar = stats?.total_scholar || 385;
   const research = stats?.total_research || 210;
-  const approved = stats?.approved_docs || Math.round((scopus + scholar + research) * 0.88);
   const total = scopus + scholar + research;
 
   const channels = [
     {
-      name: 'Terindeks Scopus',
+      name: 'Scopus',
       count: scopus,
       percentage: total > 0 ? ((scopus / total) * 100).toFixed(1) : '0',
       icon: Award,
@@ -52,16 +51,11 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-hairline-light dark:border-hairline-dark">
         <div>
           <h2 className="text-xl font-bold text-ink-heading dark:text-on-dark tracking-tight">
-            Distribusi Channel Publikasi & Riset
+            Sebaran Publikasi & Riset
           </h2>
           <p className="text-xs text-muted dark:text-on-dark-muted mt-1">
-            Komposisi publikasi ilmiah terverifikasi berdasarkan database pengindeks.
+            Ringkasan karya ilmiah dan riset dosen berdasarkan sumber pengindeks.
           </p>
-        </div>
-
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-light-raised dark:bg-surface-dark-elevated border border-hairline-light dark:border-hairline-dark text-xs font-mono font-semibold text-body dark:text-on-dark">
-          <CheckCircle2 className="w-4 h-4 text-success dark:text-success-on-dark" />
-          <span>{approved.toLocaleString()} Dokumen Disetujui</span>
         </div>
       </div>
 
@@ -79,7 +73,6 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
                 </div>
                 <span className="text-xs font-bold text-ink-heading dark:text-on-dark">{ch.name}</span>
               </div>
-              <span className="text-xs font-mono font-bold text-ink-heading dark:text-on-dark">{ch.percentage}%</span>
             </div>
 
             {loading ? (
