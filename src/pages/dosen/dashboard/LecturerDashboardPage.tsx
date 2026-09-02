@@ -102,7 +102,7 @@ export default function LecturerDashboard({ user }: { user: any }) {
               {activeUser?.name || 'Dosen'}
             </h2>
 
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted dark:text-on-dark-muted">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted dark:text-on-dark-muted">
               {programStudi ? (
                 <div className="flex items-center gap-1.5 truncate">
                   <Building2 className="h-4 w-4 shrink-0 text-muted dark:text-on-dark-muted" />
@@ -135,6 +135,38 @@ export default function LecturerDashboard({ user }: { user: any }) {
                   <span>Penta ID: {activeUser.penta_id}</span>
                 </div>
               )}
+
+              {/* Scopus Profile Link */}
+              {activeUser?.scopus_id && (
+                <a
+                  href={`https://www.scopus.com/authid/detail.uri?authorId=${activeUser.scopus_id.trim()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-ink-heading dark:hover:text-on-dark transition-colors group"
+                  title="Buka Profil Scopus"
+                  aria-label="Buka Profil Scopus"
+                >
+                  <span className="h-2 w-2 rounded-full bg-chart-scopus dark:bg-chart-scopus-dark shrink-0" />
+                  <span>Scopus</span>
+                  <ExternalLink className="h-3 w-3 text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark transition-colors" />
+                </a>
+              )}
+
+              {/* Scholar Profile Link */}
+              {activeUser?.scholar_id && (
+                <a
+                  href={`https://scholar.google.com/citations?user=${activeUser.scholar_id.trim()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-ink-heading dark:hover:text-on-dark transition-colors group"
+                  title="Buka Profil Google Scholar"
+                  aria-label="Buka Profil Google Scholar"
+                >
+                  <span className="h-2 w-2 rounded-full bg-chart-scholar dark:bg-chart-scholar-dark shrink-0" />
+                  <span>Scholar</span>
+                  <ExternalLink className="h-3 w-3 text-muted group-hover:text-ink-heading dark:text-on-dark-muted dark:group-hover:text-on-dark transition-colors" />
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -156,90 +188,33 @@ export default function LecturerDashboard({ user }: { user: any }) {
           ))}
         </div>
 
-        {/* ─── Inline Scholar & Scopus Indicators ─── */}
-        <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
-          {/* Google Scholar */}
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-chart-scholar dark:bg-chart-scholar-dark" />
-            <span className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate">Scholar</span>
-            {scholarData ? (
-              <span className="text-xs text-muted dark:text-on-dark-muted font-mono tabular-nums truncate">
-                {scholarData.document_count ?? profileData?.publications?.length ?? 0} dok
-                <span className="mx-1 text-hairline-light dark:text-hairline-dark">·</span>
-                {scholarData.total_citations ?? 0} sitasi
-                <span className="mx-1 text-hairline-light dark:text-hairline-dark">·</span>
-                h-{scholarData.h_index ?? 0}
+        {/* ─── Kontribusi Poin (Internal vs Eksternal) ─── */}
+        <div className="mt-5 space-y-2">
+          {/* Legend */}
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+              <span className="font-semibold text-ink-heading dark:text-on-dark">
+                Kontribusi Poin:
               </span>
-            ) : (
-              <span className="text-[11px] text-muted-soft dark:text-on-dark-muted italic">belum terhubung</span>
-            )}
-            {activeUser?.scholar_id && (
-              <a
-                href={`https://scholar.google.com/citations?user=${activeUser.scholar_id.trim()}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 text-muted hover:text-chart-scholar dark:text-on-dark-muted dark:hover:text-chart-scholar-dark transition-colors"
-                title="Buka Profil Google Scholar"
-                aria-label="Buka Profil Google Scholar"
-              >
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            )}
-          </div>
-
-          {/* Separator dot (desktop only) */}
-          <span className="hidden sm:block h-3.5 w-px bg-hairline-light dark:bg-hairline-dark shrink-0" />
-
-          {/* Scopus */}
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-chart-scopus dark:bg-chart-scopus-dark" />
-            <span className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate">Scopus</span>
-            {scopusData ? (
-              <span className="text-xs text-muted dark:text-on-dark-muted font-mono tabular-nums truncate">
-                {scopusData.document_count ?? 0} dok
-                <span className="mx-1 text-hairline-light dark:text-hairline-dark">·</span>
-                {scopusData.total_citations ?? 0} sitasi
-                <span className="mx-1 text-hairline-light dark:text-hairline-dark">·</span>
-                h-{scopusData.h_index ?? 0}
-              </span>
-            ) : (
-              <span className="text-[11px] text-muted-soft dark:text-on-dark-muted italic">belum terhubung</span>
-            )}
-            {activeUser?.scopus_id && (
-              <a
-                href={`https://www.scopus.com/authid/detail.uri?authorId=${activeUser.scopus_id.trim()}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 text-muted hover:text-chart-scopus dark:text-on-dark-muted dark:hover:text-chart-scopus-dark transition-colors"
-                title="Buka Profil Scopus"
-                aria-label="Buka Profil Scopus"
-              >
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            )}
-          </div>
-        </div>
-
-        {/* ─── Slim Contribution Bar ─── */}
-        <div className="mt-4 space-y-1.5">
-          <div className="flex items-center justify-between text-[11px]">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-chart-scopus dark:bg-chart-scopus-dark shrink-0" />
+              
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-chart-scopus dark:bg-chart-scopus-dark shrink-0" />
                 <span className="text-muted dark:text-on-dark-muted">
-                  Internal <strong className="font-bold font-mono text-body dark:text-on-dark-soft tabular-nums">{internalPoints.toLocaleString()}</strong> <span className="text-muted-soft dark:text-on-dark-muted">({internalPct.toFixed(1)}%)</span>
+                  Internal <strong className="font-bold font-mono text-xs sm:text-sm text-ink-heading dark:text-on-dark tabular-nums">{internalPoints.toLocaleString()}</strong> <span className="font-mono text-muted dark:text-on-dark-muted">({internalPct.toFixed(1)}%)</span>
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent dark:bg-accent-on-dark shrink-0" />
+
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-accent dark:bg-accent-on-dark shrink-0" />
                 <span className="text-muted dark:text-on-dark-muted">
-                  Eksternal <strong className="font-bold font-mono text-body dark:text-on-dark-soft tabular-nums">{apiPoints.total.toLocaleString()}</strong> <span className="text-muted-soft dark:text-on-dark-muted">({apiPct.toFixed(1)}%)</span>
+                  Eksternal <strong className="font-bold font-mono text-xs sm:text-sm text-ink-heading dark:text-on-dark tabular-nums">{apiPoints.total.toLocaleString()}</strong> <span className="font-mono text-muted dark:text-on-dark-muted">({apiPct.toFixed(1)}%)</span>
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="h-1.5 w-full rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden flex">
+          {/* Contribution Progress Bar (8px / h-2 sesuai token contribution-bar design.md) */}
+          <div className="h-2 w-full rounded-full bg-surface-light-raised dark:bg-surface-dark-elevated overflow-hidden flex">
             {internalPct > 0 && (
               <div
                 className="h-full bg-chart-scopus dark:bg-chart-scopus-dark transition-all duration-500"
