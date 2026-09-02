@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Info, FileText, Globe, RefreshCw, Award, 
+  FileText, Globe, RefreshCw, Award, 
   BookOpen, Building2, Mail, GraduationCap, Fingerprint, ExternalLink
 } from 'lucide-react';
 
@@ -418,14 +418,6 @@ export default function LecturerDashboard({ user }: { user: any }) {
             )}
           </div>
 
-          {/* Minimal Meta Subtext */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted dark:text-on-dark-muted">
-            <span>{approvedDocs.length} dokumen internal terverifikasi</span>
-            <div className="flex items-center gap-1">
-              <Info className="w-3 h-3 shrink-0 text-muted dark:text-on-dark-muted" />
-              <span>Sesuai pedoman SINTA</span>
-            </div>
-          </div>
         </div>
 
       </motion.div>

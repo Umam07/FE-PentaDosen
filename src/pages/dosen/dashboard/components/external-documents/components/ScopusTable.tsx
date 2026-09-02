@@ -52,19 +52,22 @@ export default function ScopusTable({
                 Informasi Publikasi
               </th>
               <th className="hidden lg:table-cell px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
-                Kategori &amp; Peran
+                <div className="flex flex-col items-start">
+                  <span>Kategori</span>
+                  <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Peran</span>
+                </div>
               </th>
-              <th className="px-6 py-3.5 text-center text-xs font-semibold text-body dark:text-on-dark-soft">
-                Tahun &amp; Sitasi
+              <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
+                <div className="flex flex-col items-start">
+                  <span>Tahun</span>
+                  <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Sitasi</span>
+                </div>
               </th>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-body dark:text-on-dark-soft">
                 Status
               </th>
               <th className="px-6 py-3.5 text-right text-xs font-semibold text-body dark:text-on-dark-soft">
                 Poin KPI
-              </th>
-              <th className="px-6 py-3.5 w-12 text-center text-xs font-semibold text-body dark:text-on-dark-soft">
-                Aksi
               </th>
             </tr>
           </thead>
@@ -85,22 +88,25 @@ export default function ScopusTable({
                     transition={{ delay: idx * 0.02 }}
                     className="hover:bg-surface-light-raised dark:hover:bg-surface-dark-elevated transition-colors group"
                   >
-                    {/* Informasi Publikasi */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark flex-shrink-0 mt-0.5">
+                    {/* Informasi Publikasi (Clickable Cell) */}
+                    <td
+                      className="px-6 py-4 cursor-pointer group/cell text-left align-top"
+                      onClick={() => window.open(linkUrl, '_blank', 'noopener,noreferrer')}
+                      title="Buka publikasi di Scopus"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-surface-light-raised dark:bg-surface-dark-elevated rounded-xl text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark flex-shrink-0 group-hover/cell:text-ink-heading dark:group-hover/cell:text-on-dark group-hover/cell:border-ink-heading/30 dark:group-hover/cell:border-on-dark/30 transition-colors">
                           <Globe className="w-4 h-4" />
                         </div>
                         <div className="min-w-0 max-w-xs sm:max-w-sm lg:max-w-md">
-                          <a
-                            href={linkUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-bold text-ink-heading dark:text-on-dark hover:underline transition-colors line-clamp-2 block"
-                            title={doc.title}
-                          >
-                            {doc.title}
-                          </a>
+                          <div className="flex items-start gap-1.5">
+                            <span
+                              className="font-bold text-ink-heading dark:text-on-dark group-hover/cell:underline transition-colors line-clamp-2 block"
+                            >
+                              {doc.title}
+                            </span>
+                            <ExternalLink className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted group-hover/cell:text-ink-heading dark:group-hover/cell:text-on-dark shrink-0 opacity-0 group-hover/cell:opacity-100 transition-opacity mt-0.5" />
+                          </div>
 
                           <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-muted dark:text-on-dark-muted">
                             {doc.source_name || doc.journal ? (
@@ -119,9 +125,10 @@ export default function ScopusTable({
                       </div>
                     </td>
 
-                    {/* Kategori & Peran */}
-                    <td className="hidden lg:table-cell px-6 py-4">
-                      <div className="space-y-1">
+                    {/* Kategori & Peran (Atas & Bawah) */}
+                    <td className="hidden lg:table-cell px-6 py-4 text-left align-top">
+                      <div className="flex flex-col items-start gap-1.5">
+                        {/* Kategori (Atas) */}
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {bd.q && bd.q !== 'None' ? (
                             <span className="px-2 py-0.5 rounded-md bg-surface-light-raised dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark font-bold font-mono text-[10px] border border-hairline-light dark:border-hairline-dark">
@@ -136,23 +143,28 @@ export default function ScopusTable({
                             {subtypeLabel}
                           </span>
                         </div>
-                        <p className="text-xs text-muted dark:text-on-dark-muted font-medium">
-                          {bd.role} {bd.totalAuthors > 1 && `(${bd.authorOrder ? `${bd.authorOrder}/` : ''}${bd.totalAuthors} Penulis)`}
-                        </p>
-                        {isAlsoScholar && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark text-[10px] font-semibold border border-success-border dark:border-success/30">
-                            ✓ Google Scholar
-                          </span>
-                        )}
+                        {/* Peran (Bawah) */}
+                        <div className="flex flex-col gap-0.5">
+                          <p className="text-xs text-body dark:text-on-dark-soft font-medium">
+                            {bd.role} {bd.totalAuthors > 1 && `(${bd.authorOrder ? `${bd.authorOrder}/` : ''}${bd.totalAuthors} Penulis)`}
+                          </p>
+                          {isAlsoScholar && (
+                            <span className="inline-flex items-center self-start px-2 py-0.5 rounded-md bg-success-soft dark:bg-success/10 text-success-dark dark:text-success-on-dark text-[10px] font-semibold border border-success-border dark:border-success/30 mt-0.5">
+                              ✓ Google Scholar
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </td>
 
-                    {/* Tahun & Sitasi */}
-                    <td className="px-6 py-4 text-center">
-                      <div className="space-y-1">
-                        <span className="inline-block px-2.5 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-body-strong dark:text-on-dark font-mono font-semibold text-xs border border-hairline-light dark:border-hairline-dark">
+                    {/* Tahun & Sitasi (Atas & Bawah) */}
+                    <td className="px-6 py-4 text-left align-top">
+                      <div className="flex flex-col items-start gap-1.5">
+                        {/* Tahun (Atas) */}
+                        <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark">
                           {doc.year || '—'}
                         </span>
+                        {/* Sitasi (Bawah) */}
                         <p className="text-xs text-muted dark:text-on-dark-muted font-mono tabular-nums">
                           {bd.citations} Sitasi
                         </p>
@@ -160,10 +172,10 @@ export default function ScopusTable({
                     </td>
 
                     {/* Status */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-left align-top">
                       {!isPublic && showCorrespondingControls ? (
                         !bd.isCorrespondingConfirmed ? (
-                          <div className="space-y-1.5">
+                          <div className="flex flex-col items-start gap-1.5">
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning-on-dark border border-warning-border dark:border-warning/30 rounded-lg text-xs font-semibold whitespace-nowrap">
                               <AlertTriangle className="w-3.5 h-3.5 text-warning shrink-0" />
                               Perlu Konfirmasi
@@ -199,9 +211,9 @@ export default function ScopusTable({
                     </td>
 
                     {/* Poin KPI */}
-                    <td className="px-6 py-4 text-right">
-                      <div className="space-y-1">
-                        <span className="text-xs font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">
+                    <td className="px-6 py-4 text-right align-top">
+                      <div className="flex flex-col items-end gap-1.5 text-right">
+                        <span className="block text-xs font-bold font-mono text-ink-heading dark:text-on-dark tabular-nums">
                           +{Math.round(bd.totalPoints)} <span className="text-[11px] font-normal text-muted dark:text-on-dark-muted">Pts</span>
                         </span>
                         <button
@@ -213,26 +225,13 @@ export default function ScopusTable({
                         </button>
                       </div>
                     </td>
-
-                    {/* Aksi */}
-                    <td className="px-6 py-4 text-center">
-                      <a
-                        href={linkUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center p-1.5 rounded-lg bg-surface-light-raised hover:bg-surface-light dark:bg-surface-dark-elevated dark:hover:bg-surface-dark text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark border border-hairline-light dark:border-hairline-dark transition-colors cursor-pointer"
-                        title="Buka publikasi di Scopus"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    </td>
                   </motion.tr>
 
                   {/* Expandable Breakdown Drawer */}
                   <AnimatePresence>
                     {isExpanded && (
                       <tr>
-                        <td colSpan={6} className="px-6 py-4 bg-surface-light-raised/60 dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
+                        <td colSpan={5} className="px-6 py-4 bg-surface-light-raised/60 dark:bg-surface-dark-elevated/40 border-b border-hairline-light dark:border-hairline-dark">
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}

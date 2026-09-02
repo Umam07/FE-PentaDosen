@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  TrendingUp, Calendar, Search, Lock, AlertTriangle, Info, ChevronDown, X
+  TrendingUp, Calendar, Search, Lock, ChevronDown, X
 } from 'lucide-react';
 
 const ProfileTrendChart = lazy(() =>
@@ -252,31 +252,7 @@ export default function ExternalDocumentsView({
                         }).length;
 
                         return (
-                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2.5 relative z-20">
-                            {/* Alert Banner Ramping Terintegrasi */}
-                            {unconfirmedScopusCount > 0 && (
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 bg-warning-soft dark:bg-warning/10 border border-warning-border dark:border-warning/30 rounded-xl text-xs">
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <div className="w-5 h-5 rounded-md bg-warning-soft dark:bg-warning/20 flex items-center justify-center shrink-0">
-                                    <AlertTriangle className="w-3.5 h-3.5 text-warning dark:text-warning-on-dark" />
-                                  </div>
-                                  <p className="text-xs font-semibold text-ink-heading dark:text-on-dark truncate">
-                                    <span className="font-bold text-warning dark:text-warning-on-dark">{unconfirmedScopusCount} Publikasi</span> butuh konfirmasi korespondensi
-                                  </p>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setScopusFilter(scopusFilter === 'unconfirmed' ? 'all' : 'unconfirmed');
-                                    setCurrentPage(1);
-                                  }}
-                                  className="self-start sm:self-auto px-2.5 py-0.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer text-center shrink-0 bg-warning hover:bg-warning/90 dark:bg-warning-on-dark dark:hover:bg-warning-on-dark/90 text-white dark:text-ink shadow-2xs"
-                                >
-                                  {scopusFilter === 'unconfirmed' ? 'Tampilkan Semua' : 'Filter Perlu Update'}
-                                </button>
-                              </div>
-                            )}
-
+                          <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark relative z-20">
                             {/* Right-Aligned Consolidated Filter Toolbar: Search -> Status -> Tipe -> Tahun */}
                             <div className="flex flex-wrap items-center justify-end gap-2 w-full">
                               {/* 1. Search Box (Mepet & Ramping) */}
@@ -528,18 +504,9 @@ export default function ExternalDocumentsView({
                     {/* Document List Table */}
                     <div className="space-y-3.5">
                       {/* Unified Compact Toolbar for Google Scholar */}
-                      <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2">
-                        <div className="flex items-center gap-2 px-1 text-xs">
-                          <div className="w-4 h-4 rounded-md bg-accent text-on-ink flex items-center justify-center shrink-0">
-                            <Info className="w-2.5 h-2.5" />
-                          </div>
-                          <p className="text-xs text-body dark:text-on-dark-soft">
-                            <span className="font-bold text-accent dark:text-accent-on-dark">Skema Google Scholar:</span> Dihitung dari dokumen, jumlah sitasi, &amp; bonus tersitasi.
-                          </p>
-                        </div>
-
+                      <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark">
                         {/* Search Input Box + Year Filter for Scholar */}
-                        <div className="flex flex-wrap items-center justify-end gap-2 pt-1.5 border-t border-hairline-light/60 dark:border-hairline-dark/60">
+                        <div className="flex flex-wrap items-center justify-end gap-2 w-full">
                           {/* Search Box */}
                           <div className="relative w-full sm:w-48 md:w-56 shrink-0">
                             <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -669,18 +636,9 @@ export default function ExternalDocumentsView({
                 </div>
 
                 {/* Unified Compact Toolbar for Cross-Indexed */}
-                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark space-y-2 relative z-20">
-                  <div className="flex items-center gap-2 px-1 text-xs">
-                    <div className="w-4 h-4 rounded-md bg-success text-on-ink flex items-center justify-center shrink-0">
-                      <Info className="w-2.5 h-2.5" />
-                    </div>
-                    <p className="text-xs text-body dark:text-on-dark-soft">
-                      <span className="font-bold text-success dark:text-success-on-dark">Deduplikasi Otomatis:</span> Ketika judul ada di Scopus &amp; Scholar, sistem memakai poin Scopus (kalkulasi SINTA) karena lebih besar.
-                    </p>
-                  </div>
-
+                <div className="bg-surface-light-raised dark:bg-surface-dark-elevated p-2.5 sm:p-3 rounded-2xl border border-hairline-light dark:border-hairline-dark relative z-20">
                   {/* Search Bar + Year Filter for Cross-Indexed */}
-                  <div className="flex flex-wrap items-center justify-end gap-2 pt-1.5 border-t border-hairline-light/60 dark:border-hairline-dark/60">
+                  <div className="flex flex-wrap items-center justify-end gap-2 w-full">
                     <div className="relative w-full sm:w-48 md:w-56 shrink-0">
                       <Search className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input
