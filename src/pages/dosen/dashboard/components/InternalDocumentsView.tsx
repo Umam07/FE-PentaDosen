@@ -87,19 +87,18 @@ export default function InternalDocumentsView({
         {/* ── Top Tab Bar: Dokumen | Metriks Penilaian ── */}
         <div className="flex items-center gap-5 sm:gap-8 pb-3 border-b border-hairline-light dark:border-hairline-dark mb-8 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
           {([
-            { id: 'dokumen', label: 'Dokumen Internal', icon: FileText  },
-            { id: 'metriks', label: 'Metriks Penilaian', icon: BarChart2 },
+            { id: 'dokumen', label: 'Dokumen Internal' },
+            { id: 'metriks', label: 'Metriks Penilaian' },
           ] as const).map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`group/tab relative pb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+              className={`group/tab relative pb-3 text-xs sm:text-sm font-bold tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                 activeTab === tab.id
-                  ? 'text-ink-heading dark:text-on-dark font-bold'
+                  ? 'text-ink-heading dark:text-on-dark'
                   : 'text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark'
               }`}
             >
-              <tab.icon className="w-4 h-4" />
               {tab.label}
               {activeTab === tab.id && (
                 <motion.div
