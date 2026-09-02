@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  FileText, Globe, RefreshCw, Award, 
+  FileText, Globe, RefreshCw, Award, TrendingUp,
   BookOpen, Building2, Mail, GraduationCap, Fingerprint, ExternalLink
 } from 'lucide-react';
 
@@ -30,6 +30,9 @@ export default function LecturerDashboard({ user }: { user: any }) {
     apiPoints,
     internalPoints,
     grandTotal,
+    apiPoints3Years,
+    internalPoints3Years,
+    grandTotal3Years,
     apiPointsThisYear,
     internalPointsThisYear,
     grandTotalThisYear,
@@ -60,14 +63,14 @@ export default function LecturerDashboard({ user }: { user: any }) {
       icon: Award
     },
     { 
+      label: 'Total KPI 3 Tahun',
+      val: loading && !profileData ? null : grandTotal3Years.toLocaleString(),
+      icon: TrendingUp
+    },
+    { 
       label: 'Total KPI Tahun Ini',
       val: loading && !profileData ? null : grandTotalThisYear.toLocaleString(),
       icon: Globe
-    },
-    { 
-      label: 'Poin (Internal)',
-      val: loading && !profileData ? null : internalPoints.toLocaleString(),
-      icon: FileText
     }
   ];
 

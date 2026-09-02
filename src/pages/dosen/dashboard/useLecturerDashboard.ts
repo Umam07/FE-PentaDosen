@@ -139,7 +139,52 @@ export default function useLecturerDashboard(user: any) {
 
   const grandTotal = apiPoints.total + internalPoints;
 
-  // --- 2. THIS YEAR (2026) CALCULATION ---
+  // --- 2. 3 YEARS (2024-2026) CALCULATION ---
+  const apiPoints3Years = useMemo(() => {
+    if (!profileData) return { total: 0, scopus: 0, scholar: 0 };
+    
+    const publications = (profileData.publications || []).filter((p: any) => {
+      const yr = Number(p.year);
+      return yr >= currentYear - 2 && yr <= currentYear;
+    });
+    const scopusPublications = (profileData.scopusPublications || []).filter((s: any) => {
+      const yr = Number(s.year);
+      return yr >= currentYear - 2 && yr <= currentYear;
+    });
+
+    const crossTitles = new Set(
+      (publications || []).filter((sd: any) => 
+        (scopusPublications || []).some((s: any) => normalizeTitle(s.title) === normalizeTitle(sd.title))
+      ).map((d: any) => normalizeTitle(d.title))
+    );
+    
+    const scopusPts = (scopusPublications || []).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const scholarPts = (publications || [])
+        .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)))
+        .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+    
+    return {
+      total: Math.round(scopusPts + scholarPts),
+      scopus: Math.round(scopusPts),
+      scholar: Math.round(scholarPts)
+    };
+  }, [profileData]);
+
+  const internalPoints3Years = useMemo(() => {
+    return Math.round(
+      approvedDocs
+        .filter((doc) => {
+          const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : doc.tahun_pelaksanaan;
+          const yr = Number(docYear);
+          return yr >= currentYear - 2 && yr <= currentYear;
+        })
+        .reduce((acc, doc) => acc + (Number(doc.awarded_points) || 0), 0)
+    );
+  }, [approvedDocs]);
+
+  const grandTotal3Years = apiPoints3Years.total + internalPoints3Years;
+
+  // --- 3. THIS YEAR (2026) CALCULATION ---
   const apiPointsThisYear = useMemo(() => {
     if (!profileData) return { total: 0, scopus: 0, scholar: 0 };
     
@@ -286,6 +331,9 @@ export default function useLecturerDashboard(user: any) {
     apiPoints,
     internalPoints,
     grandTotal,
+    apiPoints3Years,
+    internalPoints3Years,
+    grandTotal3Years,
     apiPointsThisYear,
     internalPointsThisYear,
     grandTotalThisYear,

@@ -1,4 +1,4 @@
-import { Award, Globe, FileText } from 'lucide-react';
+import { Award, Globe, FileText, TrendingUp } from 'lucide-react';
 import { calculateScholarPoints, calculateScopusSintaPoints } from '../../../dosen/dashboard/pointsCalculator';
 import { LecturerProfileData, StatCard, ChartDataResult } from '../types/lecturerProfile.types';
 
@@ -47,7 +47,47 @@ export function calculateKPIStats(
       .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
   );
 
-  // --- 2. THIS YEAR (2026) CALCULATION ---
+  // --- 2. 3 YEARS (2024-2026) CALCULATION ---
+  const publications3Years = (publications || []).filter(p => {
+    const yr = Number(p.year);
+    return yr >= currentYear - 2 && yr <= currentYear;
+  });
+  const scopus3Years = (scopusPublications || []).filter(s => {
+    const yr = Number(s.year);
+    return yr >= currentYear - 2 && yr <= currentYear;
+  });
+
+  const crossTitles3Years = new Set(
+    publications3Years
+      .filter(sd => scopus3Years.some(s => normalizeTitle(s.title) === normalizeTitle(sd.title)))
+      .map(d => normalizeTitle(d.title))
+  );
+
+  const extCross3Years = scopus3Years
+    .filter(s => crossTitles3Years.has(normalizeTitle(s.title)))
+    .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+  const extScopus3Years = scopus3Years
+    .filter(s => !crossTitles3Years.has(normalizeTitle(s.title)))
+    .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+  const extScholar3Years = publications3Years
+    .filter(s => !crossTitles3Years.has(normalizeTitle(s.title)))
+    .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+
+  const api3Years = Math.round(extCross3Years + extScopus3Years + extScholar3Years);
+
+  const internal3Years = Math.round(
+    (internalDocuments || [])
+      .filter((d: any) => {
+        if (d.status !== 'Approved' || !d.file_url || d.file_url === '') return false;
+        const yr = d.published_at ? new Date(d.published_at).getFullYear() : (d.tahun_pelaksanaan || d.tahun);
+        return Number(yr) >= currentYear - 2 && Number(yr) <= currentYear;
+      })
+      .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
+  );
+
+  // --- 3. THIS YEAR (2026) CALCULATION ---
   const publicationsThisYear = (publications || []).filter(p => Number(p.year) === currentYear);
   const scopusThisYear = (scopusPublications || []).filter(s => Number(s.year) === currentYear);
 
@@ -84,14 +124,14 @@ export function calculateKPIStats(
       icon: Award
     },
     { 
+      label: 'Total KPI 3 Tahun',
+      val: (api3Years + internal3Years).toLocaleString(),
+      icon: TrendingUp
+    },
+    { 
       label: 'Total KPI Tahun Ini',
       val: (apiThisYear + internalThisYear).toLocaleString(),
       icon: Globe
-    },
-    { 
-      label: 'Poin (Internal)',
-      val: internalTotal.toLocaleString(),
-      icon: FileText
     }
   ];
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, Globe, FileText } from 'lucide-react';
+import { Award, Globe, FileText, TrendingUp } from 'lucide-react';
 import { LecturerProfile, StatItem, ChartDataResult } from '../types';
 import { InternalDocument } from '../../../dosen/dashboard/components/internal-documents/internal-documents.types';
 import { getLecturerProfileAndDocs } from '../services/lecturerProfileService';
@@ -78,7 +78,48 @@ export const useLecturerProfile = () => {
         .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)
     );
 
-    // --- 2. THIS YEAR (2026) CALCULATION ---
+    // --- 2. 3 YEARS (2024-2026) CALCULATION ---
+    const publications3Years = publications.filter(p => {
+      const yr = Number(p.year);
+      return yr >= currentYear - 2 && yr <= currentYear;
+    });
+    const scopus3Years = scopusPublications.filter(s => {
+      const yr = Number(s.year);
+      return yr >= currentYear - 2 && yr <= currentYear;
+    });
+
+    const crossTitles3Years = new Set(
+      publications3Years
+        .filter(sd => scopus3Years.some(s => normalizeTitle(s.title) === normalizeTitle(sd.title)))
+        .map(d => normalizeTitle(d.title))
+    );
+
+    const extCross3Years = scopus3Years
+      .filter(s => crossTitles3Years.has(normalizeTitle(s.title)))
+      .reduce((a, d) => a + calculateScopusSintaPoints(d), 0);
+
+    const extScopus3Years = scopus3Years
+      .filter(s => !crossTitles3Years.has(normalizeTitle(s.title)))
+      .reduce((a, d) => a + calculateScopusSintaPoints(d), 0);
+
+    const extScholar3Years = publications3Years
+      .filter(s => !crossTitles3Years.has(normalizeTitle(s.title)))
+      .reduce((a, d) => a + calculateScholarPoints(d), 0);
+
+    const api3Years = Math.round(extCross3Years + extScopus3Years + extScholar3Years);
+
+    const internal3Years = Math.round(
+      documents
+        .filter(d => {
+          if (d.status !== 'Approved' || (!d.file_url && !(d as any).is_penelitian)) return false;
+          const docYear = d.published_at ? new Date(d.published_at).getFullYear() : (d as any).tahun_pelaksanaan;
+          const yr = Number(docYear);
+          return yr >= currentYear - 2 && yr <= currentYear;
+        })
+        .reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)
+    );
+
+    // --- 3. THIS YEAR (2026) CALCULATION ---
     const publicationsThisYear = publications.filter(p => Number(p.year) === currentYear);
     const scopusThisYear = scopusPublications.filter(s => Number(s.year) === currentYear);
 
@@ -120,16 +161,16 @@ export const useLecturerProfile = () => {
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
       },
       { 
+        label: 'Total KPI 3 Tahun',
+        val: (api3Years + internal3Years).toLocaleString(),
+        icon: TrendingUp, 
+        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
+      },
+      { 
         label: 'Total KPI Tahun Ini',
         val: (apiThisYear + internalThisYear).toLocaleString(),
         icon: Globe, 
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400' 
-      },
-      { 
-        label: 'Poin (Internal)',
-        val: internalOverall.toLocaleString(),
-        icon: FileText, 
-        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
       }
     ];
   }, [profile, documents]);

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Award, Globe, FileText } from 'lucide-react';
+import { Award, Globe, FileText, TrendingUp } from 'lucide-react';
 import { ProfileUser, ProfileStat, ToastMessage } from '../types/profile.types';
 import { calculateScopusSintaPoints } from '../utils/profileUtils';
 import { calculateScholarPoints } from '../../../dosen/dashboard/pointsCalculator';
@@ -137,7 +137,47 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
         .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
     );
 
-    // --- 2. THIS YEAR (2026) CALCULATION ---
+    // --- 2. 3 YEARS (2024-2026) CALCULATION ---
+    const publications3Years = (publications || []).filter(p => {
+      const yr = Number(p.year);
+      return yr >= currentYear - 2 && yr <= currentYear;
+    });
+    const scopus3Years = (scopusPublications || []).filter(s => {
+      const yr = Number(s.year);
+      return yr >= currentYear - 2 && yr <= currentYear;
+    });
+
+    const crossTitles3Years = new Set(
+      publications3Years
+        .filter(sd => scopus3Years.some(s => normalizeT(s.title) === normalizeT(sd.title)))
+        .map(d => normalizeT(d.title))
+    );
+
+    const extCross3Years = scopus3Years
+      .filter(s => crossTitles3Years.has(normalizeT(s.title)))
+      .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+    const extScopus3Years = scopus3Years
+      .filter(s => !crossTitles3Years.has(normalizeT(s.title)))
+      .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
+    const extScholar3Years = publications3Years
+      .filter(s => !crossTitles3Years.has(normalizeT(s.title)))
+      .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+
+    const api3Years = Math.round(extCross3Years + extScopus3Years + extScholar3Years);
+
+    const internal3Years = Math.round(
+      (internalDocuments || [])
+        .filter((d: any) => {
+          if (d.status !== 'Approved' || !d.file_url || d.file_url === '') return false;
+          const yr = d.published_at ? new Date(d.published_at).getFullYear() : (d.tahun_pelaksanaan || d.tahun);
+          return Number(yr) >= currentYear - 2 && Number(yr) <= currentYear;
+        })
+        .reduce((acc: number, d: any) => acc + (Number(d.awarded_points) || 0), 0)
+    );
+
+    // --- 3. THIS YEAR (2026) CALCULATION ---
     const publicationsThisYear = (publications || []).filter(p => Number(p.year) === currentYear);
     const scopusThisYear = (scopusPublications || []).filter(s => Number(s.year) === currentYear);
 
@@ -175,16 +215,16 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
         color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
       },
       {
+        label: 'Total KPI 3 Tahun',
+        val: (api3Years + internal3Years).toLocaleString(),
+        icon: TrendingUp,
+        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+      },
+      {
         label: 'Total KPI Tahun Ini',
         val: (apiThisYear + internalThisYear).toLocaleString(),
         icon: Globe,
         color: 'bg-primary-500/10 text-primary-600 dark:text-primary-400',
-      },
-      {
-        label: 'Poin (Internal)',
-        val: internalTotal.toLocaleString(),
-        icon: FileText,
-        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
       },
     ];
   }, [user, publications, scopusPublications, internalDocuments]);
