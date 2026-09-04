@@ -37,7 +37,7 @@ export default function Insights() {
     <div className="min-h-screen bg-canvas-light dark:bg-canvas-dark transition-colors duration-300 font-sans antialiased text-body dark:text-on-dark">
       <SEO
         title="Insights & Analitik Kinerja — PentaDosen (Penta Dosen) Universitas YARSI"
-        description="Visualisasi data analitik, skor KPI, sebaran publikasi, dan leaderboard riset dosen PentaDosen (Penta Dosen) Universitas YARSI."
+        description="Visualisasi data analitik, skor KPI, capaian publikasi, dan peringkat riset dosen PentaDosen (Penta Dosen) Universitas YARSI."
         keywords="Insights PentaDosen, Penta Dosen, Analitik Dosen YARSI, Leaderboard Dosen, KPI Dosen YARSI, Universitas YARSI"
         canonical="https://www.pentadosen.site/insights"
       />

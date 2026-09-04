@@ -6,13 +6,30 @@ import { fetchLecturersList } from '../services/lecturerService';
 import { FAKULTAS_THEMES } from '../constants';
 
 export const useLecturerList = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialFakultas = searchParams.get('fakultas') || 'Semua';
 
   const [lecturers, setLecturers] = useState<LecturerItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFakultas, setSelectedFakultas] = useState(initialFakultas);
+
+  // Sync state with URL search parameters if URL changes
+  useEffect(() => {
+    const param = searchParams.get('fakultas');
+    setSelectedFakultas(param || 'Semua');
+  }, [searchParams]);
+
+  const handleFakultasChange = (fakultas: string) => {
+    setSelectedFakultas(fakultas);
+    const newParams = new URLSearchParams(searchParams);
+    if (fakultas === 'Semua') {
+      newParams.delete('fakultas');
+    } else {
+      newParams.set('fakultas', fakultas);
+    }
+    setSearchParams(newParams, { replace: true });
+  };
 
   // Mengambil data leaderboard dosen saat pertama kali load
   useEffect(() => {
@@ -69,7 +86,7 @@ export const useLecturerList = () => {
     searchTerm,
     setSearchTerm,
     selectedFakultas,
-    setSelectedFakultas,
+    setSelectedFakultas: handleFakultasChange,
     loading,
     fakultasOptions,
     fakultasCounts,

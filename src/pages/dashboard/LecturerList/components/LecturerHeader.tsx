@@ -1,56 +1,81 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Search, ArrowLeft, X, Users, Building2, GraduationCap } from 'lucide-react';
+import { Search, X, Users, Building2, ChevronRight } from 'lucide-react';
 
 interface LecturerHeaderProps {
   searchTerm: string;
   onSearchTermChange: (val: string) => void;
   totalFiltered: number;
-  onBack: () => void;
+  onBack?: () => void;
+  selectedFakultas?: string;
+  onFakultasReset?: () => void;
 }
 
 export default function LecturerHeader({
   searchTerm,
   onSearchTermChange,
   totalFiltered,
-  onBack
+  selectedFakultas,
+  onFakultasReset,
 }: LecturerHeaderProps) {
+  const isFacultyFiltered = selectedFakultas && selectedFakultas !== 'Semua';
+
   return (
     <div className="space-y-8">
-      {/* Top Navigation & Breadcrumb Bar */}
-      <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
-        <motion.button 
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.15 }}
-          onClick={onBack}
-          aria-label="Kembali ke halaman sebelumnya"
-          className="group inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent rounded-md py-1"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform duration-150" />
-          <span>Kembali</span>
-        </motion.button>
+      {/* Top Breadcrumb Navigation Bar */}
+      <div className="border-b border-hairline-light dark:border-hairline-dark pb-4">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm flex-wrap">
+          <Link
+            to="/"
+            className="text-body hover:text-ink-heading dark:text-on-dark-soft dark:hover:text-on-dark transition-colors font-medium hover:underline underline-offset-4"
+          >
+            Beranda
+          </Link>
+          <ChevronRight className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" aria-hidden="true" />
+          <Link
+            to="/insights"
+            className="text-body hover:text-ink-heading dark:text-on-dark-soft dark:hover:text-on-dark transition-colors font-medium hover:underline underline-offset-4"
+          >
+            Insight
+          </Link>
+          <ChevronRight className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" aria-hidden="true" />
 
-        <div className="text-[11px] font-mono font-semibold text-muted dark:text-on-dark-muted tracking-wider uppercase">
-          PENTADOSEN / DIREKTORI
-        </div>
+          {isFacultyFiltered ? (
+            <>
+              <Link
+                to="/departments"
+                className="text-body hover:text-ink-heading dark:text-on-dark-soft dark:hover:text-on-dark transition-colors font-medium hover:underline underline-offset-4"
+              >
+                Daftar Fakultas
+              </Link>
+              <ChevronRight className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" aria-hidden="true" />
+              <Link
+                to="/lecturers"
+                onClick={onFakultasReset}
+                className="text-body hover:text-ink-heading dark:text-on-dark-soft dark:hover:text-on-dark transition-colors font-medium hover:underline underline-offset-4"
+              >
+                Direktori Dosen
+              </Link>
+              <ChevronRight className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" aria-hidden="true" />
+              <span className="text-ink-heading dark:text-on-dark font-semibold truncate max-w-[280px] sm:max-w-none" aria-current="page">
+                {selectedFakultas}
+              </span>
+            </>
+          ) : (
+            <span className="text-ink-heading dark:text-on-dark font-semibold" aria-current="page">
+              Direktori Dosen
+            </span>
+          )}
+        </nav>
       </div>
 
       {/* Main Hero Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         
-        {/* Left: Category Pill, Stats, Title & Description */}
+        {/* Left: Stats Badges, Title & Description */}
         <div className="space-y-4 max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
-            <motion.div 
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light dark:bg-surface-dark text-body-strong dark:text-on-dark border border-hairline-light dark:border-hairline-dark text-[11px] font-mono tracking-wider uppercase font-semibold shadow-2xs"
-            >
-              <GraduationCap className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-              <span>Portofolio Akademik</span>
-            </motion.div>
 
             {/* Transferred Counter Badges */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark text-[11px] font-mono">
@@ -60,7 +85,7 @@ export default function LecturerHeader({
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-light-raised dark:bg-surface-dark-elevated text-muted dark:text-on-dark-muted border border-hairline-light dark:border-hairline-dark text-[11px] font-mono">
               <Building2 className="w-3.5 h-3.5 text-muted dark:text-on-dark-muted" />
-              <span><strong className="font-bold text-ink-heading dark:text-on-dark">6</strong> Fakultas</span>
+              <span><strong className="font-bold text-ink-heading dark:text-on-dark">{isFacultyFiltered ? selectedFakultas : '6 Fakultas'}</strong></span>
             </div>
           </div>
 

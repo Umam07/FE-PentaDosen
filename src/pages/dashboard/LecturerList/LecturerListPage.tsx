@@ -58,6 +58,8 @@ export default function LecturerList() {
           onSearchTermChange={setSearchTerm}
           totalFiltered={filteredLecturers.length}
           onBack={() => navigate(-1)}
+          selectedFakultas={selectedFakultas}
+          onFakultasReset={handleResetFilter}
         />
 
         {/* Filter Strip */}

@@ -77,8 +77,7 @@ export default function InsightsHero({ stats, loading, onExploreClick }: Insight
             </h1>
 
             <p className="text-body dark:text-on-dark-soft text-base sm:text-lg font-normal leading-relaxed">
-              Pantau sebaran publikasi, sitasi riset, dan portofolio Tri Dharma
-              dosen lintas fakultas dalam satu tampilan yang terintegrasi.
+              Ringkasan capaian publikasi, sitasi riset, dan portofolio Tri Dharma dosen di seluruh fakultas Universitas YARSI.
             </p>
 
             {onExploreClick && (

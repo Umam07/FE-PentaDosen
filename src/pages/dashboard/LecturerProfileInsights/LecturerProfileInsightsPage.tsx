@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Navbar from '../../../components/Home/Navbar';
 import Footer from '../../../components/Home/Footer';
 import SEO from '../../../components/SEO';
@@ -75,15 +76,34 @@ export default function LecturerProfileInsights() {
 
       <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-6">
 
-        {/* Navigation Back Button */}
-        <div>
-          <button
-            onClick={() => navigate(-1)}
-            className="group inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-ink-heading dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span>Kembali ke Direktori</span>
-          </button>
+        {/* Breadcrumb Navigation Bar */}
+        <div className="border-b border-hairline-light dark:border-hairline-dark pb-4">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm flex-wrap">
+            <Link
+              to="/"
+              className="text-body hover:text-ink-heading dark:text-on-dark-soft dark:hover:text-on-dark transition-colors font-medium hover:underline underline-offset-4"
+            >
+              Beranda
+            </Link>
+            <ChevronRight className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" aria-hidden="true" />
+            <Link
+              to="/insights"
+              className="text-body hover:text-ink-heading dark:text-on-dark-soft dark:hover:text-on-dark transition-colors font-medium hover:underline underline-offset-4"
+            >
+              Insight
+            </Link>
+            <ChevronRight className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" aria-hidden="true" />
+            <Link
+              to="/lecturers"
+              className="text-body hover:text-ink-heading dark:text-on-dark-soft dark:hover:text-on-dark transition-colors font-medium hover:underline underline-offset-4"
+            >
+              Direktori Dosen
+            </Link>
+            <ChevronRight className="w-4 h-4 text-muted dark:text-on-dark-muted shrink-0" aria-hidden="true" />
+            <span className="text-ink-heading dark:text-on-dark font-semibold truncate max-w-[280px] sm:max-w-none" aria-current="page">
+              {profile.user?.name || 'Detail Dosen'}
+            </span>
+          </nav>
         </div>
 
         {/* Profile Hero Header & KPI Stats */}

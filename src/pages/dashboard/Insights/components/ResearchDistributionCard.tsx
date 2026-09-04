@@ -51,10 +51,10 @@ export default function ResearchDistributionCard({ stats, loading }: ResearchDis
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-hairline-light dark:border-hairline-dark">
         <div>
           <h2 className="text-xl font-bold text-ink-heading dark:text-on-dark tracking-tight">
-            Sebaran Publikasi & Riset
+            Sumber Publikasi & Riset
           </h2>
           <p className="text-xs text-muted dark:text-on-dark-muted mt-1">
-            Ringkasan karya ilmiah dan riset dosen berdasarkan sumber pengindeks.
+            Ringkasan karya ilmiah dan riset dosen berdasarkan platform pengindeks.
           </p>
         </div>
       </div>
