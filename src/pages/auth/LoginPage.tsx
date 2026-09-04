@@ -2,13 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import SEO from '../../components/SEO';
-import { useAuthStats } from './hooks/useAuthStats';
 import { AuthBrandingPanel } from './components/AuthBrandingPanel';
 import { DosenLoginForm } from './components/DosenLoginForm';
 
 export default function Login({ setUser }: { setUser: any }) {
-  const { totalDocs, totalDosen } = useAuthStats();
-
   return (
     <main className="min-h-screen bg-canvas-light dark:bg-canvas-dark flex font-sans transition-colors duration-300 relative overflow-hidden">
       <SEO
@@ -28,11 +25,8 @@ export default function Login({ setUser }: { setUser: any }) {
         Kembali
       </Link>
 
-      {/* Panel Kiri: Informasi Branding & Statistik */}
-      <AuthBrandingPanel 
-        totalDocs={totalDocs} 
-        totalDosen={totalDosen} 
-      />
+      {/* Panel Kiri: Informasi Branding & Fitur */}
+      <AuthBrandingPanel />
 
       {/* Form Login Tunggal */}
       <DosenLoginForm 

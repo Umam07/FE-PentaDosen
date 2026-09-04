@@ -1,13 +1,7 @@
 import { motion } from 'motion/react';
-import { BookOpen, Users } from 'lucide-react';
 import PentaDosenLogo from '../../../components/shared/PentaDosenLogo';
 
-interface AuthBrandingPanelProps {
-  totalDocs: number | string;
-  totalDosen: number | string;
-}
-
-export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelProps) {
+export function AuthBrandingPanel() {
   return (
     <div className="hidden lg:flex flex-col justify-between w-[44%] bg-surface-light dark:bg-surface-dark px-14 py-12 absolute top-0 bottom-0 left-0 border-r border-hairline-light dark:border-hairline-dark z-20">
       {/* Top Placeholder */}
@@ -75,38 +69,6 @@ export function AuthBrandingPanel({ totalDocs, totalDosen }: AuthBrandingPanelPr
               </li>
             ))}
           </ul>
-        </motion.div>
-
-        {/* Card Statistik Minimal */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          className="border border-hairline-light dark:border-hairline-dark bg-surface-light-raised dark:bg-surface-dark-elevated rounded-2xl p-5 shadow-sm max-w-sm"
-        >
-          <p className="text-[10px] font-bold text-muted dark:text-on-dark-muted uppercase tracking-widest mb-3">
-            Statistik Kinerja Kampus
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="flex items-center gap-1.5 text-muted dark:text-on-dark-muted mb-1">
-                <BookOpen className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-                <span className="text-[11px] font-semibold">Total Dokumen</span>
-              </div>
-              <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark">
-                {typeof totalDocs === 'number' ? `${totalDocs.toLocaleString('id-ID')}` : totalDocs}
-              </p>
-            </div>
-            <div className="border-l border-hairline-light dark:border-hairline-dark pl-4">
-              <div className="flex items-center gap-1.5 text-muted dark:text-on-dark-muted mb-1">
-                <Users className="w-3.5 h-3.5 text-accent dark:text-accent-on-dark" />
-                <span className="text-[11px] font-semibold">Dosen Aktif</span>
-              </div>
-              <p className="text-xl font-bold font-mono text-ink-heading dark:text-on-dark">
-                {typeof totalDosen === 'number' ? `${totalDosen.toLocaleString('id-ID')}` : totalDosen}
-              </p>
-            </div>
-          </div>
         </motion.div>
       </div>
 
