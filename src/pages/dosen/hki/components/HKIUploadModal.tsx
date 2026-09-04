@@ -281,7 +281,7 @@ export default function HKIUploadModal({
         <div className="space-y-1.5 relative">
           <label className="text-xs font-semibold text-body-strong dark:text-on-dark-soft flex items-center">
             <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-muted dark:text-on-dark-muted" />
-            Tanggal Perolehan HKI <span className="text-error ml-0.5">*</span>
+            Tanggal Perolehan <span className="text-error ml-0.5">*</span>
           </label>
           <DatePicker date={date} onDateChange={setDate} placeholder="Pilih tanggal perolehan" />
         </div>
