@@ -93,18 +93,19 @@ export async function exportAllDocumentsToExcel(
     const sheetName = tab.charAt(0).toUpperCase() + tab.slice(1);
     const sheet = workbook.addWorksheet(sheetName);
 
-    sheet.views = [{ showGridLines: true }];
+    // Freeze panes agar baris header tetap terlihat saat scroll ke bawah
+    sheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 5, activeCell: 'A6', showGridLines: true }];
 
-    // Title Section
-    sheet.mergeCells('A1:L1');
+    // 1. Title Section (Merged A1:K1)
+    sheet.mergeCells('A1:K1');
     const titleCell = sheet.getCell('A1');
     titleCell.value = `LAPORAN DATA ${sheetName.toUpperCase()} - PENTADOSEN`;
-    titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF1E293B' } };
+    titleCell.font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: 'FF1E293B' } };
     titleCell.alignment = { vertical: 'middle', horizontal: 'left' };
-    sheet.getRow(1).height = 30;
+    sheet.getRow(1).height = 32;
 
-    // Metadata Section
-    sheet.mergeCells('A2:L2');
+    // 2. Metadata Section (Merged A2:K2)
+    sheet.mergeCells('A2:K2');
     const metaCell = sheet.getCell('A2');
     const dateStr = new Date().toLocaleDateString('id-ID', {
       weekday: 'long',
@@ -115,73 +116,82 @@ export async function exportAllDocumentsToExcel(
       minute: '2-digit',
     });
     metaCell.value = `Diekspor oleh : ${user?.name || 'Admin'}  |  Diekspor pada : ${dateStr}`;
-    metaCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+    metaCell.font = { name: 'Segoe UI', size: 9.5, italic: true, color: { argb: 'FF64748B' } };
     metaCell.alignment = { vertical: 'middle', horizontal: 'left' };
     sheet.getRow(2).height = 20;
 
-    // Filter Section
-    sheet.mergeCells('A3:L3');
+    // 3. Filter Section (Merged A3:K3)
+    sheet.mergeCells('A3:K3');
     const filterCell = sheet.getCell('A3');
     filterCell.value = `Filter Fakultas : ${selectedFakultas || 'Semua Fakultas'}  |  Kata Kunci : "${searchTerm || '-'}"`;
-    filterCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+    filterCell.font = { name: 'Segoe UI', size: 9.5, italic: true, color: { argb: 'FF64748B' } };
     filterCell.alignment = { vertical: 'middle', horizontal: 'left' };
     sheet.getRow(3).height = 20;
 
-    sheet.getRow(4).height = 10;
+    // Baris pemisah kosong
+    sheet.getRow(4).height = 12;
 
     let headers: string[] = [];
     let colWidths: { width: number }[] = [];
 
     if (tab === 'penelitian') {
       headers = [
-        'No', 'ID Penelitian', 'Judul Penelitian', 'Program', 'Skema',
+        'No', 'Judul Penelitian', 'Program', 'Skema',
         'Fokus', 'Dosen Pengaju', 'Fakultas', 'Status', 'Dana Disetujui',
-        'Poin Awarded', 'Tanggal Pelaksanaan'
+        'Poin KPI', 'Tanggal Pelaksanaan'
       ];
       colWidths = [
-        { width: 6 }, { width: 15 }, { width: 45 }, { width: 20 }, { width: 25 },
-        { width: 20 }, { width: 25 }, { width: 25 }, { width: 15 }, { width: 20 },
-        { width: 15 }, { width: 18 }
+        { width: 6 }, { width: 50 }, { width: 22 }, { width: 24 },
+        { width: 22 }, { width: 28 }, { width: 28 }, { width: 16 }, { width: 22 },
+        { width: 14 }, { width: 20 }
       ];
     } else {
       headers = [
-        'No', 'ID Dokumen', `Judul ${sheetName}`, 'Kategori', 'Dosen Pengaju',
+        'No', `Judul ${sheetName}`, 'Kategori', 'Dosen Pengaju',
         'Fakultas', 'Status', 'Tanggal Publikasi', 'Sumber', 'Status KPI',
-        'Poin Awarded', 'Tanggal Pengajuan'
+        'Poin KPI', 'Tanggal Pengajuan'
       ];
       colWidths = [
-        { width: 6 }, { width: 15 }, { width: 45 }, { width: 25 }, { width: 25 },
-        { width: 25 }, { width: 15 }, { width: 18 }, { width: 12 }, { width: 15 },
-        { width: 15 }, { width: 18 }
+        { width: 6 }, { width: 50 }, { width: 24 }, { width: 28 },
+        { width: 28 }, { width: 16 }, { width: 18 }, { width: 14 }, { width: 14 },
+        { width: 14 }, { width: 18 }
       ];
     }
 
+    // 4. Header Row (Row 5)
     const headerRowNumber = 5;
     const headerRow = sheet.getRow(headerRowNumber);
-    headerRow.height = 28;
+    headerRow.height = 32;
 
     headers.forEach((h, colIdx) => {
       const cell = headerRow.getCell(colIdx + 1);
       cell.value = h;
-      cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FF4F46E5' }
+        fgColor: { argb: 'FF1E293B' }
       };
       cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
       cell.border = {
-        top: { style: 'thin', color: { argb: 'FF312E81' } },
-        bottom: { style: 'medium', color: { argb: 'FF312E81' } },
-        left: { style: 'thin', color: { argb: 'FF312E81' } },
-        right: { style: 'thin', color: { argb: 'FF312E81' } }
+        top: { style: 'thin', color: { argb: 'FF0F172A' } },
+        bottom: { style: 'medium', color: { argb: 'FF0F172A' } },
+        left: { style: 'thin', color: { argb: 'FF334155' } },
+        right: { style: 'thin', color: { argb: 'FF334155' } }
       };
     });
 
+    // AutoFilter
+    sheet.autoFilter = {
+      from: { row: headerRowNumber, column: 1 },
+      to: { row: headerRowNumber, column: headers.length }
+    };
+
+    // 5. Data Rows
     data.forEach((item, dataIdx) => {
       const rowNum = headerRowNumber + 1 + dataIdx;
       const row = sheet.getRow(rowNum);
-      row.height = 22;
+      row.height = 24;
 
       let rowValues: any[] = [];
       const num = dataIdx + 1;
@@ -194,7 +204,6 @@ export async function exportAllDocumentsToExcel(
         const tanggalPelaksanaan = item.tahun ? new Date(item.tahun) : null;
         rowValues = [
           num,
-          item.id,
           item.judul_penelitian || '',
           item.program || '',
           item.skema || '',
@@ -214,7 +223,6 @@ export async function exportAllDocumentsToExcel(
         const kpiStatus = item.is_kpi_counted ? 'KPI Aktif' : 'Arsip';
         rowValues = [
           num,
-          item.id,
           item.title || '',
           category,
           author,
@@ -231,6 +239,24 @@ export async function exportAllDocumentsToExcel(
       rowValues.forEach((val, colIdx) => {
         const cell = row.getCell(colIdx + 1);
 
+        // Default font & border
+        cell.font = { name: 'Segoe UI', size: 9.5, color: { argb: 'FF334155' } };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+          bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+          left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+          right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+        };
+
+        // Zebra striping
+        if (dataIdx % 2 === 1) {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFF8FAFC' }
+          };
+        }
+
         if (val instanceof Date) {
           cell.value = val;
           cell.numFmt = 'yyyy-mm-dd';
@@ -239,47 +265,153 @@ export async function exportAllDocumentsToExcel(
           cell.value = val ?? '-';
 
           if (tab === 'penelitian') {
-            if ([2, 3, 4, 5, 6, 7].includes(colIdx)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'left' };
-            } else if (colIdx === 9) {
+            if ([1, 2, 3, 4, 5, 6].includes(colIdx)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: colIdx === 1 };
+            } else if (colIdx === 7) {
+              // Status Badge
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              const statusStr = String(val || '');
+              if (statusStr === 'Approved') {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF15803D' } };
+              } else if (statusStr === 'Rejected') {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFB91C1C' } };
+              } else if (statusStr === 'Verified by Fakultas') {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF1D4ED8' } };
+              } else {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFB45309' } };
+              }
+            } else if (colIdx === 8) {
+              // Dana Disetujui
               cell.numFmt = '"Rp"#,##0';
               cell.alignment = { vertical: 'middle', horizontal: 'right' };
-            } else if (colIdx === 10) {
+            } else if (colIdx === 9) {
+              // Poin KPI
               cell.numFmt = '#,##0;-#,##0;0';
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF1E293B' } };
             } else {
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
             }
           } else {
-            if ([2, 3, 4, 5].includes(colIdx)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'left' };
-            } else if (colIdx === 10) {
+            if ([1, 2, 3, 4].includes(colIdx)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: colIdx === 1 };
+            } else if (colIdx === 5) {
+              // Status Badge
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              const statusStr = String(val || '');
+              if (statusStr === 'Approved') {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF15803D' } };
+              } else if (statusStr === 'Rejected') {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFB91C1C' } };
+              } else if (statusStr === 'Verified by Fakultas') {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF1D4ED8' } };
+              } else {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFB45309' } };
+              }
+            } else if (colIdx === 8) {
+              // Status KPI
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              if (val === 'KPI Aktif') {
+                cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF0284C7' } };
+              } else {
+                cell.font = { name: 'Segoe UI', size: 9.5, color: { argb: 'FF64748B' } };
+              }
+            } else if (colIdx === 9) {
+              // Poin KPI
               cell.numFmt = '#,##0;-#,##0;0';
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF1E293B' } };
             } else {
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
             }
           }
         }
+      });
+    });
 
-        cell.font = { name: 'Arial', size: 10, color: { argb: 'FF334155' } };
+    // 6. Summary / Total Row
+    if (data.length > 0) {
+      const totalRowNumber = headerRowNumber + data.length + 1;
+      const totalRow = sheet.getRow(totalRowNumber);
+      totalRow.height = 26;
 
+      if (tab === 'penelitian') {
+        sheet.mergeCells(`A${totalRowNumber}:H${totalRowNumber}`);
+        const labelCell = totalRow.getCell(1);
+        labelCell.value = `TOTAL KESELURUHAN (${data.length} DATA)`;
+        labelCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF0F172A' } };
+        labelCell.alignment = { vertical: 'middle', horizontal: 'right' };
+
+        const sumDanaCell = totalRow.getCell(9);
+        sumDanaCell.value = { formula: `SUM(I6:I${totalRowNumber - 1})` };
+        sumDanaCell.numFmt = '"Rp"#,##0';
+        sumDanaCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF0F172A' } };
+        sumDanaCell.alignment = { vertical: 'middle', horizontal: 'right' };
+
+        const sumPoinCell = totalRow.getCell(10);
+        sumPoinCell.value = { formula: `SUM(J6:J${totalRowNumber - 1})` };
+        sumPoinCell.numFmt = '#,##0';
+        sumPoinCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF0F172A' } };
+        sumPoinCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        const endCell = totalRow.getCell(11);
+        endCell.value = '';
+      } else {
+        sheet.mergeCells(`A${totalRowNumber}:I${totalRowNumber}`);
+        const labelCell = totalRow.getCell(1);
+        labelCell.value = `TOTAL KESELURUHAN (${data.length} DATA)`;
+        labelCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF0F172A' } };
+        labelCell.alignment = { vertical: 'middle', horizontal: 'right' };
+
+        const sumPoinCell = totalRow.getCell(10);
+        sumPoinCell.value = { formula: `SUM(J6:J${totalRowNumber - 1})` };
+        sumPoinCell.numFmt = '#,##0';
+        sumPoinCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF0F172A' } };
+        sumPoinCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        const endCell = totalRow.getCell(11);
+        endCell.value = '';
+      }
+
+      for (let c = 1; c <= headers.length; c++) {
+        const cell = totalRow.getCell(c);
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFF1F5F9' }
+        };
         cell.border = {
+          top: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          bottom: { style: 'double', color: { argb: 'FF0F172A' } },
+          left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+          right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+        };
+      }
+    } else {
+      const emptyRowNumber = headerRowNumber + 1;
+      sheet.mergeCells(`A${emptyRowNumber}:K${emptyRowNumber}`);
+      const emptyCell = sheet.getCell(`A${emptyRowNumber}`);
+      emptyCell.value = 'Tidak ada dokumen yang ditemukan sesuai kriteria filter.';
+      emptyCell.font = { name: 'Segoe UI', size: 9.5, italic: true, color: { argb: 'FF94A3B8' } };
+      emptyCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      sheet.getRow(emptyRowNumber).height = 28;
+      for (let c = 1; c <= headers.length; c++) {
+        sheet.getRow(emptyRowNumber).getCell(c).border = {
           top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
           bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
           left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
           right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
         };
-
-        if (dataIdx % 2 === 1) {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FFF8FAFC' }
-          };
-        }
-      });
-    });
+      }
+    }
 
     colWidths.forEach((col, idx) => {
       sheet.getColumn(idx + 1).width = col.width;
