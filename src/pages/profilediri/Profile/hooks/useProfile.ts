@@ -120,14 +120,25 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
         .map((d) => normalizeT(d.title))
     );
 
+    const approvedManualTitles = new Set(
+      (internalDocuments || [])
+        .filter((d: any) => {
+          if (d.status !== 'Approved') return false;
+          if (d.source === 'scopus' || d.source === 'scholar' || d.category === 'Google Scholar') return false;
+          return (d.file_url && d.file_url !== '' && d.file_url !== '-') || d.is_penelitian;
+        })
+        .map((d: any) => normalizeT(d.title))
+        .filter(Boolean)
+    );
+
     const extCross = (scopusPublications || [])
-      .filter((s) => crossTitles.has(normalizeT(s.title)))
+      .filter((s) => crossTitles.has(normalizeT(s.title)) && !approvedManualTitles.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
     const extScopus = (scopusPublications || [])
-      .filter((s) => !crossTitles.has(normalizeT(s.title)))
+      .filter((s) => !crossTitles.has(normalizeT(s.title)) && !approvedManualTitles.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
     const extScholar = (publications || [])
-      .filter((s) => !crossTitles.has(normalizeT(s.title)))
+      .filter((s) => !crossTitles.has(normalizeT(s.title)) && !approvedManualTitles.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
     const extTotal = Math.round(extCross + extScopus + extScholar);
 
@@ -151,6 +162,19 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
       return yr >= currentYear - 2 && yr <= currentYear;
     });
 
+    const approvedManualTitles3Years = new Set(
+      (internalDocuments || [])
+        .filter((d: any) => {
+          if (d.status !== 'Approved') return false;
+          if (d.source === 'scopus' || d.source === 'scholar' || d.category === 'Google Scholar') return false;
+          if (!((d.file_url && d.file_url !== '' && d.file_url !== '-') || d.is_penelitian)) return false;
+          const yr = d.published_at ? new Date(d.published_at).getFullYear() : (d.tahun_pelaksanaan || d.tahun);
+          return Number(yr) >= currentYear - 2 && Number(yr) <= currentYear;
+        })
+        .map((d: any) => normalizeT(d.title))
+        .filter(Boolean)
+    );
+
     const crossTitles3Years = new Set(
       publications3Years
         .filter(sd => scopus3Years.some(s => normalizeT(s.title) === normalizeT(sd.title)))
@@ -158,15 +182,15 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     );
 
     const extCross3Years = scopus3Years
-      .filter(s => crossTitles3Years.has(normalizeT(s.title)))
+      .filter(s => crossTitles3Years.has(normalizeT(s.title)) && !approvedManualTitles3Years.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
 
     const extScopus3Years = scopus3Years
-      .filter(s => !crossTitles3Years.has(normalizeT(s.title)))
+      .filter(s => !crossTitles3Years.has(normalizeT(s.title)) && !approvedManualTitles3Years.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
 
     const extScholar3Years = publications3Years
-      .filter(s => !crossTitles3Years.has(normalizeT(s.title)))
+      .filter(s => !crossTitles3Years.has(normalizeT(s.title)) && !approvedManualTitles3Years.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
 
     const api3Years = Math.round(extCross3Years + extScopus3Years + extScholar3Years);
@@ -187,6 +211,19 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     const publicationsThisYear = (publications || []).filter(p => Number(p.year) === currentYear);
     const scopusThisYear = (scopusPublications || []).filter(s => Number(s.year) === currentYear);
 
+    const approvedManualTitlesThisYear = new Set(
+      (internalDocuments || [])
+        .filter((d: any) => {
+          if (d.status !== 'Approved') return false;
+          if (d.source === 'scopus' || d.source === 'scholar' || d.category === 'Google Scholar') return false;
+          if (!((d.file_url && d.file_url !== '' && d.file_url !== '-') || d.is_penelitian)) return false;
+          const yr = d.published_at ? new Date(d.published_at).getFullYear() : (d.tahun_pelaksanaan || d.tahun);
+          return Number(yr) === currentYear;
+        })
+        .map((d: any) => normalizeT(d.title))
+        .filter(Boolean)
+    );
+
     const crossTitlesThisYear = new Set(
       publicationsThisYear
         .filter(sd => scopusThisYear.some(s => normalizeT(s.title) === normalizeT(sd.title)))
@@ -194,15 +231,15 @@ export const useProfile = (user: ProfileUser | null | undefined, setUser: (user:
     );
 
     const extCrossThisYear = scopusThisYear
-      .filter(s => crossTitlesThisYear.has(normalizeT(s.title)))
+      .filter(s => crossTitlesThisYear.has(normalizeT(s.title)) && !approvedManualTitlesThisYear.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
 
     const extScopusThisYear = scopusThisYear
-      .filter(s => !crossTitlesThisYear.has(normalizeT(s.title)))
+      .filter(s => !crossTitlesThisYear.has(normalizeT(s.title)) && !approvedManualTitlesThisYear.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
 
     const extScholarThisYear = publicationsThisYear
-      .filter(s => !crossTitlesThisYear.has(normalizeT(s.title)))
+      .filter(s => !crossTitlesThisYear.has(normalizeT(s.title)) && !approvedManualTitlesThisYear.has(normalizeT(s.title)))
       .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
 
     const apiThisYear = Math.round(extCrossThisYear + extScopusThisYear + extScholarThisYear);

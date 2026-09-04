@@ -118,23 +118,30 @@ export default function useLecturerDashboard(user: any) {
     if (!profileData) return { total: 0, scopus: 0, scholar: 0 };
     
     const { publications = [], scopusPublications = [] } = profileData;
+    const manualApprovedTitles = new Set(
+      approvedDocs.map((d: any) => normalizeTitle(d.title)).filter(Boolean)
+    );
+
     const crossTitles = new Set(
       (publications || []).filter((sd: any) => 
         (scopusPublications || []).some((s: any) => normalizeTitle(s.title) === normalizeTitle(sd.title))
       ).map((d: any) => normalizeTitle(d.title))
     );
     
-    const scopusPts = (scopusPublications || []).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const scopusPts = (scopusPublications || [])
+      .filter((s: any) => !manualApprovedTitles.has(normalizeTitle(s.title)))
+      .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
     const scholarPts = (publications || [])
-        .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)))
-        .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+      .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)) && !manualApprovedTitles.has(normalizeTitle(s.title)))
+      .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
     
     return {
       total: Math.round(scopusPts + scholarPts),
       scopus: Math.round(scopusPts),
       scholar: Math.round(scholarPts)
     };
-  }, [profileData]);
+  }, [profileData, approvedDocs]);
 
   const internalPoints = useMemo(() => {
     return Math.round(approvedDocs.reduce((acc, doc) => acc + (Number(doc.awarded_points) || 0), 0));
@@ -155,23 +162,37 @@ export default function useLecturerDashboard(user: any) {
       return yr >= currentYear - 2 && yr <= currentYear;
     });
 
+    const manualApprovedTitles3Years = new Set(
+      approvedDocs
+        .filter((doc) => {
+          const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : doc.tahun_pelaksanaan;
+          const yr = Number(docYear);
+          return yr >= currentYear - 2 && yr <= currentYear;
+        })
+        .map((d: any) => normalizeTitle(d.title))
+        .filter(Boolean)
+    );
+
     const crossTitles = new Set(
       (publications || []).filter((sd: any) => 
         (scopusPublications || []).some((s: any) => normalizeTitle(s.title) === normalizeTitle(sd.title))
       ).map((d: any) => normalizeTitle(d.title))
     );
     
-    const scopusPts = (scopusPublications || []).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const scopusPts = (scopusPublications || [])
+      .filter((s: any) => !manualApprovedTitles3Years.has(normalizeTitle(s.title)))
+      .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
     const scholarPts = (publications || [])
-        .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)))
-        .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+      .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)) && !manualApprovedTitles3Years.has(normalizeTitle(s.title)))
+      .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
     
     return {
       total: Math.round(scopusPts + scholarPts),
       scopus: Math.round(scopusPts),
       scholar: Math.round(scholarPts)
     };
-  }, [profileData]);
+  }, [profileData, approvedDocs]);
 
   const internalPoints3Years = useMemo(() => {
     return Math.round(
@@ -194,23 +215,36 @@ export default function useLecturerDashboard(user: any) {
     const publications = (profileData.publications || []).filter((p: any) => Number(p.year) === currentYear);
     const scopusPublications = (profileData.scopusPublications || []).filter((s: any) => Number(s.year) === currentYear);
 
+    const manualApprovedTitlesThisYear = new Set(
+      approvedDocs
+        .filter((doc) => {
+          const docYear = doc.published_at ? new Date(doc.published_at).getFullYear() : doc.tahun_pelaksanaan;
+          return Number(docYear) === currentYear;
+        })
+        .map((d: any) => normalizeTitle(d.title))
+        .filter(Boolean)
+    );
+
     const crossTitles = new Set(
       (publications || []).filter((sd: any) => 
         (scopusPublications || []).some((s: any) => normalizeTitle(s.title) === normalizeTitle(sd.title))
       ).map((d: any) => normalizeTitle(d.title))
     );
     
-    const scopusPts = (scopusPublications || []).reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+    const scopusPts = (scopusPublications || [])
+      .filter((s: any) => !manualApprovedTitlesThisYear.has(normalizeTitle(s.title)))
+      .reduce((a: number, d: any) => a + calculateScopusSintaPoints(d), 0);
+
     const scholarPts = (publications || [])
-        .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)))
-        .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
+      .filter((s: any) => !crossTitles.has(normalizeTitle(s.title)) && !manualApprovedTitlesThisYear.has(normalizeTitle(s.title)))
+      .reduce((a: number, d: any) => a + calculateScholarPoints(d), 0);
     
     return {
       total: Math.round(scopusPts + scholarPts),
       scopus: Math.round(scopusPts),
       scholar: Math.round(scholarPts)
     };
-  }, [profileData]);
+  }, [profileData, approvedDocs]);
 
   const internalPointsThisYear = useMemo(() => {
     return Math.round(

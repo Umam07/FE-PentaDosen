@@ -367,11 +367,30 @@ export function usePublication(user: UserSession) {
 
   const stats: StatsInfo = useMemo(() => {
     const src = filteredDocuments;
+    const seenTitles = new Set<string>();
+    let totalPts = 0;
+
+    src.forEach((d) => {
+      const norm = String(d.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const pts = d.source === 'scholar' 
+        ? calculateScholarPoints(d) 
+        : (Number(d.awarded_points) || 0);
+
+      if (norm) {
+        if (!seenTitles.has(norm)) {
+          seenTitles.add(norm);
+          totalPts += pts;
+        }
+      } else {
+        totalPts += pts;
+      }
+    });
+
     return {
       total: src.length,
       approved: src.filter((d) => d.status === 'Approved').length,
       pending: src.filter((d) => d.status === 'Pending' || d.status === 'Verified by Fakultas').length,
-      points: Math.round(src.reduce((acc, d) => acc + (Number(d.awarded_points) || 0), 0)),
+      points: Math.round(totalPts),
       citations: src.reduce((acc, d) => acc + (Number(d.citations) || 0), 0)
     };
   }, [filteredDocuments]);
@@ -419,12 +438,13 @@ export function usePublication(user: UserSession) {
     try {
       setUpdatingCorrespondingId(docId);
       const targetDoc = (documents || []).find((d) => String(d.id) === String(docId));
+      const cleanId = String(docId).replace(/^(scopus_|scholar_)/, '');
 
-      let endpoint = `/api/documents/${docId}/corresponding`;
+      let endpoint = `/api/documents/${cleanId}/corresponding`;
       if (targetDoc?.source === 'scopus') {
-        endpoint = `/api/scopus-publications/${docId}/corresponding`;
+        endpoint = `/api/scopus-publications/${cleanId}/corresponding`;
       } else if (targetDoc?.source === 'scholar') {
-        endpoint = `/api/scholar-publications/${docId}/corresponding`;
+        endpoint = `/api/scholar-publications/${cleanId}/corresponding`;
       }
 
       const res = await fetch(endpoint, {

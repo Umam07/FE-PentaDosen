@@ -847,7 +847,8 @@ export default function PublicationTable({
                   {/* Actions */}
                   <td className="px-3 py-4 lg:py-5 text-center align-middle" onClick={(e) => e.stopPropagation()}>
                     {(() => {
-                      const isLocked = doc.status === 'Approved' || (doc.status || '').toLowerCase().includes('verified');
+                      const isExternal = doc.source === 'scopus' || doc.source === 'scholar';
+                      const isLocked = isExternal || doc.status === 'Approved' || (doc.status || '').toLowerCase().includes('verified');
                       return (
                         <div className="flex items-center justify-center gap-1.5">
                           {!isLocked ? (
@@ -872,7 +873,7 @@ export default function PublicationTable({
                           ) : (
                             <span 
                               className="p-1.5 rounded-lg bg-surface-light-raised/50 dark:bg-surface-dark-elevated/50 text-muted/60 dark:text-on-dark-muted/50 border border-hairline-light/60 dark:border-hairline-dark/60 inline-flex items-center justify-center cursor-not-allowed"
-                              title="Publikasi terkunci karena sudah disetujui / diverifikasi"
+                              title={isExternal ? `Data sinkronisasi dari API ${doc.source === 'scopus' ? 'Scopus' : 'Scholar'}` : "Publikasi terkunci karena sudah disetujui / diverifikasi"}
                             >
                               <Lock className="w-3.5 h-3.5" />
                             </span>
@@ -930,14 +931,14 @@ export default function PublicationTable({
           </phantom-ui>
         ) : currentDocuments.length > 0 ? (
           currentDocuments.map((doc: any) => {
+            const isExternal = doc.source === 'scopus' || doc.source === 'scholar';
             const isApproved = (doc.status || '').toLowerCase() === 'approved';
             const isRejected = (doc.status || '').toLowerCase() === 'rejected';
             const isVerified = (doc.status || '').toLowerCase().includes('verified') || (doc.status || '').toLowerCase().includes('fakultas');
-            const isLocked = doc.status === 'Approved' || (doc.status || '').toLowerCase().includes('verified');
+            const isLocked = isExternal || doc.status === 'Approved' || (doc.status || '').toLowerCase().includes('verified');
             
             const normTitle = (doc.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
             const isCrossIndexed = !!doc.is_cross_indexed || (!!crossTitlesSet && crossTitlesSet.has(normTitle));
-            const isExternal = doc.source === 'scopus' || doc.source === 'scholar';
             
             const isJI = doc.category === 'Jurnal Internasional';
             const isJN = doc.category === 'Jurnal Nasional';
@@ -1138,7 +1139,7 @@ export default function PublicationTable({
                     ) : (
                       <span 
                         className="p-1.5 rounded-lg bg-surface-light-raised/50 dark:bg-surface-dark-elevated/50 text-muted/60 dark:text-on-dark-muted/50 border border-hairline-light/60 dark:border-hairline-dark/60 inline-flex items-center justify-center cursor-not-allowed"
-                        title="Publikasi terkunci karena sudah disetujui / diverifikasi"
+                        title={isExternal ? `Data sinkronisasi dari API ${doc.source === 'scopus' ? 'Scopus' : 'Scholar'}` : "Publikasi terkunci karena sudah disetujui / diverifikasi"}
                       >
                         <Lock className="w-3.5 h-3.5" />
                       </span>
