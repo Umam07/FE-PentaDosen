@@ -199,17 +199,18 @@ export const exportToExcel = async (
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Log Aktivitas');
 
-  sheet.views = [{ showGridLines: true }];
+  // Freeze panes agar header tetap terlihat saat scroll ke bawah
+  sheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 5, activeCell: 'A6', showGridLines: true }];
 
-  // Bagian Judul
+  // 1. Bagian Judul (Merged A1:F1)
   sheet.mergeCells('A1:F1');
   const titleCell = sheet.getCell('A1');
   titleCell.value = 'LOG AKTIVITAS SISTEM - PENTADOSEN';
-  titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF1E293B' } };
+  titleCell.font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: 'FF1E293B' } };
   titleCell.alignment = { vertical: 'middle', horizontal: 'left' };
-  sheet.getRow(1).height = 30;
+  sheet.getRow(1).height = 32;
 
-  // Bagian Metadata
+  // 2. Bagian Metadata (Merged A2:F2)
   sheet.mergeCells('A2:F2');
   const metaCell = sheet.getCell('A2');
   const dateStr = new Date().toLocaleDateString('id-ID', {
@@ -221,59 +222,65 @@ export const exportToExcel = async (
     minute: '2-digit'
   });
   metaCell.value = `Diekspor oleh : ${user?.name || 'Admin'}  |  Diekspor pada : ${dateStr}`;
-  metaCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+  metaCell.font = { name: 'Segoe UI', size: 9.5, italic: true, color: { argb: 'FF64748B' } };
   metaCell.alignment = { vertical: 'middle', horizontal: 'left' };
   sheet.getRow(2).height = 20;
 
-  // Bagian Filter
+  // 3. Bagian Filter (Merged A3:F3)
   sheet.mergeCells('A3:F3');
   const filterCell = sheet.getCell('A3');
   filterCell.value = `Filter Aksi : ${selectedAction || 'Semua Aksi'}  |  Kata Kunci : "${searchTerm || '-'}"`;
-  filterCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF64748B' } };
+  filterCell.font = { name: 'Segoe UI', size: 9.5, italic: true, color: { argb: 'FF64748B' } };
   filterCell.alignment = { vertical: 'middle', horizontal: 'left' };
   sheet.getRow(3).height = 20;
 
-  // Spasi kosong
-  sheet.getRow(4).height = 10;
+  // Baris pemisah kosong
+  sheet.getRow(4).height = 12;
 
-  // Tabel Header
+  // 4. Tabel Header (Row 5)
   const headers = ['No', 'Waktu', 'Nama Pengguna', 'Peran', 'Aksi', 'Deskripsi Detail'];
   const colWidths = [
     { width: 6 },
     { width: 22 },
-    { width: 25 },
-    { width: 16 },
+    { width: 28 },
     { width: 18 },
+    { width: 20 },
     { width: 65 }
   ];
 
   const headerRowNumber = 5;
   const headerRow = sheet.getRow(headerRowNumber);
-  headerRow.height = 28;
+  headerRow.height = 32;
 
   headers.forEach((h, colIdx) => {
     const cell = headerRow.getCell(colIdx + 1);
     cell.value = h;
-    cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+    cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'FF4F46E5' } // Indigo 600
+      fgColor: { argb: 'FF1E293B' } // Slate 800 premium dark corporate
     };
-    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     cell.border = {
-      top: { style: 'thin', color: { argb: 'FF312E81' } },
-      bottom: { style: 'medium', color: { argb: 'FF312E81' } },
-      left: { style: 'thin', color: { argb: 'FF312E81' } },
-      right: { style: 'thin', color: { argb: 'FF312E81' } }
+      top: { style: 'thin', color: { argb: 'FF0F172A' } },
+      bottom: { style: 'medium', color: { argb: 'FF0F172A' } },
+      left: { style: 'thin', color: { argb: 'FF334155' } },
+      right: { style: 'thin', color: { argb: 'FF334155' } }
     };
   });
 
-  // Isi data baris demi baris
+  // AutoFilter pada baris header
+  sheet.autoFilter = {
+    from: { row: headerRowNumber, column: 1 },
+    to: { row: headerRowNumber, column: headers.length }
+  };
+
+  // 5. Isi data baris
   filteredAllLogs.forEach((log, dataIdx) => {
     const rowNum = headerRowNumber + 1 + dataIdx;
     const row = sheet.getRow(rowNum);
-    row.height = 22;
+    row.height = 24;
 
     const formattedTime = new Date(log.created_at).toLocaleString('id-ID', {
       year: 'numeric',
@@ -284,19 +291,22 @@ export const exportToExcel = async (
       second: '2-digit'
     });
 
+    const actionStr = log.action || '-';
+    const roleStr = log.user?.role || 'System';
+
     const rowValues = [
       dataIdx + 1,
       formattedTime,
       log.user?.name || 'Sistem / Anonim',
-      log.user?.role || 'System',
-      log.action || '-',
+      roleStr,
+      actionStr,
       log.description || '-'
     ];
 
     rowValues.forEach((val, colIdx) => {
       const cell = row.getCell(colIdx + 1);
       cell.value = val;
-      cell.font = { name: 'Arial', size: 10, color: { argb: 'FF334155' } };
+      cell.font = { name: 'Segoe UI', size: 9.5, color: { argb: 'FF334155' } };
       
       cell.border = {
         top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
@@ -306,22 +316,91 @@ export const exportToExcel = async (
       };
 
       // Alignment khusus per kolom
-      if (colIdx === 0 || colIdx === 1 || colIdx === 3 || colIdx === 4) {
+      if (colIdx === 0 || colIdx === 1) {
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      } else if (colIdx === 2) {
+        // Nama Pengguna
+        cell.alignment = { vertical: 'middle', horizontal: 'left' };
+        cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF1E293B' } };
+      } else if (colIdx === 3) {
+        // Peran / Role badge
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        const r = String(val || '').toLowerCase();
+        if (r.includes('admin') || r.includes('fakultas')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+          cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF1D4ED8' } };
+        } else if (r.includes('dosen')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
+          cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF15803D' } };
+        } else if (r.includes('lppm') || r.includes('penelitian')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEDE9FE' } };
+          cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF6D28D9' } };
+        }
+      } else if (colIdx === 4) {
+        // Aksi badge
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        const a = String(val || '').toLowerCase();
+        if (a.includes('login')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
+          cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF15803D' } };
+        } else if (a.includes('logout')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+          cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFB91C1C' } };
+        } else if (a.includes('verify')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+          cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFB45309' } };
+        } else if (a.includes('sync') || a.includes('submit') || a.includes('upload')) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDBEAFE' } };
+          cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF1D4ED8' } };
+        }
       } else {
-        cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: colIdx === 5 };
+        // Deskripsi Detail
+        cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
       }
 
       // Desain zebra striping
       if (dataIdx % 2 === 1) {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFF8FAFC' }
-        };
+        if (!cell.fill) {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFF8FAFC' }
+          };
+        }
       }
     });
   });
+
+  // 6. Summary / Total Row
+  if (filteredAllLogs.length > 0) {
+    const totalRowNumber = headerRowNumber + filteredAllLogs.length + 1;
+    const totalRow = sheet.getRow(totalRowNumber);
+    totalRow.height = 26;
+
+    sheet.mergeCells(`A${totalRowNumber}:E${totalRowNumber}`);
+    const labelCell = totalRow.getCell(1);
+    labelCell.value = `TOTAL AKTIVITAS TERCATAT: ${filteredAllLogs.length} LOG`;
+    labelCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FF0F172A' } };
+    labelCell.alignment = { vertical: 'middle', horizontal: 'right' };
+
+    const endCell = totalRow.getCell(6);
+    endCell.value = '';
+
+    for (let c = 1; c <= headers.length; c++) {
+      const cell = totalRow.getCell(c);
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFF1F5F9' }
+      };
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FF94A3B8' } },
+        bottom: { style: 'double', color: { argb: 'FF0F172A' } },
+        left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+        right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+      };
+    }
+  }
 
   colWidths.forEach((col, idx) => {
     sheet.getColumn(idx + 1).width = col.width;
