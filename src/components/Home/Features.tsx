@@ -2,79 +2,101 @@ import { motion } from 'motion/react';
 import {
   Check,
   X,
-  Zap,
+  RefreshCw,
   Calculator,
   ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 /* ------------------------------------------------------------------ */
-/* Comparison row — dipakai di panel "Cara Lama" & "Dengan PentaDosen" */
+/* Baris Komparasi — Bersih, teks natural, tanpa visual berlebihan     */
 /* ------------------------------------------------------------------ */
 
-interface CompareRowProps {
-  text: string;
-  variant: 'old' | 'new';
+interface CompareItemProps {
+  title: string;
+  description: string;
+  isPositive: boolean;
 }
 
-function CompareRow({ text, variant }: CompareRowProps) {
-  const isNew = variant === 'new';
+function CompareItem({ title, description, isPositive }: CompareItemProps) {
   return (
-    <li className="flex items-start gap-3">
+    <li className="flex items-start gap-4">
       <span
-        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-          isNew
+        className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+          isPositive
             ? 'bg-success-soft text-success dark:bg-success/15 dark:text-success-on-dark'
-            : 'bg-hairline-light-soft text-muted-soft dark:bg-hairline-dark-soft dark:text-on-dark-muted'
+            : 'bg-hairline-light text-muted dark:bg-hairline-dark dark:text-on-dark-muted'
         }`}
         aria-hidden="true"
       >
-        {isNew ? <Check className="h-3 w-3" strokeWidth={3} /> : <X className="h-3 w-3" strokeWidth={3} />}
+        {isPositive ? (
+          <Check className="h-3 w-3" strokeWidth={3} />
+        ) : (
+          <X className="h-3 w-3" strokeWidth={2.5} />
+        )}
       </span>
-      <span
-        className={`text-sm md:text-[15px] leading-relaxed ${
-          isNew
-            ? 'text-body-strong dark:text-on-dark font-medium'
-            : 'text-muted dark:text-on-dark-muted'
-        }`}
-      >
-        {text}
-      </span>
+      <div className="space-y-1">
+        <p
+          className={`text-sm md:text-base font-semibold leading-snug ${
+            isPositive
+              ? 'text-ink-heading dark:text-on-dark'
+              : 'text-body-strong dark:text-on-dark-soft'
+          }`}
+        >
+          {title}
+        </p>
+        <p className="text-xs md:text-sm text-body dark:text-on-dark-muted leading-relaxed">
+          {description}
+        </p>
+      </div>
     </li>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* Pillar card — 3 pembeda utama, ringkas: 1 ikon, 1 judul, 1 kalimat  */
+/* Pilar Fitur — Luas, tanpa kartu di dalam kartu, fokus tipografi    */
 /* ------------------------------------------------------------------ */
 
-interface PillarProps {
+interface FeaturePillarProps {
   icon: ReactNode;
   title: string;
   description: string;
+  points: string[];
   delay?: number;
 }
 
-function Pillar({ icon, title, description, delay = 0 }: PillarProps) {
+function FeaturePillar({ icon, title, description, points, delay = 0 }: FeaturePillarProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="flex flex-col gap-4"
+      className="flex flex-col justify-between rounded-3xl border border-hairline-light bg-surface-light p-8 md:p-10 dark:border-hairline-dark dark:bg-surface-dark transition-colors duration-200"
     >
-      <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-ink-soft text-body dark:bg-surface-dark-elevated dark:text-on-dark-soft">
-        {icon}
-      </div>
       <div>
-        <h3 className="text-[17px] font-semibold tracking-tight text-ink-heading dark:text-on-dark mb-1.5">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-ink-soft text-ink-heading dark:bg-surface-dark-elevated dark:text-on-dark border border-hairline-light-soft dark:border-hairline-dark mb-6">
+          {icon}
+        </div>
+
+        <h3 className="text-xl font-semibold tracking-tight text-ink-heading dark:text-on-dark mb-3 leading-snug">
           {title}
         </h3>
-        <p className="text-sm text-body dark:text-on-dark-soft leading-relaxed">
+
+        <p className="text-sm md:text-[15px] text-body dark:text-on-dark-soft leading-relaxed mb-6">
           {description}
         </p>
       </div>
+
+      <ul className="space-y-2.5 pt-6 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
+        {points.map((point, idx) => (
+          <li key={idx} className="flex items-center gap-2.5 text-xs md:text-sm text-body dark:text-on-dark-soft font-medium">
+            <span className="h-1 w-1 rounded-full bg-muted dark:bg-on-dark-muted shrink-0" aria-hidden="true" />
+            <span>{point}</span>
+          </li>
+        ))}
+      </ul>
     </motion.div>
   );
 }
@@ -83,102 +105,157 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="py-20 md:py-32 bg-canvas-light dark:bg-canvas-dark relative overflow-hidden font-sans"
+      className="py-24 md:py-32 bg-canvas-light dark:bg-canvas-dark relative font-sans transition-colors duration-300"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
-        <div className="max-w-2xl mb-14 md:mb-20">
+        <div className="max-w-3xl mb-16 md:mb-20">
           <motion.h2
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-ink-heading dark:text-on-dark leading-[1.15] mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-ink-heading dark:text-on-dark leading-[1.15] mb-5"
           >
-            Sistem yang kerja duluan,{' '}
+            Sistem yang bekerja otomatis,{' '}
             <br className="hidden sm:inline" />
-            bukan nunggu diinput manual.
+            <span className="text-accent dark:text-accent-on-dark">bukan menunggu entri manual.</span>
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.08 }}
             className="text-base sm:text-lg text-body dark:text-on-dark-soft leading-relaxed"
           >
-            Kebanyakan sistem kampus sekadar menjadi tempat penyimpanan data. PentaDosen dirancang aktif — menarik data publikasi, menghitung poin kinerja, hingga menyiapkan dokumen untuk audit secara otomatis.
+            Memangkas beban rekapitulasi berkas setiap periode pelaporan. Seluruh capaian kinerja dan portofolio dosen terhimpun rapi secara berkelanjutan, siap dievaluasi kapan pun dibutuhkan.
           </motion.p>
         </div>
 
-        {/* Before / After Comparison Panel */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 mb-6 md:mb-8">
+        {/* Panel Komparasi Alur Kerja */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 md:mb-24">
 
-          {/* CARA LAMA */}
+          {/* Sisi Kiri: Sebelum Menggunakan PentaDosen */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-3xl border border-dashed border-hairline-light bg-surface-light p-8 md:p-10 dark:border-hairline-dark dark:bg-surface-dark"
+            className="rounded-3xl border border-hairline-light bg-surface-light-raised/60 p-8 sm:p-10 dark:border-hairline-dark dark:bg-surface-dark-soft/70 flex flex-col justify-between"
           >
-            <span className="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-soft dark:text-on-dark-muted mb-4 block">
-              Cara Lama
-            </span>
-            <h3 className="text-xl font-semibold text-body-strong dark:text-on-dark-soft tracking-tight mb-6">
-              Sistem akademik pada umumnya
-            </h3>
-            <ul className="space-y-4">
-              <CompareRow variant="old" text="Data publikasi diinput manual satu per satu" />
-              <CompareRow variant="old" text="Poin kinerja dihitung sendiri pakai rumus Excel" />
-              <CompareRow variant="old" text="Bukti fisik baru dicari saat mendekati jadwal audit" />
-              <CompareRow variant="old" text="Data sitasi sering tertinggal dan tidak ter-update" />
-            </ul>
+            <div>
+              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-muted dark:text-on-dark-muted mb-3">
+                Sebelum Menggunakan PentaDosen
+              </p>
+              <h3 className="text-xl sm:text-2xl font-semibold text-body-strong dark:text-on-dark-soft tracking-tight mb-8">
+                Rekapitulasi data dilakukan manual
+              </h3>
+
+              <ul className="space-y-6">
+                <CompareItem
+                  isPositive={false}
+                  title="Pencatatan artikel satu per satu"
+                  description="Dosen harus menyalin judul, nomor DOI, nama jurnal, dan indeksasi secara berulang."
+                />
+                <CompareItem
+                  isPositive={false}
+                  title="Perhitungan angka kredit rawan selisih"
+                  description="Rumus Excel dihitung mandiri sehingga sering terjadi perbedaan penafsiran aturan kredit."
+                />
+                <CompareItem
+                  isPositive={false}
+                  title="Dokumen baru dicari saat mendekati audit"
+                  description="Bukti fisik PDF tersebar di berbagai folder dan perangkat, memicu kepanikan menjelang audit."
+                />
+                <CompareItem
+                  isPositive={false}
+                  title="Data sitasi dan reputasi riset tertinggal"
+                  description="Angka sitasi serta H-Index di portal kampus tidak diperbarui secara berkala."
+                />
+              </ul>
+            </div>
           </motion.div>
 
-          {/* DENGAN PENTADOSEN */}
+          {/* Sisi Kanan: Dengan PentaDosen */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-3xl border border-hairline-light bg-surface-light p-8 md:p-10 shadow-sm transition-all duration-300 hover:border-ink-border dark:border-hairline-dark dark:bg-surface-dark dark:hover:border-hairline-dark"
+            className="rounded-3xl border border-hairline-light bg-surface-light p-8 sm:p-10 shadow-xs dark:border-hairline-dark dark:bg-surface-dark flex flex-col justify-between"
           >
-            <span className="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-accent dark:text-accent-on-dark mb-4 block">
-              Dengan PentaDosen
-            </span>
-            <h3 className="text-xl font-semibold text-ink-heading dark:text-on-dark tracking-tight mb-6">
-              Otomatis dari awal sampai akhir
-            </h3>
-            <ul className="space-y-4">
-              <CompareRow variant="new" text="Sinkron otomatis dari Google Scholar & Scopus" />
-              <CompareRow variant="new" text="Poin Tri Dharma terhitung otomatis sesuai regulasi" />
-              <CompareRow variant="new" text="Dokumen tersusun rapi, siap diverifikasi kapan saja" />
-              <CompareRow variant="new" text="Data selalu mutakhir tanpa perlu pengecekan manual" />
-            </ul>
+            <div>
+              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-accent dark:text-accent-on-dark mb-3">
+                Dengan PentaDosen
+              </p>
+              <h3 className="text-xl sm:text-2xl font-semibold text-ink-heading dark:text-on-dark tracking-tight mb-8">
+                Tersinkronisasi dan siap verifikasi
+              </h3>
+
+              <ul className="space-y-6">
+                <CompareItem
+                  isPositive={true}
+                  title="Tarik data otomatis dari Google Scholar &amp; Scopus"
+                  description="Metadata publikasi, jumlah sitasi, dan H-Index terhimpun langsung ke sistem tanpa input manual."
+                />
+                <CompareItem
+                  isPositive={true}
+                  title="Kalkulasi poin Tri Dharma otomatis dan transparan"
+                  description="Nilai kredit dihitung terstandarisasi berdasarkan skema, kategori jurnal, dan regulasi PO PAK Dikti."
+                />
+                <CompareItem
+                  isPositive={true}
+                  title="Arsip digital terpusat, siap audit kapan saja"
+                  description="Dokumen bukti tersusun rapi dengan alur verifikasi bertingkat dari Fakultas hingga LPPM."
+                />
+                <CompareItem
+                  isPositive={true}
+                  title="Data sitasi dan publikasi selalu diperbarui"
+                  description="Perkembangan sitasi, H-Index, dan rekam jejak riset dosen terpantau otomatis tanpa perlu dicek satu per satu."
+                />
+              </ul>
+            </div>
           </motion.div>
         </div>
 
-        {/* 3 Pilar Pembeda — ringkas, bukan feature dump */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10 pt-10 md:pt-12 border-t border-hairline-light-soft dark:border-hairline-dark-soft">
-          <Pillar
+        {/* 3 Pilar Kemampuan Utama — Desain Lapang & Bersih */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <FeaturePillar
             delay={0}
-            icon={<Zap className="h-5 w-5" />}
-            title="Sinkron Otomatis, Tanpa Repot"
-            description="Karya ilmiah, sitasi, dan H-Index terhimpun otomatis dari Google Scholar dan Scopus. Dosen tetap dapat memperbarui data secara mandiri kapan saja."
+            icon={<RefreshCw className="h-6 w-6" />}
+            title="Sinkronisasi Publikasi Otomatis"
+            description="Karya ilmiah, sitasi, dan indeksasi Scopus serta Google Scholar dihimpun terjadwal. Dosen tetap dapat memicu penyelarasan mandiri kapan saja."
+            points={[
+              'Integrasi ID Scopus & Google Scholar',
+              'Penyaringan artikel ganda (deduplikasi)',
+              'Pembaruan jumlah sitasi berkala'
+            ]}
           />
-          <Pillar
+
+          <FeaturePillar
             delay={0.08}
-            icon={<Calculator className="h-5 w-5" />}
-            title="Poin Kinerja Terhitung Otomatis"
-            description="Tanpa rumus manual. Akumulasi angka kredit Tri Dharma dihitung otomatis sesuai bobot dan regulasi akademik yang berlaku."
+            icon={<Calculator className="h-6 w-6" />}
+            title="Perhitungan Poin KPI Objektif"
+            description="Poin kinerja akademik dihitung otomatis sesuai bobot kategori jurnal (SINTA, Scopus Q1–Q4, prosiding) serta peran kepenulisan dosen."
+            points={[
+              'Aturan baku berbasis pedoman Dikti',
+              'Proporsi penulis pertama dan anggota',
+              'Transparansi riwayat perhitungan poin'
+            ]}
           />
-          <Pillar
+
+          <FeaturePillar
             delay={0.16}
-            icon={<ShieldCheck className="h-5 w-5" />}
-            title="Dokumen Siap Audit Kapan Saja"
-            description="Seluruh berkas melewati verifikasi berjenjang Fakultas dan LPPM, siap diekspor ke format PDF maupun Excel saat dibutuhkan."
+            icon={<ShieldCheck className="h-6 w-6" />}
+            title="Verifikasi Berjenjang &amp; Siap Audit"
+            description="Mendukung alur validasi resmi oleh Fakultas dan LPPM YARSI. Data rekapitulasi portofolio siap diekspor ke Excel dan PDF saat akreditasi."
+            points={[
+              'Persetujuan bertingkat Fakultas & LPPM',
+              'Status verifikasi dokumen transparan',
+              'Ekspor laporan resmi Excel & PDF'
+            ]}
           />
         </div>
 

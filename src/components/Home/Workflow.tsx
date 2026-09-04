@@ -271,7 +271,7 @@ export default function Workflow() {
                     </p>
 
                     {/* Highlights Bullet List */}
-                    <div className="space-y-3 bg-surface-light-raised dark:bg-surface-dark-elevated p-4 rounded-2xl border border-hairline-light dark:border-hairline-dark">
+                    <div className="space-y-3 pt-2">
                       {currentStep.highlights.map((item, idx) => (
                         <div key={idx} className="flex items-start gap-3">
                           <div className={`mt-0.5 w-5 h-5 rounded-full ${currentStep.accentBg} flex items-center justify-center shrink-0`}>
@@ -286,238 +286,240 @@ export default function Workflow() {
 
                   </div>
 
-                {/* Right Column: Custom Interactive Stage Graphics */}
+                {/* Right Column: Clean Interactive Stage Visual */}
                 <div className="lg:col-span-6">
-                  <div className="bg-surface-dark-soft dark:bg-surface-dark-soft rounded-2xl p-6 border border-hairline-dark text-on-dark shadow-2xl relative overflow-hidden min-h-[340px] flex flex-col justify-between">
+                  <div className="bg-surface-light-raised/80 dark:bg-surface-dark-elevated/60 rounded-2xl p-6 sm:p-8 border border-hairline-light dark:border-hairline-dark min-h-[360px] flex flex-col justify-between">
                     
-                    {/* Background Grid Pattern inside Card */}
-                    <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] pointer-events-none" />
-
                     {/* Render Specific Visual per Step */}
                     {currentStep.id === 1 && (
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-6 py-2">
-                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-xs font-mono font-bold text-on-dark-soft">SYSTEM GATEWAY ACTIVE</span>
-                          </div>
-                          <span className="text-[10px] font-mono bg-accent/20 text-accent-on-dark px-2 py-0.5 rounded border border-accent/30">SSO OAuth 2.0</span>
+                      <div className="flex flex-col h-full justify-between gap-6">
+                        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
+                          <span className="text-xs font-mono font-bold tracking-wider text-body-strong dark:text-on-dark-soft uppercase">
+                            Integrasi Sumber Data
+                          </span>
+                          <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-accent/10 dark:bg-accent/20 text-accent-hover dark:text-accent-on-dark border border-accent/20">
+                            SSO & API Terkoneksi
+                          </span>
                         </div>
 
-                        {/* Connected Node Graph Simulation */}
-                        <div className="grid grid-cols-3 gap-3 items-center text-center relative my-4">
-                          <motion.div 
-                            whileHover={{ scale: 1.03 }}
-                            className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col items-center gap-2"
-                          >
-                            <UserCheck className="w-6 h-6 text-accent-on-dark" />
-                            <span className="text-xs font-bold text-on-dark">LDAP Kampus</span>
-                            <span className="text-[9px] font-mono text-success-on-dark font-bold">✓ Authenticated</span>
-                          </motion.div>
-
-                          <div className="flex flex-col items-center justify-center relative">
-                            <motion.div 
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                              className="w-8 h-8 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent-on-dark mb-1"
-                            >
-                              <RefreshCw className="w-4 h-4 animate-spin" style={{ animationDuration: '6s' }} />
-                            </motion.div>
-                            <span className="text-[9px] font-mono text-on-dark-muted">Sync Engine</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center text-center py-2">
+                          <div className="flex flex-col items-center gap-2 p-2">
+                            <div className="w-12 h-12 rounded-xl bg-accent/10 dark:bg-accent/20 text-accent-hover dark:text-accent-on-dark flex items-center justify-center">
+                              <UserCheck className="w-6 h-6" />
+                            </div>
+                            <span className="text-sm font-bold text-ink-heading dark:text-on-dark">Akun Dosen</span>
+                            <span className="text-xs text-body dark:text-on-dark-soft">SSO LDAP Universitas</span>
                           </div>
 
-                          <motion.div 
-                            whileHover={{ scale: 1.03 }}
-                            className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col items-center gap-2"
-                          >
-                            <Database className="w-6 h-6 text-success-on-dark" />
-                            <span className="text-xs font-bold text-on-dark">Scopus & Scholar</span>
-                            <span className="text-[9px] font-mono text-accent-on-dark font-bold">API Connected</span>
-                          </motion.div>
+                          <div className="flex flex-col items-center justify-center gap-1.5 py-2">
+                            <div className="w-9 h-9 rounded-full bg-surface-light dark:bg-surface-dark border border-hairline-light dark:border-hairline-dark flex items-center justify-center text-body dark:text-on-dark-soft">
+                              <RefreshCw className="w-4 h-4" />
+                            </div>
+                            <span className="text-[11px] font-mono text-body dark:text-on-dark-soft">Sinkronisasi</span>
+                          </div>
+
+                          <div className="flex flex-col items-center gap-2 p-2">
+                            <div className="w-12 h-12 rounded-xl bg-accent/10 dark:bg-accent/20 text-accent-hover dark:text-accent-on-dark flex items-center justify-center">
+                              <Database className="w-6 h-6" />
+                            </div>
+                            <span className="text-sm font-bold text-ink-heading dark:text-on-dark">Basis Eksternal</span>
+                            <span className="text-xs text-body dark:text-on-dark-soft">Scopus & Google Scholar</span>
+                          </div>
                         </div>
 
-                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-accent" />
-                            <span className="font-mono text-on-dark-soft">Data Stream Sync:</span>
-                          </div>
-                          <span className="font-mono font-bold text-success-on-dark">142 Articles Ingested</span>
+                        <div className="pt-4 border-t border-hairline-light dark:border-hairline-dark flex items-center justify-between text-xs text-body dark:text-on-dark-soft">
+                          <span>Protokol Keamanan:</span>
+                          <span className="font-mono font-medium text-ink-heading dark:text-on-dark">OAuth 2.0 / Kampus LDAP</span>
                         </div>
                       </div>
                     )}
 
                     {currentStep.id === 2 && (
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
-                          <span className="text-xs font-mono font-bold text-on-dark-soft">MULTI-FORMAT INGESTION</span>
-                          <span className="text-[10px] font-mono bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">PDF / EXCEL (.XLSX)</span>
+                      <div className="flex flex-col h-full justify-between gap-6">
+                        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
+                          <span className="text-xs font-mono font-bold tracking-wider text-body-strong dark:text-on-dark-soft uppercase">
+                            Kanal Penerimaan Berkas
+                          </span>
+                          <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-ink-soft dark:bg-surface-dark-elevated text-ink-heading dark:text-on-dark border border-hairline-light dark:border-hairline-dark">
+                            Multi-Format
+                          </span>
                         </div>
 
-                        {/* Publication Items Stack */}
-                        <div className="space-y-2.5 my-2">
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-surface-dark/90 p-3 rounded-xl border border-hairline-dark flex items-center justify-between gap-3"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-surface-dark-elevated border border-hairline-dark flex items-center justify-center text-accent-on-dark shrink-0 font-bold text-xs">
+                        <div className="divide-y divide-hairline-light dark:divide-hairline-dark py-1">
+                          <div className="py-2.5 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-9 h-9 rounded-lg bg-accent/10 dark:bg-accent/20 text-accent-hover dark:text-accent-on-dark flex items-center justify-center font-bold text-xs shrink-0">
                                 J1
                               </div>
-                              <div className="overflow-hidden">
-                                <div className="text-xs font-bold text-on-dark truncate">Deep Learning for Precision Agriculture</div>
-                                <div className="text-[10px] font-mono text-on-dark-muted">Jurnal Q1 Scopus • DOI: 10.1016/j.future</div>
+                              <div className="truncate">
+                                <div className="text-sm font-semibold text-ink-heading dark:text-on-dark truncate">Publikasi & Artikel Ilmiah</div>
+                                <div className="text-xs text-body dark:text-on-dark-soft">Jurnal Scopus, WoS, dan SINTA</div>
                               </div>
                             </div>
-                            <span className="text-[10px] font-mono font-bold text-success-on-dark bg-success/15 px-2 py-1 rounded">Imported</span>
-                          </motion.div>
+                            <span className="text-xs font-medium text-body dark:text-on-dark-soft shrink-0">PDF & Metadata</span>
+                          </div>
 
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="bg-surface-dark/90 p-3 rounded-xl border border-hairline-dark flex items-center justify-between gap-3"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-warning/15 border border-warning/30 flex items-center justify-center text-warning-on-dark shrink-0 font-bold text-xs">
+                          <div className="py-2.5 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-9 h-9 rounded-lg bg-warning/15 dark:bg-warning/20 text-warning dark:text-warning-on-dark flex items-center justify-center font-bold text-xs shrink-0">
                                 HKI
                               </div>
-                              <div className="overflow-hidden">
-                                <div className="text-xs font-bold text-on-dark truncate">Sistem Otomatisasi Evaluasi Kinerja</div>
-                                <div className="text-[10px] font-mono text-on-dark-muted">Hak Cipta No. EC00202688192</div>
+                              <div className="truncate">
+                                <div className="text-sm font-semibold text-ink-heading dark:text-on-dark truncate">Hak Kekayaan Intelektual & Paten</div>
+                                <div className="text-xs text-body dark:text-on-dark-soft">Sertifikat & Surat Pencatatan Resmi</div>
                               </div>
                             </div>
-                            <span className="text-[10px] font-mono font-bold text-success-on-dark bg-success/15 px-2 py-1 rounded">Imported</span>
-                          </motion.div>
+                            <span className="text-xs font-medium text-body dark:text-on-dark-soft shrink-0">Unggah Bukti</span>
+                          </div>
+
+                          <div className="py-2.5 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-9 h-9 rounded-lg bg-success/15 dark:bg-success/20 text-success dark:text-success-on-dark flex items-center justify-center font-bold text-xs shrink-0">
+                                XLS
+                              </div>
+                              <div className="truncate">
+                                <div className="text-sm font-semibold text-ink-heading dark:text-on-dark truncate">Impor Massal Portofolio</div>
+                                <div className="text-xs text-body dark:text-on-dark-soft">Unggah rekapitulasi berkas Excel</div>
+                              </div>
+                            </div>
+                            <span className="text-xs font-medium text-body dark:text-on-dark-soft shrink-0">.xlsx / .xls</span>
+                          </div>
                         </div>
 
-                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
-                          <span className="font-mono text-on-dark-muted">Format Pendukung:</span>
-                          <div className="flex gap-1.5 font-mono text-[10px]">
-                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.PDF</span>
-                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.XLSX</span>
-                            <span className="bg-surface-dark-elevated text-on-dark-soft px-2 py-0.5 rounded border border-hairline-dark">.XLS</span>
-                          </div>
+                        <div className="pt-4 border-t border-hairline-light dark:border-hairline-dark flex items-center justify-between text-xs text-body dark:text-on-dark-soft">
+                          <span>Dukungan Berkas:</span>
+                          <span className="font-mono font-medium text-ink-heading dark:text-on-dark">PDF, Excel (.xlsx), & Formulir Langsung</span>
                         </div>
                       </div>
                     )}
 
                     {currentStep.id === 3 && (
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
-                          <span className="text-xs font-mono font-bold text-on-dark-soft">CORE DEDUPLICATION & SCORING</span>
-                          <span className="text-[10px] font-mono bg-[#7c5cf0]/20 text-[#a78bfa] px-2 py-0.5 rounded border border-[#7c5cf0]/30">FUZZY MATCH 99.8%</span>
+                      <div className="flex flex-col h-full justify-between gap-6">
+                        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
+                          <span className="text-xs font-mono font-bold tracking-wider text-body-strong dark:text-on-dark-soft uppercase">
+                            Kalkulasi & Verifikasi DOI
+                          </span>
+                          <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-[#5b21b6]/10 dark:bg-[#7c5cf0]/20 text-[#5b21b6] dark:text-[#c4b5fd] border border-[#5b21b6]/20">
+                            Anti-Duplikasi
+                          </span>
                         </div>
 
-                        {/* Processing Matrix Simulation */}
-                        <div className="bg-surface-dark/80 p-4 rounded-xl border border-hairline-dark space-y-3 my-1">
-                          <div className="flex items-center justify-between text-xs border-b border-hairline-dark pb-2">
-                            <span className="text-on-dark-muted">Verifikasi DOI:</span>
-                            <span className="font-mono font-bold text-success-on-dark">✓ Unique Entry Validated</span>
+                        <div className="space-y-3 py-1">
+                          <div className="flex items-center justify-between text-xs pb-2 border-b border-hairline-light dark:border-hairline-dark">
+                            <span className="text-body dark:text-on-dark-soft">Validasi Keunikan Dokumen:</span>
+                            <span className="font-semibold text-success dark:text-success-on-dark">Terverifikasi Unik (DOI Match)</span>
                           </div>
 
-                          <div className="space-y-1.5">
-                            <div className="flex justify-between text-[11px] font-mono">
-                              <span className="text-on-dark-muted">Skor Bobot Jurnal (Q1):</span>
-                              <span className="text-on-dark font-bold">40.0 Poin</span>
+                          <div className="space-y-2 text-xs">
+                            <div className="flex justify-between">
+                              <span className="text-body dark:text-on-dark-soft">Bobot Kategori Karya (Jurnal Q1):</span>
+                              <span className="font-mono font-semibold text-ink-heading dark:text-on-dark">40.0 Poin</span>
                             </div>
-                            <div className="flex justify-between text-[11px] font-mono">
-                              <span className="text-on-dark-muted">Pengali Penulis Utama (60%):</span>
-                              <span className="text-on-dark font-bold">× 0.6</span>
+                            <div className="flex justify-between">
+                              <span className="text-body dark:text-on-dark-soft">Pengali Penulis Pertama (60%):</span>
+                              <span className="font-mono font-semibold text-ink-heading dark:text-on-dark">× 0.6</span>
                             </div>
-                            <div className="h-px bg-hairline-dark my-1" />
-                            <div className="flex justify-between text-xs font-mono font-bold">
-                              <span className="text-[#a78bfa]">Akumulasi Poin Kinerja:</span>
-                              <span className="text-success-on-dark text-sm">+24.0 KPI</span>
+                            <div className="pt-2 border-t border-hairline-light dark:border-hairline-dark flex justify-between items-center">
+                              <span className="font-semibold text-ink-heading dark:text-on-dark text-sm">Akumulasi Poin Kinerja:</span>
+                              <span className="font-mono font-bold text-accent dark:text-accent-on-dark text-base">+24.0 KPI</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-2">
-                            <Cpu className="w-4 h-4 text-[#a78bfa]" />
-                            <span className="font-mono text-on-dark-soft">Rules Engine:</span>
-                          </div>
-                          <span className="font-mono font-bold text-[#a78bfa]">Permenristekdikti Standard</span>
+                        <div className="pt-4 border-t border-hairline-light dark:border-hairline-dark flex items-center justify-between text-xs text-body dark:text-on-dark-soft">
+                          <span>Rujukan Aturan:</span>
+                          <span className="font-mono font-medium text-ink-heading dark:text-on-dark">Pedoman Operasional PAK & KPI Kampus</span>
                         </div>
                       </div>
                     )}
 
                     {currentStep.id === 4 && (
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
-                          <span className="text-xs font-mono font-bold text-on-dark-soft">VERIFICATION APPROVAL TRACK</span>
-                          <span className="text-[10px] font-mono bg-success/20 text-success-on-dark px-2 py-0.5 rounded border border-success/30">SLA &lt; 24 JAM</span>
+                      <div className="flex flex-col h-full justify-between gap-6">
+                        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
+                          <span className="text-xs font-mono font-bold tracking-wider text-body-strong dark:text-on-dark-soft uppercase">
+                            Tahapan Validasi
+                          </span>
+                          <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-success/15 dark:bg-success/20 text-success dark:text-success-on-dark border border-success/30">
+                            Berjenjang & Terstruktur
+                          </span>
                         </div>
 
-                        {/* Approval Stage Timeline */}
-                        <div className="space-y-3 my-2">
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center font-bold text-xs shrink-0">
+                        <div className="relative pl-7 space-y-4 py-1">
+                          <div className="absolute left-3 top-2.5 bottom-2.5 w-0.5 bg-hairline-light dark:bg-hairline-dark" />
+
+                          <div className="relative">
+                            <div className="absolute -left-7 top-0.5 w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center text-xs font-bold">
                               ✓
                             </div>
-                            <div className="flex-1 bg-surface-dark/90 p-2.5 rounded-lg border border-hairline-dark flex justify-between items-center text-xs">
-                              <span className="font-bold text-on-dark">1. Submit Berkas Dosen</span>
-                              <span className="text-[10px] font-mono text-on-dark-muted">09:15 WIB</span>
+                            <div className="flex justify-between items-baseline">
+                              <div className="text-sm font-semibold text-ink-heading dark:text-on-dark">1. Pengajuan Dokumen</div>
+                              <span className="text-xs text-body dark:text-on-dark-soft">Dosen</span>
                             </div>
+                            <p className="text-xs text-body dark:text-on-dark-soft mt-0.5">Berkas dan bukti luaran diunggah ke sistem</p>
                           </div>
 
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="relative">
+                            <div className="absolute -left-7 top-0.5 w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center text-xs font-bold">
                               ✓
                             </div>
-                            <div className="flex-1 bg-surface-dark/90 p-2.5 rounded-lg border border-hairline-dark flex justify-between items-center text-xs">
-                              <span className="font-bold text-on-dark">2. Verifikasi Admin Fakultas</span>
-                              <span className="text-[10px] font-mono text-on-dark-muted">11:40 WIB</span>
+                            <div className="flex justify-between items-baseline">
+                              <div className="text-sm font-semibold text-ink-heading dark:text-on-dark">2. Verifikasi Berkas</div>
+                              <span className="text-xs text-body dark:text-on-dark-soft">Admin Fakultas</span>
                             </div>
+                            <p className="text-xs text-body dark:text-on-dark-soft mt-0.5">Pemeriksaan kelengkapan dan kesesuaian kategori</p>
                           </div>
 
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-success text-on-ink flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="relative">
+                            <div className="absolute -left-7 top-0.5 w-6 h-6 rounded-full bg-accent text-on-ink flex items-center justify-center text-xs font-bold">
                               ✓
                             </div>
-                            <div className="flex-1 bg-success/10 p-2.5 rounded-lg border border-success/30 flex justify-between items-center text-xs">
-                              <span className="font-bold text-success-on-dark">3. Validasi Final LPPM</span>
-                              <span className="text-[10px] font-mono font-bold text-success-on-dark">VERIFIED</span>
+                            <div className="flex justify-between items-baseline">
+                              <div className="text-sm font-semibold text-ink-heading dark:text-on-dark">3. Pengesahan Kinerja</div>
+                              <span className="text-xs font-semibold text-accent dark:text-accent-on-dark">LPPM</span>
                             </div>
+                            <p className="text-xs text-body dark:text-on-dark-soft mt-0.5">Poin kinerja tercatat resmi dalam rekam jejak institusi</p>
                           </div>
                         </div>
 
-                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
-                          <span className="font-mono text-on-dark-soft">Status Dokumen:</span>
-                          <span className="font-mono font-bold text-success-on-dark uppercase tracking-wider">TERVALIDASI RESMI</span>
+                        <div className="pt-4 border-t border-hairline-light dark:border-hairline-dark flex items-center justify-between text-xs text-body dark:text-on-dark-soft">
+                          <span>Jejak Riwayat:</span>
+                          <span className="font-mono font-medium text-ink-heading dark:text-on-dark">Terdokumentasi Lengkap dengan Catatan Reviewer</span>
                         </div>
                       </div>
                     )}
 
                     {currentStep.id === 5 && (
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4 py-2">
-                        <div className="flex items-center justify-between border-b border-hairline-dark pb-3">
-                          <span className="text-xs font-mono font-bold text-on-dark-soft">EXECUTIVE ANALYTICS</span>
-                          <span className="text-[10px] font-mono bg-warning/20 text-warning-on-dark px-2 py-0.5 rounded border border-warning/30">REAL-TIME RANKING</span>
+                      <div className="flex flex-col h-full justify-between gap-6">
+                        <div className="flex items-center justify-between border-b border-hairline-light dark:border-hairline-dark pb-4">
+                          <span className="text-xs font-mono font-bold tracking-wider text-body-strong dark:text-on-dark-soft uppercase">
+                            Pemantauan & Analitik
+                          </span>
+                          <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-warning/15 dark:bg-warning/20 text-warning dark:text-warning-on-dark border border-warning/30">
+                            Siap Evaluasi
+                          </span>
                         </div>
 
-                        {/* Analytics Mini Dashboard */}
-                        <div className="grid grid-cols-2 gap-3 my-1">
-                          <div className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col justify-between">
-                            <span className="text-[10px] font-mono text-on-dark-muted">Total Akumulasi Skor</span>
-                            <div className="text-2xl font-mono font-black text-warning-on-dark mt-1">348.5 <span className="text-xs font-sans text-on-dark-soft">pts</span></div>
-                            <span className="text-[9px] text-success-on-dark font-mono mt-1">▲ 18% dari target</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-2">
+                          <div className="space-y-1.5">
+                            <span className="text-xs text-body dark:text-on-dark-soft">Akumulasi Poin Kinerja</span>
+                            <div className="text-3xl font-mono font-black text-ink-heading dark:text-on-dark">
+                              348.5 <span className="text-xs font-sans font-normal text-body dark:text-on-dark-soft">poin KPI</span>
+                            </div>
+                            <p className="text-xs text-success dark:text-success-on-dark font-medium">Melampaui target semester</p>
                           </div>
 
-                          <div className="bg-surface-dark/90 p-3.5 rounded-xl border border-hairline-dark flex flex-col justify-between">
-                            <span className="text-[10px] font-mono text-on-dark-muted">Posisi Pemeringkatan</span>
-                            <div className="text-2xl font-mono font-black text-on-dark mt-1">#01 <span className="text-xs font-sans text-on-dark-muted">FTI</span></div>
-                            <span className="text-[9px] text-warning-on-dark font-mono mt-1">Top 5% Perguruan Tinggi</span>
+                          <div className="space-y-1.5">
+                            <span className="text-xs text-body dark:text-on-dark-soft">Posisi Kinerja Fakultas</span>
+                            <div className="text-3xl font-mono font-black text-ink-heading dark:text-on-dark">
+                              Top 5% <span className="text-xs font-sans font-normal text-body dark:text-on-dark-soft">Fakultas</span>
+                            </div>
+                            <p className="text-xs text-body dark:text-on-dark-soft">Produktivitas publikasi tertinggi</p>
                           </div>
                         </div>
 
-                        <div className="bg-canvas-dark rounded-xl p-3 border border-hairline-dark flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-2">
-                            <Award className="w-4 h-4 text-warning-on-dark" />
-                            <span className="font-mono text-on-dark-soft">Export Ready:</span>
-                          </div>
-                          <span className="font-mono font-bold text-warning-on-dark">Format Excel (.xlsx) Ready</span>
+                        <div className="pt-4 border-t border-hairline-light dark:border-hairline-dark flex items-center justify-between text-xs text-body dark:text-on-dark-soft">
+                          <span>Format Laporan:</span>
+                          <span className="font-mono font-medium text-ink-heading dark:text-on-dark">Ekspor Rekapitulasi Excel (.xlsx) & PDF</span>
                         </div>
                       </div>
                     )}
