@@ -51,6 +51,82 @@ export default function ResearchEditModal({
 }: ResearchEditModalProps) {
   const [, setIsDragging] = useState(false);
 
+  const [editSkemaSelect, setEditSkemaSelect] = useState<string>(() => {
+    if (!editSkema) return '';
+    if (['kompetisi', 'pembinaan'].includes(editSkema.toLowerCase())) return editSkema.toLowerCase();
+    return 'lainnya';
+  });
+  const [customEditSkema, setCustomEditSkema] = useState<string>(() => {
+    if (!editSkema) return '';
+    if (['kompetisi', 'pembinaan'].includes(editSkema.toLowerCase())) return '';
+    return editSkema;
+  });
+
+  const [editFokusSelect, setEditFokusSelect] = useState<string>(() => {
+    if (!editFokus) return '';
+    if (['kesehatan', 'ekonomi', 'teknologi', 'sosial'].includes(editFokus.toLowerCase())) return editFokus.toLowerCase();
+    return 'lainnya';
+  });
+  const [customEditFokus, setCustomEditFokus] = useState<string>(() => {
+    if (!editFokus) return '';
+    if (['kesehatan', 'ekonomi', 'teknologi', 'sosial'].includes(editFokus.toLowerCase())) return '';
+    return editFokus;
+  });
+
+  React.useEffect(() => {
+    if (!editSkema) {
+      setEditSkemaSelect('');
+      setCustomEditSkema('');
+    } else if (['kompetisi', 'pembinaan'].includes(editSkema.toLowerCase())) {
+      setEditSkemaSelect(editSkema.toLowerCase());
+      setCustomEditSkema('');
+    } else {
+      setEditSkemaSelect('lainnya');
+      setCustomEditSkema(editSkema);
+    }
+  }, [editSkema]);
+
+  React.useEffect(() => {
+    if (!editFokus) {
+      setEditFokusSelect('');
+      setCustomEditFokus('');
+    } else if (['kesehatan', 'ekonomi', 'teknologi', 'sosial'].includes(editFokus.toLowerCase())) {
+      setEditFokusSelect(editFokus.toLowerCase());
+      setCustomEditFokus('');
+    } else {
+      setEditFokusSelect('lainnya');
+      setCustomEditFokus(editFokus);
+    }
+  }, [editFokus]);
+
+  const handleEditSkemaSelectChange = (val: string) => {
+    setEditSkemaSelect(val);
+    if (val === 'lainnya') {
+      setEditSkema(customEditSkema);
+    } else {
+      setEditSkema(val);
+    }
+  };
+
+  const handleCustomEditSkemaChange = (val: string) => {
+    setCustomEditSkema(val);
+    setEditSkema(val);
+  };
+
+  const handleEditFokusSelectChange = (val: string) => {
+    setEditFokusSelect(val);
+    if (val === 'lainnya') {
+      setEditFokus(customEditFokus);
+    } else {
+      setEditFokus(val);
+    }
+  };
+
+  const handleCustomEditFokusChange = (val: string) => {
+    setCustomEditFokus(val);
+    setEditFokus(val);
+  };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -126,15 +202,15 @@ export default function ResearchEditModal({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-start">
             {/* Skema */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
                 Skema <span className="text-error ml-0.5">*</span>
               </label>
               <select
-                value={editSkema}
-                onChange={(e) => setEditSkema(e.target.value)}
+                value={editSkemaSelect}
+                onChange={(e) => handleEditSkemaSelectChange(e.target.value)}
                 required
                 className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
               >
@@ -143,15 +219,37 @@ export default function ResearchEditModal({
                 <option value="pembinaan">Pembinaan</option>
                 <option value="lainnya">Lainnya</option>
               </select>
+
+              {editSkemaSelect === 'lainnya' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="pt-1.5 space-y-1"
+                >
+                  <label className="text-[11px] font-semibold text-body dark:text-on-dark-soft">
+                    Sebutkan Skema Lainnya <span className="text-error ml-0.5">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={customEditSkema}
+                    onChange={(e) => handleCustomEditSkemaChange(e.target.value)}
+                    placeholder="Ketik skema penelitian lainnya..."
+                    className="w-full px-3.5 py-2 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark placeholder:text-muted-soft"
+                  />
+                </motion.div>
+              )}
             </div>
+
             {/* Fokus */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
                 Fokus <span className="text-error ml-0.5">*</span>
               </label>
               <select
-                value={editFokus}
-                onChange={(e) => setEditFokus(e.target.value)}
+                value={editFokusSelect}
+                onChange={(e) => handleEditFokusSelectChange(e.target.value)}
                 required
                 className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
               >
@@ -162,6 +260,27 @@ export default function ResearchEditModal({
                 <option value="sosial">Sosial</option>
                 <option value="lainnya">Lainnya</option>
               </select>
+
+              {editFokusSelect === 'lainnya' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="pt-1.5 space-y-1"
+                >
+                  <label className="text-[11px] font-semibold text-body dark:text-on-dark-soft">
+                    Sebutkan Fokus Lainnya <span className="text-error ml-0.5">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={customEditFokus}
+                    onChange={(e) => handleCustomEditFokusChange(e.target.value)}
+                    placeholder="Ketik fokus penelitian lainnya..."
+                    className="w-full px-3.5 py-2 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark placeholder:text-muted-soft"
+                  />
+                </motion.div>
+              )}
             </div>
           </div>
 

@@ -58,6 +58,82 @@ export default function ResearchUploadModal({
 }: ResearchUploadModalProps) {
   const [, setIsDragging] = useState(false);
 
+  const [skemaSelect, setSkemaSelect] = useState<string>(() => {
+    if (!skema) return '';
+    if (['kompetisi', 'pembinaan'].includes(skema.toLowerCase())) return skema.toLowerCase();
+    return 'lainnya';
+  });
+  const [customSkema, setCustomSkema] = useState<string>(() => {
+    if (!skema) return '';
+    if (['kompetisi', 'pembinaan'].includes(skema.toLowerCase())) return '';
+    return skema;
+  });
+
+  const [fokusSelect, setFokusSelect] = useState<string>(() => {
+    if (!fokus) return '';
+    if (['kesehatan', 'ekonomi', 'teknologi', 'sosial'].includes(fokus.toLowerCase())) return fokus.toLowerCase();
+    return 'lainnya';
+  });
+  const [customFokus, setCustomFokus] = useState<string>(() => {
+    if (!fokus) return '';
+    if (['kesehatan', 'ekonomi', 'teknologi', 'sosial'].includes(fokus.toLowerCase())) return '';
+    return fokus;
+  });
+
+  React.useEffect(() => {
+    if (!skema) {
+      setSkemaSelect('');
+      setCustomSkema('');
+    } else if (['kompetisi', 'pembinaan'].includes(skema.toLowerCase())) {
+      setSkemaSelect(skema.toLowerCase());
+      setCustomSkema('');
+    } else {
+      setSkemaSelect('lainnya');
+      setCustomSkema(skema);
+    }
+  }, [skema]);
+
+  React.useEffect(() => {
+    if (!fokus) {
+      setFokusSelect('');
+      setCustomFokus('');
+    } else if (['kesehatan', 'ekonomi', 'teknologi', 'sosial'].includes(fokus.toLowerCase())) {
+      setFokusSelect(fokus.toLowerCase());
+      setCustomFokus('');
+    } else {
+      setFokusSelect('lainnya');
+      setCustomFokus(fokus);
+    }
+  }, [fokus]);
+
+  const handleSkemaSelectChange = (val: string) => {
+    setSkemaSelect(val);
+    if (val === 'lainnya') {
+      setSkema(customSkema);
+    } else {
+      setSkema(val);
+    }
+  };
+
+  const handleCustomSkemaChange = (val: string) => {
+    setCustomSkema(val);
+    setSkema(val);
+  };
+
+  const handleFokusSelectChange = (val: string) => {
+    setFokusSelect(val);
+    if (val === 'lainnya') {
+      setFokus(customFokus);
+    } else {
+      setFokus(val);
+    }
+  };
+
+  const handleCustomFokusChange = (val: string) => {
+    setCustomFokus(val);
+    setFokus(val);
+  };
+
   // Scoring preview calculated locally based on docType, program, and danaDisetujui
   const scoringPreview = useMemo(() => {
     if (docType === 'arsip') {
@@ -222,15 +298,15 @@ export default function ResearchUploadModal({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
           {/* Skema */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-body-strong dark:text-on-dark">
               Skema Penelitian <span className="text-error ml-0.5">*</span>
             </label>
             <select
-              value={skema}
-              onChange={(e) => setSkema(e.target.value)}
+              value={skemaSelect}
+              onChange={(e) => handleSkemaSelectChange(e.target.value)}
               required
               className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
             >
@@ -247,6 +323,27 @@ export default function ResearchUploadModal({
                 Lainnya
               </option>
             </select>
+
+            {skemaSelect === 'lainnya' && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="pt-1.5 space-y-1"
+              >
+                <label className="text-[11px] font-semibold text-body dark:text-on-dark-soft">
+                  Sebutkan Skema Lainnya <span className="text-error ml-0.5">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={customSkema}
+                  onChange={(e) => handleCustomSkemaChange(e.target.value)}
+                  placeholder="Ketik skema penelitian lainnya..."
+                  className="w-full px-3.5 py-2 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark placeholder:text-muted-soft"
+                />
+              </motion.div>
+            )}
           </div>
 
           {/* Fokus */}
@@ -255,8 +352,8 @@ export default function ResearchUploadModal({
               Fokus Penelitian <span className="text-error ml-0.5">*</span>
             </label>
             <select
-              value={fokus}
-              onChange={(e) => setFokus(e.target.value)}
+              value={fokusSelect}
+              onChange={(e) => handleFokusSelectChange(e.target.value)}
               required
               className="w-full px-3.5 py-2.5 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark cursor-pointer"
             >
@@ -279,6 +376,27 @@ export default function ResearchUploadModal({
                 Lainnya
               </option>
             </select>
+
+            {fokusSelect === 'lainnya' && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="pt-1.5 space-y-1"
+              >
+                <label className="text-[11px] font-semibold text-body dark:text-on-dark-soft">
+                  Sebutkan Fokus Penelitian Lainnya <span className="text-error ml-0.5">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={customFokus}
+                  onChange={(e) => handleCustomFokusChange(e.target.value)}
+                  placeholder="Ketik fokus penelitian lainnya..."
+                  className="w-full px-3.5 py-2 bg-surface-light dark:bg-surface-dark-soft border border-hairline-light dark:border-hairline-dark rounded-lg font-medium focus:bg-surface-light dark:focus:bg-surface-dark-soft focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all outline-none text-xs text-ink-heading dark:text-on-dark placeholder:text-muted-soft"
+                />
+              </motion.div>
+            )}
           </div>
         </div>
 
