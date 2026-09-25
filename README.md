@@ -195,15 +195,15 @@ Frontend memanggil endpoint backend menggunakan relative path (`/api/...`). Peng
     "rewrites": [
       {
         "source": "/api/(.*)",
-        "destination": "https://be-pentadosen-production-4cae.up.railway.app/api/$1"
+        "destination": "https://be-pentadosen-production-ad7a.up.railway.app/api/$1"
       },
       {
         "source": "/storage/(.*)",
-        "destination": "https://be-pentadosen-production-4cae.up.railway.app/storage/$1"
+        "destination": "https://be-pentadosen-production-ad7a.up.railway.app/storage/$1"
       },
       {
         "source": "/uploads/(.*)",
-        "destination": "https://be-pentadosen-production-4cae.up.railway.app/uploads/$1"
+        "destination": "https://be-pentadosen-production-ad7a.up.railway.app/uploads/$1"
       },
       {
         "source": "/(.*)",
