@@ -1,4 +1,4 @@
-# 🚀 PentaDosen (Frontend)
+# PentaDosen - Frontend Application
 
 <p align="center">
   <img src="public/Insights-Analitik-Kinerja-—-PentaDosen-Penta-Dosen-Universitas-YARSI-08-31-2026_04_16_PM.webp" alt="PentaDosen Insights Preview" width="100%" />
@@ -14,220 +14,245 @@
 
 ---
 
-## 📌 Tentang Platform
+## 1. Ringkasan Platform
 
-**PentaDosen** adalah platform sistem informasi manajemen portofolio dan pelacakan kinerja Tri Dharma Perguruan Tinggi (Pendidikan, Penelitian, dan Pengabdian kepada Masyarakat) untuk dosen di lingkungan **Universitas YARSI**.
+PentaDosen adalah platform sistem informasi manajemen portofolio dan pelacakan kinerja Tri Dharma Perguruan Tinggi (Pendidikan, Penelitian, dan Pengabdian kepada Masyarakat) untuk dosen di lingkungan Universitas YARSI.
 
-Platform ini dirancang khusus untuk mempermudah dosen dalam mendokumentasikan dan memantau perolehan **Poin KPI Akademik** secara otomatis, akurat, dan transparan tanpa proses manual yang memakan waktu. PentaDosen mengintegrasikan data publikasi ilmiah dari pengindeks global seperti **Scopus** dan **Google Scholar**, mengotomatisasi kalkulasi angka kredit berbasis peran kepenulisan (*First Author*, *Corresponding*, *Co-Author*), serta menyediakan tata kelola berkas penelitian, HKI, dan buku ajar dalam satu antarmuka modern yang adaptif.
+Platform ini mengotomatisasi pendataan dan kalkulasi poin Key Performance Indicator (KPI) akademik secara transparan. Sistem mengintegrasikan rekam jejak publikasi ilmiah dari pengindeks internasional dan nasional (Scopus, Google Scholar, dan SINTA), mengotomatisasi pembobotan angka kredit berbasis peran kepenulisan (First Author, Corresponding Author, Co-Author), serta menyediakan tata kelola berkas penelitian, Hak Kekayaan Intelektual (HKI), dan buku ajar dalam antarmuka web modern yang responsif.
 
 ---
 
-## 🌐 Live Demo
+## 2. Lingkungan Akses Sistem
 
-Aplikasi PentaDosen dapat diakses melalui tautan berikut:
-
-| Lingkungan (Environment) | Tautan Akses | Keterangan |
+| Lingkungan | Tautan Akses | Keterangan |
 | :--- | :--- | :--- |
-| 🏛️ **Production Resmi** | [pentadosen.yarsi.ac.id](https://pentadosen.yarsi.ac.id/) | Domain resmi institusi Universitas YARSI yang digunakan untuk operasional dan penilaian kinerja civitas akademika aktif. |
-| 🚀 **Staging / Public Demo** | [www.pentadosen.site](https://www.pentadosen.site/) | Lingkungan demonstrasi publik dan pengujian berkala untuk rilis fitur terbaru sebelum diterapkan ke server utama. |
+| Production Resmi | [pentadosen.yarsi.ac.id](https://pentadosen.yarsi.ac.id/) | Domain institusi resmi Universitas YARSI untuk operasional dan evaluasi kinerja aktif. |
+| Staging / Demo Publik | [www.pentadosen.site](https://www.pentadosen.site/) | Lingkungan demonstrasi publik dan pengujian pra-rilis fitur sistem. |
 
 ---
 
-## ✨ Fitur Utama
+## 3. Fitur Sistem
 
-Fitur-fitur pada PentaDosen dikelompokkan secara terstruktur berdasarkan peran pengguna dan modul analitik:
+### Modul Dosen
+* **Dasbor & KPI Tracker**: Pemantauan akumulasi poin kinerja Tri Dharma, visualisasi tren penelitian per tahun, dan rekapitulasi status berkas.
+* **Manajemen Publikasi Ilmiah**: Pelacakan metadata jurnal terindeks Scopus (Q1-Q4), Google Scholar, dan akreditasi SINTA (S1-S6), disertai konfigurasi peran kepenulisan (Corresponding / First Author).
+* **Manajemen Penelitian**: Pencatatan data penelitian internal dan eksternal, skema pendanaan, status kelayakan, serta penautan dokumen bukti.
+* **Manajemen HKI & Paten**: Inventarisasi sertifikat Hak Cipta, Paten, Desain Industri, dan Merek dengan integrasi penautan ke dokumen penelitian terkait.
+* **Manajemen Buku Akademik**: Pengarsipan monograf, buku ajar, dan buku referensi ber-ISBN.
+* **Pratinjau Berkas Terintegrasi**: Pengunggahan berkas bukti fisik (PDF) dan penampil dokumen in-app (*PDF viewer*).
+* **Antarmuka Responsif Adaptif**: Konversi otomatis tata letak tabel ke format kartu dinamis (*Card List View*) pada perangkat layar sentuh dan ponsel pintar.
 
-### 👨‍🏫 1. Portal Dosen
-* **Dashboard & KPI Tracker:** Pemantauan real-time ringkasan akumulasi poin KPI, grafik performa riset per tahun, dan status dokumen.
-* **Manajemen Publikasi Ilmiah:** Pelacakan otomatis jurnal internasional (terindeks Scopus dengan quartile Q1–Q4) & jurnal nasional (terakreditasi SINTA 1–6), jumlah sitasi, serta konfigurasi status *corresponding author*.
-* **Manajemen Penelitian:** Pencatatan proposal dan laporan penelitian berdasarkan skema pendanaan, fokus riset, serta nominal dana disetujui.
-* **Manajemen HKI & Paten:** Inventarisasi Hak Kekayaan Intelektual (Paten, Hak Cipta, Merek, Desain Industri) dengan fitur penautan (*linking*) ke riset asal.
-* **Manajemen Buku Akademik:** Pengarsipan penulisan buku referensi, monograf, dan buku ajar ber-ISBN.
-* **Pratinjau & Unggah Berkas:** Upload berkas bukti fisik (PDF) dan penampil dokumen bawaan (*in-app PDF Preview*).
-* **Tampilan Responsif Adaptif:** Dukungan penuh antarmuka mobile dengan konversi tabel ke format kartu (*Card List View*) yang nyaman digunakan di smartphone.
+### Modul Administrator
+* **Verifikasi Dokumen**: Antrean kerja verifikasi dokumen pengajuan dosen dengan alur persetujuan (*Approve*) atau penolakan (*Reject*).
+* **Sistem Umpan Balik Validasi**: Mekanisme pemberian catatan evaluasi dan alasan revisi secara langsung kepada dosen pemohon.
+* **Direktori Kinerja Dosen**: Pemantauan portofolio komprehensif, produktivitas publikasi, dan keaktifan berkala seluruh dosen antarprogram studi.
+* **Sinkronisasi Data Eksternal**: Trigger sinkronisasi massal untuk penarikan data publikasi dan sitasi terbaru dari Scopus, Google Scholar, dan SINTA.
+* **Log Aktivitas & Audit Trail**: Pencatatan histori aktivitas administratif untuk memastikan transparansi dan integritas data operasional.
+* **Manajemen CMS & Master Bobot**: Konfigurasi parameter bobot poin KPI akademik dan pengelolaan template dokumen institusi.
 
-### 👑 2. Portal Administrator
-* **Pusat Verifikasi Dokumen:** Antrean verifikasi dokumen yang diajukan dosen dengan workflow *Approve* atau *Reject*.
-* **Sistem Umpan Balik (Feedback):** Pemberian catatan revisi langsung kepada dosen apabila dokumen ditolak atau memerlukan perbaikan.
-* **Direktori & Profil Kinerja Dosen:** Basis data komprehensif untuk mengevaluasi portofolio, riwayat publikasi, dan keaktifan Tri Dharma tiap dosen.
-* **Sinkronisasi Data Eksternal:** Modul sinkronisasi terintegrasi untuk menarik rekam jejak sitasi dan metadata publikasi dari API eksternal.
-* **Audit Trail & Activity Logs:** Pencatatan kronologis aktivitas sistem untuk memastikan transparansi dan integritas data.
-* **CMS & Template Management:** Pengaturan kriteria KPI dan pengunduhan template dokumen resmi institusi.
-
-### 📊 3. Analitik & Direktori Publik
-* **Insights & Statistik Komparatif:** Visualisasi perbandingan produktivitas riset antarfakultas dan program studi.
-* **Peringkat & Distribusi Publikasi:** Analisis visual sebaran quartile Scopus, peringkat SINTA, dan tren sitasi tahunan.
-* **Aksesibilitas & Tema Dinamis:** Dukungan mode Terang/Gelap (*Light & Dark Mode*) serta standar aksesibilitas WCAG 2.1 AA.
+### Modul Analitik Publik
+* **Insights & Statistik Agregat**: Visualisasi perbandingan produktivitas penelitian antarfakultas dan program studi.
+* **Distribusi Publikasi**: Analisis proporsi quartile jurnal Scopus, capaian SINTA, serta tren pertumbuhan sitasi universitas.
+* **Dukungan Aksesibilitas**: Pengaturan tema Terang/Gelap (*Light & Dark Mode*) yang selaras dengan panduan WCAG 2.1 AA.
 
 ---
 
-## 🛠️ Tech Stack & Dependencies
+## 4. Tumpukan Teknologi (Tech Stack)
 
-PentaDosen Frontend dibangun menggunakan arsitektur Single Page Application (SPA) berbasis teknologi web modern:
+Aplikasi dibangun menggunakan arsitektur Single Page Application (SPA) dengan rincian pustaka utama sebagai berikut:
 
-| Kategori | Teknologi / Pustaka | Versi | Fungsi Utama |
+| Kategori | Paket / Teknologi | Versi | Peran Teknis |
 | :--- | :--- | :--- | :--- |
-| **Core Framework** | React | `^19.0.0` | Library UI berbasis komponen deklaratif |
-| **Language** | TypeScript | `~5.8.2` | Pengetikan statis ketat (*type safety*) |
-| **Build Tool** | Vite | `^6.2.0` | Development server kilat (HMR) dan bundler produksi teroptimasi |
-| **Styling** | Tailwind CSS | `^4.1.14` | Framework utility-first CSS modern dengan performa tinggi |
-| **Routing** | React Router DOM | `^7.13.1` | Manajemen rute sisi klien dan proteksi hak akses |
-| **Animasi** | Motion / Framer Motion | `^12.38.0` | Mikro-interaksi, transisi layout, dan animasi responsif |
-| **Visualisasi Data**| Recharts | `^3.8.0` | Grafik batang, garis, dan diagram lingkaran interaktif |
-| **Ikon UI** | Lucide React | `^0.546.0` | Set ikon vektor modern yang ringan dan konsisten |
-| **Dokumen & Data** | React-PDF & ExcelJS | `^10.4.1` / `^4.4.0` | Pratinjau PDF di browser dan pemrosesan impor/ekspor data Excel |
-| **Komponen UI** | Radix UI / Phantom UI | `^1.1.15` / `^1.4.0` | Primitif dialog modal, slot, dan komponen shimmer loading |
-| **Notifikasi** | Sonner | `^2.0.7` | Sistem toast notification interaktif |
+| Framework Inti | React | `^19.0.0` | Pustaka antarmuka berbasis komponen reaktif |
+| Bahasa | TypeScript | `~5.8.2` | Pengetikan statis ketat (*type safety*) |
+| Build Tool | Vite | `^6.2.0` | Development server cepat (HMR) dan bundler aset produksi |
+| Styling | Tailwind CSS | `^4.1.14` | Kerangka kerja utilitas CSS modern berkinerja tinggi |
+| Routing | React Router DOM | `^7.13.1` | Manajemen navigasi rute klien dan proteksi hak akses |
+| Animasi | Motion / Framer Motion | `^12.38.0` | Mikro-interaksi dan transisi elemen visual |
+| Visualisasi Data | Recharts | `^3.8.0` | Komponen diagram batang, garis, dan visualisasi statistik |
+| Ikonografi | Lucide React | `^0.546.0` | Paket ikon vektor standar antarmuka |
+| Pemrosesan Berkas | React-PDF & ExcelJS | `^10.4.1` / `^4.4.0` | Rendering dokumen PDF di peramban dan pengolahan data spreadsheet |
+| Primitif UI | Radix UI / Phantom UI | `^1.1.15` / `^1.4.0` | Komponen dialog modal, dropdown, dan efek skeleton loading |
+| Notifikasi | Sonner | `^2.0.7` | Manajemen pesan toast non-intrusif |
 
 ---
 
-## 📂 Struktur Folder Proyek
+## 5. Struktur Direktori Proyek
 
-Struktur folder `src/` disusun dengan pendekatan arsitektur **Feature-Based & Modular** agar kode terisolasi rapi, mudah dibaca, dan skalabel:
+Proyek menggunakan pendekatan arsitektur berbasis fitur (*Feature-Driven Directory Structure*):
 
 ```text
 src/
-├── components/                     # 🧩 Komponen antarmuka yang dapat digunakan ulang
-│   ├── Home/                       #    Seksi-seksi landing page publik (Navbar, Hero, Features, Footer)
-│   ├── features/                   #    Komponen fitur bersama (misal: PdfPreviewModal, DocumentDetailDrawer)
-│   ├── layout/                     #    Kerangka shell dashboard (Sidebar, Topbar, ThemeToggle, ScrollToTop)
-│   ├── shared/                     #    Komponen bersama antarmuka (Filter bar, Year picker, dll.)
-│   ├── ui/                         #    Komponen atomik dasar (Button, Dialog, DropdownSelect, EmptyState, Loader)
-│   └── SEO.tsx                     #    Komponen manajemen metadata & Open Graph tag
+├── components/                     # Komponen antarmuka modular yang dapat digunakan ulang
+│   ├── Home/                       # Komponen landing page publik (Navbar, Hero, Features, Footer)
+│   ├── features/                   # Komponen fitur bersama (PdfPreviewModal, GuidedTour, Onboarding)
+│   ├── layout/                     # Kerangka dashboard (Sidebar, Topbar, ThemeToggle, ScrollToTop)
+│   ├── shared/                     # Komponen antarmuka umum (FilterBar, YearPicker, SearchBar)
+│   ├── ui/                         # Komponen atomik dasar (Button, Dialog, DropdownSelect, Loader)
+│   └── SEO.tsx                     # Pengelolaan metadata dokumen dan tag Open Graph
 │
-├── lib/                            # 🔩 Utilitas, helper, dan pustaka konfigurasi
-│   └── utils.ts                    #    Fungsi pembantu (classnames merger, formatters)
+├── lib/                            # Modul fungsi pembantu dan utilitas sistem
+│   └── utils.ts                    # Utilitas styling (clsx, tailwind-merge) dan format data
 │
-├── pages/                          # 📄 Halaman dan modul fungsional aplikasi
-│   ├── admin/                      # 👑 Portal Administrator
-│   │   ├── ActivityLogs/           #    Audit trail log aktivitas sistem
-│   │   ├── AdminAllDocuments/      #    Pusat penelusuran seluruh dokumen
-│   │   ├── AdminInputDocument/     #    Form penginputan dokumen administratif manual
-│   │   ├── AdminSync/              #    Sinkronisasi API data dosen & publikasi
-│   │   ├── CmsDashboard/           #    Dasbor ringkasan analitik admin & KPI
-│   │   ├── LecturerProfile/        #    Detail profil dosen dari sudut pandang admin
-│   │   ├── Lecturers/              #    Daftar direktori dosen admin
-│   │   └── Verification/           #    Workflow verifikasi dokumen (Approve/Reject)
+├── pages/                          # Halaman modul utama sistem
+│   ├── admin/                      # Portal fungsional Administrator
+│   │   ├── ActivityLogs/           # Audit trail log aktivitas sistem
+│   │   ├── AdminAllDocuments/      # Direktori komprehensif seluruh dokumen institusi
+│   │   ├── AdminInputDocument/     # Formulir input berkas administratif manual
+│   │   ├── AdminSync/              # Panel sinkronisasi API data dosen dan publikasi
+│   │   ├── CmsDashboard/           # Dasbor manajemen konten dan analitik master KPI
+│   │   ├── LecturerProfile/        # Tinjauan profil dosen dari sisi administrator
+│   │   ├── Lecturers/              # Pengelolaan direktori daftar dosen institusi
+│   │   └── Verification/           # Alur kerja verifikasi berkas (Approve / Reject)
 │   │
-│   ├── auth/                       # 🔒 Modul Otentikasi
-│   │   ├── LoginPage.tsx           #    Halaman masuk dosen (LDAP / SSO)
-│   │   └── AdminLogin.tsx          #    Halaman masuk administrator
+│   ├── auth/                       # Modul autentikasi pengguna
+│   │   ├── LoginPage.tsx           # Halaman login dosen dan staf
+│   │   ├── AdminLogin.tsx          # Halaman login administrator
+│   │   └── services/               # Layanan HTTP autentikasi ke backend
 │   │
-│   ├── dashboard/                  # 📊 Modul Analitik & Insights Publik
-│   │   ├── DepartementList/        #    Statistik dan daftar per departemen/prodi
-│   │   ├── Insights/               #    Visualisasi grafik kinerja dan sitasi agregat
-│   │   ├── LecturerList/           #    Direktori publik dosen dengan filter interaktif
-│   │   └── LecturerProfileInsights/#    Detail insight portofolio per dosen
+│   ├── dashboard/                  # Modul analitik dan insight publik
+│   │   ├── DepartementList/        # Statistik dan daftar per departemen/prodi
+│   │   ├── Insights/               # Grafik agregasi kinerja riset dan sitasi institusi
+│   │   ├── LecturerList/           # Direktori publik dosen dengan filter interaktif
+│   │   └── LecturerProfileInsights/# Detail capaian kinerja individu dosen
 │   │
-│   ├── dosen/                      # 👨‍🏫 Portal Dosen (Portofolio Tri Dharma)
-│   │   ├── dashboard/              #    Dasbor utama pencapaian kredit & poin KPI
-│   │   ├── publication/            #    Manajemen publikasi internasional & nasional
-│   │   ├── research/               #    Manajemen arsip dokumen penelitian
-│   │   ├── hki/                    #    Manajemen dokumen HKI, paten, dan hak cipta
-│   │   ├── buku/                   #    Manajemen dokumen buku ajar dan monograf
-│   │   └── FaqHelp/                #    Pusat bantuan & panduan penggunaan sistem
+│   ├── dosen/                      # Portal kinerja Dosen (Tri Dharma)
+│   │   ├── dashboard/              # Dasbor capaian angka kredit dan poin KPI dosen
+│   │   ├── publication/            # Pengelolaan publikasi jurnal internasional dan nasional
+│   │   ├── research/               # Pengelolaan arsip data dan laporan penelitian
+│   │   ├── hki/                    # Pengelolaan data paten, hak cipta, dan desain industri
+│   │   ├── buku/                   # Pengelolaan data buku monograf dan buku ajar
+│   │   └── FaqHelp/                # Pusat bantuan dan panduan penggunaan sistem
 │   │
-│   ├── profilediri/                # 👤 Halaman profil dan identitas akademik dosen
-│   ├── Developers.tsx              # 👥 Halaman profil pengembang & dosen pembimbing (DUK Team)
-│   └── Home.tsx                    # 🏠 Halaman utama (Landing Page)
+│   ├── profilediri/                # Pengaturan profil akun dan tautan identitas pengindeks
+│   ├── Developers.tsx              # Halaman profil tim pengembang sistem (DUK Team)
+│   └── Home.tsx                    # Landing page publik sistem PentaDosen
 │
-├── App.tsx                         # 🗺️ Konfigurasi routing & penjagaan hak akses (Guards)
-├── index.css                       # 🎨 Variabel warna desain sistem Tailwind CSS
-├── main.tsx                        # ⚡ Entry point React DOM
-└── phantom-ui.d.ts                 # 📝 Deklarasi tipe komponen web custom
+├── App.tsx                         # Konfigurasi routing utama, state sesi, dan global error interceptor
+├── index.css                       # Variabel desain sistem Tailwind CSS dan styling global
+├── main.tsx                        # Entry point eksekusi React DOM
+└── phantom-ui.d.ts                 # Deklarasi tipe TypeScript untuk komponen web tambahan
 ```
 
 ---
 
-## 🚀 Panduan Memulai (Getting Started)
+## 6. Panduan Instalasi dan Menjalankan Aplikasi
 
-Ikuti langkah-langkah berikut untuk mengoperasikan proyek di lingkungan lokal komputer Anda:
+### Prasyarat Sistem
+* Node.js versi 18.x atau versi LTS yang lebih baru.
+* Package manager: npm, yarn, atau pnpm.
+* Git command line client.
 
-### 1. Prasyarat Sistem
-* **Node.js**: Versi `18.x` atau lebih baru (`LTS` direkomendasikan).
-* **Package Manager**: `npm` (bawaan Node.js), `yarn`, atau `pnpm`.
-* **Git**: Terpasang di komputer lokal.
+### Langkah Instalasi
+1. Kloning repositori frontend:
+   ```bash
+   git clone https://github.com/Umam07/FE-PentaDosen.git
+   cd FE-PentaDosen
+   ```
 
-### 2. Kloning Repositori & Instalasi Dependensi
-```bash
-# Kloning repositori frontend
-git clone https://github.com/DUK-Team/FE-PentaDosen.git
+2. Pasang paket dependensi proyek:
+   ```bash
+   npm install
+   ```
 
-# Masuk ke direktori proyek
-cd FE-PentaDosen
+3. Jalankan server pengembangan lokal:
+   ```bash
+   npm run dev
+   ```
+   Aplikasi dapat diakses melalui alamat lokal `http://localhost:5173`.
 
-# Pasang semua pustaka dependensi
-npm install
-```
+---
 
-### 3. Konfigurasi Environment Variables
-Salin berkas `.env.example` menjadi `.env`:
-```bash
-cp .env.example .env
-```
-Sesuaikan variabel lingkungan yang diperlukan (misal: API endpoint backend lokal / API keys).
+## 7. Konfigurasi Jaringan dan Proxy API
 
-> **Catatan Keamanan:** Jangan pernah melakukan *commit* atau mengekspos kredensial rahasia, token akses, atau API key pribadi ke dalam repositori publik.
+Frontend memanggil endpoint backend menggunakan relative path (`/api/...`). Pengalihan rute ke server API backend diatur melalui konfigurasi berikut:
 
-### 4. Menjalankan Development Server
-Jalankan perintah berikut untuk menyalakan server pengembangan lokal:
-```bash
-npm run dev
-```
-Buka peramban dan akses alamat `http://localhost:5173`.
+* **Lingkungan Pengembangan (Local Development)**:
+  Dikonfigurasi melalui `vite.config.ts` menggunakan fitur Vite Proxy:
+  ```typescript
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+      '/storage': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+      '/uploads': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+    },
+  }
+  ```
 
-### 5. Skrip Perintah (Available Scripts)
+* **Lingkungan Produksi (Deployment Vercel)**:
+  Dikonfigurasi melalui `vercel.json` menggunakan aturan URL rewrite:
+  ```json
+  {
+    "rewrites": [
+      {
+        "source": "/api/(.*)",
+        "destination": "https://be-pentadosen-production-4cae.up.railway.app/api/$1"
+      },
+      {
+        "source": "/storage/(.*)",
+        "destination": "https://be-pentadosen-production-4cae.up.railway.app/storage/$1"
+      },
+      {
+        "source": "/uploads/(.*)",
+        "destination": "https://be-pentadosen-production-4cae.up.railway.app/uploads/$1"
+      },
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
+  ```
 
-| Perintah | Fungsi | Keterangan |
+---
+
+## 8. Skrip Perintah (Available Scripts)
+
+| Perintah | Tujuan | Deskripsi Teknis |
 | :--- | :--- | :--- |
-| `npm run dev` | **Start Dev Server** | Menjalankan aplikasi secara lokal dengan fitur Hot Module Replacement (HMR). |
-| `npm run build` | **Build Production** | Mengompilasi dan mengoptimasi aset ke dalam direktori `dist/` untuk deployment. |
-| `npm run preview` | **Preview Build** | Menjalankan server lokal untuk menguji hasil build produksi sebelum di-deploy. |
-| `npm run lint` | **Type Checking** | Menjalankan validasi tipe TypeScript (`tsc --noEmit`) untuk memastikan tidak ada kesalahan tipe. |
+| `npm run dev` | Menjalankan Dev Server | Menjalankan Vite server dengan fitur Hot Module Replacement (HMR). |
+| `npm run build` | Kompilasi Produksi | Mengompilasi kode TypeScript dan mem-bundle aset ke direktori `dist/`. |
+| `npm run preview` | Pratinjau Produksi | Menjalankan server lokal untuk menguji build produksi hasil kompilasi. |
+| `npm run lint` | Validasi Tipe | Menjalankan compiler TypeScript (`tsc --noEmit`) untuk audit tipe data. |
+| `npm run clean` | Pembersihan Aset | Menghapus direktori `dist/` untuk memastikan kompilasi bersih ulang. |
 
 ---
 
-## 📐 Konvensi Kode (Code Conventions)
+## 9. Konvensi Penulisan Kode
 
-Demi menjaga kebersihan, konsistensi, dan kemudahan pemeliharaan kode:
-1. **Strict TypeScript:** Wajib menggunakan pengetikan tipe eksplisit (*explicit types/interfaces*). Hindari penggunaan tipe `any`.
-2. **Penamaan Berkas & Komponen:**
-   - Komponen React: `PascalCase.tsx` (misal: `PublicationTable.tsx`).
-   - Hooks: `camelCase.ts` berawalan `use` (misal: `usePublication.ts`).
-   - Utilities/Services: `camelCase.ts` (misal: `hkiService.ts`, `publicationUtils.ts`).
-   - Types: `kebab-case.types.ts` atau `camelCase.types.ts`.
-3. **Pemisahan Logika & Tampilan:** Pisahkan logika kompleks pemrosesan data ke dalam *custom hooks* atau berkas *utils* agar komponen UI tetap bersih dan fokus pada rendering.
-4. **Komentar:** Gunakan komentar secukupnya untuk menjelaskan alasan teknis/bisnis di balik logika yang kompleks (*non-obvious context*).
+1. **Pengetikan Ketat (Strict Typing)**: Gunakan tipe data eksplisit pada parameter, props, dan return type fungsi. Hindari penggunaan tipe `any`.
+2. **Standar Penamaan**:
+   * Komponen UI: `PascalCase.tsx` (contoh: `PublicationTable.tsx`).
+   * React Hooks: `camelCase.ts` dengan awalan `use` (contoh: `usePublication.ts`).
+   * Layanan & Utilitas: `camelCase.ts` (contoh: `authService.ts`, `researchUtils.ts`).
+   * Definisi Tipe: `kebab-case.types.ts` atau `camelCase.types.ts`.
+3. **Pemisahan Logika Bisnis dan Antarmuka**: Seluruh mutasi data dan query HTTP dipisahkan ke dalam folder `services/` dan `hooks/` terkait, menjaga komponen tampilan tetap ringkas dan terfokus pada rendering.
 
 ---
 
-## 🤝 Alur Kontribusi (Contribution Workflow)
+## 10. Tim Pengembang dan Supervisi
 
-Pengembangan proyek dikelola menggunakan standar kolaborasi Git berbasis cabang (*branching*):
-1. **Issues:** Buat atau pilih *Issue* terkait fitur atau perbaikan bug yang akan dikerjakan.
-2. **Branching:** Buat cabang baru dari `main` dengan format penamaan yang jelas:
-   - Fitur baru: `feature/nama-fitur`
-   - Perbaikan bug: `fix/nama-bug`
-   - Refactoring: `refactor/nama-modul`
-3. **Commit Messages:** Tulis pesan *commit* yang deskriptif dan terstruktur.
-4. **Pull Request (PR):** Ajukan PR ke cabang `main` dengan menyertakan deskripsi perubahan, referensi *Issue*, serta bukti hasil pengujian lokal.
+Proyek PentaDosen dikembangkan dan dipelihara oleh DUK Team di bawah naungan Program Studi Teknik Informatika, Fakultas Teknologi Informasi, Universitas YARSI:
 
----
+* **Dosen Pembimbing Utama**:
+  * Nurmaya, S.Kom., M.Eng., Ph.D. — Pengarah Arsitektur Tata Kelola Data Akademik
 
-## 👥 Tim Pengembang & Pengarah
-
-Proyek **PentaDosen** dikembangkan dan dipelihara oleh **DUK Team** di bawah naungan Program Studi Teknik Informatika, Fakultas Teknologi Informasi, **Universitas YARSI**:
-
-* **Dosen Pembimbing Utama:**
-  * **Nurmaya, S.Kom., M.Eng., Ph.D.** — *Dosen Pembimbing & Pengarah Arsitektur Tata Kelola Akademik*
-
-* **Mahasiswa Pengembang Sistem (DUK Team):**
-  * **Muhammad Syafi'ul Umam** — *Pengembang Website* ([GitHub](https://github.com/Umam07))
-  * **Kiki Aimar Wicaksana** — *Pengembang Website* ([GitHub](https://github.com/KikiAimarWicaksana))
-  * **Rafi Daniswara Anggoro Putra** — *Pengembang Website* ([GitHub](https://github.com/DanisMf))
+* **Mahasiswa Pengembang Sistem (DUK Team)**:
+  * Muhammad Syafi'ul Umam — Software Engineer ([GitHub](https://github.com/Umam07))
+  * Kiki Aimar Wicaksana — Software Engineer ([GitHub](https://github.com/KikiAimarWicaksana))
+  * Rafi Daniswara Anggoro Putra — Software Engineer ([GitHub](https://github.com/DanisMf))
 
 ---
 
-<div align="center">
-  <sub>© 2026 PentaDosen • DUK Team — Universitas YARSI. Hak Cipta Dilindungi.</sub>
-</div>
+<p align="center">
+  Hak Cipta © 2026 PentaDosen • DUK Team — Universitas YARSI. Seluruh hak cipta dilindungi undang-undang.
+</p>
