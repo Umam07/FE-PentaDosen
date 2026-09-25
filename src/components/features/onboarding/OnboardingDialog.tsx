@@ -98,6 +98,7 @@ export function OnboardingDialog({ user }: OnboardingDialogProps) {
 
   const handleComplete = () => {
     localStorage.setItem(storageKey, "true")
+    window.dispatchEvent(new Event("penta_onboarding_completed"))
     setOpen(false)
     navigate(getCompletionRouteForRole(activeRole))
   }

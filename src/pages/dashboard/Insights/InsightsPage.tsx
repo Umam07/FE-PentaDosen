@@ -72,7 +72,7 @@ export default function Insights() {
         <ResearchDistributionCard stats={stats} loading={loading} />
 
         {/* Analytics visualisations and Leaderboard ranking */}
-        <div id="fakultas-analytics" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div id="fakultas-analytics" className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <FakultasPieChart
             loading={loading}
             sortBy={sortBy}

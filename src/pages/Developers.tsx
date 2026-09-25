@@ -213,7 +213,7 @@ export default function Developers() {
               DUK Team <span className="text-accent dark:text-accent-on-dark">— PentaDosen</span>
             </motion.h1>
             <p className="text-sm sm:text-base text-body dark:text-on-dark-soft leading-relaxed font-normal">
-              Platform manajemen dan analitik portofolio Tri Dharma PentaDosen dirancang dan dikembangkan secara mandiri oleh <span className="font-semibold text-ink-heading dark:text-on-dark">DUK Team</span> (Danis, Umam, Kiki) di bawah bimbingan Program Studi Teknik Informatika, Fakultas Teknologi Informasi Universitas YARSI.
+              Platform Penelitian Dosen YARSI untuk mengelola publikasi, sitasi, dan dokumen akademik dalam satu ekosistem yang aman dan modern. Dirancang dan dikembangkan secara mandiri oleh <span className="font-semibold text-ink-heading dark:text-on-dark">DUK Team</span> (Danis, Umam, Kiki) di bawah bimbingan Program Studi Teknik Informatika, Fakultas Teknologi Informasi Universitas YARSI.
             </p>
           </div>
 

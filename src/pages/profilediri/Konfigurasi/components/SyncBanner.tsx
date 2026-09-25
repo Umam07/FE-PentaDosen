@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw, ShieldCheck } from 'lucide-react';
+import { RefreshCw, ShieldCheck, HelpCircle } from 'lucide-react';
 
 interface SyncBannerProps {
   loading: boolean;
@@ -7,6 +7,7 @@ interface SyncBannerProps {
   scopusId: string;
   onSyncAll: () => Promise<void>;
   onSyncSinta?: () => Promise<void>;
+  onOpenTour?: () => void;
 }
 
 export const SyncBanner: React.FC<SyncBannerProps> = ({
@@ -15,6 +16,7 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
   scopusId,
   onSyncAll,
   onSyncSinta,
+  onOpenTour,
 }) => {
   const hasConfiguredId = Boolean(scholarId || scopusId);
 
@@ -27,9 +29,23 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-sm font-bold tracking-tight text-ink-heading dark:text-on-dark">
-              Sinkronisasi Data Publikasi
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm font-bold tracking-tight text-ink-heading dark:text-on-dark">
+                Sinkronisasi Data Publikasi
+              </h2>
+              {onOpenTour && (
+                <button
+                  type="button"
+                  onClick={onOpenTour}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-light-raised hover:bg-surface-light border border-hairline-light text-muted hover:text-ink-heading dark:bg-surface-dark-elevated dark:hover:bg-surface-dark dark:border-hairline-dark dark:text-on-dark-muted dark:hover:text-on-dark transition-colors cursor-pointer"
+                  title="Buka panduan langkah sinkronisasi"
+                  aria-label="Buka panduan langkah sinkronisasi"
+                >
+                  <HelpCircle className="w-3 h-3 text-accent dark:text-accent-on-dark" />
+                  <span>Panduan Cepat</span>
+                </button>
+              )}
+            </div>
             <p className="text-xs text-muted dark:text-on-dark-muted mt-0.5">
               Isi ID Scholar & Scopus secara mandiri, atau gunakan deteksi otomatis dari profil SINTA.
             </p>
@@ -39,11 +55,12 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
         <div className="flex flex-wrap items-center gap-2.5 sm:shrink-0">
           {onSyncSinta && (
             <button
+              id="tour-sync-sinta-btn"
               onClick={onSyncSinta}
               disabled={loading}
               title="Deteksi dan isi Scopus ID serta Google Scholar ID secara otomatis berdasarkan nama dari profil SINTA"
               aria-label="Deteksi dan isi ID dari profil SINTA"
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-hairline-light bg-surface-light-raised px-4 text-xs font-semibold text-ink transition-colors hover:bg-surface-light hover:border-ink/20 dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark dark:hover:bg-surface-dark disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-hairline-light bg-surface-light-raised px-4 text-xs font-semibold text-ink transition-colors hover:bg-surface-light hover:border-ink/20 dark:border-hairline-dark dark:bg-surface-dark-elevated dark:text-on-dark dark:hover:bg-surface-dark disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer whitespace-nowrap"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
               {loading ? 'Mendeteksi ID...' : 'Isi ID dari SINTA'}
@@ -51,10 +68,11 @@ export const SyncBanner: React.FC<SyncBannerProps> = ({
           )}
 
           <button
+            id="tour-sync-all-btn"
             onClick={onSyncAll}
             disabled={loading || !hasConfiguredId}
             aria-label="Sinkronkan semua data publikasi"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-xs font-bold text-on-ink transition-colors hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-ink dark:hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer shadow-xs"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-xs font-bold text-on-ink transition-colors hover:bg-ink-hover active:bg-ink-active dark:bg-on-dark dark:text-ink dark:hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer shadow-xs whitespace-nowrap"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
             {loading ? 'Menyinkronkan...' : 'Sinkronkan Semua'}

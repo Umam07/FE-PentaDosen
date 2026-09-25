@@ -1,8 +1,14 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Hash, ShieldCheck } from 'lucide-react';
 import { KonfigurasiProps } from './types/konfigurasi.types';
 import { SyncBanner } from './components/SyncBanner';
 import { IntegrationCard } from './components/IntegrationCard';
+import { GuidedTour } from '../../../components/features/tour';
+import {
+  INTEGRASI_DOSEN_STEPS,
+  INTEGRASI_TOUR_STORAGE_KEY,
+} from './tour/integrasiTour.config';
 
 export default function Konfigurasi({
   user,
@@ -29,6 +35,59 @@ export default function Konfigurasi({
   handleSyncSinta,
   tabVariants,
 }: KonfigurasiProps) {
+  const isDosen = !user?.role || user.role === 'dosen';
+  const [isTourOpen, setIsTourOpen] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+
+  useEffect(() => {
+    if (!isDosen) return;
+
+    const checkEligibility = () => {
+      const onboardingSeen = localStorage.getItem('penta_onboarding_seen') === 'true';
+      const tourSeen = localStorage.getItem(INTEGRASI_TOUR_STORAGE_KEY) === 'true';
+
+      if (onboardingSeen && !tourSeen) {
+        const timer = setTimeout(() => {
+          setIsTourOpen(true);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    };
+
+    const cleanup = checkEligibility();
+
+    const handleOnboardingCompleted = () => {
+      const tourSeen = localStorage.getItem(INTEGRASI_TOUR_STORAGE_KEY) === 'true';
+      if (!tourSeen) {
+        setTimeout(() => {
+          setIsTourOpen(true);
+        }, 400);
+      }
+    };
+
+    window.addEventListener('penta_onboarding_completed', handleOnboardingCompleted);
+
+    return () => {
+      if (cleanup) cleanup();
+      window.removeEventListener('penta_onboarding_completed', handleOnboardingCompleted);
+    };
+  }, [isDosen]);
+
+  const handleTourComplete = () => {
+    localStorage.setItem(INTEGRASI_TOUR_STORAGE_KEY, 'true');
+    setIsTourOpen(false);
+  };
+
+  const handleTourSkip = () => {
+    localStorage.setItem(INTEGRASI_TOUR_STORAGE_KEY, 'true');
+    setIsTourOpen(false);
+  };
+
+  const handleOpenTour = () => {
+    setTourStep(0);
+    setIsTourOpen(true);
+  };
+
   return (
     <motion.div
       key="integrasi"
@@ -45,7 +104,20 @@ export default function Konfigurasi({
         scopusId={scopusId}
         onSyncAll={handleSyncAll}
         onSyncSinta={handleSyncSinta}
+        onOpenTour={isDosen ? handleOpenTour : undefined}
       />
+
+      {/* Interactive Guided Tour untuk Dosen Baru */}
+      {isDosen && (
+        <GuidedTour
+          isOpen={isTourOpen}
+          steps={INTEGRASI_DOSEN_STEPS}
+          currentStep={tourStep}
+          onStepChange={setTourStep}
+          onComplete={handleTourComplete}
+          onSkip={handleTourSkip}
+        />
+      )}
 
       {/* Kartu Integrasi */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

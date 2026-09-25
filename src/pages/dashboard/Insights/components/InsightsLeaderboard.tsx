@@ -21,7 +21,7 @@ export default function InsightsLeaderboard({
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="lg:col-span-4 bg-surface-light dark:bg-surface-dark rounded-3xl shadow-xs border border-hairline-light dark:border-hairline-dark p-6 sm:p-8 flex flex-col justify-between"
+      className="lg:col-span-4 bg-surface-light dark:bg-surface-dark rounded-3xl shadow-xs border border-hairline-light dark:border-hairline-dark p-6 sm:p-8 flex flex-col justify-between h-full"
     >
       <div>
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-hairline-light dark:border-hairline-dark">
