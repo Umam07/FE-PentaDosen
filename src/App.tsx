@@ -84,6 +84,7 @@ export default function App() {
       } catch (e) {
         console.error('Failed to parse stored user:', e);
         sessionStorage.removeItem('pentadosen_user');
+        sessionStorage.removeItem('pentadosen_token');
         return null;
       }
     }
@@ -93,14 +94,28 @@ export default function App() {
   const [isSessionExpired, setIsSessionExpired] = useState(false);
   const [isRateLimited, setIsRateLimited] = useState(false);
 
-  // Global Interceptor for 429 (Rate Limit), 401 (Unauthorized), 419 (Session Expired), and Global Sync Events
+  // Global Interceptor for 429 (Rate Limit), 401 (Unauthorized), 419 (Session Expired), Bearer Token injection, and Global Sync Events
   useEffect(() => {
     const originalFetch = window.fetch;
     let activeSyncCount = 0;
 
     window.fetch = async (...args) => {
-      const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
+      let [input, init] = args;
+      const url = typeof input === 'string' ? input : (input as Request)?.url || '';
       const urlLower = url.toLowerCase();
+
+      // Automatically attach Bearer token if present in sessionStorage for /api/ requests
+      const token = sessionStorage.getItem('pentadosen_token');
+      if (token && url.includes('/api/')) {
+        init = init ? { ...init } : {};
+        const headers = new Headers(init.headers || {});
+        if (!headers.has('Authorization')) {
+          headers.set('Authorization', `Bearer ${token}`);
+        }
+        init.headers = headers;
+        args[1] = init;
+      }
+
       const isSyncRequest = urlLower.includes('/sync') || urlLower.includes('detect-sinta') || urlLower.includes('sync-scopus') || urlLower.includes('sync-sinta');
 
       if (isSyncRequest) {
@@ -117,7 +132,6 @@ export default function App() {
         const isLoginRequest = url.includes('/api/login');
 
         // Check if rate limit modal should be suppressed (e.g. background mass sync)
-        const init = args[1] as RequestInit | undefined;
         let suppressRateLimitModal = false;
         if (init?.headers) {
           if (init.headers instanceof Headers) {
@@ -169,6 +183,8 @@ export default function App() {
     }
     setIsSessionExpired(false);
     setUser(null);
+    sessionStorage.removeItem('pentadosen_user');
+    sessionStorage.removeItem('pentadosen_token');
     window.location.href = '/login';
   };
 
@@ -187,6 +203,7 @@ export default function App() {
       sessionStorage.setItem('pentadosen_user', JSON.stringify(user));
     } else {
       sessionStorage.removeItem('pentadosen_user');
+      sessionStorage.removeItem('pentadosen_token');
     }
   }, [user, isSessionExpired]);
 
@@ -225,6 +242,7 @@ export default function App() {
       });
     };
   }, [user, isSessionExpired]);
+
   return (
     <Router>
       <ScrollToTop />

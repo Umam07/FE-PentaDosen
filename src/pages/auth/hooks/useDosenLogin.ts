@@ -28,6 +28,9 @@ export function useDosenLogin(setUser: (user: User) => void) {
     setLoading(true);
     try {
       const data = await authService.login(username, password);
+      if (data.token) {
+        sessionStorage.setItem('pentadosen_token', data.token);
+      }
       setUser(data.user);
       navigate('/dashboard');
     } catch (err: any) {

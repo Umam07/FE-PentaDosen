@@ -51,6 +51,8 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
       console.error('Logout logging failed', error);
     }
     setUser(null);
+    sessionStorage.removeItem('pentadosen_user');
+    sessionStorage.removeItem('pentadosen_token');
     navigate('/login');
   };
 
@@ -127,7 +129,6 @@ export default function Layout({ user, setUser }: { user: any, setUser: any }) {
     },
   ];
 
-  // Cari nama halaman aktif (termasuk children)
   // Cari nama halaman aktif (termasuk children)
   const currentPage = (() => {
     // Custom route matching for non-sidebar pages
